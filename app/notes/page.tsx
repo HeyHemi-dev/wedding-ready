@@ -1,7 +1,14 @@
-import { createClient } from '@/utils/supabase/server'
+import { db } from '@/db/db'
+import * as schema from '@/db/schema'
 
 export default async function Page() {
-  const supabase = await createClient()
-  const { data: notes } = await supabase.from('notes').select()
-  return <pre>{JSON.stringify(notes, null, 2)}</pre>
+  const notes = await db.select().from(schema.notes)
+
+  return (
+    <pre>
+      {notes.map((note) => (
+        <div key={note.id}>{note.title}</div>
+      ))}
+    </pre>
+  )
 }
