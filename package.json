@@ -3,7 +3,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:generate": "drizzle-kit generate --config drizzle.config.ts",
+    "db:push": "drizzle-kit push --config drizzle.config.ts",
+    "db:pull": "drizzle-kit pull --config drizzle.config.ts"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.1.1",
@@ -15,9 +18,11 @@
     "autoprefixer": "10.4.20",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "drizzle-orm": "^0.39.3",
     "lucide-react": "^0.468.0",
     "next": "latest",
     "next-themes": "^0.4.3",
+    "postgres": "^3.4.5",
     "prettier": "^3.3.3",
     "react": "19.0.0",
     "react-dom": "19.0.0"
@@ -26,10 +31,13 @@
     "@types/node": "22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "19.0.2",
+    "dotenv": "^16.4.7",
+    "drizzle-kit": "^0.30.4",
     "postcss": "8.4.49",
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "3.4.17",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.19.3",
     "typescript": "5.7.2"
   }
 }
