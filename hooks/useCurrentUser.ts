@@ -1,19 +1,14 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+import type { User } from '@supabase/supabase-js'
 
-export async function useCurrentUser() {
+export async function useCurrentUser(): Promise<User | null> {
   const supabase = await createClient()
   const {
     data: { user },
     error,
   } = await supabase.auth.getUser()
-
-  // Server-side auth check
-  if (error || !user) {
-    redirect('/sign-in')
-  }
 
   return user
 }
