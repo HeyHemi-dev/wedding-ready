@@ -2,14 +2,21 @@ import { signOutAction } from '@/actions/authActions'
 
 import Link from 'next/link'
 import { Button } from './ui/button'
-import { useAuth } from '@/hooks/useAuth'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 
 export default async function AuthButton() {
-  const user = await useAuth()
+  const user = await useCurrentUser()
 
   return user ? (
     <div className="flex items-center gap-4">
-      {user.email}
+      <Button variant={'ghost'} asChild>
+        <Link href="/account" className="font-normal">
+          <div className="flex flex-col items-end gap-0">
+            <div className="text-sm font-normal">{user.email}</div>
+            <div className="text-xs text-muted-foreground">view account</div>
+          </div>
+        </Link>
+      </Button>
       <form action={signOutAction}>
         <Button type="submit" variant={'outline'}>
           Sign out
