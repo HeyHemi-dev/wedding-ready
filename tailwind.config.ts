@@ -14,8 +14,13 @@ const config = {
     },
     extend: {
       spacing: {
+        siteWidth: '80rem',
         sitePadding: '2rem',
         sectionPadding: '6rem',
+        headerHeight: '4rem',
+      },
+      gridTemplateColumns: {
+        siteLayout: 'minmax(theme(spacing.sitePadding), auto) minmax(0, theme(spacing.siteWidth)) minmax(theme(spacing.sitePadding), auto)',
       },
       colors: {
         border: 'hsl(var(--border))',

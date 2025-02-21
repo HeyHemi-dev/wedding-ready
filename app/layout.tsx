@@ -50,23 +50,22 @@ function Providers({ children }: { children: React.ReactNode }) {
 
 function Header() {
   return (
-    <header>
-      <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-        <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-          <div className="flex gap-5 items-center font-semibold">
-            <Link href={'/'}>WeddingReady</Link>
-          </div>
-          <HeaderAuth />
-        </div>
-      </nav>
+    <header className="border-b border-b-foreground/10 h-headerHeight grid grid-cols-siteLayout">
+      <div className="col-start-2 col-end-3 flex justify-between items-center py-3 text-sm">
+        <nav className="flex gap-5 items-center font-semibold">
+          <Link href={'/'}>WeddingReady</Link>
+        </nav>
+        <HeaderAuth />
+      </div>
     </header>
   )
 }
 
 function Footer() {
   return (
-    <footer>
-      <div className="flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
+    <footer className="grid grid-cols-siteLayout border-t border-t-foreground/10 pt-16 pb-sitePadding">
+      <div className="col-start-2 col-end-3 flex items-center justify-between  text-xs">
+        <p className="text-muted-foreground">© 2025 WeddingReady</p>
         <ThemeSwitcher />
       </div>
     </footer>
