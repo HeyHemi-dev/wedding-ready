@@ -1,9 +1,9 @@
 'use client'
 
-import { useAuthOnClient } from '@/hooks/useAuthOnClient'
+import { useCurrentUserOnClient } from '@/hooks/useCurrentUserOnClient'
 
 export default function ProtectedClient() {
-  const { user, loading } = useAuthOnClient()
+  const { user, loading } = useCurrentUserOnClient()
 
   if (loading) {
     return <div>Loading...</div>
