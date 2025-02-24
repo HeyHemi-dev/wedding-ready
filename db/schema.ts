@@ -1,6 +1,102 @@
-import { pgTable, bigserial, text } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, boolean, primaryKey } from 'drizzle-orm/pg-core'
 
-export const notes = pgTable('notes', {
-  id: bigserial({ mode: 'bigint' }).primaryKey().notNull(),
-  title: text(),
+// Maintain 1-1 relationship between users and auth users
+export const users = pgTable('users', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  authUserId: uuid('auth_user_id').notNull(),
+  avatarUrl: text('avatar_url'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  deletedAt: timestamp('deleted_at'),
 })
+
+export const suppliers = pgTable('suppliers', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  ownedByUserId: uuid('owned_by_user_id').notNull(),
+  name: text('name').notNull(),
+  description: text('description'),
+  websiteUrl: text('website_url'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const tiles = pgTable('tiles', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  imagePath: text('image_path').notNull(),
+  title: text('title').notNull(),
+  description: text('description'),
+  createdByUserId: uuid('created_by_user_id').notNull(),
+  locationId: uuid('location_id').references(() => locations.id, { onDelete: 'set null' }),
+  isPrivate: boolean('is_private').notNull().default(false),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const userSavedTiles = pgTable(
+  'user_saved_tiles',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    tileId: uuid('tile_id')
+      .notNull()
+      .references(() => tiles.id, { onDelete: 'cascade' }),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.tileId] })]
+)
+
+export const tileSuppliers = pgTable(
+  'tile_suppliers',
+  {
+    tileId: uuid('tile_id')
+      .notNull()
+      .references(() => tiles.id, { onDelete: 'cascade' }),
+    supplierId: uuid('supplier_id')
+      .notNull()
+      .references(() => suppliers.id, { onDelete: 'cascade' }),
+  },
+  (table) => [primaryKey({ columns: [table.tileId, table.supplierId] })]
+)
+
+export const stacks = pgTable('stacks', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  ownedByUserId: uuid('owned_by_user_id').notNull(),
+  title: text('title').notNull(),
+  description: text('description'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const stackTiles = pgTable(
+  'stack_tiles',
+  {
+    stackId: uuid('stack_id')
+      .notNull()
+      .references(() => stacks.id, { onDelete: 'cascade' }),
+    tileId: uuid('tile_id')
+      .notNull()
+      .references(() => tiles.id, { onDelete: 'cascade' }),
+  },
+  (table) => [primaryKey({ columns: [table.stackId, table.tileId] })]
+)
+
+export const locations = pgTable('locations', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  name: text('name').notNull(),
+  locationType: text('location_type').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const supplierLocations = pgTable(
+  'supplier_locations',
+  {
+    supplierId: uuid('supplier_id')
+      .notNull()
+      .references(() => suppliers.id, { onDelete: 'cascade' }),
+    locationId: uuid('location_id')
+      .notNull()
+      .references(() => locations.id, { onDelete: 'cascade' }),
+  },
+  (table) => [primaryKey({ columns: [table.supplierId, table.locationId] })]
+)
