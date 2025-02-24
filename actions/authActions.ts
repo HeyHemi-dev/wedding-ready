@@ -4,6 +4,8 @@ import { encodedRedirect } from '@/utils/utils'
 import { createClient } from '@/utils/supabase/server'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { db } from '@/db/db'
+import { users } from '@/db/schema'
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString()
@@ -15,7 +17,7 @@ export const signUpAction = async (formData: FormData) => {
     return encodedRedirect('error', '/sign-up', 'Email and password are required')
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -26,9 +28,16 @@ export const signUpAction = async (formData: FormData) => {
   if (error) {
     console.error(error.code + ' ' + error.message)
     return encodedRedirect('error', '/sign-up', error.message)
-  } else {
-    return encodedRedirect('success', '/sign-up', 'Thanks for signing up! Please check your email for a verification link.')
   }
+
+  // Create user record if auth signup succeeded
+  if (data.user) {
+    await db.insert(users).values({
+      authUserId: data.user.id,
+    })
+  }
+
+  return encodedRedirect('success', '/sign-up', 'Thanks for signing up! Please check your email for a verification link.')
 }
 
 export const signInAction = async (formData: FormData) => {
