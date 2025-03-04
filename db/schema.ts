@@ -12,6 +12,7 @@ export const user_details = pgTable('user_details', {
     .primaryKey()
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  username: text('username').notNull().unique(),
   avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -43,8 +44,8 @@ export const tiles = pgTable('tiles', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
 
-export const userSavedTiles = pgTable(
-  'user_saved_tiles',
+export const savedTiles = pgTable(
+  'saved_tiles',
   {
     userId: uuid('user_id')
       .notNull()
