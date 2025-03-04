@@ -1,8 +1,12 @@
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { InfoIcon } from 'lucide-react'
-
+import { redirect } from 'next/navigation'
 export default async function AccountPage() {
   const user = await useCurrentUser()
+
+  if (!user) {
+    redirect('/sign-in')
+  }
 
   return (
     <div className="flex flex-col gap-12">
