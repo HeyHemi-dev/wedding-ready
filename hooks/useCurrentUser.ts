@@ -1,19 +1,20 @@
 'use server'
 
+import UserDetailActions from '@/actions/userActions'
 import { createClient } from '@/utils/supabase/server'
-import type { User } from '@supabase/supabase-js'
+import type { UserWithDetail } from '@/models/Users'
+import { makeUserWithDetail } from '@/models/Users'
 
 /**
- * A server-side function that retrieves the current authenticated user.
+ * A server-side function that retrieves the current authenticated user and their extended user details.
  * This function must be called from a Server Component or server action.
  *
- * @returns {Promise<User | null>} A promise that resolves to:
- *   - User object if authenticated
- *   - null if not authenticated
+ * @returns UserWithDetail object if authenticated
+ * @returns null if not authenticated
  *
  * @example
  * ```tsx
- * // In a Server Component
+ * // Server Component
  * async function ProfilePage() {
  *   const user = await useCurrentUser()
  *
@@ -24,17 +25,24 @@ import type { User } from '@supabase/supabase-js'
  *       <h1>Profile</h1>
  *       <p>Email: {user.email}</p>
  *       <p>User ID: {user.id}</p>
+ *       <img src={user.avatarUrl} alt={user.name} />
  *     </div>
  *   )
  * }
  * ```
  */
-export async function useCurrentUser(): Promise<User | null> {
+export async function useCurrentUser(): Promise<UserWithDetail | null> {
   const supabase = await createClient()
   const {
     data: { user },
     error,
   } = await supabase.auth.getUser()
 
-  return user
+  if (!user) return null
+
+  const userDetail = await UserDetailActions.getByAuthUserId(user.id)
+
+  if (!userDetail) throw new Error(`User details missing for user: ${user.id}`)
+
+  return makeUserWithDetail(user, userDetail)
 }
