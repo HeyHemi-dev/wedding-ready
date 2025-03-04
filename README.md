@@ -7,7 +7,7 @@ WeddingReady is a platform that transforms wedding inspiration into real purchas
 - **Framework**: [Next.js 14](https://nextjs.org) with App Router
 - **Database**: [Supabase PostgreSQL](https://supabase.com) with [Drizzle ORM](https://orm.drizzle.team)
 - **Authentication**: Supabase Auth with SSR
-- **Storage**: Supabase Storage
+- **Storage**: Supabase Storage or [Uploadthing](https://uploadthing.com/dashboard/) - TBD
 - **Styling**: [Tailwind CSS](https://tailwindcss.com) with [shadcn/ui](https://ui.shadcn.com) components
 - **Language**: TypeScript throughout
 
