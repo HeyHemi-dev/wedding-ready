@@ -8,15 +8,13 @@ const users = authSchema.table('users', {
 
 // Maintain 1-1 relationship between users and auth users
 export const user_details = pgTable('user_details', {
-  id: uuid('id').primaryKey().notNull().defaultRandom(),
-  authUserId: uuid('auth_user_id')
+  id: uuid('id')
+    .primaryKey()
     .notNull()
-    .unique()
     .references(() => users.id, { onDelete: 'cascade' }),
   avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  deletedAt: timestamp('deleted_at'),
 })
 
 export const suppliers = pgTable('suppliers', {
@@ -54,6 +52,7 @@ export const userSavedTiles = pgTable(
     tileId: uuid('tile_id')
       .notNull()
       .references(() => tiles.id, { onDelete: 'cascade' }),
+    isSaved: boolean('is_saved').notNull(),
   },
   (table) => [primaryKey({ columns: [table.userId, table.tileId] })]
 )
