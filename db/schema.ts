@@ -1,9 +1,18 @@
-import { pgTable, text, uuid, timestamp, boolean, primaryKey } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgSchema } from 'drizzle-orm/pg-core'
+
+const authSchema = pgSchema('auth')
+
+const users = authSchema.table('users', {
+  id: uuid('id').primaryKey(),
+})
 
 // Maintain 1-1 relationship between users and auth users
-export const users = pgTable('users', {
+export const user_details = pgTable('user_details', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
-  authUserId: uuid('auth_user_id').notNull(),
+  authUserId: uuid('auth_user_id')
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: 'cascade' }),
   avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -12,7 +21,9 @@ export const users = pgTable('users', {
 
 export const suppliers = pgTable('suppliers', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
-  ownedByUserId: uuid('owned_by_user_id').notNull(),
+  ownedByUserId: uuid('owned_by_user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   description: text('description'),
   websiteUrl: text('website_url'),
@@ -22,10 +33,12 @@ export const suppliers = pgTable('suppliers', {
 
 export const tiles = pgTable('tiles', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
-  imagePath: text('image_path').notNull(),
+  imagePath: text('image_path').notNull().unique(),
   title: text('title').notNull(),
   description: text('description'),
-  createdByUserId: uuid('created_by_user_id').notNull(),
+  createdByUserId: uuid('created_by_user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'no action' }),
   locationId: uuid('location_id').references(() => locations.id, { onDelete: 'set null' }),
   isPrivate: boolean('is_private').notNull().default(false),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -60,7 +73,9 @@ export const tileSuppliers = pgTable(
 
 export const stacks = pgTable('stacks', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
-  ownedByUserId: uuid('owned_by_user_id').notNull(),
+  ownedByUserId: uuid('owned_by_user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   description: text('description'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
