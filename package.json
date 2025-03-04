@@ -4,6 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "lint": "next lint",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "db:pull": "drizzle-kit pull --config drizzle.config.ts"
@@ -32,6 +33,8 @@
     "@types/react-dom": "19.0.2",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.4",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.0",
     "postcss": "8.4.49",
     "prettier": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
