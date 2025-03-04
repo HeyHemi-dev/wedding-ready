@@ -1,16 +1,16 @@
 'use server'
 
 import { encodedRedirect } from '@/utils/utils'
-import { createClient } from '@/utils/supabase/server'
+import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { db } from '@/db/db'
-import { users } from '@/db/schema'
+import UserDetailActions from '@/actions/userActions'
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString()
   const password = formData.get('password')?.toString()
   const supabase = await createClient()
+  const supabaseAdmin = createAdminClient()
   const origin = (await headers()).get('origin')
 
   if (!email || !password) {
@@ -30,11 +30,16 @@ export const signUpAction = async (formData: FormData) => {
     return encodedRedirect('error', '/sign-up', error.message)
   }
 
-  // Create user record if auth signup succeeded
+  // Create userDetail record if auth signup succeeded
   if (data.user) {
-    await db.insert(users).values({
-      authUserId: data.user.id,
-    })
+    try {
+      await UserDetailActions.create({ id: data.user.id })
+    } catch (error) {
+      console.error('Failed to create user details:', error)
+      // Delete the auth user since we couldn't create their profile
+      await supabaseAdmin.auth.admin.deleteUser(data.user.id)
+      return encodedRedirect('error', '/sign-up', 'Failed to complete signup. Please try again.')
+    }
   }
 
   return encodedRedirect('success', '/sign-up', 'Thanks for signing up! Please check your email for a verification link.')
