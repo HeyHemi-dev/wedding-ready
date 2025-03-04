@@ -12,7 +12,7 @@ export const user_details = pgTable('user_details', {
     .primaryKey()
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  username: text('username').notNull().unique(),
+  handle: text('handle').notNull().unique(),
   avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -24,6 +24,8 @@ export const suppliers = pgTable('suppliers', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
+  handle: text('handle').notNull().unique(),
+  handleUpdatedAt: timestamp('handle_updated_at').notNull().defaultNow(),
   description: text('description'),
   websiteUrl: text('website_url'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
