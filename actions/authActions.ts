@@ -9,12 +9,13 @@ import UserDetailActions from '@/actions/userActions'
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString()
   const password = formData.get('password')?.toString()
+  const handle = formData.get('handle')?.toString()
   const supabase = await createClient()
   const supabaseAdmin = createAdminClient()
   const origin = (await headers()).get('origin')
 
-  if (!email || !password) {
-    return encodedRedirect('error', '/sign-up', 'Email and password are required')
+  if (!email || !password || !handle) {
+    return encodedRedirect('error', '/sign-up', 'Email, password and handle are required')
   }
 
   const { data, error } = await supabase.auth.signUp({
@@ -33,7 +34,7 @@ export const signUpAction = async (formData: FormData) => {
   // Create userDetail record if auth signup succeeded
   if (data.user) {
     try {
-      await UserDetailActions.create({ id: data.user.id })
+      await UserDetailActions.create({ id: data.user.id, handle })
     } catch (error) {
       console.error('Failed to create user details:', error)
       // Delete the auth user since we couldn't create their profile
