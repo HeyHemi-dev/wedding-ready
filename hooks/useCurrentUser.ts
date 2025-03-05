@@ -40,7 +40,7 @@ export async function useCurrentUser(): Promise<UserWithDetail | null> {
 
   if (!user) return null
 
-  const userDetail = await UserDetailActions.getByAuthUserId(user.id)
+  const userDetail = await UserDetailActions.getById(user.id)
 
   if (!userDetail) throw new Error(`User details missing for user: ${user.id}`)
 

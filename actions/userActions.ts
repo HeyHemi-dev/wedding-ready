@@ -17,15 +17,6 @@ class UserDetailActions {
     return userDetails.length ? userDetails[0] : null
   }
 
-  static async getByAuthUserId(authUserId: string): Promise<UserDetail | null> {
-    const userDetails = await db.select().from(userDetailsTable).where(eq(userDetailsTable.id, authUserId))
-
-    if (userDetails.length > 1) {
-      throw new Error(`Integrity error: multiple user details found with authUserId ${authUserId}.`)
-    }
-    return userDetails.length ? userDetails[0] : null
-  }
-
   /**
    * Creates a new user_details record.
    * Use when a new user signs up.
@@ -44,13 +35,20 @@ class UserDetailActions {
 
   // Instance method example
   async update(insertUserData: InsertUserDetail): Promise<UserDetail> {
-    await db.update(userDetailsTable).set(insertUserData).where(eq(userDetailsTable.id, this.userDetail.id))
+    const userDetails = await db.update(userDetailsTable).set(insertUserData).where(eq(userDetailsTable.id, this.userDetail.id)).returning()
+
+    this.userDetail = userDetails[0]
     return this.userDetail
   }
 
   // Hybrid method example
   async hasAvatar(): Promise<boolean> {
     return this.userDetail.avatarUrl !== null
+  }
+
+  static async checkHandleAvailability(handle: string): Promise<boolean> {
+    const userDetails = await db.select().from(userDetailsTable).where(eq(userDetailsTable.handle, handle))
+    return userDetails.length === 0
   }
 }
 
