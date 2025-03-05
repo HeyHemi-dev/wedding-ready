@@ -16,9 +16,11 @@ export async function GET(request: Request) {
   }
 
   if (redirectTo) {
-    return NextResponse.redirect(`${origin}${redirectTo}`)
+    // Ensure redirectTo starts with a slash and combine with origin
+    const normalizedRedirect = redirectTo.startsWith('/') ? redirectTo : `/${redirectTo}`
+    return NextResponse.redirect(`${origin}${normalizedRedirect}`)
   }
 
   // URL to redirect to after sign up process completes
-  return NextResponse.redirect(`${origin}/account`)
+  return NextResponse.redirect(new URL('/feed', origin))
 }
