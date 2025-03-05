@@ -49,6 +49,13 @@ For architecture and development patterns, see [architecture.md](docs/architectu
    pnpm dev
    ```
 
+5. Run linting:
+   ```bash
+   pnpm lint
+   ```
+
+The project uses Next.js's ESLint configuration with TypeScript support. See `.eslintrc.json` for the complete configuration.
+
 ## Contributing
 
 1. Create a feature branch from `main`
