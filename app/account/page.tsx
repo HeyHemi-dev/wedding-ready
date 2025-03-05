@@ -1,14 +1,14 @@
 import UserDetailActions from '@/actions/userActions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { getCurrentUser } from '@/actions/getCurrentUser'
 import { InsertUserDetail } from '@/models/Users'
 import { InfoIcon } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 export default async function AccountPage() {
-  const user = await useCurrentUser()
+  const user = await getCurrentUser()
 
   if (!user) {
     redirect('/sign-in')
@@ -30,7 +30,7 @@ export default async function AccountPage() {
           <Button type="submit">Update</Button>
           <Input name="userId" type="hidden" value={user.id} />
         </form>
-        <pre className="text-xs font-mono p-3 rounded border text-muted-foreground">{JSON.stringify(user, null, 2)}</pre>
+        <pre className="text-xs font-mono p-3 rounded border text-muted-foreground bg-muted">{JSON.stringify(user, null, 2)}</pre>
       </div>
     </div>
   )
@@ -42,7 +42,7 @@ async function handleUpdateUserDetail(formData: FormData) {
   const handle = formData.get('handle')?.toString()
   const avatarUrl = formData.get('avatarUrl')?.toString()
 
-  const user = await useCurrentUser()
+  const user = await getCurrentUser()
   if (!user || user.id !== userId) {
     throw new Error('Unauthorized')
   }

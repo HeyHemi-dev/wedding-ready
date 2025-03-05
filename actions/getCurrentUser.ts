@@ -16,7 +16,7 @@ import { makeUserWithDetail } from '@/models/Users'
  * ```tsx
  * // Server Component
  * async function ProfilePage() {
- *   const user = await useCurrentUser()
+ *   const user = await getCurrentUser()
  *
  *   if (!user) return <div>Please log in</div>
  *
@@ -25,13 +25,13 @@ import { makeUserWithDetail } from '@/models/Users'
  *       <h1>Profile</h1>
  *       <p>Email: {user.email}</p>
  *       <p>User ID: {user.id}</p>
- *       <img src={user.avatarUrl} alt={user.name} />
+ *       <img src={user.extended.avatarUrl} alt={user.name} />
  *     </div>
  *   )
  * }
  * ```
  */
-export async function useCurrentUser(): Promise<UserWithDetail | null> {
+export async function getCurrentUser(): Promise<UserWithDetail | null> {
   const supabase = await createClient()
   const {
     data: { user },
