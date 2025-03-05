@@ -1,13 +1,16 @@
 import { InferSelectModel, InferInsertModel } from 'drizzle-orm'
 import { stacks, stackTiles, user_details } from '@/db/schema'
-import { User } from '@supabase/supabase-js'
+import { User as AuthUser } from '@supabase/supabase-js'
+
+export type User = AuthUser
 
 /**
- * UserDetail represents a row in the user_details table
+ * A UserDetail (no 's') represents a single row in the user_details table and is used to extend the Supabase Auth user with additional fields.
  */
 export type UserDetail = InferSelectModel<typeof user_details>
 
 /**
+ * UserDetail is used to extend the Supabase Auth user with additional fields.
  * @requires id - must match the id of the Supabase Auth user
  */
 export type InsertUserDetail = InferInsertModel<typeof user_details>
@@ -29,9 +32,7 @@ export function makeUserWithDetail(user: User, userDetail: UserDetail): UserWith
   } as UserWithDetail
 }
 
-/**
- * Stacks belong to a user
- */
+// Stacks belong to a user which is why we are defining the type here
 export type Stack = InferSelectModel<typeof stacks>
 export type InsertStack = InferInsertModel<typeof stacks>
 
