@@ -2,10 +2,10 @@ import { signOutAction } from '@/actions/authActions'
 
 import Link from 'next/link'
 import { Button } from './ui/button'
-import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { getCurrentUser } from '@/actions/getCurrentUser'
 
 export default async function AuthButton() {
-  const user = await useCurrentUser()
+  const user = await getCurrentUser()
 
   return user ? (
     <div className="flex items-center gap-4">

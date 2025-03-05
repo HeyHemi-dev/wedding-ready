@@ -1,21 +1,24 @@
 'use server'
 
 import { encodedRedirect } from '@/utils/utils'
-import { createClient } from '@/utils/supabase/server'
+import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import UserDetailActions from '@/actions/userActions'
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString()
   const password = formData.get('password')?.toString()
+  const handle = formData.get('handle')?.toString()
   const supabase = await createClient()
+  const supabaseAdmin = createAdminClient()
   const origin = (await headers()).get('origin')
 
-  if (!email || !password) {
-    return encodedRedirect('error', '/sign-up', 'Email and password are required')
+  if (!email || !password || !handle) {
+    return encodedRedirect('error', '/sign-up', 'Email, password and handle are required')
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -26,9 +29,21 @@ export const signUpAction = async (formData: FormData) => {
   if (error) {
     console.error(error.code + ' ' + error.message)
     return encodedRedirect('error', '/sign-up', error.message)
-  } else {
-    return encodedRedirect('success', '/sign-up', 'Thanks for signing up! Please check your email for a verification link.')
   }
+
+  // Create userDetail record if auth signup succeeded
+  if (data.user) {
+    try {
+      await UserDetailActions.create({ id: data.user.id, handle })
+    } catch (error) {
+      console.error('Failed to create user details:', error)
+      // Delete the auth user since we couldn't create their profile
+      await supabaseAdmin.auth.admin.deleteUser(data.user.id)
+      return encodedRedirect('error', '/sign-up', 'Failed to complete signup. Please try again.')
+    }
+  }
+
+  return encodedRedirect('success', '/sign-up', 'Thanks for signing up! Please check your email for a verification link.')
 }
 
 export const signInAction = async (formData: FormData) => {

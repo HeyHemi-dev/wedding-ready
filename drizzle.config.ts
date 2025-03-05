@@ -9,7 +9,8 @@ export default defineConfig({
   out: './db/migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    url: process.env.DATABASE_URL_SESSION_POOLER!,
   },
   verbose: true,
+  schemaFilter: ['public'], //we exclude 'auth' schema so we can use auth.user for relations in the schema.ts without even though supabase does not allow auth schema to be overridden
 })
