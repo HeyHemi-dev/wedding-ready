@@ -5,6 +5,7 @@ import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import UserDetailActions from '@/actions/userActions'
+import { isProtectedPath } from '@/utils/auth'
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString()
@@ -49,6 +50,7 @@ export const signUpAction = async (formData: FormData) => {
 export const signInAction = async (formData: FormData) => {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  const redirectTo = formData.get('redirectTo')?.toString() || '/feed'
   const supabase = await createClient()
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -60,7 +62,7 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect('error', '/sign-in', error.message)
   }
 
-  return redirect('/account')
+  return redirect(redirectTo)
 }
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -116,6 +118,12 @@ export const resetPasswordAction = async (formData: FormData) => {
 
 export const signOutAction = async () => {
   const supabase = await createClient()
+  const headersList = await headers()
+  const referer = headersList.get('referer') || '/'
+  const url = new URL(referer)
+
   await supabase.auth.signOut()
-  return redirect('/sign-in')
+
+  // If on a protected page, redirect to sign-in, otherwise stay on current page
+  return isProtectedPath(url.pathname) ? redirect('/sign-in') : redirect(referer)
 }
