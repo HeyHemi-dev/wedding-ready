@@ -1,6 +1,6 @@
 import { db } from '@/db/db'
-import { suppliers as suppliersTable } from '@/db/schema'
-import { InsertSupplier, Supplier } from '@/models/Suppliers'
+import { suppliers as suppliersTable, supplierUsers as supplierUsersTable } from '@/db/schema'
+import { InsertSupplier, InsertSupplierUser, Supplier, SupplierRole, SupplierWithUsers } from '@/models/Suppliers'
 import { User, UserWithDetail } from '@/models/Users'
 import { eq } from 'drizzle-orm'
 
@@ -16,14 +16,43 @@ class SupplierActions {
     return suppliers.length ? suppliers[0] : null
   }
 
-  static async getByHandle(handle: string) {
-    const suppliers = await db.select().from(suppliersTable).where(eq(suppliersTable.handle, handle))
-    return suppliers.length ? suppliers[0] : null
+  static async getByHandle(handle: string): Promise<SupplierWithUsers | null> {
+    const result = await db
+      .select()
+      .from(suppliersTable)
+      .where(eq(suppliersTable.handle, handle))
+      .innerJoin(supplierUsersTable, eq(suppliersTable.id, supplierUsersTable.supplierId))
+
+    if (result.length === 0) {
+      return null
+    }
+
+    const supplier = result[0].suppliers
+    const supplierUsers = result.map((r) => r.supplier_users)
+
+    return {
+      ...supplier,
+      users: supplierUsers,
+    }
   }
 
-  static async create(user: User | UserWithDetail, insertSupplierData: InsertSupplier) {
+  static async create(admin: User | UserWithDetail, insertSupplierData: InsertSupplier): Promise<SupplierWithUsers> {
     const suppliers = await db.insert(suppliersTable).values(insertSupplierData).returning()
-    return suppliers[0]
+    const supplier = suppliers[0]
+
+    // Define an admin for the supplier
+    const insertSupplierUserData: InsertSupplierUser = {
+      supplierId: supplier.id,
+      userId: admin.id,
+      role: SupplierRole.ADMIN,
+    }
+
+    const supplierUsers = await db.insert(supplierUsersTable).values(insertSupplierUserData).returning()
+
+    return {
+      ...supplier,
+      users: supplierUsers,
+    }
   }
 }
 
