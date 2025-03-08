@@ -16,7 +16,7 @@ export default async function SupplierRegisterPage() {
   return (
     <Section>
       <div className="flex flex-col gap-6">
-        <h2 className="font-medium text-xl mb-4">Register as a supplier</h2>
+        <h2 className="font-medium text-xl mb-4">Register a supplier</h2>
         <form action={handleRegisterSupplier} className="grid grid-cols-[auto_1fr] items-center gap-4">
           <Label>Business name</Label>
           <Input name="name" placeholder="Name" />
@@ -30,7 +30,9 @@ export default async function SupplierRegisterPage() {
           <Label>Description</Label>
           <Input name="description" placeholder="Description" />
           <Input name="userId" type="hidden" value={user.id} />
-          <Button type="submit">Register</Button>
+          <Button type="submit" className="col-span-2">
+            Register
+          </Button>
         </form>
       </div>
     </Section>
@@ -57,9 +59,9 @@ async function handleRegisterSupplier(formData: FormData) {
   const insertSupplierData: InsertSupplier = {
     name,
     handle,
-    ownedByUserId: userId,
     description: description ?? null,
     websiteUrl: website ?? null,
+    createdByUserId: user.id,
   }
 
   const supplier = await SupplierActions.create(user, insertSupplierData)
