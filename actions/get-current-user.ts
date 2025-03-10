@@ -1,6 +1,6 @@
 'use server'
 
-import UserDetailActions from '@/actions/user-actions'
+import UserDetailActions from '@/models/user-actions'
 import { createClient } from '@/utils/supabase/server'
 import type { UserWithDetail } from '@/models/users'
 import { makeUserWithDetail } from '@/models/users'

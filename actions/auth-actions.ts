@@ -4,7 +4,7 @@ import { encodedRedirect } from '@/utils/utils'
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import UserDetailActions from '@/actions/user-actions'
+import UserDetailActions from '@/models/user-actions'
 import { isProtectedPath } from '@/utils/auth'
 
 export const signUpAction = async (formData: FormData) => {

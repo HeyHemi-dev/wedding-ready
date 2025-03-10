@@ -1,4 +1,4 @@
-import UserDetailActions from '@/actions/user-actions'
+import UserDetailActions from '@/models/user-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { getCurrentUser } from '@/actions/get-current-user'
