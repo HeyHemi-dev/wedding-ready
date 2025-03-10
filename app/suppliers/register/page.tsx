@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input'
 import Section from '@/components/ui/section'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { redirect } from 'next/navigation'
-import SupplierActions from '@/actions/supplier-actions'
+import SupplierActions from '@/models/supplier-actions'
 import { InsertSupplier } from '@/models/suppliers'
 import { Label } from '@/components/ui/label'
 export default async function SupplierRegisterPage() {
