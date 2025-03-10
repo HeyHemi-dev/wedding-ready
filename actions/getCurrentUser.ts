@@ -32,6 +32,7 @@ import { makeUserWithDetail } from '@/models/Users'
  * ```
  */
 export async function getCurrentUser(): Promise<UserWithDetail | null> {
+  console.log('getCurrentUser called')
   const supabase = await createClient()
   const {
     data: { user },
