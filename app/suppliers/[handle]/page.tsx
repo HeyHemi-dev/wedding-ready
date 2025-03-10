@@ -45,7 +45,10 @@ export default async function SupplierPage({ params }: any) {
       <Section>
         {tiles.length > 0
           ? tiles.map((tile) => <p key={tile.id}>{tile.title}</p>)
-          : noTiles({ message: `${supplier.name} has no tiles`, cta: { text: 'Add a tile', redirect: `/suppliers/${handle}/new` } })}
+          : noTiles({
+              message: `${supplier.name} has no tiles`,
+              cta: { text: 'Add a tile', redirect: `/suppliers/${handle}/new`, show: isSupplierUser },
+            })}
       </Section>
     </>
   )
@@ -56,17 +59,18 @@ interface noTilesProps {
   cta?: {
     text: string
     redirect: string
+    show?: boolean
   }
 }
 
 function noTiles({ message, cta }: noTilesProps) {
   'use client'
   return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex flex-col items-center justify-center h-full gap-4">
       <p>{message}</p>
-      {cta && (
+      {cta && cta.show && (
         <Link href={cta.redirect}>
-          <Button>{cta.text}</Button>
+          <Button variant={'outline'}>{cta.text}</Button>
         </Link>
       )}
     </div>
