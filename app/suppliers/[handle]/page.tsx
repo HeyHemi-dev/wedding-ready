@@ -1,5 +1,5 @@
-import { getCurrentUser } from '@/actions/getCurrentUser'
-import SupplierActions from '@/actions/supplierActions'
+import { getCurrentUser } from '@/actions/get-current-user'
+import SupplierActions from '@/actions/supplier-actions'
 import Section from '@/components/ui/section'
 import { Button } from '@/components/ui/button'
 import { redirect } from 'next/navigation'

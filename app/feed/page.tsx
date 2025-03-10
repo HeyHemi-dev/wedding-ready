@@ -1,7 +1,7 @@
 import Section from '@/components/ui/section'
 import { db } from '@/db/db'
 import * as schema from '@/db/schema'
-import { getCurrentUser } from '@/actions/getCurrentUser'
+import { getCurrentUser } from '@/actions/get-current-user'
 import { redirect } from 'next/navigation'
 export default async function Page() {
   const user = await getCurrentUser()

@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Section from '@/components/ui/section'
-import { getCurrentUser } from '@/actions/getCurrentUser'
+import { getCurrentUser } from '@/actions/get-current-user'
 import { redirect } from 'next/navigation'
-import SupplierActions from '@/actions/supplierActions'
+import SupplierActions from '@/actions/supplier-actions'
 import { InsertSupplier } from '@/models/suppliers'
 import { Label } from '@/components/ui/label'
 export default async function SupplierRegisterPage() {
