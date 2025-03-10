@@ -1,4 +1,4 @@
-import { SupplierRole } from '@/models/suppliers'
+import { Service, SupplierRole } from '@/models/suppliers'
 import { enumToPgEnum } from '@/utils/enum-to-pgEnum'
 import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgSchema, pgEnum } from 'drizzle-orm/pg-core'
 
@@ -52,6 +52,15 @@ export const supplierUsers = pgTable(
   (table) => [primaryKey({ columns: [table.supplierId, table.userId] })]
 )
 
+export const services = pgEnum('services', enumToPgEnum(Service))
+
+export const supplierServices = pgTable('supplier_services', {
+  supplierId: uuid('supplier_id')
+    .notNull()
+    .references(() => suppliers.id, { onDelete: 'cascade' }),
+  service: services('service'),
+})
+
 export const tiles = pgTable('tiles', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   imagePath: text('image_path').notNull().unique(),
@@ -89,6 +98,8 @@ export const tileSuppliers = pgTable(
     supplierId: uuid('supplier_id')
       .notNull()
       .references(() => suppliers.id, { onDelete: 'cascade' }),
+    service: services('service'),
+    serviceDescription: text('service_description'),
   },
   (table) => [primaryKey({ columns: [table.tileId, table.supplierId] })]
 )
