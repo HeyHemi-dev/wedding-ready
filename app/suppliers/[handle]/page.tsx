@@ -8,7 +8,7 @@ import { tiles as tilesTable, tileSuppliers as tileSuppliersTable } from '@/db/s
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 
-export default async function SupplierPage({ params }: any) {
+export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const supplier = await SupplierActions.getByHandle(handle)
 
