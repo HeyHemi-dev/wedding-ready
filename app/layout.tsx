@@ -54,6 +54,7 @@ function Header() {
       <div className="col-start-2 col-end-3 flex justify-between items-center py-3 text-sm">
         <nav className="flex gap-5 items-center font-semibold">
           <Link href={'/'}>WeddingReady</Link>
+          <Link href={'/suppliers'}>Suppliers</Link>
         </nav>
         <HeaderAuth />
       </div>
