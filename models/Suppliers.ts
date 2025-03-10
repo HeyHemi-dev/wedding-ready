@@ -1,6 +1,7 @@
 import { InferSelectModel, InferInsertModel, getTableColumns } from 'drizzle-orm'
 import { suppliers, supplierLocations, supplierUsers, supplierServices } from '@/db/schema'
 import { Location } from '@/models/locations'
+import { Service, SupplierRole } from '@/models/constants'
 
 export type Supplier = InferSelectModel<typeof suppliers>
 export type InsertSupplier = InferInsertModel<typeof suppliers>
@@ -25,48 +26,4 @@ export interface SupplierWithDetail extends Supplier {
 
 export interface SupplierWithUsers extends SupplierWithDetail {
   users: SupplierUser[]
-}
-
-// This enum is used by the schema to define the pgEnum
-export enum SupplierRole {
-  ADMIN = 'admin',
-  STANDARD = 'standard',
-}
-
-// Wedding supplier services
-export enum Service {
-  // Place & food
-  VENUE = 'venue',
-  ACCOMODATION = 'accomodation',
-  CATERER = 'caterer',
-  CAKE = 'cake',
-  // Capture
-  PHOTOGRAPHER = 'photographer',
-  VIDEOGRAPHER = 'videographer',
-  // Outfit
-  BRIDAL_WEAR = 'bridal_wear',
-  BRIDESMAIDS_WEAR = 'bridesmaids_wear',
-  BRIDAL_ACCESSORY = 'bridal_accessory',
-  MENSWEAR = 'menswear',
-  MENSWEAR_ACCESSORY = 'menswear_accessory',
-  RINGS = 'rings',
-  // Beauty
-  MAKEUP = 'makeup',
-  HAIR = 'hair',
-  BEAUTY = 'beauty',
-  // Organise
-  PLANNER = 'planner',
-  CELEBRANT = 'celebrant',
-  MC = 'mc',
-  // Style
-  FLORIST = 'florist',
-  STYLIST = 'stylist',
-  HIRE = 'hire',
-  STATIONERY = 'stationery',
-  // Vibes
-  BAND = 'band',
-  ENTERTAINMENT = 'entertainment',
-  // Logistics
-  TRANSPORT = 'transport',
-  SUPPORT = 'support',
 }

@@ -6,7 +6,8 @@ import {
   locations as locationsTable,
   supplierServices as supplierServicesTable,
 } from '@/db/schema'
-import { InsertSupplier, InsertSupplierUser, Service, Supplier, SupplierRole, SupplierWithDetail, SupplierWithUsers, supplierColumns } from '@/models/suppliers'
+import { InsertSupplier, InsertSupplierUser, Supplier, SupplierWithDetail, SupplierWithUsers, supplierColumns } from '@/models/suppliers'
+import { Service, SupplierRole } from '@/models/constants'
 import { Location } from '@/models/locations'
 import { User, UserWithDetail } from '@/models/users'
 import { and, eq } from 'drizzle-orm'
@@ -71,7 +72,7 @@ class SupplierActions {
 
     if (location) conditions.push(eq(supplierLocationsTable.locationId, location.id))
 
-    const result = await supplierBaseQuery.where(conditions.length > 0 ? and(...conditions) : undefined).groupBy(suppliersTable.id)
+    const result = await supplierBaseQuery.where(conditions.length > 0 ? and(...conditions) : undefined)
     return aggregateSupplierQueryResults(result)
   }
 
