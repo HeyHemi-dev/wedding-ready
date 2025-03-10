@@ -1,5 +1,5 @@
 import { SupplierRole } from '@/models/suppliers'
-import { enumToPgEnum } from '@/utils/enumToPgEnum'
+import { enumToPgEnum } from '@/utils/enum-to-pgEnum'
 import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgSchema, pgEnum } from 'drizzle-orm/pg-core'
 
 const authSchema = pgSchema('auth')
