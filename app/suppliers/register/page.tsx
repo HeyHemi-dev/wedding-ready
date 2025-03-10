@@ -4,7 +4,7 @@ import Section from '@/components/ui/section'
 import { getCurrentUser } from '@/actions/getCurrentUser'
 import { redirect } from 'next/navigation'
 import SupplierActions from '@/actions/supplierActions'
-import { InsertSupplier } from '@/models/Suppliers'
+import { InsertSupplier } from '@/models/suppliers'
 import { Label } from '@/components/ui/label'
 export default async function SupplierRegisterPage() {
   const user = await getCurrentUser()

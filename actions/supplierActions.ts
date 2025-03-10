@@ -5,8 +5,8 @@ import {
   supplierLocations as supplierLocationsTable,
   locations as locationsTable,
 } from '@/db/schema'
-import { InsertSupplier, InsertSupplierUser, Supplier, SupplierRole, SupplierWithUsers } from '@/models/Suppliers'
-import { User, UserWithDetail } from '@/models/Users'
+import { InsertSupplier, InsertSupplierUser, Supplier, SupplierRole, SupplierWithUsers } from '@/models/suppliers'
+import { User, UserWithDetail } from '@/models/users'
 import { eq } from 'drizzle-orm'
 
 class SupplierActions {

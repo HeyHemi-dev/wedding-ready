@@ -1,4 +1,4 @@
-import { SupplierRole } from '@/models/Suppliers'
+import { SupplierRole } from '@/models/suppliers'
 import { enumToPgEnum } from '@/utils/enumToPgEnum'
 import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgSchema, pgEnum } from 'drizzle-orm/pg-core'
 
