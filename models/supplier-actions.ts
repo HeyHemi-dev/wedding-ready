@@ -100,24 +100,35 @@ class SupplierActions {
     }
   }
 
-  static async create(admin: User | UserWithDetail, insertSupplierData: InsertSupplier): Promise<SupplierWithUsers> {
+  static async create(user: User | UserWithDetail, insertSupplierData: InsertSupplier, services: Service[], locations: Location[]): Promise<SupplierWithUsers> {
     const suppliers = await db.insert(suppliersTable).values(insertSupplierData).returning()
     const supplier = suppliers[0]
 
-    // Define an admin for the supplier
+    // The user who creates the supplier is automatically an admin
     const insertSupplierUserData: InsertSupplierUser = {
       supplierId: supplier.id,
-      userId: admin.id,
+      userId: user.id,
       role: SupplierRole.ADMIN,
     }
-
     const supplierUsers = await db.insert(supplierUsersTable).values(insertSupplierUserData).returning()
+
+    const insertSupplierServiceData: InsertSupplierService[] = services.map((service) => ({
+      supplierId: supplier.id,
+      service,
+    }))
+    const supplierServices = await db.insert(supplierServicesTable).values(insertSupplierServiceData).returning()
+
+    const insertSupplierLocationData: InsertSupplierLocation[] = locations.map((location) => ({
+      supplierId: supplier.id,
+      location,
+    }))
+    const supplierLocations = await db.insert(supplierLocationsTable).values(insertSupplierLocationData).returning()
 
     return {
       ...supplier,
       users: supplierUsers,
-      services: [],
-      locations: [],
+      services: supplierServices.map((service) => service.service),
+      locations: supplierLocations.map((location) => location.location),
     }
   }
 }
