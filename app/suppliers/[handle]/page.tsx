@@ -39,7 +39,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
         <p>{supplier.description}</p>
         <p>{supplier.websiteUrl}</p>
         {supplier.locations.map((location) => (
-          <p key={location.id}>{location.name}</p>
+          <p key={location}>{location}</p>
         ))}
       </Section>
       <Section>
