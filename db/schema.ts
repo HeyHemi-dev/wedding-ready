@@ -81,20 +81,27 @@ export const supplierUsers = pgTable(
   (table) => [primaryKey({ columns: [table.supplierId, table.userId] })]
 )
 
-export const supplierServices = pgTable('supplier_services', {
-  supplierId: uuid('supplier_id')
-    .notNull()
-    .references(() => suppliers.id, { onDelete: 'cascade' }),
-  service: services('service'),
-})
+export const supplierServices = pgTable(
+  'supplier_services',
+  {
+    supplierId: uuid('supplier_id')
+      .notNull()
+      .references(() => suppliers.id, { onDelete: 'cascade' }),
+    service: services('service'),
+  },
+  (table) => [primaryKey({ columns: [table.supplierId, table.service] })]
+)
 
-export const supplierLocations = pgTable('supplier_locations', {
-  supplierId: uuid('supplier_id')
-    .primaryKey()
-    .notNull()
-    .references(() => suppliers.id, { onDelete: 'cascade' }),
-  location: locations('location'),
-})
+export const supplierLocations = pgTable(
+  'supplier_locations',
+  {
+    supplierId: uuid('supplier_id')
+      .notNull()
+      .references(() => suppliers.id, { onDelete: 'cascade' }),
+    location: locations('location'),
+  },
+  (table) => [primaryKey({ columns: [table.supplierId, table.location] })]
+)
 
 export const savedTiles = pgTable(
   'saved_tiles',
