@@ -69,7 +69,7 @@ export const tiles = pgTable('tiles', {
   createdByUserId: uuid('created_by_user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'no action' }),
-  locationId: uuid('location_id').references(() => locations.id, { onDelete: 'set null' }),
+  location: locations('location'),
   isPrivate: boolean('is_private').notNull().default(false),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
