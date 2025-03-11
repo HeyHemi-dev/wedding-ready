@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
+import { isProtectedPath } from '@/utils/auth'
 
 export const updateSession = async (request: NextRequest) => {
   // Create an unmodified response
@@ -29,7 +30,7 @@ export const updateSession = async (request: NextRequest) => {
   const user = await supabase.auth.getUser()
 
   // protected routes
-  if (request.nextUrl.pathname.startsWith('/account') && user.error) {
+  if (isProtectedPath(request.nextUrl.pathname) && user.error) {
     return NextResponse.redirect(new URL('/sign-in', request.url))
   }
 

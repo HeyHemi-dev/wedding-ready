@@ -1,8 +1,8 @@
-import { signOutAction } from '@/actions/authActions'
+import { signOutAction } from '@/actions/auth-actions'
 
 import Link from 'next/link'
 import { Button } from './ui/button'
-import { getCurrentUser } from '@/actions/getCurrentUser'
+import { getCurrentUser } from '@/actions/get-current-user'
 
 export default async function AuthButton() {
   const user = await getCurrentUser()

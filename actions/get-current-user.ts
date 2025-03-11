@@ -1,9 +1,8 @@
 'use server'
 
-import UserDetailActions from '@/actions/userActions'
+import UserDetailActions from '@/models/user-actions'
 import { createClient } from '@/utils/supabase/server'
-import type { UserWithDetail } from '@/models/Users'
-import { makeUserWithDetail } from '@/models/Users'
+import { UserWithDetail, makeUserWithDetail } from '@/models/types'
 
 /**
  * A server-side function that retrieves the current authenticated user and their extended user details.
@@ -32,6 +31,7 @@ import { makeUserWithDetail } from '@/models/Users'
  * ```
  */
 export async function getCurrentUser(): Promise<UserWithDetail | null> {
+  console.log('getCurrentUser called')
   const supabase = await createClient()
   const {
     data: { user },

@@ -39,6 +39,7 @@ The project uses Supabase Auth with a sophisticated server-side implementation:
 - Strong TypeScript implementation throughout
 - Type definitions for database models
 - Strict type checking enabled
+- ESLint with Next.js TypeScript rules for enhanced type checking
 
 ### 2. Actions/Models
 - Inferred models for each database table

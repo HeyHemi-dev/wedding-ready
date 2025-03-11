@@ -1,4 +1,6 @@
-import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgSchema } from 'drizzle-orm/pg-core'
+import { Service, SupplierRole } from '@/models/constants'
+import { enumToPgEnum } from '@/utils/enum-to-pgEnum'
+import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgSchema, pgEnum } from 'drizzle-orm/pg-core'
 
 const authSchema = pgSchema('auth')
 
@@ -20,16 +22,43 @@ export const user_details = pgTable('user_details', {
 
 export const suppliers = pgTable('suppliers', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
-  ownedByUserId: uuid('owned_by_user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   handle: text('handle').notNull().unique(),
   handleUpdatedAt: timestamp('handle_updated_at').notNull().defaultNow(),
   description: text('description'),
   websiteUrl: text('website_url'),
+  createdByUserId: uuid('created_by_user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'no action' }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const supplierRoles = pgEnum('supplier_roles', enumToPgEnum(SupplierRole))
+
+export const supplierUsers = pgTable(
+  'supplier_users',
+  {
+    supplierId: uuid('supplier_id')
+      .notNull()
+      .references(() => suppliers.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    role: supplierRoles('role').notNull().default(SupplierRole.STANDARD),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.supplierId, table.userId] })]
+)
+
+export const services = pgEnum('services', enumToPgEnum(Service))
+
+export const supplierServices = pgTable('supplier_services', {
+  supplierId: uuid('supplier_id')
+    .notNull()
+    .references(() => suppliers.id, { onDelete: 'cascade' }),
+  service: services('service'),
 })
 
 export const tiles = pgTable('tiles', {
@@ -69,6 +98,8 @@ export const tileSuppliers = pgTable(
     supplierId: uuid('supplier_id')
       .notNull()
       .references(() => suppliers.id, { onDelete: 'cascade' }),
+    service: services('service'),
+    serviceDescription: text('service_description'),
   },
   (table) => [primaryKey({ columns: [table.tileId, table.supplierId] })]
 )
