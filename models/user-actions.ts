@@ -46,7 +46,7 @@ class UserDetailActions {
     return this.userDetail.avatarUrl !== null
   }
 
-  static async checkHandleAvailability(handle: string): Promise<boolean> {
+  static async isHandleAvailable(handle: string): Promise<boolean> {
     const userDetails = await db.select().from(userDetailsTable).where(eq(userDetailsTable.handle, handle))
     return userDetails.length === 0
   }

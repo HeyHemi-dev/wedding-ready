@@ -47,7 +47,7 @@ async function handleUpdateUserDetail(formData: FormData) {
     throw new Error('Unauthorized')
   }
 
-  if (handle && (await UserDetailActions.checkHandleAvailability(handle))) {
+  if (handle && (await UserDetailActions.isHandleAvailable(handle))) {
     throw new Error('Handle is already taken')
   }
 
