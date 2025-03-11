@@ -6,10 +6,18 @@ import {
   locations as locationsTable,
   supplierServices as supplierServicesTable,
 } from '@/db/schema'
-import { InsertSupplier, InsertSupplierUser, Supplier, SupplierWithDetail, SupplierWithUsers, supplierColumns } from '@/models/suppliers'
+import {
+  InsertSupplier,
+  InsertSupplierUser,
+  Supplier,
+  SupplierWithDetail,
+  SupplierWithUsers,
+  supplierColumns,
+  User,
+  UserWithDetail,
+  Location,
+} from '@/models/types'
 import { Service, SupplierRole } from '@/models/constants'
-import { Location } from '@/models/locations'
-import { User, UserWithDetail } from '@/models/users'
 import { and, eq } from 'drizzle-orm'
 
 const supplierBaseQuery = db

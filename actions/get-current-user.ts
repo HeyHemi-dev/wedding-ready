@@ -2,7 +2,7 @@
 
 import UserDetailActions from '@/models/user-actions'
 import { createClient } from '@/utils/supabase/server'
-import { UserWithDetail, makeUserWithDetail } from '@/models/users'
+import { UserWithDetail, makeUserWithDetail } from '@/models/types'
 
 /**
  * A server-side function that retrieves the current authenticated user and their extended user details.

@@ -1,6 +1,6 @@
 import Section from '@/components/ui/section'
 import SupplierActions from '@/models/supplier-actions'
-import { SupplierWithDetail } from '@/models/suppliers'
+import { SupplierWithDetail } from '@/models/types'
 import Link from 'next/link'
 
 export default async function SuppliersPage() {

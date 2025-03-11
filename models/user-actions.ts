@@ -1,7 +1,7 @@
 import { db } from '@/db/db'
 import { user_details as userDetailsTable } from '@/db/schema'
 import { eq } from 'drizzle-orm'
-import { InsertUserDetail, UserDetail } from '@/models/users'
+import { InsertUserDetail, UserDetail } from '@/models/types'
 
 class UserDetailActions {
   private userDetail: UserDetail
