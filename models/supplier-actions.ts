@@ -53,10 +53,10 @@ function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): Suppl
     const supplierWithDetail = supplierMap.get(supplierId)!
 
     // we don't need to check if the services and locations are already in the array, because the db schema ensures that there is only one service and location per supplier
-    if (row.service) {
+    if (row.service && !supplierWithDetail.services.includes(row.service)) {
       supplierWithDetail.services.push(row.service)
     }
-    if (row.location) {
+    if (row.location && !supplierWithDetail.locations.includes(row.location)) {
       supplierWithDetail.locations.push(row.location)
     }
   }
