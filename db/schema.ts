@@ -1,4 +1,4 @@
-import { Service, SupplierRole } from '@/models/constants'
+import { Service, SupplierRole, Location } from '@/models/constants'
 import { enumToPgEnum } from '@/utils/enum-to-pgEnum'
 import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgSchema, pgEnum } from 'drizzle-orm/pg-core'
 
@@ -128,23 +128,12 @@ export const stackTiles = pgTable(
   (table) => [primaryKey({ columns: [table.stackId, table.tileId] })]
 )
 
-export const locations = pgTable('locations', {
-  id: uuid('id').primaryKey().notNull().defaultRandom(),
-  name: text('name').notNull(),
-  locationType: text('location_type').notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
+export const locations = pgEnum('locations', enumToPgEnum(Location))
 
-export const supplierLocations = pgTable(
-  'supplier_locations',
-  {
-    supplierId: uuid('supplier_id')
-      .notNull()
-      .references(() => suppliers.id, { onDelete: 'cascade' }),
-    locationId: uuid('location_id')
-      .notNull()
-      .references(() => locations.id, { onDelete: 'cascade' }),
-  },
-  (table) => [primaryKey({ columns: [table.supplierId, table.locationId] })]
-)
+export const supplierLocations = pgTable('supplier_locations', {
+  supplierId: uuid('supplier_id')
+    .primaryKey()
+    .notNull()
+    .references(() => suppliers.id, { onDelete: 'cascade' }),
+  location: locations('location'),
+})
