@@ -1,6 +1,6 @@
 import { InferSelectModel, InferInsertModel, getTableColumns } from 'drizzle-orm'
 import * as schema from '@/db/schema'
-import { Service } from '@/models/constants'
+import { Service, Location } from '@/models/constants'
 import { User as AuthUser } from '@supabase/supabase-js'
 
 export type User = AuthUser
@@ -51,10 +51,6 @@ export const savedTileColumns = getTableColumns(schema.savedTiles)
 export type TileSupplier = InferSelectModel<typeof schema.tileSuppliers>
 export type InsertTileSupplier = InferInsertModel<typeof schema.tileSuppliers>
 export const tileSupplierColumns = getTableColumns(schema.tileSuppliers)
-
-export type Location = InferSelectModel<typeof schema.locations>
-export type InsertLocation = InferInsertModel<typeof schema.locations>
-export const locationColumns = getTableColumns(schema.locations)
 
 /**
  * UserWithDetail extends Supabase Auth user with user_details fields.

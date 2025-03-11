@@ -42,7 +42,7 @@ export enum Service {
 }
 
 // Wedding supplier locations
-export enum Region {
+export enum Location {
   NORTHLAND = 'northland',
   AUCKLAND = 'auckland',
   WAIKATO = 'waikato',

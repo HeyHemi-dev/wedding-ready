@@ -3,7 +3,6 @@ import {
   suppliers as suppliersTable,
   supplierUsers as supplierUsersTable,
   supplierLocations as supplierLocationsTable,
-  locations as locationsTable,
   supplierServices as supplierServicesTable,
 } from '@/db/schema'
 import {
@@ -15,21 +14,21 @@ import {
   supplierColumns,
   User,
   UserWithDetail,
-  Location,
+  InsertSupplierService,
+  InsertSupplierLocation,
 } from '@/models/types'
-import { Service, SupplierRole } from '@/models/constants'
+import { Service, SupplierRole, Location } from '@/models/constants'
 import { and, eq } from 'drizzle-orm'
 
 const supplierBaseQuery = db
   .select({
     ...supplierColumns,
     service: supplierServicesTable.service,
-    location: locationsTable,
+    location: supplierLocationsTable.location,
   })
   .from(suppliersTable)
   .leftJoin(supplierServicesTable, eq(suppliersTable.id, supplierServicesTable.supplierId))
   .leftJoin(supplierLocationsTable, eq(suppliersTable.id, supplierLocationsTable.supplierId))
-  .leftJoin(locationsTable, eq(supplierLocationsTable.locationId, locationsTable.id))
 
 interface SupplierBaseQueryResult extends Supplier {
   service: Service | null
@@ -37,7 +36,7 @@ interface SupplierBaseQueryResult extends Supplier {
 }
 
 function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): SupplierWithDetail[] {
-  // Group results by supplier
+  // Create a map that we can iterate through, constructing a  SupplierWithDetail for each supplier
   const supplierMap = new Map<string, SupplierWithDetail>()
 
   for (const row of result) {
@@ -50,14 +49,12 @@ function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): Suppl
       })
     }
 
+    // We can assert the supplierId is in the map, because we just created it if it didn't already exist
     const supplierWithDetail = supplierMap.get(supplierId)!
 
-    // Add service if it exists and isn't already in the array
     if (row.service && !supplierWithDetail.services.includes(row.service)) {
       supplierWithDetail.services.push(row.service)
     }
-
-    // Add location if it exists and isn't already in the array
     if (row.location && !supplierWithDetail.locations.includes(row.location)) {
       supplierWithDetail.locations.push(row.location)
     }
@@ -78,15 +75,10 @@ class SupplierActions {
 
     if (service) conditions.push(eq(supplierServicesTable.service, service))
 
-    if (location) conditions.push(eq(supplierLocationsTable.locationId, location.id))
+    if (location) conditions.push(eq(supplierLocationsTable.location, location))
 
     const result = await supplierBaseQuery.where(conditions.length > 0 ? and(...conditions) : undefined)
     return aggregateSupplierQueryResults(result)
-  }
-
-  static async getById(id: string) {
-    const suppliers = await db.select().from(suppliersTable).where(eq(suppliersTable.id, id))
-    return suppliers.length ? suppliers[0] : null
   }
 
   static async getByHandle(handle: string): Promise<SupplierWithUsers | null> {
@@ -97,6 +89,8 @@ class SupplierActions {
     }
 
     const suppliers = aggregateSupplierQueryResults(result)
+
+    // There should only be one supplier with this handle because of db constraints.
     const supplier = suppliers[0]
     const supplierUsers = await db.select().from(supplierUsersTable).where(eq(supplierUsersTable.supplierId, supplier.id))
 
@@ -106,24 +100,37 @@ class SupplierActions {
     }
   }
 
-  static async create(admin: User | UserWithDetail, insertSupplierData: InsertSupplier): Promise<SupplierWithUsers> {
+  static async create(user: User | UserWithDetail, insertSupplierData: InsertSupplier, services: Service[], locations: Location[]): Promise<SupplierWithUsers> {
     const suppliers = await db.insert(suppliersTable).values(insertSupplierData).returning()
     const supplier = suppliers[0]
 
-    // Define an admin for the supplier
+    // The user who creates the supplier is automatically an admin
     const insertSupplierUserData: InsertSupplierUser = {
       supplierId: supplier.id,
-      userId: admin.id,
+      userId: user.id,
       role: SupplierRole.ADMIN,
     }
-
     const supplierUsers = await db.insert(supplierUsersTable).values(insertSupplierUserData).returning()
 
+    const insertSupplierServiceData: InsertSupplierService[] = services.map((service) => ({
+      supplierId: supplier.id,
+      service,
+    }))
+    const supplierServices = await db.insert(supplierServicesTable).values(insertSupplierServiceData).returning()
+
+    const insertSupplierLocationData: InsertSupplierLocation[] = locations.map((location) => ({
+      supplierId: supplier.id,
+      location,
+    }))
+    const supplierLocations = await db.insert(supplierLocationsTable).values(insertSupplierLocationData).returning()
+
+    // We can assert that the services and locations exist because we just inserted them.
+    // TODO: remove this assert when services and locations are non-nullable in the db schema.
     return {
       ...supplier,
       users: supplierUsers,
-      services: [],
-      locations: [],
+      services: supplierServices.map((service) => service.service!),
+      locations: supplierLocations.map((location) => location.location!),
     }
   }
 }

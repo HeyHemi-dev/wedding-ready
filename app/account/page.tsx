@@ -42,12 +42,14 @@ async function handleUpdateUserDetail(formData: FormData) {
   const handle = formData.get('handle')?.toString()
   const avatarUrl = formData.get('avatarUrl')?.toString()
 
+  console.log('handle', handle)
+
   const user = await getCurrentUser()
   if (!user || user.id !== userId) {
     throw new Error('Unauthorized')
   }
 
-  if (handle && (await UserDetailActions.checkHandleAvailability(handle))) {
+  if (!handle || !(await UserDetailActions.isHandleAvailable(handle))) {
     throw new Error('Handle is already taken')
   }
 

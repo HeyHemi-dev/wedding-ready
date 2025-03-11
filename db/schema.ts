@@ -1,8 +1,14 @@
-import { Service, SupplierRole } from '@/models/constants'
+import { Service, SupplierRole, Location } from '@/models/constants'
 import { enumToPgEnum } from '@/utils/enum-to-pgEnum'
 import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgSchema, pgEnum } from 'drizzle-orm/pg-core'
 
 const authSchema = pgSchema('auth')
+
+export const supplierRoles = pgEnum('supplier_roles', enumToPgEnum(SupplierRole))
+
+export const services = pgEnum('services', enumToPgEnum(Service))
+
+export const locations = pgEnum('locations', enumToPgEnum(Location))
 
 const users = authSchema.table('users', {
   id: uuid('id').primaryKey(),
@@ -34,7 +40,30 @@ export const suppliers = pgTable('suppliers', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
 
-export const supplierRoles = pgEnum('supplier_roles', enumToPgEnum(SupplierRole))
+export const tiles = pgTable('tiles', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  imagePath: text('image_path').notNull().unique(),
+  title: text('title').notNull(),
+  description: text('description'),
+  createdByUserId: uuid('created_by_user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'no action' }),
+  location: locations('location'),
+  isPrivate: boolean('is_private').notNull().default(false),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const stacks = pgTable('stacks', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  ownedByUserId: uuid('owned_by_user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  description: text('description'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
 
 export const supplierUsers = pgTable(
   'supplier_users',
@@ -52,28 +81,27 @@ export const supplierUsers = pgTable(
   (table) => [primaryKey({ columns: [table.supplierId, table.userId] })]
 )
 
-export const services = pgEnum('services', enumToPgEnum(Service))
+export const supplierServices = pgTable(
+  'supplier_services',
+  {
+    supplierId: uuid('supplier_id')
+      .notNull()
+      .references(() => suppliers.id, { onDelete: 'cascade' }),
+    service: services('service'),
+  },
+  (table) => [primaryKey({ columns: [table.supplierId, table.service] })]
+)
 
-export const supplierServices = pgTable('supplier_services', {
-  supplierId: uuid('supplier_id')
-    .notNull()
-    .references(() => suppliers.id, { onDelete: 'cascade' }),
-  service: services('service'),
-})
-
-export const tiles = pgTable('tiles', {
-  id: uuid('id').primaryKey().notNull().defaultRandom(),
-  imagePath: text('image_path').notNull().unique(),
-  title: text('title').notNull(),
-  description: text('description'),
-  createdByUserId: uuid('created_by_user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'no action' }),
-  locationId: uuid('location_id').references(() => locations.id, { onDelete: 'set null' }),
-  isPrivate: boolean('is_private').notNull().default(false),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
+export const supplierLocations = pgTable(
+  'supplier_locations',
+  {
+    supplierId: uuid('supplier_id')
+      .notNull()
+      .references(() => suppliers.id, { onDelete: 'cascade' }),
+    location: locations('location'),
+  },
+  (table) => [primaryKey({ columns: [table.supplierId, table.location] })]
+)
 
 export const savedTiles = pgTable(
   'saved_tiles',
@@ -104,17 +132,6 @@ export const tileSuppliers = pgTable(
   (table) => [primaryKey({ columns: [table.tileId, table.supplierId] })]
 )
 
-export const stacks = pgTable('stacks', {
-  id: uuid('id').primaryKey().notNull().defaultRandom(),
-  ownedByUserId: uuid('owned_by_user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  title: text('title').notNull(),
-  description: text('description'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
-
 export const stackTiles = pgTable(
   'stack_tiles',
   {
@@ -126,25 +143,4 @@ export const stackTiles = pgTable(
       .references(() => tiles.id, { onDelete: 'cascade' }),
   },
   (table) => [primaryKey({ columns: [table.stackId, table.tileId] })]
-)
-
-export const locations = pgTable('locations', {
-  id: uuid('id').primaryKey().notNull().defaultRandom(),
-  name: text('name').notNull(),
-  locationType: text('location_type').notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
-
-export const supplierLocations = pgTable(
-  'supplier_locations',
-  {
-    supplierId: uuid('supplier_id')
-      .notNull()
-      .references(() => suppliers.id, { onDelete: 'cascade' }),
-    locationId: uuid('location_id')
-      .notNull()
-      .references(() => locations.id, { onDelete: 'cascade' }),
-  },
-  (table) => [primaryKey({ columns: [table.supplierId, table.locationId] })]
 )

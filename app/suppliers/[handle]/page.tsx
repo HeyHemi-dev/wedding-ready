@@ -7,7 +7,7 @@ import { db } from '@/db/db'
 import { tiles as tilesTable, tileSuppliers as tileSuppliersTable } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
-
+import { Badge } from '@/components/ui/badge'
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const supplier = await SupplierActions.getByHandle(handle)
@@ -33,14 +33,19 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
     <>
       <Section>
         {isSupplierUser && <p>You can edit this page</p>}
-        <h1 className="text-2xl font-bold">{supplier.name}</h1>
-
-        <p className="text-muted-foreground">{supplier.handle}</p>
-        <p>{supplier.description}</p>
-        <p>{supplier.websiteUrl}</p>
-        {supplier.locations.map((location) => (
-          <p key={location.id}>{location.name}</p>
-        ))}
+        <div className="flex gap-4 items-baseline">
+          <h1 className="text-2xl font-bold">{supplier.name}</h1>
+          <p className="text-muted-foreground">{supplier.handle}</p>
+        </div>
+        {supplier.description && <p>{supplier.description}</p>}
+        {supplier.websiteUrl && <p>{supplier.websiteUrl}</p>}
+        <div className="flex flex-wrap gap-2">
+          {supplier.locations.map((location) => (
+            <Badge variant={'secondary'} key={location}>
+              {location}
+            </Badge>
+          ))}
+        </div>
       </Section>
       <Section>
         {tiles.length > 0
@@ -67,7 +72,7 @@ function noTiles({ message, cta }: noTilesProps) {
   'use client'
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4">
-      <p>{message}</p>
+      <p className="text-muted-foreground">{message}</p>
       {cta && cta.show && (
         <Link href={cta.redirect}>
           <Button variant={'outline'}>{cta.text}</Button>
