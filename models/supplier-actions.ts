@@ -124,11 +124,13 @@ class SupplierActions {
     }))
     const supplierLocations = await db.insert(supplierLocationsTable).values(insertSupplierLocationData).returning()
 
+    // We can assert that the services and locations exist because we just inserted them.
+    // TODO: remove this assert when services and locations are non-nullable in the db schema.
     return {
       ...supplier,
       users: supplierUsers,
-      services: supplierServices.map((service) => service.service),
-      locations: supplierLocations.map((location) => location.location),
+      services: supplierServices.map((service) => service.service!),
+      locations: supplierLocations.map((location) => location.location!),
     }
   }
 }
