@@ -6,6 +6,10 @@ import { redirect } from 'next/navigation'
 import SupplierActions from '@/models/supplier-actions'
 import { InsertSupplier } from '@/models/types'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Location, Service } from '@/models/constants'
+import { enumToPretty } from '@/utils/enum-to-pretty'
+
 export default async function SupplierRegisterPage() {
   const user = await getCurrentUser()
 
@@ -23,6 +27,34 @@ export default async function SupplierRegisterPage() {
 
           <Label>Handle</Label>
           <Input name="handle" placeholder="Handle" />
+
+          <Label>Locations served</Label>
+          <Select name="location">
+            <SelectTrigger>
+              <SelectValue placeholder="Select location" />
+            </SelectTrigger>
+            <SelectContent>
+              {enumToPretty(Location).map((location) => (
+                <SelectItem key={location.value} value={location.value}>
+                  {location.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Label>Services offered</Label>
+          <Select name="service">
+            <SelectTrigger>
+              <SelectValue placeholder="Select service" />
+            </SelectTrigger>
+            <SelectContent>
+              {enumToPretty(Service).map((service) => (
+                <SelectItem key={service.value} value={service.value}>
+                  {service.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <Label>Website</Label>
           <Input name="website" placeholder="Website url" />
@@ -43,11 +75,13 @@ async function handleRegisterSupplier(formData: FormData) {
   'use server'
   const name = formData.get('name')?.toString()
   const handle = formData.get('handle')?.toString()
+  const location = formData.get('location')?.toString() as Location
+  const service = formData.get('service')?.toString() as Service
   const website = formData.get('website')?.toString()
   const description = formData.get('description')?.toString()
   const userId = formData.get('userId')?.toString()
 
-  if (!name || !handle || !userId) {
+  if (!name || !handle || !location || !service || !userId) {
     throw new Error('Missing required fields')
   }
 
@@ -64,7 +98,10 @@ async function handleRegisterSupplier(formData: FormData) {
     createdByUserId: user.id,
   }
 
-  const supplier = await SupplierActions.create(user, insertSupplierData)
+  const locations = [location]
+  const services = [service]
+
+  const supplier = await SupplierActions.create(user, insertSupplierData, services, locations)
 
   redirect(`/supplier/${supplier.handle}`)
 }
