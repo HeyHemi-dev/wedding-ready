@@ -52,10 +52,11 @@ function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): Suppl
     // We can assert the supplierId is in the map, because we just created it if it didn't already exist
     const supplierWithDetail = supplierMap.get(supplierId)!
 
-    if (row.service && !supplierWithDetail.services.includes(row.service)) {
+    // we don't need to check if the services and locations are already in the array, because the db schema ensures that there is only one service and location per supplier
+    if (row.service) {
       supplierWithDetail.services.push(row.service)
     }
-    if (row.location && !supplierWithDetail.locations.includes(row.location)) {
+    if (row.location) {
       supplierWithDetail.locations.push(row.location)
     }
   }
