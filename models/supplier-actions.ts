@@ -81,11 +81,6 @@ class SupplierActions {
     return aggregateSupplierQueryResults(result)
   }
 
-  static async getById(id: string) {
-    const suppliers = await db.select().from(suppliersTable).where(eq(suppliersTable.id, id))
-    return suppliers.length ? suppliers[0] : null
-  }
-
   static async getByHandle(handle: string): Promise<SupplierWithUsers | null> {
     const result = await supplierBaseQuery.where(eq(suppliersTable.handle, handle))
 
