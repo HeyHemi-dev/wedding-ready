@@ -4,7 +4,7 @@ import { UploadDropzone } from '@/utils/uploadthing'
 export default function UploadForm() {
   return (
     <UploadDropzone
-      endpoint="imageUploader"
+      endpoint="tileUploader"
       onClientUploadComplete={(res) => {
         // Do something with the response
         console.log('Files: ', res)

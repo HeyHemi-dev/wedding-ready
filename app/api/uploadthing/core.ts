@@ -1,27 +1,29 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
+import { getCurrentUser } from '@/actions/get-current-user'
 
 const f = createUploadthing()
 
-const auth = (req: Request) => ({ id: 'fakeId' }) // Fake auth function
-
 // FileRouter for your app, can contain multiple FileRoutes
-export const ourFileRouter = {
+export const uploadthingRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
-  imageUploader: f({
+  tileUploader: f({
     image: {
       /**
        * For full list of options and defaults, see the File Route API reference
        * @see https://docs.uploadthing.com/file-routes#route-config
        */
-      maxFileSize: '4MB',
-      maxFileCount: 1,
+      maxFileSize: '1MB',
+      maxFileCount: 10,
     },
   })
     // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {
-      // This code runs on your server before upload
-      const user = await auth(req)
+      const body = await req.json()
+      const { supplierId } = body
+
+      // Authenticate before upload
+      const user = await getCurrentUser()
 
       // If you throw, the user will not be able to upload
       if (!user) throw new UploadThingError('Unauthorized')
@@ -40,4 +42,4 @@ export const ourFileRouter = {
     }),
 } satisfies FileRouter
 
-export type OurFileRouter = typeof ourFileRouter
+export type UploadthingRouter = typeof uploadthingRouter
