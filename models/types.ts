@@ -40,8 +40,8 @@ export type StackTile = InferSelectModel<typeof schema.stackTiles>
 export type InsertStackTile = InferInsertModel<typeof schema.stackTiles>
 export const stackTileColumns = getTableColumns(schema.stackTiles)
 
-export type Tile = InferSelectModel<typeof schema.tiles>
-export type InsertTile = InferInsertModel<typeof schema.tiles>
+export type TileRaw = InferSelectModel<typeof schema.tiles>
+export type InsertTileRaw = InferInsertModel<typeof schema.tiles>
 export const tileColumns = getTableColumns(schema.tiles)
 
 export type SavedTile = InferSelectModel<typeof schema.savedTiles>
@@ -84,6 +84,10 @@ export interface SupplierWithUsers extends SupplierWithDetail {
   users: SupplierUser[]
 }
 
-export interface TileSaved extends Tile {
-  isSaved: boolean
+/**
+ * Tile extends the tile table with its suppliers and if the tile is saved by the current user.
+ */
+export interface Tile extends TileRaw {
+  suppliers: Supplier[]
+  isSaved?: boolean
 }
