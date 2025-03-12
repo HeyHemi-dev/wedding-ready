@@ -2,7 +2,8 @@ import { db } from '@/db/db'
 import { InsertTileRaw, Tile, Supplier, InsertTileSupplier, supplierColumns } from './types'
 import * as schema from '@/db/schema'
 import { eq, and, inArray } from 'drizzle-orm'
-class TileActions {
+
+export class TileModel {
   private tile: Tile
 
   constructor(tile: Tile) {
@@ -89,5 +90,3 @@ class TileActions {
     }
   }
 }
-
-export default TileActions

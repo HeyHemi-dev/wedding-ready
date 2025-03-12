@@ -1,8 +1,8 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
 import { getCurrentUser } from '@/actions/get-current-user'
-import TileActions from '@/models/tile-actions'
-import { InsertTileRaw } from '@/models/types'
+import { TileModel } from '@/models/tile'
+
 const f = createUploadthing()
 
 // FileRouter for your app, can contain multiple FileRoutes
@@ -34,7 +34,7 @@ export const uploadthingRouter = {
       console.log('Uploaded by:', metadata.userId)
       console.log('File url:', file.ufsUrl)
 
-      const tile = await TileActions.createRaw({
+      const tile = await TileModel.createRaw({
         createdByUserId: metadata.userId,
         imagePath: file.ufsUrl,
         title: file.name,
