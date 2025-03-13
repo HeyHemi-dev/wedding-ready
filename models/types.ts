@@ -85,9 +85,12 @@ export interface SupplierWithUsers extends SupplierWithDetail {
 }
 
 /**
- * Tile extends the tile table with its suppliers and if the tile is saved by the current user.
+ * Tile extends tile table row with a required imagePath, its suppliers and optionally if the tile is saved by the current user.
+ * @requires imagePath - Since we allow a raw tile to be created before the image is uploaded, we require the imagePath to be set here to  ensure we have a valid tile object.
+ * @requires suppliers - List of suppliers that are associated with the tile.
  */
 export interface Tile extends TileRaw {
+  imagePath: string
   suppliers: Supplier[]
   isSaved?: boolean
 }

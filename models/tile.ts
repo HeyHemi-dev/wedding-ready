@@ -1,5 +1,5 @@
 import { db } from '@/db/db'
-import { InsertTileRaw, Tile, Supplier, InsertTileSupplier, supplierColumns } from './types'
+import { InsertTileRaw, Tile, Supplier, InsertTileSupplier, supplierColumns, TileRaw } from './types'
 import * as schema from '@/db/schema'
 import { eq, and, inArray } from 'drizzle-orm'
 
@@ -10,12 +10,21 @@ export class TileModel {
     this.tile = tile
   }
 
-  static async createRaw(tileData: InsertTileRaw) {
+  static async createRaw(tileData: InsertTileRaw): Promise<TileRaw> {
     const tiles = await db.insert(schema.tiles).values(tileData).returning()
     return tiles[0]
   }
 
+  /**
+   * Create a tile and its relationships with suppliers
+   * @requires tileData.imagePath - The path to the tile image
+   * @requires tileSuppliers - List of suppliers to be related to this tile. Will not modify the suppliers themselves.
+   */
   static async create(tileData: InsertTileRaw, tileSuppliers: Supplier[]): Promise<Tile> {
+    if (!tileData.imagePath) {
+      throw new Error('Image path is required')
+    }
+
     const tiles = await db.insert(schema.tiles).values(tileData).returning()
     const tile = tiles[0]
 
@@ -34,19 +43,22 @@ export class TileModel {
 
     return {
       ...tile,
+      imagePath: tile.imagePath!, // We can assert that imagePath exists because we already threw an error if it was missing.
       suppliers: suppliers,
     }
   }
 
   /**
-   * Update a tile and its suppliers
+   * Update a tile and its relationships with suppliers
    * @param tileData - overwrites the existing tile data
-   * @param tileSuppliers - optional. If passed it will overwrite the existing tile suppliers
+   * @param tileSuppliers - optional. If passed it will overwrite the existing tileSupplier relationships. Will not modify the suppliers themselves.
+   * @requires tileData.id - The id of the tile to update
+   * @requires tileData.imagePath - The path to the tile image
    * @returns The updated tile
    */
   static async update(tileData: InsertTileRaw, tileSuppliers?: Supplier[]): Promise<Tile> {
-    if (!tileData.id) {
-      throw new Error('Tile ID is required')
+    if (!tileData.id || !tileData.imagePath) {
+      throw new Error('Id and imagePath are required')
     }
 
     const tiles = await db.update(schema.tiles).set(tileData).where(eq(schema.tiles.id, tileData.id)).returning()
@@ -86,6 +98,7 @@ export class TileModel {
 
     return {
       ...tile,
+      imagePath: tile.imagePath!, // We can assert that imagePath exists because we already threw an error if it was missing.
       suppliers: suppliers,
     }
   }
