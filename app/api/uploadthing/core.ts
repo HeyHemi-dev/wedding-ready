@@ -2,6 +2,8 @@ import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { TileModel } from '@/models/tile'
+import { tileUploaderInputSchema } from '@/models/validations'
+import { z } from 'zod'
 
 const f = createUploadthing()
 
@@ -18,15 +20,19 @@ export const uploadthingRouter = {
       maxFileCount: 10,
     },
   })
+    .input(tileUploaderInputSchema)
     // Middleware runs on the server before upload
     // Whatever is returned is accessible in onUploadComplete as `metadata`
-    .middleware(async ({ req }) => {
-      // eslint-disable-line @typescript-eslint/no-unused-vars
-
+    .middleware(async ({ req, input }) => {
       const user = await getCurrentUser()
       if (!user) throw new UploadThingError('Unauthorized')
 
-      return { userId: user.id }
+      // Validate input type
+      const validatedInput = tileUploaderInputSchema.parse(input)
+      return {
+        userId: user.id,
+        tiles: validatedInput,
+      }
     })
     // OnUploadComplete runs on the server after upload
     // Whatever is returned is sent to the clientside `onClientUploadComplete` callback
@@ -34,13 +40,20 @@ export const uploadthingRouter = {
       console.log('Uploaded by:', metadata.userId)
       console.log('File url:', file.ufsUrl)
 
-      const tile = await TileModel.createRaw({
-        createdByUserId: metadata.userId,
-        imagePath: file.ufsUrl,
-        title: file.name,
+      const tiles = metadata.tiles.map(async (t) => {
+        const tile = await TileModel.getById(t.tileId)
+        if (!tile) throw new Error('Tile not found')
+
+        const updatedTile = await TileModel.update({
+          id: tile.id,
+          createdByUserId: tile.createdByUserId,
+          title: t.title || tile.title,
+          imagePath: file.ufsUrl,
+          description: t.description || tile.description || null,
+        })
       })
 
-      return { tileId: tile.id, tileImagePath: tile.imagePath, tileTitle: tile.title }
+      return tiles
     }),
 } satisfies FileRouter
 
