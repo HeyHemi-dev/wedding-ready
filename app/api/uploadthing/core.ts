@@ -3,7 +3,6 @@ import { UploadThingError } from 'uploadthing/server'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { TileModel } from '@/models/tile'
 import { tileUploaderInputSchema } from '@/models/validations'
-import { z } from 'zod'
 
 const f = createUploadthing()
 
@@ -23,6 +22,7 @@ export const uploadthingRouter = {
     .input(tileUploaderInputSchema)
     // Middleware runs on the server before upload
     // Whatever is returned is accessible in onUploadComplete as `metadata`
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .middleware(async ({ req, input }) => {
       const user = await getCurrentUser()
       if (!user) throw new UploadThingError('Unauthorized')
@@ -44,7 +44,7 @@ export const uploadthingRouter = {
         const tile = await TileModel.getById(t.tileId)
         if (!tile) throw new Error('Tile not found')
 
-        const updatedTile = await TileModel.update({
+        await TileModel.update({
           id: tile.id,
           createdByUserId: tile.createdByUserId,
           title: t.title || tile.title,
