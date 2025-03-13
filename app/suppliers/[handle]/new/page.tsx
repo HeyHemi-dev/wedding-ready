@@ -2,6 +2,7 @@ import Section from '@/components/ui/section'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { redirect } from 'next/navigation'
 import UploadForm from './upload-form'
+import { CustomUploadForm } from './custom-upload-form'
 
 export default async function NewSupplierTilePage() {
   const user = await getCurrentUser()
@@ -13,7 +14,8 @@ export default async function NewSupplierTilePage() {
     <Section>
       <h1>New Supplier Tile</h1>
 
-      <UploadForm />
+      {/* <UploadForm /> */}
+      <CustomUploadForm />
     </Section>
   )
 }
