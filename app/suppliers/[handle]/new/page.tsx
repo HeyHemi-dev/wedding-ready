@@ -4,22 +4,27 @@ import { redirect } from 'next/navigation'
 import { SupplierModel } from '@/models/supplier'
 import { CustomUploadForm } from './custom-upload-form'
 
-export default async function NewSupplierTilePage({ params }: { params: { handle: string } }) {
-  const user = await getCurrentUser()
-  if (!user) {
-    redirect('/sign-in')
+export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
+  const { handle } = await params
+  const supplier = await SupplierModel.getByHandle(handle)
+
+  if (!supplier) {
+    redirect(`/404`)
   }
 
-  const supplier = await SupplierModel.getByHandle(params.handle)
-  if (!supplier) {
-    redirect('/suppliers')
+  // Check if the user is the owner of the supplier to allow creating tiles
+  const user = await getCurrentUser()
+  const isSupplierUser = supplier?.users.some((u) => u.userId === user?.id)
+
+  if (!user || !isSupplierUser) {
+    redirect(`/suppliers/${handle}`)
   }
 
   return (
     <Section>
       <h1>Create new tiles for {supplier.name}</h1>
 
-      <CustomUploadForm supplier={supplier} />
+      <CustomUploadForm supplier={supplier} user={user} />
     </Section>
   )
 }
