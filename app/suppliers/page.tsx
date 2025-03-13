@@ -1,10 +1,10 @@
 import Section from '@/components/ui/section'
-import SupplierActions from '@/models/supplier-actions'
+import { SupplierModel } from '@/models/supplier'
 import { SupplierWithDetail } from '@/models/types'
 import Link from 'next/link'
 
 export default async function SuppliersPage() {
-  const suppliers = await SupplierActions.getAll()
+  const suppliers = await SupplierModel.getAll()
 
   return (
     <Section>

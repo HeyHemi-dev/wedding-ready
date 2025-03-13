@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/actions/get-current-user'
-import SupplierActions from '@/models/supplier-actions'
+import { SupplierModel } from '@/models/supplier'
 import Section from '@/components/ui/section'
 import { Button } from '@/components/ui/button'
 import { redirect } from 'next/navigation'
@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const supplier = await SupplierActions.getByHandle(handle)
+  const supplier = await SupplierModel.getByHandle(handle)
 
   if (!supplier) {
     redirect(`/404`)

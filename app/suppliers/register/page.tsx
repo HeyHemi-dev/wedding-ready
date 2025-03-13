@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input'
 import Section from '@/components/ui/section'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { redirect } from 'next/navigation'
-import SupplierActions from '@/models/supplier-actions'
+import { SupplierModel } from '@/models/supplier'
 import { InsertSupplier } from '@/models/types'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -101,7 +101,7 @@ async function handleRegisterSupplier(formData: FormData) {
   const locations = [location]
   const services = [service]
 
-  const supplier = await SupplierActions.create(user, insertSupplierData, services, locations)
+  const supplier = await SupplierModel.create(user, insertSupplierData, services, locations)
 
   redirect(`/supplier/${supplier.handle}`)
 }

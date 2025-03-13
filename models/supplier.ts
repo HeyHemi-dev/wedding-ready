@@ -63,7 +63,7 @@ function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): Suppl
   return Array.from(supplierMap.values())
 }
 
-class SupplierActions {
+export class SupplierModel {
   private supplier: Supplier
 
   constructor(supplier: Supplier) {
@@ -134,5 +134,3 @@ class SupplierActions {
     }
   }
 }
-
-export default SupplierActions
