@@ -10,6 +10,11 @@ export class TileModel {
     this.tile = tile
   }
 
+  static async getById(id: string): Promise<TileRaw | null> {
+    const tiles = await db.select().from(schema.tiles).where(eq(schema.tiles.id, id)).limit(1)
+    return tiles.length ? tiles[0] : null
+  }
+
   static async createRaw(tileData: InsertTileRaw): Promise<TileRaw> {
     const tiles = await db.insert(schema.tiles).values(tileData).returning()
     return tiles[0]
@@ -17,7 +22,6 @@ export class TileModel {
 
   /**
    * Create a tile and its relationships with suppliers
-   * @requires tileData.imagePath - The path to the tile image
    * @requires tileSuppliers - List of suppliers to be related to this tile. Will not modify the suppliers themselves.
    */
   static async createRawWithSuppliers(tileData: InsertTileRaw, tileSuppliers: Supplier[]): Promise<TileRawWithSuppliers> {
