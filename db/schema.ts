@@ -42,7 +42,7 @@ export const suppliers = pgTable('suppliers', {
 
 export const tiles = pgTable('tiles', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
-  imagePath: text('image_path').notNull().unique(),
+  imagePath: text('image_path').unique(),
   title: text('title').notNull(),
   description: text('description'),
   createdByUserId: uuid('created_by_user_id')
@@ -87,7 +87,7 @@ export const supplierServices = pgTable(
     supplierId: uuid('supplier_id')
       .notNull()
       .references(() => suppliers.id, { onDelete: 'cascade' }),
-    service: services('service'),
+    service: services('service').notNull(),
   },
   (table) => [primaryKey({ columns: [table.supplierId, table.service] })]
 )
@@ -98,7 +98,7 @@ export const supplierLocations = pgTable(
     supplierId: uuid('supplier_id')
       .notNull()
       .references(() => suppliers.id, { onDelete: 'cascade' }),
-    location: locations('location'),
+    location: locations('location').notNull(),
   },
   (table) => [primaryKey({ columns: [table.supplierId, table.location] })]
 )
