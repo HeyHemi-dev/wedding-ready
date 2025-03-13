@@ -1,5 +1,5 @@
 import { db } from '@/db/db'
-import { InsertTileRaw, Tile, Supplier, InsertTileSupplier, supplierColumns, TileRaw } from './types'
+import { InsertTileRaw, Tile, Supplier, InsertTileSupplier, supplierColumns, TileRaw, TileRawWithSuppliers } from './types'
 import * as schema from '@/db/schema'
 import { eq, and, inArray } from 'drizzle-orm'
 
@@ -20,11 +20,7 @@ export class TileModel {
    * @requires tileData.imagePath - The path to the tile image
    * @requires tileSuppliers - List of suppliers to be related to this tile. Will not modify the suppliers themselves.
    */
-  static async create(tileData: InsertTileRaw, tileSuppliers: Supplier[]): Promise<Tile> {
-    if (!tileData.imagePath) {
-      throw new Error('Image path is required')
-    }
-
+  static async createRawWithSuppliers(tileData: InsertTileRaw, tileSuppliers: Supplier[]): Promise<TileRawWithSuppliers> {
     const tiles = await db.insert(schema.tiles).values(tileData).returning()
     const tile = tiles[0]
 
@@ -43,7 +39,7 @@ export class TileModel {
 
     return {
       ...tile,
-      imagePath: tile.imagePath!, // We can assert that imagePath exists because we already threw an error if it was missing.
+
       suppliers: suppliers,
     }
   }
