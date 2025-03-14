@@ -1,59 +1,78 @@
 'use client'
 
 import * as React from 'react'
+import { useFormStatus } from 'react-dom'
 import { generateClientDropzoneAccept, generatePermittedFileTypes } from 'uploadthing/client'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Supplier, UserWithDetail } from '@/models/types'
-import { tileNewRequestBody, tileNewResponseBody } from '@/app/api/tile/new/route'
+import { Supplier, TileRaw, UserWithDetail } from '@/models/types'
+import { tileNewRequestBody, tileNewResponseBody, tilesUpdateRequestBody } from '@/app/api/tiles/route'
 import { Button } from '@/components/ui/button'
-interface FileWithMetaData extends File {
-  preview?: string
-  tileId?: string
-  title?: string
-  description?: string
-  location?: string
-  isPrivate?: boolean
-  suppliers?: Supplier[]
+import { useRouter } from 'next/navigation'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { enumToPretty } from '@/utils/enum-to-pretty'
+import { Location } from '@/models/constants'
+
+interface FileWithMetaData extends TileRaw {
+  preview: string
+  file: File
+}
+
+function UploadButton() {
+  const { pending } = useFormStatus()
+
+  return (
+    <Button type="submit" disabled={pending} variant={'default'}>
+      {pending ? 'Uploading...' : 'Upload files'}
+    </Button>
+  )
 }
 
 export function CustomUploadForm({ supplier, user }: { supplier: Supplier; user: UserWithDetail }) {
   const [files, setFiles] = React.useState<FileWithMetaData[]>([])
+  const filesRef = React.useRef<FileWithMetaData[]>([])
+  const formRef = React.useRef<HTMLFormElement>(null)
+  const router = useRouter()
 
-  const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
-    const filesWithMetadata = await Promise.all(
-      acceptedFiles.map(async (file) => {
-        const reqBody: tileNewRequestBody = {
-          title: file.name,
-          createdByUserId: user.id,
-          suppliers: [supplier],
-        }
-        // Create a tile for each file
-        const res = await fetch('/api/tile/new', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(reqBody),
-        })
-        const resBody = (await res.json()) as tileNewResponseBody
+  React.useEffect(() => {
+    filesRef.current = files
+  }, [files])
 
-        return Object.assign(file, {
-          preview: URL.createObjectURL(file),
-          tileId: resBody.id,
-          title: resBody.title,
-          location: undefined,
-          isPrivate: false,
-          suppliers: resBody.suppliers,
+  const onDrop = React.useCallback(
+    async (acceptedFiles: File[]) => {
+      const filesWithMetadata = await Promise.all(
+        acceptedFiles.map(async (file) => {
+          const reqBody: tileNewRequestBody = {
+            title: file.name,
+            createdByUserId: user.id,
+            suppliers: [supplier],
+          }
+          // Create a tile for each file
+          const res = await fetch('/api/tiles/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(reqBody),
+          })
+          const resBody = (await res.json()) as tileNewResponseBody
+
+          return Object.assign(file, {
+            preview: URL.createObjectURL(file),
+            file: file,
+            ...resBody,
+          })
         })
-      })
-    )
-    setFiles(filesWithMetadata)
-  }, [])
+      )
+      setFiles(filesWithMetadata)
+    },
+    [supplier, user.id]
+  )
 
   const { startUpload, routeConfig } = useUploadThing('tileUploader', {
     onClientUploadComplete: () => {
       alert('uploaded successfully!')
       setFiles([])
+      router.push(`/suppliers/${supplier.handle}`)
     },
     onUploadError: () => {
       alert('error occurred while uploading')
@@ -68,7 +87,6 @@ export function CustomUploadForm({ supplier, user }: { supplier: Supplier; user:
     accept: generateClientDropzoneAccept(generatePermittedFileTypes(routeConfig).fileTypes),
   })
 
-  // Cleanup previews
   React.useEffect(() => {
     return () =>
       files.forEach((file) => {
@@ -78,22 +96,44 @@ export function CustomUploadForm({ supplier, user }: { supplier: Supplier; user:
       })
   }, [files])
 
-  const handleUpload = () => {
-    startUpload(
-      files,
-      files.map((file) => ({
-        tileId: file.tileId!,
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const filesCurrent = filesRef.current
+    const reqBody: tilesUpdateRequestBody = {
+      tiles: filesCurrent.map((file) => ({
+        id: file.id!,
         title: file.title!,
-        description: file.description,
-        location: file.location,
-        isPrivate: file.isPrivate,
-        suppliers: file.suppliers!,
-      }))
-    )
+        description: file.description ?? null,
+        location: file.location ?? null,
+        isPrivate: file.isPrivate ?? false,
+        createdByUserId: user.id,
+        createdAt: file.createdAt!,
+        updatedAt: new Date(),
+        imagePath: null,
+      })),
+    }
+
+    console.log('Request body for update:', reqBody)
+
+    await fetch('/api/tiles/', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reqBody),
+    })
+
+    // Use the original files for upload
+    const filesToUpload = filesCurrent.map((file) => file.file)
+
+    startUpload(filesToUpload)
   }
 
   const updateFileMetadata = (index: number, metadata: Partial<FileWithMetaData>) => {
-    setFiles((prev) => prev.map((file, i) => (i === index ? { ...file, ...metadata } : file)))
+    setFiles((prev) => {
+      const updated = prev.map((file, i) => (i === index ? { ...file, ...metadata } : file))
+      console.log('Updated file metadata:', updated[index])
+      return updated
+    })
   }
 
   return (
@@ -110,13 +150,10 @@ export function CustomUploadForm({ supplier, user }: { supplier: Supplier; user:
       )}
 
       {files.length > 0 && (
-        <div>
-          <button onClick={handleUpload} className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Upload {files.length} files
-          </button>
-
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <FilePreviewList files={files} onUpdateMetadata={updateFileMetadata} />
-        </div>
+          <UploadButton />
+        </form>
       )}
     </div>
   )
@@ -132,7 +169,7 @@ function FilePreviewList({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {files.map((file, index) => (
-        <FilePreview key={file.name} file={file} onUpdateMetadata={(metadata) => onUpdateMetadata(index, metadata)} />
+        <FilePreview key={file.id} file={file} onUpdateMetadata={(metadata) => onUpdateMetadata(index, metadata)} />
       ))}
     </div>
   )
@@ -142,23 +179,37 @@ function FilePreview({ file, onUpdateMetadata }: { file: FileWithMetaData; onUpd
   return (
     <div className="space-y-2">
       <div className="relative aspect-square">
-        <img src={file.preview} alt={file.name} className="w-full h-full object-cover rounded-lg" />
+        <img src={file.preview} alt={file.file.name} className="w-full h-full object-cover rounded-lg" />
       </div>
       <div className="space-y-2">
         <Input
           type="text"
+          name={`title-${file.id}`}
           value={file.title}
           onChange={(e) => onUpdateMetadata({ title: e.target.value })}
           className="w-full px-2 py-1 border rounded"
           placeholder="Title"
         />
         <Textarea
-          value={file.description}
+          name={`description-${file.id}`}
+          value={file.description ?? ''}
           onChange={(e) => onUpdateMetadata({ description: e.target.value })}
           className="w-full px-2 py-1 border rounded"
           placeholder="Description"
           rows={2}
         />
+        <Select name={`location-${file.id}`} value={file.location ?? ''} onValueChange={(value) => onUpdateMetadata({ location: value as Location })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a location" />
+          </SelectTrigger>
+          <SelectContent>
+            {enumToPretty(Location).map((location) => (
+              <SelectItem key={location.value} value={location.value}>
+                {location.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   )
