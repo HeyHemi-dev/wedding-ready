@@ -1,24 +1,26 @@
 import { z } from 'zod'
+import { Location } from '@/models/constants'
+export const tileUploaderInputSchema = z.object({
+  tileIds: z.array(z.string()),
+})
 
-export const tileUploaderInputSchema = z.array(
-  z.object({
-    tileId: z.string(),
-    title: z.string(),
-    description: z.string().optional(),
-    location: z.string().optional(),
-    isPrivate: z.boolean().optional(),
-    suppliers: z.array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        handle: z.string(),
-        handleUpdatedAt: z.string(),
-        description: z.string().optional(),
-        websiteUrl: z.string().optional(),
-        createdByUserId: z.string(),
-        createdAt: z.string(),
-        updatedAt: z.string(),
-      })
-    ),
-  })
-)
+const supplierSchema = z.object({
+  id: z.string(),
+  description: z.string().nullable(),
+  name: z.string(),
+  createdByUserId: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  handle: z.string(),
+  handleUpdatedAt: z.date(),
+  websiteUrl: z.string().nullable(),
+})
+
+export const tileUpdateFormSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string().optional(),
+  location: z.nativeEnum(Location).nullable(),
+  isPrivate: z.boolean(),
+  suppliers: z.array(supplierSchema),
+})
