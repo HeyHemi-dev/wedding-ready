@@ -1,8 +1,8 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
 import { getCurrentUser } from '@/actions/get-current-user'
+import { tiles } from '@/db/schema'
 import { TileModel } from '@/models/tile'
-import { tileUploaderInputSchema } from '@/models/validations'
 
 const f = createUploadthing()
 
@@ -11,27 +11,18 @@ export const uploadthingRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
   tileUploader: f({
     'image/jpeg': {
-      /**
-       * For full list of options and defaults, see the File Route API reference
-       * @see https://docs.uploadthing.com/file-routes#route-config
-       */
       maxFileSize: '1MB',
       maxFileCount: 10,
     },
   })
-    .input(tileUploaderInputSchema)
     // Middleware runs on the server before upload
     // Whatever is returned is accessible in onUploadComplete as `metadata`
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .middleware(async ({ req, input }) => {
+    .middleware(async ({ req }) => {
       const user = await getCurrentUser()
       if (!user) throw new UploadThingError('Unauthorized')
-
-      // Validate input type
-      const validatedInput = tileUploaderInputSchema.parse(input)
       return {
         userId: user.id,
-        tiles: validatedInput,
       }
     })
     // OnUploadComplete runs on the server after upload
@@ -40,20 +31,16 @@ export const uploadthingRouter = {
       console.log('Uploaded by:', metadata.userId)
       console.log('File url:', file.ufsUrl)
 
-      const tiles = metadata.tiles.map(async (t) => {
-        const tile = await TileModel.getById(t.tileId)
-        if (!tile) throw new Error('Tile not found')
+      // TODO: figure out a way to get the tile id through metadata
+      // const tile = await TileModel.getById(t.tileId)
+      // if (!tile) throw new Error('Tile not found')
 
-        await TileModel.update({
-          id: tile.id,
-          createdByUserId: tile.createdByUserId,
-          title: t.title || tile.title,
-          imagePath: file.ufsUrl,
-          description: t.description || tile.description || null,
-        })
-      })
+      // await TileModel.update({
+      //   ...tile,
+      //   imagePath: file.ufsUrl,
+      // })
 
-      return tiles
+      return
     }),
 } satisfies FileRouter
 
