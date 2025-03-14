@@ -175,6 +175,8 @@ function FilePreviewList({
   )
 }
 
+// TODO suggest having one form per image, so a user can submit/update/upload each image one at a time as they fill out the forms.
+// The handle submit will then only process one image at a time making it easier to pass the tileId as an input on the startUpload function.
 function FilePreview({ file, onUpdateMetadata }: { file: FileWithMetaData; onUpdateMetadata: (metadata: Partial<FileWithMetaData>) => void }) {
   return (
     <div className="space-y-2">
