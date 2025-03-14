@@ -8,6 +8,7 @@ import { tiles as tilesTable, tileSuppliers as tileSuppliersTable } from '@/db/s
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
+import { TileModel } from '@/models/tile'
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const supplier = await SupplierModel.getByHandle(handle)
@@ -21,13 +22,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
   const isSupplierUser = supplier?.users.some((u) => u.userId === user?.id)
 
   // Get tiles for supplier
-  const result = await db
-    .select()
-    .from(tilesTable)
-    .leftJoin(tileSuppliersTable, eq(tilesTable.id, tileSuppliersTable.tileId))
-    .where(eq(tileSuppliersTable.supplierId, supplier.id))
-
-  const tiles = result.map((r) => r.tiles).filter((tile): tile is NonNullable<typeof tile> => tile !== null)
+  const tiles = await TileModel.getBySupplier(supplier, user ? user : undefined)
 
   return (
     <>
