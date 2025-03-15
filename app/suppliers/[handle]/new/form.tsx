@@ -14,6 +14,9 @@ import { Location } from '@/models/constants'
 import { enumToPretty } from '@/utils/enum-to-pretty'
 import { SubmitButton } from '@/components/submit-button'
 import { ExpandedRouteConfig } from 'uploadthing/types'
+import { useCreateTile, useUploadTile } from '@/hooks/use-create-tile'
+import { useFormState, useFormStatus } from 'react-dom'
+import { cn } from '@/utils/shadcn-utils'
 
 type FileWithMetadata = {
   file: File
@@ -94,18 +97,9 @@ function FilePreviewList({
 }
 
 function FilePreview({ file, supplier, user, onComplete }: { file: FileWithMetadata; supplier: Supplier; user: UserWithDetail; onComplete: () => void }) {
-  const { startUpload, isUploading } = useUploadThing('tileUploader', {
-    onClientUploadComplete: () => {
-      onComplete()
-    },
-    onUploadError: (error) => {
-      console.error('Upload failed:', error)
-      // Could add toast notification here
-    },
-  })
+  const { startUpload, isUploading } = useUploadTile()
 
   async function onSubmit(formData: FormData) {
-    // Create tile first
     const tileData: InsertTileRaw = {
       title: formData.get('title') as string,
       description: (formData.get('description') as string) || null,
@@ -113,28 +107,17 @@ function FilePreview({ file, supplier, user, onComplete }: { file: FileWithMetad
       createdByUserId: user.id,
       isPrivate: false,
     }
-    // Create tile in the database
-    const res = await fetch('/api/tiles', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...tileData,
-        suppliers: [supplier],
-      }),
-    })
 
-    if (!res.ok) {
-      throw new Error('Failed to create tile')
-    }
-
-    const tile = (await res.json()) as TileRaw
+    const tile = await useCreateTile(tileData, [supplier])
 
     // Upload to UploadThing. onUploadComplete updates the tile with the imagePath
     await startUpload([file.file], { createdByUserId: user.id, tileId: tile.id })
+
+    onComplete()
   }
 
   return (
-    <Card>
+    <Card className={cn(isUploading && 'opacity-50')}>
       <CardContent className="p-6 flex gap-6">
         <div className="w-1/3">
           <div className="aspect-square relative rounded-lg overflow-hidden">
@@ -169,7 +152,7 @@ function FilePreview({ file, supplier, user, onComplete }: { file: FileWithMetad
             </Select>
           </div>
 
-          <SubmitButton>Upload</SubmitButton>
+          <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
         </form>
       </CardContent>
     </Card>
