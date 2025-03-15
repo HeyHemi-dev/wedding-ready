@@ -29,6 +29,8 @@ export function createBatchUpdateObject<T extends Record<string, any>>(items: T[
     updateObject['updatedAt'] = sql`CURRENT_TIMESTAMP`
   }
 
+  // TODO: handle fields that should not be updated.
+  // TODO: #Lachie maybe updatedAt should be the responsibility of the frontend to set? For example, if we have an updatedBy field in the future, this would have to be set by the front end, because the database will have no way to know... right?
   for (const key of Object.keys(exampleItem) as Array<keyof T>) {
     // Skip the id field since we're using it for the WHERE clause
     // Also skip updatedAt since we've already handled it

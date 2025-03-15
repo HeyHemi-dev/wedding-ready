@@ -42,6 +42,7 @@ export const stackTileColumns = getTableColumns(schema.stackTiles)
 
 export type TileRaw = InferSelectModel<typeof schema.tiles>
 export type InsertTileRaw = InferInsertModel<typeof schema.tiles>
+export type SetTileRaw = Omit<InsertTileRaw, 'id' | 'createdAt' | 'createdByUserId' | 'isPrivate'>
 export const tileColumns = getTableColumns(schema.tiles)
 
 export type SavedTile = InferSelectModel<typeof schema.savedTiles>
