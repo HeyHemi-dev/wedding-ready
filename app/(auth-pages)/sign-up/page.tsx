@@ -33,7 +33,7 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
           <Input name="handle" placeholder="your-handle" required />
           <Label htmlFor="password">Password</Label>
           <Input type="password" name="password" placeholder="Your password" minLength={6} required />
-          <SubmitButton formAction={signUpAction} pendingText="Signing up...">
+          <SubmitButton formAction={signUpAction} pendingChildren={'Signing up...'}>
             Sign up
           </SubmitButton>
           <FormMessage message={searchParams} />
