@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { generateClientDropzoneAccept, generatePermittedFileTypes } from 'uploadthing/client'
+import { generateClientDropzoneAccept, generateMimeTypes, generatePermittedFileTypes, isValidFileSize } from 'uploadthing/client'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,38 +12,53 @@ import { Label } from '@/components/ui/label'
 import { InsertTileRaw, Supplier, TileRaw, UserWithDetail } from '@/models/types'
 import { Location } from '@/models/constants'
 import { enumToPretty } from '@/utils/enum-to-pretty'
-import { useFormState } from 'react-dom'
 import { SubmitButton } from '@/components/submit-button'
+import { ExpandedRouteConfig } from 'uploadthing/types'
 
-type FileState = {
+type FileWithMetadata = {
   file: File
-  preview: string
+  fileObjectUrl: string
+}
+
+function checkFileSizes(files: File[], routeConfig: ExpandedRouteConfig | undefined) {
+  for (const file of files) {
+    if (routeConfig) {
+      return isValidFileSize(file, routeConfig)
+    } else {
+      return file.size < 1024 * 1024 * 1 // Number of MB
+    }
+  }
 }
 
 export function CustomUploadForm({ supplier, user }: { supplier: Supplier; user: UserWithDetail }) {
-  const [files, setFiles] = React.useState<FileState[]>([])
+  const [files, setFiles] = React.useState<FileWithMetadata[]>([])
+  const { routeConfig } = useUploadThing('tileUploader')
 
   const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
-    const filesWithPreview = acceptedFiles.map((file) => ({
+    if (!checkFileSizes(acceptedFiles, routeConfig)) {
+      alert('File size is too large')
+      return
+    }
+
+    const files = acceptedFiles.map((file) => ({
       file,
-      preview: URL.createObjectURL(file),
+      fileObjectUrl: URL.createObjectURL(file),
     }))
-    setFiles((prev) => [...prev, ...filesWithPreview])
+    setFiles(() => [...files])
   }, [])
 
-  const { routeConfig } = useUploadThing('tileUploader')
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: generateClientDropzoneAccept(generatePermittedFileTypes(routeConfig).fileTypes),
   })
 
   React.useEffect(() => {
-    return () => files.forEach((file) => URL.revokeObjectURL(file.preview))
+    return () => files.forEach((file) => URL.revokeObjectURL(file.fileObjectUrl))
   }, [files])
 
   return (
     <div className="space-y-6">
-      {files.length === 0 && <UploadDropzone getRootProps={getRootProps} getInputProps={getInputProps} routeConfig={routeConfig} />}
+      {files.length === 0 && <UploadDropzone getRootProps={getRootProps} getInputProps={getInputProps} />}
       {files.length > 0 && (
         <FilePreviewList
           files={files}
@@ -64,7 +79,7 @@ function FilePreviewList({
   user,
   onComplete,
 }: {
-  files: FileState[]
+  files: FileWithMetadata[]
   supplier: Supplier
   user: UserWithDetail
   onComplete: (fileIndex: number) => void
@@ -72,14 +87,14 @@ function FilePreviewList({
   return (
     <div className="grid grid-cols-1 gap-6">
       {files.map((file, index) => (
-        <FilePreview key={file.preview} file={file} supplier={supplier} user={user} onComplete={() => onComplete(index)} />
+        <FilePreview key={file.fileObjectUrl} file={file} supplier={supplier} user={user} onComplete={() => onComplete(index)} />
       ))}
     </div>
   )
 }
 
-function FilePreview({ file, supplier, user, onComplete }: { file: FileState; supplier: Supplier; user: UserWithDetail; onComplete: () => void }) {
-  const { startUpload } = useUploadThing('tileUploader', {
+function FilePreview({ file, supplier, user, onComplete }: { file: FileWithMetadata; supplier: Supplier; user: UserWithDetail; onComplete: () => void }) {
+  const { startUpload, isUploading } = useUploadThing('tileUploader', {
     onClientUploadComplete: () => {
       onComplete()
     },
@@ -98,7 +113,7 @@ function FilePreview({ file, supplier, user, onComplete }: { file: FileState; su
       createdByUserId: user.id,
       isPrivate: false,
     }
-
+    // Create tile in the database
     const res = await fetch('/api/tiles', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -114,8 +129,8 @@ function FilePreview({ file, supplier, user, onComplete }: { file: FileState; su
 
     const tile = (await res.json()) as TileRaw
 
-    // Then upload with tileId
-    await startUpload([file.file], { tileId: tile.id })
+    // Upload to UploadThing. onUploadComplete updates the tile with the imagePath
+    await startUpload([file.file], { createdByUserId: user.id, tileId: tile.id })
   }
 
   return (
@@ -123,7 +138,7 @@ function FilePreview({ file, supplier, user, onComplete }: { file: FileState; su
       <CardContent className="p-6 flex gap-6">
         <div className="w-1/3">
           <div className="aspect-square relative rounded-lg overflow-hidden">
-            <img src={file.preview} alt={file.file.name} className="object-cover w-full h-full" />
+            <img src={file.fileObjectUrl} alt={file.file.name} className="object-cover w-full h-full" />
           </div>
         </div>
 
@@ -161,16 +176,17 @@ function FilePreview({ file, supplier, user, onComplete }: { file: FileState; su
   )
 }
 
-function UploadDropzone({ getRootProps, getInputProps, routeConfig }: { getRootProps: any; getInputProps: any; routeConfig: any }) {
+function UploadDropzone({ getRootProps, getInputProps }: { getRootProps: any; getInputProps: any }) {
   return (
     <div
       {...getRootProps()}
       className="flex flex-col items-center justify-center gap-4 border-2 border-dashed rounded-lg p-12 min-h-[25svh] hover:bg-gray-50/50 cursor-pointer">
       <input {...getInputProps()} />
-      <Button variant="outline" size="lg">
-        Click to add images
-      </Button>
-      <p className="text-sm text-muted-foreground">Or drag and drop up to {routeConfig?.['image/jpeg']?.maxFileCount} images</p>
+      <div className="text-center">
+        <p className="">Drag and drop images here</p>
+        <p className="text-sm text-muted-foreground">Must be jpg/jpeg, and less than 1 MB</p>
+      </div>
+      <Button variant="outline">Choose images</Button>
     </div>
   )
 }
