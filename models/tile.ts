@@ -1,8 +1,10 @@
 import { db } from '@/db/db'
-import { InsertTileRaw, Tile, Supplier, supplierColumns, TileRaw, TileRawWithSuppliers, UserWithDetail, tileColumns } from './types'
+import { supplierColumns, tileColumns } from './types'
+import type * as types from './types'
 import * as schema from '@/db/schema'
 import { eq, and, inArray, isNotNull } from 'drizzle-orm'
 import { createBatchUpdateObject } from '@/utils/db-utils'
+
 const tileBaseQuery = db
   .select({
     ...tileColumns,
@@ -12,29 +14,29 @@ const tileBaseQuery = db
   .leftJoin(schema.tileSuppliers, eq(schema.tiles.id, schema.tileSuppliers.tileId))
   .leftJoin(schema.suppliers, eq(schema.tileSuppliers.supplierId, schema.suppliers.id))
 
-interface TileBaseQueryResult extends TileRaw {
-  supplier: Supplier | null
+interface TileBaseQueryResult extends types.TileRaw {
+  supplier: types.Supplier | null
 }
 
 export class TileModel {
-  private tile: Tile
+  private tile: types.Tile
 
-  constructor(tile: Tile) {
+  constructor(tile: types.Tile) {
     this.tile = tile
   }
 
-  static async getRawById(id: string): Promise<TileRaw | null> {
+  static async getRawById(id: string): Promise<types.TileRaw | null> {
     const tiles = await db.select().from(schema.tiles).where(eq(schema.tiles.id, id)).limit(1)
     return tiles.length ? tiles[0] : null
   }
 
-  static async getBySupplier(supplier: Supplier, user?: UserWithDetail): Promise<Tile[]> {
+  static async getBySupplier(supplier: types.Supplier, user?: types.UserWithDetail): Promise<types.Tile[]> {
     const result = await tileBaseQuery.where(
       and(eq(schema.tileSuppliers.supplierId, supplier.id), eq(schema.tiles.isPrivate, false), isNotNull(schema.tiles.imagePath))
     )
 
-    // Since we're filtering for non-null imagePath in the query, we can safely assert the type.
-    const tiles = aggregateTileQueryResults(result) as Tile[]
+    // Since we're filtering for non-null imagePath in the query, we can safely assert the types.
+    const tiles = aggregateTileQueryResults(result) as types.Tile[]
 
     // Get the user's saved status for each tile
     if (user) {
@@ -58,7 +60,7 @@ export class TileModel {
     return tiles
   }
 
-  static async createRaw(tileData: InsertTileRaw): Promise<TileRaw> {
+  static async createRaw(tileData: types.InsertTileRaw): Promise<types.TileRaw> {
     const tiles = await db.insert(schema.tiles).values(tileData).returning()
     return tiles[0]
   }
@@ -67,7 +69,7 @@ export class TileModel {
    * Create a tile and its relationships with suppliers
    * @requires tileSuppliers - List of suppliers to be related to this tile. Will not update the suppliers themselves.
    */
-  static async createRawWithSuppliers(tileData: InsertTileRaw, tileSuppliers: Supplier[]): Promise<TileRawWithSuppliers> {
+  static async createRawWithSuppliers(tileData: types.InsertTileRaw, tileSuppliers: types.Supplier[]): Promise<types.TileRawWithSuppliers> {
     const tiles = await db.insert(schema.tiles).values(tileData).returning()
     const tile = tiles[0]
 
@@ -91,7 +93,12 @@ export class TileModel {
     }
   }
 
-  static async updateAllRaw(tilesData: TileRaw[]): Promise<TileRaw[]> {
+  /**
+   * Update multiple rows in the tiles table
+   * @param tilesData - array. overwrites the existing tile data
+   * @returns The updated tiles
+   */
+  static async updateAllRaw(tilesData: types.TileRaw[]): Promise<types.TileRaw[]> {
     if (tilesData.length === 0) {
       return []
     }
@@ -119,12 +126,12 @@ export class TileModel {
    * @requires tileData.imagePath - The path to the tile image
    * @returns The updated tile
    */
-  static async update(tileData: TileRaw, tileSuppliers?: Supplier[]): Promise<Tile> {
+  static async update(tileData: types.TileRaw, tileSuppliers?: types.Supplier[]): Promise<types.Tile> {
     if (!tileData.imagePath) {
       throw new Error('imagePath is required')
     }
-    tileData.updatedAt = new Date()
-    const tiles = await db.update(schema.tiles).set(tileData).where(eq(schema.tiles.id, tileData.id)).returning()
+
+    const tiles = await db.update(schema.tiles).set(tileUpdateSafe(tileData)).where(eq(schema.tiles.id, tileData.id)).returning()
     const tile = tiles[0]
 
     if (tileSuppliers) {
@@ -167,9 +174,9 @@ export class TileModel {
   }
 }
 
-function aggregateTileQueryResults(result: TileBaseQueryResult[]): TileRawWithSuppliers[] {
-  // Create a map that we can iterate through, constructing a Tile for each tile
-  const tileMap = new Map<string, TileRawWithSuppliers>()
+function aggregateTileQueryResults(result: TileBaseQueryResult[]): types.TileRawWithSuppliers[] {
+  // Create a map that we can iterate through for each tile
+  const tileMap = new Map<string, types.TileRawWithSuppliers>()
 
   for (const row of result) {
     const key = row.id
@@ -188,4 +195,16 @@ function aggregateTileQueryResults(result: TileBaseQueryResult[]): TileRawWithSu
   }
 
   return Array.from(tileMap.values())
+}
+
+/**
+ * Removes fields that should not be updated from a TileRaw
+ * @returns A safe update object with the updatedAt field set to the current date
+ */
+function tileUpdateSafe(tile: types.TileRaw | types.Tile): types.SetTileRaw {
+  const { id, createdAt, createdByUserId, updatedAt, isPrivate, ...rest } = tile
+  return {
+    ...rest,
+    updatedAt: new Date(),
+  }
 }
