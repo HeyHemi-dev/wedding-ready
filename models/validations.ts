@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { Location } from '@/models/constants'
 export const tileUploaderInputSchema = z.object({
-  tileIds: z.array(z.string()),
+  tileId: z.string(),
 })
 
 const supplierSchema = z.object({
