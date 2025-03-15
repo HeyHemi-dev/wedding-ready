@@ -1,15 +1,13 @@
 import { NextResponse } from 'next/server'
 import { TileModel } from '@/models/tile'
 import { getCurrentUser } from '@/actions/get-current-user'
-import { Supplier, TileRaw, TileRawWithSuppliers } from '@/models/types'
+import * as types from '@/models/types'
 
-export interface tileNewRequestBody {
-  title: string
-  createdByUserId: string
-  suppliers: Supplier[]
+export interface tileNewRequestBody extends types.InsertTileRaw {
+  suppliers: types.Supplier[]
 }
 
-export type tileNewResponseBody = TileRawWithSuppliers
+export type tileNewResponseBody = types.TileRawWithSuppliers
 
 export async function POST(req: Request): Promise<NextResponse> {
   const body = (await req.json()) as tileNewRequestBody
@@ -18,19 +16,15 @@ export async function POST(req: Request): Promise<NextResponse> {
     return new NextResponse('Unauthorized', { status: 401 })
   }
 
-  const tile: tileNewResponseBody = await TileModel.createRawWithSuppliers(
-    {
-      createdByUserId: user.id,
-      title: body.title,
-    },
-    body.suppliers
-  )
-  console.log('tile created', tile)
+  const { suppliers, ...rest } = body
+
+  const tile: tileNewResponseBody = await TileModel.createRawWithSuppliers(rest, suppliers)
+
   return NextResponse.json(tile)
 }
 
 export interface tilesUpdateRequestBody {
-  tiles: TileRaw[]
+  tiles: types.TileRaw[]
 }
 
 export interface tilesUpdateResponseBody {
@@ -43,8 +37,8 @@ export async function PUT(req: Request): Promise<NextResponse> {
   if (!user) {
     return new NextResponse('Unauthorized', { status: 401 })
   }
-  console.log('tiles update request body', body.tiles)
+
   const tiles = await TileModel.updateAllRaw(body.tiles)
-  console.log('tiles updated', tiles)
+
   return NextResponse.json({ tileIds: tiles.map((tile) => tile.id) } as tilesUpdateResponseBody)
 }
