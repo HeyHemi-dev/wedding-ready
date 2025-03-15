@@ -60,16 +60,27 @@ export class TileModel {
     return tiles
   }
 
+  /**
+   * Create a placeholder tile
+   * @note Do not use this function to create a tile with an imagePath
+   */
   static async createRaw(tileData: types.InsertTileRaw): Promise<types.TileRaw> {
+    if (tileData.imagePath) {
+      throw new Error('imagePath must not be set')
+    }
     const tiles = await db.insert(schema.tiles).values(tileData).returning()
     return tiles[0]
   }
 
   /**
-   * Create a tile and its relationships with suppliers
+   * Create a placeholder tile and its relationships with suppliers
+   * @note Do not use this function to create a tile with an imagePath
    * @requires tileSuppliers - List of suppliers to be related to this tile. Will not update the suppliers themselves.
    */
   static async createRawWithSuppliers(tileData: types.InsertTileRaw, tileSuppliers: types.Supplier[]): Promise<types.TileRawWithSuppliers> {
+    if (tileData.imagePath) {
+      throw new Error('imagePath must not be set')
+    }
     const tiles = await db.insert(schema.tiles).values(tileData).returning()
     const tile = tiles[0]
 
@@ -88,7 +99,6 @@ export class TileModel {
 
     return {
       ...tile,
-
       suppliers: suppliers,
     }
   }
