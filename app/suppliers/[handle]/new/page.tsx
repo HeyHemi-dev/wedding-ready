@@ -2,8 +2,8 @@ import Section from '@/components/ui/section'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { redirect } from 'next/navigation'
 import { SupplierModel } from '@/models/supplier'
-import { CustomUploadForm } from './custom-upload-form'
-
+// import { CustomUploadForm } from './custom-upload-form'
+import { CustomUploadForm } from './form'
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const supplier = await SupplierModel.getByHandle(handle)
