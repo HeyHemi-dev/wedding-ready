@@ -3,6 +3,7 @@ import { ThemeSwitcher } from '@/components/theme-switcher'
 import { Geist } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import Link from 'next/link'
+import { Toaster } from '@/components/ui/sonner'
 import '@/public/styles/globals.css'
 
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
@@ -34,6 +35,7 @@ export default function RootLayout({
 
             <Footer />
           </div>
+          <Toaster />
         </Providers>
       </body>
     </html>
