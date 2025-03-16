@@ -3,7 +3,7 @@ import { UploadThingError } from 'uploadthing/server'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { TileModel } from '@/models/tile'
 import { tileUploaderInputSchema } from '@/models/validations'
-import { error } from 'console'
+
 const f = createUploadthing()
 
 export const uploadthingRouter = {
@@ -42,16 +42,16 @@ export const uploadthingRouter = {
     // Whatever is returned is sent to the clientside `onClientUploadComplete` callback
     .onUploadComplete(async ({ metadata, file }) => {
       try {
-        const tile = await TileModel.update({
+        await TileModel.update({
           ...metadata.tileRaw,
           imagePath: file.ufsUrl,
         })
+
+        return
       } catch (error) {
         console.error('Error updating tile', error)
         throw new UploadThingError('Error updating tile')
       }
-
-      return
     }),
 } satisfies FileRouter
 
