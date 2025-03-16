@@ -3,12 +3,12 @@ import { SupplierModel } from '@/models/supplier'
 import Section from '@/components/ui/section'
 import { Button } from '@/components/ui/button'
 import { redirect } from 'next/navigation'
-import { db } from '@/db/db'
-import { tiles as tilesTable, tileSuppliers as tileSuppliersTable } from '@/db/schema'
-import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { TileModel } from '@/models/tile'
+import { TileList, TileListSkeleton } from '@/components/tile-list'
+import { Suspense } from 'react'
+
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const supplier = await SupplierModel.getByHandle(handle)
@@ -42,13 +42,24 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
           ))}
         </div>
       </Section>
-      <Section>
-        {tiles.length > 0
-          ? tiles.map((tile) => <p key={tile.id}>{tile.title}</p>)
-          : noTiles({
+      <Section containerClassName="pt-0">
+        <Suspense fallback={<TileListSkeleton />}>
+          {tiles.length > 0 ? (
+            <>
+              <div className="flex justify-end">
+                <Link href={`/suppliers/${handle}/new`}>
+                  <Button variant={'default'}>Add More Tiles</Button>
+                </Link>
+              </div>
+              <TileList tiles={tiles} />
+            </>
+          ) : (
+            noTiles({
               message: `${supplier.name} has no tiles`,
               cta: { text: 'Add a tile', redirect: `/suppliers/${handle}/new`, show: isSupplierUser },
-            })}
+            })
+          )}
+        </Suspense>
       </Section>
     </>
   )
