@@ -22,14 +22,17 @@ export async function useCreateTile(tileData: types.InsertTileRaw, suppliers: ty
   return (await res.json()) as types.TileRaw
 }
 
-export function useUploadTile(signal?: AbortSignal) {
+export function useUploadTile(options: { signal?: AbortSignal; onUploadComplete?: () => void }) {
+  const [isUploadComplete, setIsUploadComplete] = React.useState(false)
   const [uploadProgress, setUploadProgress] = React.useState(0)
 
   const { startUpload, isUploading, routeConfig } = useUploadThing('tileUploader', {
     headers: {},
-    signal,
+    signal: options.signal,
     onClientUploadComplete: () => {
+      setIsUploadComplete(true)
       toast('Tile uploaded')
+      options.onUploadComplete?.()
     },
     onUploadError: () => {
       toast.error('Tile upload failed')
@@ -41,7 +44,9 @@ export function useUploadTile(signal?: AbortSignal) {
 
   return {
     startUpload,
+    routeConfig,
     isUploading,
     uploadProgress,
+    isUploadComplete,
   }
 }
