@@ -31,8 +31,8 @@ export function TileListSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {Array.from({ length: 6 }).map((_, index) => (
-        <div className="grid grid-rows-[auto_1fr] gap-2">
-          <Skeleton key={index} className="aspect-square rounded-lg" />
+        <div key={index} className="grid grid-rows-[auto_1fr] gap-2">
+          <Skeleton className="aspect-square rounded-lg" />
           <div className="flex flex-col gap-1">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-1/2" />
