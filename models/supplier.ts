@@ -35,35 +35,7 @@ interface SupplierBaseQueryResult extends Supplier {
   location: Location | null
 }
 
-function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): SupplierWithDetail[] {
-  // Create a map that we can iterate through, constructing a  SupplierWithDetail for each supplier
-  const supplierMap = new Map<string, SupplierWithDetail>()
-
-  for (const row of result) {
-    const supplierId = row.id
-    if (!supplierMap.has(supplierId)) {
-      supplierMap.set(supplierId, {
-        ...row,
-        services: [],
-        locations: [],
-      })
-    }
-
-    // We can assert the supplierId is in the map, because we just created it if it didn't already exist
-    const supplierWithDetail = supplierMap.get(supplierId)!
-
-    if (row.service && !supplierWithDetail.services.includes(row.service)) {
-      supplierWithDetail.services.push(row.service)
-    }
-    if (row.location && !supplierWithDetail.locations.includes(row.location)) {
-      supplierWithDetail.locations.push(row.location)
-    }
-  }
-
-  return Array.from(supplierMap.values())
-}
-
-class SupplierActions {
+export class SupplierModel {
   private supplier: Supplier
 
   constructor(supplier: Supplier) {
@@ -135,4 +107,30 @@ class SupplierActions {
   }
 }
 
-export default SupplierActions
+function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): SupplierWithDetail[] {
+  // Create a map that we can iterate through, constructing a  SupplierWithDetail for each supplier
+  const supplierMap = new Map<string, SupplierWithDetail>()
+
+  for (const row of result) {
+    const supplierId = row.id
+    if (!supplierMap.has(supplierId)) {
+      supplierMap.set(supplierId, {
+        ...row,
+        services: [],
+        locations: [],
+      })
+    }
+
+    // We can assert the supplierId is in the map, because we just created it if it didn't already exist
+    const supplierWithDetail = supplierMap.get(supplierId)!
+
+    if (row.service && !supplierWithDetail.services.includes(row.service)) {
+      supplierWithDetail.services.push(row.service)
+    }
+    if (row.location && !supplierWithDetail.locations.includes(row.location)) {
+      supplierWithDetail.locations.push(row.location)
+    }
+  }
+
+  return Array.from(supplierMap.values())
+}

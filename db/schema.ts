@@ -1,8 +1,7 @@
 import { Service, SupplierRole, Location } from '@/models/constants'
 import { enumToPgEnum } from '@/utils/enum-to-pgEnum'
-import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgSchema, pgEnum } from 'drizzle-orm/pg-core'
-
-const authSchema = pgSchema('auth')
+import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
+import { authUsers as users } from 'drizzle-orm/supabase'
 
 export const supplierRoles = pgEnum('supplier_roles', enumToPgEnum(SupplierRole))
 
@@ -10,11 +9,7 @@ export const services = pgEnum('services', enumToPgEnum(Service))
 
 export const locations = pgEnum('locations', enumToPgEnum(Location))
 
-const users = authSchema.table('users', {
-  id: uuid('id').primaryKey(),
-})
-
-// Maintain 1-1 relationship between users and auth users
+// Maintain 1-1 relationship between user_details and auth schemausers
 export const user_details = pgTable('user_details', {
   id: uuid('id')
     .primaryKey()
@@ -42,7 +37,7 @@ export const suppliers = pgTable('suppliers', {
 
 export const tiles = pgTable('tiles', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
-  imagePath: text('image_path').notNull().unique(),
+  imagePath: text('image_path').unique(),
   title: text('title').notNull(),
   description: text('description'),
   createdByUserId: uuid('created_by_user_id')
@@ -87,7 +82,7 @@ export const supplierServices = pgTable(
     supplierId: uuid('supplier_id')
       .notNull()
       .references(() => suppliers.id, { onDelete: 'cascade' }),
-    service: services('service'),
+    service: services('service').notNull(),
   },
   (table) => [primaryKey({ columns: [table.supplierId, table.service] })]
 )
@@ -98,7 +93,7 @@ export const supplierLocations = pgTable(
     supplierId: uuid('supplier_id')
       .notNull()
       .references(() => suppliers.id, { onDelete: 'cascade' }),
-    location: locations('location'),
+    location: locations('location').notNull(),
   },
   (table) => [primaryKey({ columns: [table.supplierId, table.location] })]
 )

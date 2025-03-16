@@ -40,8 +40,9 @@ export type StackTile = InferSelectModel<typeof schema.stackTiles>
 export type InsertStackTile = InferInsertModel<typeof schema.stackTiles>
 export const stackTileColumns = getTableColumns(schema.stackTiles)
 
-export type Tile = InferSelectModel<typeof schema.tiles>
-export type InsertTile = InferInsertModel<typeof schema.tiles>
+export type TileRaw = InferSelectModel<typeof schema.tiles>
+export type InsertTileRaw = InferInsertModel<typeof schema.tiles>
+export type SetTileRaw = Omit<InsertTileRaw, 'id' | 'createdAt' | 'createdByUserId' | 'isPrivate'>
 export const tileColumns = getTableColumns(schema.tiles)
 
 export type SavedTile = InferSelectModel<typeof schema.savedTiles>
@@ -84,6 +85,17 @@ export interface SupplierWithUsers extends SupplierWithDetail {
   users: SupplierUser[]
 }
 
-export interface TileSaved extends Tile {
-  isSaved: boolean
+export interface TileRawWithSuppliers extends TileRaw {
+  suppliers: Supplier[]
+}
+
+/**
+ * Tile extends tile table row with a required imagePath, its suppliers and optionally if the tile is saved by the current user.
+ * @requires imagePath - Since we allow a raw tile to be created before the image is uploaded, we require the imagePath to be set here to  ensure we have a valid tile object.
+ * @requires suppliers - List of suppliers that are associated with the tile.
+ */
+export interface Tile extends TileRaw {
+  imagePath: string
+  suppliers: Supplier[]
+  isSaved?: boolean
 }
