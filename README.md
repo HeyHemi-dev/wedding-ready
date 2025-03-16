@@ -4,11 +4,13 @@ WeddingReady is a platform that transforms wedding inspiration into real purchas
 
 ## Tech Stack
 
-- **Framework**: [Next.js 14](https://nextjs.org) with App Router
-- **Database**: [Supabase PostgreSQL](https://supabase.com) with [Drizzle ORM](https://orm.drizzle.team)
-- **Authentication**: Supabase Auth with SSR
-- **Storage**: Supabase Storage or [Uploadthing](https://uploadthing.com/dashboard/) - TBD
-- **Styling**: [Tailwind CSS](https://tailwindcss.com) with [shadcn/ui](https://ui.shadcn.com) components
+- **Meta Framework**: [Next.js 15](https://nextjs.org/docs) with App Router and [React 19](https://react.dev/reference/react)
+- **Client Side Fetching**: [Tanstack Query](https://tanstack.com/query/latest/docs/framework/react/overview)
+- **Forms**: [Tanstack Form](https://tanstack.com/form/latest/docs/overview) with [Zod](https://zod.dev/)
+- **Database**: [Supabase PostgreSQL](https://supabase.com/docs/guides/database/overview) with [Drizzle ORM](https://orm.drizzle.team/docs/rqb)
+- **Authentication**: [Supabase Auth](https://supabase.com/docs/guides/auth) with SSR
+- **Storage**: [Uploadthing](https://docs.uploadthing.com/)
+- **Styling**: [Tailwind CSS v3](https://v3.tailwindcss.com/) with [shadcn/ui](https://ui.shadcn.com/docs) components
 - **Language**: TypeScript throughout
 
 ## Project Structure
