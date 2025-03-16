@@ -6,7 +6,7 @@ CREATE TYPE "public"."services" AS ENUM('venue', 'accomodation', 'caterer', 'cak
 CREATE TYPE "public"."supplier_roles" AS ENUM('admin', 'standard');--> statement-breakpoint
 CREATE TABLE "tiles" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"image_path" text NOT NULL,
+	"image_path" text,
 	"title" text NOT NULL,
 	"description" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -105,6 +105,3 @@ ALTER TABLE "tile_suppliers" ADD CONSTRAINT "tile_suppliers_tile_id_tiles_id_fk"
 ALTER TABLE "supplier_users" ADD CONSTRAINT "supplier_users_supplier_id_suppliers_id_fk" FOREIGN KEY ("supplier_id") REFERENCES "public"."suppliers"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "supplier_users" ADD CONSTRAINT "supplier_users_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;
 */
-
--- This is a baseline migration, no changes needed
-SELECT 1;

@@ -1,1 +1,0 @@
-ALTER TABLE "tiles" ALTER COLUMN "image_path" DROP NOT NULL;

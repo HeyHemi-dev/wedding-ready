@@ -19,7 +19,7 @@
           "name": "image_path",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "title": {
           "name": "title",

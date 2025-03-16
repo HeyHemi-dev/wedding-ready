@@ -1,8 +1,7 @@
 import { Service, SupplierRole, Location } from '@/models/constants'
 import { enumToPgEnum } from '@/utils/enum-to-pgEnum'
-import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgSchema, pgEnum } from 'drizzle-orm/pg-core'
-
-const authSchema = pgSchema('auth')
+import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
+import { authUsers as users } from 'drizzle-orm/supabase'
 
 export const supplierRoles = pgEnum('supplier_roles', enumToPgEnum(SupplierRole))
 
@@ -10,11 +9,7 @@ export const services = pgEnum('services', enumToPgEnum(Service))
 
 export const locations = pgEnum('locations', enumToPgEnum(Location))
 
-const users = authSchema.table('users', {
-  id: uuid('id').primaryKey(),
-})
-
-// Maintain 1-1 relationship between users and auth users
+// Maintain 1-1 relationship between user_details and auth schemausers
 export const user_details = pgTable('user_details', {
   id: uuid('id')
     .primaryKey()
