@@ -17,18 +17,21 @@ export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: U
   const [files, setFiles] = React.useState<FileWithMetadata[]>([])
   const { routeConfig } = useUploadThing('tileUploader')
 
-  const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
-    if (!checkFileSizes(acceptedFiles, routeConfig)) {
-      alert('File size is too large')
-      return
-    }
+  const onDrop = React.useCallback(
+    async (acceptedFiles: File[]) => {
+      if (!checkFileSizes(acceptedFiles, routeConfig)) {
+        alert('File size is too large')
+        return
+      }
 
-    const files = acceptedFiles.map((file) => ({
-      file,
-      fileObjectUrl: URL.createObjectURL(file),
-    }))
-    setFiles(() => [...files])
-  }, [])
+      const files = acceptedFiles.map((file) => ({
+        file,
+        fileObjectUrl: URL.createObjectURL(file),
+      }))
+      setFiles(() => [...files])
+    },
+    [routeConfig]
+  )
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
@@ -40,7 +43,7 @@ export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: U
   }, [files])
 
   return (
-    <div className="space-y-6">
+    <>
       {files.length === 0 && <Dropzone getRootProps={getRootProps} getInputProps={getInputProps} />}
 
       {files.length > 0 && (
@@ -53,11 +56,17 @@ export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: U
           }}
         />
       )}
-    </div>
+    </>
   )
 }
 
-function Dropzone({ getRootProps, getInputProps }: { getRootProps: any; getInputProps: any }) {
+function Dropzone({
+  getRootProps,
+  getInputProps,
+}: {
+  getRootProps: ReturnType<typeof useDropzone>['getRootProps']
+  getInputProps: ReturnType<typeof useDropzone>['getInputProps']
+}) {
   return (
     <div
       {...getRootProps()}
