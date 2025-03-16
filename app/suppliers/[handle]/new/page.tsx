@@ -2,8 +2,10 @@ import Section from '@/components/ui/section'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { redirect } from 'next/navigation'
 import { SupplierModel } from '@/models/supplier'
-// import { CustomUploadForm } from './custom-upload-form'
-import { CustomUploadForm } from './form'
+import { UploadDropzone } from './upload-dropzone'
+import Link from 'next/link'
+import { ArrowLeftIcon } from 'lucide-react'
+
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const supplier = await SupplierModel.getByHandle(handle)
@@ -22,9 +24,13 @@ export default async function NewSupplierTilePage({ params }: { params: Promise<
 
   return (
     <Section>
-      <h1>Create new tiles for {supplier.name}</h1>
+      <Link href={`/suppliers/${handle}`} className="flex items-center gap-2 text-muted-foreground">
+        <ArrowLeftIcon size={16} />
+        Back to {supplier.name}
+      </Link>
+      <h1 className="text-2xl font-semibold">Create new tiles for {supplier.name}</h1>
 
-      <CustomUploadForm supplier={supplier} user={user} />
+      <UploadDropzone supplier={supplier} user={user} />
     </Section>
   )
 }
