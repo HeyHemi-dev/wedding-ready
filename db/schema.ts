@@ -1,5 +1,6 @@
 import { Service, SupplierRole, Location } from '@/models/constants'
 import { enumToPgEnum } from '@/utils/enum-to-pgEnum'
+import { getTableColumns } from 'drizzle-orm'
 import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
 import { authUsers as users } from 'drizzle-orm/supabase'
 
@@ -20,6 +21,7 @@ export const user_details = pgTable('user_details', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
+export const userDetailColumns = getTableColumns(user_details)
 
 export const suppliers = pgTable('suppliers', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
@@ -34,6 +36,7 @@ export const suppliers = pgTable('suppliers', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
+export const supplierColumns = getTableColumns(suppliers)
 
 export const tiles = pgTable('tiles', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
@@ -48,6 +51,7 @@ export const tiles = pgTable('tiles', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
+export const tileColumns = getTableColumns(tiles)
 
 export const stacks = pgTable('stacks', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
@@ -59,6 +63,7 @@ export const stacks = pgTable('stacks', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
+export const stackColumns = getTableColumns(stacks)
 
 export const supplierUsers = pgTable(
   'supplier_users',
@@ -75,6 +80,7 @@ export const supplierUsers = pgTable(
   },
   (table) => [primaryKey({ columns: [table.supplierId, table.userId] })]
 )
+export const supplierUserColumns = getTableColumns(supplierUsers)
 
 export const supplierServices = pgTable(
   'supplier_services',
@@ -86,6 +92,7 @@ export const supplierServices = pgTable(
   },
   (table) => [primaryKey({ columns: [table.supplierId, table.service] })]
 )
+export const supplierServiceColumns = getTableColumns(supplierServices)
 
 export const supplierLocations = pgTable(
   'supplier_locations',
@@ -97,6 +104,7 @@ export const supplierLocations = pgTable(
   },
   (table) => [primaryKey({ columns: [table.supplierId, table.location] })]
 )
+export const supplierLocationColumns = getTableColumns(supplierLocations)
 
 export const savedTiles = pgTable(
   'saved_tiles',
@@ -111,6 +119,7 @@ export const savedTiles = pgTable(
   },
   (table) => [primaryKey({ columns: [table.userId, table.tileId] })]
 )
+export const savedTileColumns = getTableColumns(savedTiles)
 
 export const tileSuppliers = pgTable(
   'tile_suppliers',
@@ -126,6 +135,7 @@ export const tileSuppliers = pgTable(
   },
   (table) => [primaryKey({ columns: [table.tileId, table.supplierId] })]
 )
+export const tileSupplierColumns = getTableColumns(tileSuppliers)
 
 export const stackTiles = pgTable(
   'stack_tiles',
@@ -139,3 +149,4 @@ export const stackTiles = pgTable(
   },
   (table) => [primaryKey({ columns: [table.stackId, table.tileId] })]
 )
+export const stackTileColumns = getTableColumns(stackTiles)

@@ -1,5 +1,4 @@
 import { db } from '@/db/db'
-import { supplierColumns, tileColumns } from './types'
 import type * as types from './types'
 import * as schema from '@/db/schema'
 import { eq, and, inArray, isNotNull } from 'drizzle-orm'
@@ -7,7 +6,7 @@ import { createBatchUpdateObject } from '@/utils/db-utils'
 
 const tileBaseQuery = db
   .select({
-    ...tileColumns,
+    ...schema.tileColumns,
     supplier: schema.suppliers,
   })
   .from(schema.tiles)
@@ -92,7 +91,7 @@ export class TileModel {
     )
 
     const suppliers = await db
-      .select({ ...supplierColumns })
+      .select({ ...schema.supplierColumns })
       .from(schema.suppliers)
       .innerJoin(schema.tileSuppliers, eq(schema.suppliers.id, schema.tileSuppliers.supplierId))
       .where(eq(schema.tileSuppliers.tileId, tile.id))
@@ -171,7 +170,7 @@ export class TileModel {
 
     // Get updated suppliers list
     const suppliers = await db
-      .select({ ...supplierColumns })
+      .select({ ...schema.supplierColumns })
       .from(schema.suppliers)
       .innerJoin(schema.tileSuppliers, eq(schema.suppliers.id, schema.tileSuppliers.supplierId))
       .where(eq(schema.tileSuppliers.tileId, tile.id))

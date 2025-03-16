@@ -1,6 +1,7 @@
 import { db } from '@/db/db'
 import {
   suppliers as suppliersTable,
+  supplierColumns,
   supplierUsers as supplierUsersTable,
   supplierLocations as supplierLocationsTable,
   supplierServices as supplierServicesTable,
@@ -11,7 +12,6 @@ import {
   Supplier,
   SupplierWithDetail,
   SupplierWithUsers,
-  supplierColumns,
   User,
   UserWithDetail,
   InsertSupplierService,

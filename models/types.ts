@@ -1,4 +1,4 @@
-import { InferSelectModel, InferInsertModel, getTableColumns } from 'drizzle-orm'
+import { InferSelectModel, InferInsertModel } from 'drizzle-orm'
 import * as schema from '@/db/schema'
 import { Service, Location } from '@/models/constants'
 import { User as AuthUser } from '@supabase/supabase-js'
@@ -18,40 +18,31 @@ export type InsertUserDetail = InferInsertModel<typeof schema.user_details>
 
 export type Supplier = InferSelectModel<typeof schema.suppliers>
 export type InsertSupplier = InferInsertModel<typeof schema.suppliers>
-export const supplierColumns = getTableColumns(schema.suppliers)
 
 export type SupplierLocation = InferSelectModel<typeof schema.supplierLocations>
 export type InsertSupplierLocation = InferInsertModel<typeof schema.supplierLocations>
-export const supplierLocationColumns = getTableColumns(schema.supplierLocations)
 
 export type SupplierService = InferSelectModel<typeof schema.supplierServices>
 export type InsertSupplierService = InferInsertModel<typeof schema.supplierServices>
-export const supplierServiceColumns = getTableColumns(schema.supplierServices)
 
 export type SupplierUser = InferSelectModel<typeof schema.supplierUsers>
 export type InsertSupplierUser = InferInsertModel<typeof schema.supplierUsers>
-export const supplierUserColumns = getTableColumns(schema.supplierUsers)
 
 export type Stack = InferSelectModel<typeof schema.stacks>
 export type InsertStack = InferInsertModel<typeof schema.stacks>
-export const stackColumns = getTableColumns(schema.stacks)
 
 export type StackTile = InferSelectModel<typeof schema.stackTiles>
 export type InsertStackTile = InferInsertModel<typeof schema.stackTiles>
-export const stackTileColumns = getTableColumns(schema.stackTiles)
 
 export type TileRaw = InferSelectModel<typeof schema.tiles>
 export type InsertTileRaw = InferInsertModel<typeof schema.tiles>
 export type SetTileRaw = Omit<InsertTileRaw, 'id' | 'createdAt' | 'createdByUserId' | 'isPrivate'>
-export const tileColumns = getTableColumns(schema.tiles)
 
 export type SavedTile = InferSelectModel<typeof schema.savedTiles>
 export type InsertSavedTile = InferInsertModel<typeof schema.savedTiles>
-export const savedTileColumns = getTableColumns(schema.savedTiles)
 
 export type TileSupplier = InferSelectModel<typeof schema.tileSuppliers>
 export type InsertTileSupplier = InferInsertModel<typeof schema.tileSuppliers>
-export const tileSupplierColumns = getTableColumns(schema.tileSuppliers)
 
 /**
  * UserWithDetail extends Supabase Auth user with user_details fields.
