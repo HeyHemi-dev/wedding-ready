@@ -1,17 +1,17 @@
 import { db } from '@/db/db'
 import { user_details as userDetailsTable } from '@/db/schema'
 import { eq } from 'drizzle-orm'
-import { InsertUserDetail, UserDetail } from '@/models/types'
+import { InsertUserDetailRaw, UserDetailRaw } from '@/models/types'
 
 class UserDetailActions {
-  private userDetail: UserDetail
+  private userDetail: UserDetailRaw
 
-  constructor(userDetail: UserDetail) {
+  constructor(userDetail: UserDetailRaw) {
     this.userDetail = userDetail
   }
 
   // Class method example
-  static async getById(id: string): Promise<UserDetail | null> {
+  static async getById(id: string): Promise<UserDetailRaw | null> {
     const userDetails = await db.select().from(userDetailsTable).where(eq(userDetailsTable.id, id)).limit(1)
 
     return userDetails.length ? userDetails[0] : null
@@ -28,13 +28,13 @@ class UserDetailActions {
    * await UserDetailActions.create({ id: data.user.id })
    * ```
    */
-  static async create(insertUserData: InsertUserDetail): Promise<UserDetail> {
+  static async create(insertUserData: InsertUserDetailRaw): Promise<UserDetailRaw> {
     const userDetails = await db.insert(userDetailsTable).values(insertUserData).returning()
     return userDetails[0]
   }
 
   // Instance method example
-  async update(insertUserData: InsertUserDetail): Promise<UserDetail> {
+  async update(insertUserData: InsertUserDetailRaw): Promise<UserDetailRaw> {
     const userDetails = await db.update(userDetailsTable).set(insertUserData).where(eq(userDetailsTable.id, this.userDetail.id)).returning()
 
     this.userDetail = userDetails[0]

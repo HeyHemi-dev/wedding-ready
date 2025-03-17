@@ -4,7 +4,7 @@ import * as React from 'react'
 import { generateClientDropzoneAccept, generatePermittedFileTypes, isValidFileSize } from 'uploadthing/client'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 import { Button } from '@/components/ui/button'
-import { Supplier, UserWithDetail } from '@/models/types'
+import { SupplierRaw, User } from '@/models/types'
 import { ExpandedRouteConfig } from 'uploadthing/types'
 import { UploadPreviewList } from './upload-preview'
 
@@ -13,7 +13,7 @@ export type FileWithMetadata = {
   fileObjectUrl: string
 }
 
-export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: UserWithDetail }) {
+export function UploadDropzone({ supplier, user }: { supplier: SupplierRaw; user: User }) {
   const [files, setFiles] = React.useState<FileWithMetadata[]>([])
   const { routeConfig } = useUploadThing('tileUploader')
 

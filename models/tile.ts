@@ -1,7 +1,7 @@
 import { db } from '@/db/db'
 import type * as types from './types'
 import * as schema from '@/db/schema'
-import { eq, and, inArray, isNotNull } from 'drizzle-orm'
+import { eq, and, inArray, isNotNull, desc } from 'drizzle-orm'
 import { createBatchUpdateObject } from '@/utils/db-utils'
 
 const tileBaseQuery = db
@@ -14,7 +14,7 @@ const tileBaseQuery = db
   .leftJoin(schema.suppliers, eq(schema.tileSuppliers.supplierId, schema.suppliers.id))
 
 interface TileBaseQueryResult extends types.TileRaw {
-  supplier: types.Supplier | null
+  supplier: types.SupplierRaw | null
 }
 
 export class TileModel {
@@ -25,14 +25,14 @@ export class TileModel {
   }
 
   static async getRawById(id: string): Promise<types.TileRaw | null> {
-    const tiles = await db.select().from(schema.tiles).where(eq(schema.tiles.id, id)).limit(1)
-    return tiles.length ? tiles[0] : null
+    const tilesRaw = await db.select().from(schema.tiles).where(eq(schema.tiles.id, id)).limit(1)
+    return tilesRaw.length ? tilesRaw[0] : null
   }
 
-  static async getBySupplier(supplier: types.Supplier, user?: types.UserWithDetail): Promise<types.Tile[]> {
-    const result = await tileBaseQuery.where(
-      and(eq(schema.tileSuppliers.supplierId, supplier.id), eq(schema.tiles.isPrivate, false), isNotNull(schema.tiles.imagePath))
-    )
+  static async getBySupplier(supplier: types.SupplierRaw | types.Supplier, user?: types.User): Promise<types.Tile[]> {
+    const result = await tileBaseQuery
+      .where(and(eq(schema.tileSuppliers.supplierId, supplier.id), eq(schema.tiles.isPrivate, false), isNotNull(schema.tiles.imagePath)))
+      .orderBy(desc(schema.tiles.createdAt))
 
     // Since we're filtering for non-null imagePath in the query, we can safely assert the types.
     const tiles = aggregateTileQueryResults(result) as types.Tile[]
@@ -63,12 +63,12 @@ export class TileModel {
    * Create a placeholder tile
    * @note Do not use this function to create a tile with an imagePath
    */
-  static async createRaw(tileData: types.InsertTileRaw): Promise<types.TileRaw> {
-    if (tileData.imagePath) {
+  static async createRaw(tileRawData: types.InsertTileRaw): Promise<types.TileRaw> {
+    if (tileRawData.imagePath) {
       throw new Error('imagePath must not be set')
     }
-    const tiles = await db.insert(schema.tiles).values(tileData).returning()
-    return tiles[0]
+    const tilesRaw = await db.insert(schema.tiles).values(tileRawData).returning()
+    return tilesRaw[0]
   }
 
   /**
@@ -76,16 +76,16 @@ export class TileModel {
    * @note Do not use this function to create a tile with an imagePath
    * @requires tileSuppliers - List of suppliers to be related to this tile. Will not update the suppliers themselves.
    */
-  static async createRawWithSuppliers(tileData: types.InsertTileRaw, tileSuppliers: types.Supplier[]): Promise<types.TileRawWithSuppliers> {
-    if (tileData.imagePath) {
+  static async createRawWithSuppliers(tileRawData: types.InsertTileRaw, suppliersRaw: types.SupplierRaw[]): Promise<types.TileRawWithSuppliers> {
+    if (tileRawData.imagePath) {
       throw new Error('imagePath must not be set')
     }
-    const tiles = await db.insert(schema.tiles).values(tileData).returning()
-    const tile = tiles[0]
+    const tilesRaw = await db.insert(schema.tiles).values(tileRawData).returning()
+    const tileRaw = tilesRaw[0]
 
     await db.insert(schema.tileSuppliers).values(
-      tileSuppliers.map((supplier) => ({
-        tileId: tile.id,
+      suppliersRaw.map((supplier) => ({
+        tileId: tileRaw.id,
         supplierId: supplier.id,
       }))
     )
@@ -94,25 +94,25 @@ export class TileModel {
       .select({ ...schema.supplierColumns })
       .from(schema.suppliers)
       .innerJoin(schema.tileSuppliers, eq(schema.suppliers.id, schema.tileSuppliers.supplierId))
-      .where(eq(schema.tileSuppliers.tileId, tile.id))
+      .where(eq(schema.tileSuppliers.tileId, tileRaw.id))
 
     return {
-      ...tile,
-      suppliers: suppliers,
+      ...tileRaw,
+      suppliers,
     }
   }
 
   /**
    * Update multiple rows in the tiles table
-   * @param tilesData - array. overwrites the existing tile data
+   * @param tilesRawData - array. overwrites the existing tile data
    * @returns The updated tiles
    */
-  static async updateAllRaw(tilesData: types.TileRaw[]): Promise<types.TileRaw[]> {
-    if (tilesData.length === 0) {
+  static async updateAllRaw(tilesRawData: types.TileRaw[]): Promise<types.TileRaw[]> {
+    if (tilesRawData.length === 0) {
       return []
     }
 
-    const updateObj = createBatchUpdateObject(tilesData, 'id', schema.tiles)
+    const updateObj = createBatchUpdateObject(tilesRawData, 'id', schema.tiles)
 
     const tiles = await db
       .update(schema.tiles)
@@ -120,7 +120,7 @@ export class TileModel {
       .where(
         inArray(
           schema.tiles.id,
-          tilesData.map((tile) => tile.id)
+          tilesRawData.map((tile) => tile.id)
         )
       )
       .returning()
@@ -130,38 +130,38 @@ export class TileModel {
 
   /**
    * Update a tile and its relationships with suppliers
-   * @param tileData - overwrites the existing tile data
-   * @param tileSuppliers - optional. If passed it will overwrite the existing tileSupplier relationships. Will not update the suppliers themselves.
-   * @requires tileData.imagePath - The path to the tile image
+   * @param tileRawData - overwrites the existing tile data
+   * @param suppliersRaw - optional. If passed it will overwrite the existing tileSupplier relationships. Will not update the suppliers themselves.
+   * @requires tileRawData.imagePath - The path to the tile image
    * @returns The updated tile
    */
-  static async update(tileData: types.TileRaw, tileSuppliers?: types.Supplier[]): Promise<types.Tile> {
-    if (!tileData.imagePath) {
+  static async update(tileRawData: types.TileRaw, suppliersRaw?: types.SupplierRaw[]): Promise<types.Tile> {
+    if (!tileRawData.imagePath) {
       throw new Error('imagePath is required')
     }
 
-    const tiles = await db.update(schema.tiles).set(tileUpdateSafe(tileData)).where(eq(schema.tiles.id, tileData.id)).returning()
-    const tile = tiles[0]
+    const tilesRaw = await db.update(schema.tiles).set(tileUpdateSafe(tileRawData)).where(eq(schema.tiles.id, tileRawData.id)).returning()
+    const tileRaw = tilesRaw[0]
 
-    if (tileSuppliers) {
+    if (suppliersRaw) {
       // Get status of existing tileSupplier relationships
-      const existingTileSuppliers = await db.select().from(schema.tileSuppliers).where(eq(schema.tileSuppliers.tileId, tile.id))
-      const supplierIdsToKeep = tileSuppliers.map((s) => s.id)
+      const existingTileSuppliers = await db.select().from(schema.tileSuppliers).where(eq(schema.tileSuppliers.tileId, tileRaw.id))
+      const supplierIdsToKeep = suppliersRaw.map((s) => s.id)
       const supplierIdsToRemove = existingTileSuppliers.filter((ts) => !supplierIdsToKeep.includes(ts.supplierId)).map((ts) => ts.supplierId)
-      const supplierIdsToAdd = tileSuppliers.filter((s) => !existingTileSuppliers.some((ts) => ts.supplierId === s.id)).map((s) => s.id)
+      const supplierIdsToAdd = suppliersRaw.filter((s) => !existingTileSuppliers.some((ts) => ts.supplierId === s.id)).map((s) => s.id)
 
       // Remove old relationships
       if (supplierIdsToRemove.length > 0) {
         await db
           .delete(schema.tileSuppliers)
-          .where(and(eq(schema.tileSuppliers.tileId, tile.id), inArray(schema.tileSuppliers.supplierId, supplierIdsToRemove)))
+          .where(and(eq(schema.tileSuppliers.tileId, tileRaw.id), inArray(schema.tileSuppliers.supplierId, supplierIdsToRemove)))
       }
 
       // Add new relationships
       if (supplierIdsToAdd.length > 0) {
         await db.insert(schema.tileSuppliers).values(
           supplierIdsToAdd.map((supplierId) => ({
-            tileId: tile.id,
+            tileId: tileRaw.id,
             supplierId: supplierId,
           }))
         )
@@ -169,16 +169,16 @@ export class TileModel {
     }
 
     // Get updated suppliers list
-    const suppliers = await db
+    const updatedSuppliers = await db
       .select({ ...schema.supplierColumns })
       .from(schema.suppliers)
       .innerJoin(schema.tileSuppliers, eq(schema.suppliers.id, schema.tileSuppliers.supplierId))
-      .where(eq(schema.tileSuppliers.tileId, tile.id))
+      .where(eq(schema.tileSuppliers.tileId, tileRaw.id))
 
     return {
-      ...tile,
-      imagePath: tile.imagePath!, // We can assert that imagePath exists because we already threw an error if it was missing.
-      suppliers: suppliers,
+      ...tileRaw,
+      imagePath: tileRaw.imagePath!, // We can assert that imagePath exists because we already threw an error if it was missing.
+      suppliers: updatedSuppliers,
     }
   }
 }

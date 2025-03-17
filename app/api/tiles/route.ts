@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/actions/get-current-user'
 import * as types from '@/models/types'
 
 export interface tileNewRequestBody extends types.InsertTileRaw {
-  suppliers: types.Supplier[]
+  suppliers: types.SupplierRaw[]
 }
 
 export type tileNewResponseBody = types.TileRawWithSuppliers

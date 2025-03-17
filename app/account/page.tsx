@@ -2,7 +2,7 @@ import UserDetailActions from '@/models/user-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { getCurrentUser } from '@/actions/get-current-user'
-import { InsertUserDetail } from '@/models/types'
+import { InsertUserDetailRaw } from '@/models/types'
 import { InfoIcon } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -53,14 +53,14 @@ async function handleUpdateUserDetail(formData: FormData) {
     throw new Error('Handle is already taken')
   }
 
-  const insertUserDetail: InsertUserDetail = {
+  const insertUserDetailRaw: InsertUserDetailRaw = {
     id: user.extended.id,
     handle: handle ?? user.extended.handle,
     avatarUrl: avatarUrl ?? user.extended.avatarUrl,
     updatedAt: new Date(),
   }
 
-  await new UserDetailActions(user.extended).update(insertUserDetail)
+  await new UserDetailActions(user.extended).update(insertUserDetailRaw)
 
   revalidatePath('/account')
 }
