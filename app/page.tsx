@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
 import Link from 'next/link'
-import HeroSectionTitle from './hero-text-carousel'
 import { ChevronDown } from 'lucide-react'
 import HeroTextCarousel from './hero-text-carousel'
 
