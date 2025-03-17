@@ -10,9 +10,10 @@ Consider the audiences; reviewers, future developers, product managers, etc.
 
 ## Checklist
 <!-- Mark completed items with 'x' -->
+- [ ] Code has been linted/formatted
+- [ ] Database migrations have been run
 - [ ] Documentation has been updated (if applicable)
 - [ ] Tests have been added/updated (if applicable)
-- [ ] Code has been linted/formatted
 - [ ] All tests are passing
 
 

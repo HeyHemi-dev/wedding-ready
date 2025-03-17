@@ -41,8 +41,8 @@ export function useCreateTile(options: { signal?: AbortSignal; onUploadComplete?
   }: {
     files: File[]
     tileData: types.InsertTileRaw
-    suppliers: types.Supplier[]
-    user: types.UserWithDetail
+    suppliers: types.SupplierRaw[]
+    user: types.User
   }): Promise<void> {
     setStatus('creating')
 

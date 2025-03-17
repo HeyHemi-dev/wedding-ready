@@ -4,7 +4,7 @@ import Section from '@/components/ui/section'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { redirect } from 'next/navigation'
 import { SupplierModel } from '@/models/supplier'
-import { InsertSupplier } from '@/models/types'
+import { InsertSupplierRaw } from '@/models/types'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Location, Service } from '@/models/constants'
@@ -90,7 +90,7 @@ async function handleRegisterSupplier(formData: FormData) {
     throw new Error('Unauthorized')
   }
 
-  const insertSupplierData: InsertSupplier = {
+  const insertSupplierData: InsertSupplierRaw = {
     name,
     handle,
     description: description ?? null,

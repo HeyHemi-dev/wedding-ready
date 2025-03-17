@@ -1,6 +1,6 @@
 import Section from '@/components/ui/section'
 import { SupplierModel } from '@/models/supplier'
-import { SupplierWithDetail } from '@/models/types'
+import { Supplier } from '@/models/types'
 import Link from 'next/link'
 
 export default async function SuppliersPage() {
@@ -18,7 +18,7 @@ export default async function SuppliersPage() {
   )
 }
 
-function SupplierCard({ supplier }: { supplier: SupplierWithDetail }) {
+function SupplierCard({ supplier }: { supplier: Supplier }) {
   return (
     <div className="border border-border rounded-lg p-4">
       <h2 className="text-lg font-bold">{supplier.name}</h2>

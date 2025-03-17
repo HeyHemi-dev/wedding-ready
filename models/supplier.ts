@@ -1,21 +1,21 @@
 import { db } from '@/db/db'
 import {
   suppliers as suppliersTable,
+  supplierColumns,
   supplierUsers as supplierUsersTable,
   supplierLocations as supplierLocationsTable,
   supplierServices as supplierServicesTable,
 } from '@/db/schema'
 import {
-  InsertSupplier,
-  InsertSupplierUser,
+  InsertSupplierRaw,
+  InsertSupplierUserRaw,
+  SupplierRaw,
   Supplier,
-  SupplierWithDetail,
   SupplierWithUsers,
-  supplierColumns,
+  AuthUser,
   User,
-  UserWithDetail,
-  InsertSupplierService,
-  InsertSupplierLocation,
+  InsertSupplierServiceRaw,
+  InsertSupplierLocationRaw,
 } from '@/models/types'
 import { Service, SupplierRole, Location } from '@/models/constants'
 import { and, eq } from 'drizzle-orm'
@@ -30,7 +30,7 @@ const supplierBaseQuery = db
   .leftJoin(supplierServicesTable, eq(suppliersTable.id, supplierServicesTable.supplierId))
   .leftJoin(supplierLocationsTable, eq(suppliersTable.id, supplierLocationsTable.supplierId))
 
-interface SupplierBaseQueryResult extends Supplier {
+interface SupplierBaseQueryResult extends SupplierRaw {
   service: Service | null
   location: Location | null
 }
@@ -38,11 +38,15 @@ interface SupplierBaseQueryResult extends Supplier {
 export class SupplierModel {
   private supplier: Supplier
 
-  constructor(supplier: Supplier) {
-    this.supplier = supplier
+  constructor(supplierRaw: SupplierRaw, services: Service[], locations: Location[]) {
+    this.supplier = {
+      ...supplierRaw,
+      services,
+      locations,
+    }
   }
 
-  static async getAll(service?: Service, location?: Location): Promise<SupplierWithDetail[]> {
+  static async getAll(service?: Service, location?: Location): Promise<Supplier[]> {
     const conditions = []
 
     if (service) conditions.push(eq(supplierServicesTable.service, service))
@@ -72,25 +76,25 @@ export class SupplierModel {
     }
   }
 
-  static async create(user: User | UserWithDetail, insertSupplierData: InsertSupplier, services: Service[], locations: Location[]): Promise<SupplierWithUsers> {
+  static async create(user: AuthUser | User, insertSupplierData: InsertSupplierRaw, services: Service[], locations: Location[]): Promise<SupplierWithUsers> {
     const suppliers = await db.insert(suppliersTable).values(insertSupplierData).returning()
     const supplier = suppliers[0]
 
     // The user who creates the supplier is automatically an admin
-    const insertSupplierUserData: InsertSupplierUser = {
+    const insertSupplierUserData: InsertSupplierUserRaw = {
       supplierId: supplier.id,
       userId: user.id,
       role: SupplierRole.ADMIN,
     }
     const supplierUsers = await db.insert(supplierUsersTable).values(insertSupplierUserData).returning()
 
-    const insertSupplierServiceData: InsertSupplierService[] = services.map((service) => ({
+    const insertSupplierServiceData: InsertSupplierServiceRaw[] = services.map((service) => ({
       supplierId: supplier.id,
       service,
     }))
     const supplierServices = await db.insert(supplierServicesTable).values(insertSupplierServiceData).returning()
 
-    const insertSupplierLocationData: InsertSupplierLocation[] = locations.map((location) => ({
+    const insertSupplierLocationData: InsertSupplierLocationRaw[] = locations.map((location) => ({
       supplierId: supplier.id,
       location,
     }))
@@ -107,9 +111,9 @@ export class SupplierModel {
   }
 }
 
-function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): SupplierWithDetail[] {
-  // Create a map that we can iterate through, constructing a  SupplierWithDetail for each supplier
-  const supplierMap = new Map<string, SupplierWithDetail>()
+function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): Supplier[] {
+  // Create a map that we can iterate through, constructing a  Supplier for each supplier
+  const supplierMap = new Map<string, Supplier>()
 
   for (const row of result) {
     const supplierId = row.id

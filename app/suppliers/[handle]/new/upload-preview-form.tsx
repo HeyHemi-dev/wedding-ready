@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { InsertTileRaw, Supplier, UserWithDetail } from '@/models/types'
+import { InsertTileRaw, SupplierRaw, User } from '@/models/types'
 import { Location } from '@/models/constants'
 import { enumToPretty } from '@/utils/enum-to-pretty'
 import { SubmitButton } from '@/components/submit-button'
@@ -21,8 +21,8 @@ export function UploadPreviewForm({
   onCompleteAction,
 }: {
   file: FileWithMetadata
-  supplier: Supplier
-  user: UserWithDetail
+  supplier: SupplierRaw
+  user: User
   onCompleteAction: () => void
 }) {
   const { startCreateTile, status, uploadProgress } = useCreateTile({ onUploadComplete: onCompleteAction })
