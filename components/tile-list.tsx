@@ -1,5 +1,6 @@
 import { Tile } from '@/models/types'
 import { Skeleton } from '@/components/ui/skeleton'
+import Link from 'next/link'
 
 export function TileList({ tiles }: { tiles: Tile[] }) {
   return (
@@ -16,9 +17,9 @@ export function TileList({ tiles }: { tiles: Tile[] }) {
 export function TileListItem({ tile }: { tile: Tile }) {
   return (
     <div className="grid grid-rows-[auto_1fr] gap-2">
-      <div className="aspect-[2/3] bg-muted rounded-lg overflow-hidden">
+      <Link href={`/t/${tile.id}`} className="aspect-[2/3] bg-muted rounded-lg overflow-hidden">
         <img src={tile.imagePath} alt={tile.title} className="h-full w-full object-contain" />
-      </div>
+      </Link>
       <div className="flex flex-col gap-1">
         <p className="text-sm font-semibold">{tile.title}</p>
         {tile.description && <p className="text-xs text-muted-foreground">{tile.description}</p>}
