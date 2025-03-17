@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react'
 
+const CAROUSEL_TEXTS = ['bridal fit', 'outdoor venue', 'bespoke stationery', 'seasonal florals', 'table setting hire']
+
 export default function HeroTextCarousel({ className }: { className?: string }) {
-  const texts = ['bridal fit', 'outdoor venue', 'bespoke stationery', 'seasonal florals', 'table setting hire']
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % texts.length)
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % CAROUSEL_TEXTS.length)
     }, 5000)
 
     return () => clearInterval(interval)
@@ -18,7 +19,7 @@ export default function HeroTextCarousel({ className }: { className?: string }) 
     <>
       <h1 className={className}>
         <span className="block">Find your local</span>
-        <span className="block">{texts[currentIndex]}</span>
+        <span className="block">{CAROUSEL_TEXTS[currentIndex]}</span>
       </h1>
     </>
   )
