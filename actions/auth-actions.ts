@@ -4,7 +4,7 @@ import { encodedRedirect } from '@/utils/utils'
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import UserDetailActions from '@/models/user-actions'
+import { UserDetailModel } from '@/models/user'
 import { isProtectedPath } from '@/utils/auth'
 
 export const signUpAction = async (formData: FormData) => {
@@ -35,7 +35,7 @@ export const signUpAction = async (formData: FormData) => {
   // Create userDetail record if auth signup succeeded
   if (data.user) {
     try {
-      await UserDetailActions.create({ id: data.user.id, handle })
+      await UserDetailModel.create({ id: data.user.id, handle })
     } catch (error) {
       console.error('Failed to create user details:', error)
       // Delete the auth user since we couldn't create their profile

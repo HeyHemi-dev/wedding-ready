@@ -3,7 +3,7 @@ import { user_details as userDetailsTable } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { InsertUserDetailRaw, UserDetailRaw } from '@/models/types'
 
-class UserDetailActions {
+export class UserDetailModel {
   private userDetailRaw: UserDetailRaw
 
   constructor(userDetailRaw: UserDetailRaw) {
@@ -53,5 +53,3 @@ class UserDetailActions {
     return userDetails.length === 0
   }
 }
-
-export default UserDetailActions

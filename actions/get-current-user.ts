@@ -1,8 +1,8 @@
 'use server'
 
-import UserDetailActions from '@/models/user-actions'
+import { UserDetailModel } from '@/models/user'
 import { createClient } from '@/utils/supabase/server'
-import { AuthUser, User, makeUserWithDetail } from '@/models/types'
+import { User, makeUserWithDetail } from '@/models/types'
 
 /**
  * A server-side function that retrieves the current authenticated user and their extended user details.
@@ -40,7 +40,7 @@ export async function getCurrentUser(): Promise<User | null> {
 
   if (!user) return null
 
-  const userDetail = await UserDetailActions.getById(user.id)
+  const userDetail = await UserDetailModel.getById(user.id)
 
   if (!userDetail) throw new Error(`User details missing for user: ${user.id}`)
 
