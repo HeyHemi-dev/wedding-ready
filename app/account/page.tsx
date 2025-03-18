@@ -1,4 +1,4 @@
-import UserDetailActions from '@/models/user-actions'
+import { UserDetailModel } from '@/models/user'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { getCurrentUser } from '@/actions/get-current-user'
@@ -49,7 +49,7 @@ async function handleUpdateUserDetail(formData: FormData) {
     throw new Error('Unauthorized')
   }
 
-  if (!handle || !(await UserDetailActions.isHandleAvailable(handle))) {
+  if (!handle || !(await UserDetailModel.isHandleAvailable(handle))) {
     throw new Error('Handle is already taken')
   }
 
@@ -60,7 +60,7 @@ async function handleUpdateUserDetail(formData: FormData) {
     updatedAt: new Date(),
   }
 
-  await new UserDetailActions(user.extended).update(insertUserDetailRaw)
+  await new UserDetailModel(user.extended).update(insertUserDetailRaw)
 
   revalidatePath('/account')
 }
