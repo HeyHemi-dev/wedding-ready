@@ -1,5 +1,5 @@
 import { db } from '@/db/db'
-import { user_details as userDetailsTable } from '@/db/schema'
+import * as schema from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { InsertUserDetailRaw, UserDetailRaw } from '@/models/types'
 
@@ -12,7 +12,7 @@ export class UserDetailModel {
 
   // Class method example
   static async getById(id: string): Promise<UserDetailRaw | null> {
-    const userDetails = await db.select().from(userDetailsTable).where(eq(userDetailsTable.id, id)).limit(1)
+    const userDetails = await db.select().from(schema.user_details).where(eq(schema.user_details.id, id)).limit(1)
 
     return userDetails.length ? userDetails[0] : null
   }
@@ -29,13 +29,13 @@ export class UserDetailModel {
    * ```
    */
   static async create(userDetailRawData: InsertUserDetailRaw): Promise<UserDetailRaw> {
-    const userDetailsRaw = await db.insert(userDetailsTable).values(userDetailRawData).returning()
+    const userDetailsRaw = await db.insert(schema.user_details).values(userDetailRawData).returning()
     return userDetailsRaw[0]
   }
 
   // Instance method example
   async update(userDetailRawData: InsertUserDetailRaw): Promise<UserDetailRaw> {
-    const userDetailsRaw = await db.update(userDetailsTable).set(userDetailRawData).where(eq(userDetailsTable.id, this.userDetailRaw.id)).returning()
+    const userDetailsRaw = await db.update(schema.user_details).set(userDetailRawData).where(eq(schema.user_details.id, this.userDetailRaw.id)).returning()
 
     this.userDetailRaw = userDetailsRaw[0]
     return this.userDetailRaw
@@ -49,7 +49,7 @@ export class UserDetailModel {
    * @returns true if the handle is available, false otherwise
    */
   static async isHandleAvailable(handle: string): Promise<boolean> {
-    const userDetails = await db.select().from(userDetailsTable).where(eq(userDetailsTable.handle, handle))
+    const userDetails = await db.select().from(schema.user_details).where(eq(schema.user_details.handle, handle))
     return userDetails.length === 0
   }
 }

@@ -1,11 +1,5 @@
 import { db } from '@/db/db'
-import {
-  suppliers as suppliersTable,
-  supplierColumns,
-  supplierUsers as supplierUsersTable,
-  supplierLocations as supplierLocationsTable,
-  supplierServices as supplierServicesTable,
-} from '@/db/schema'
+import * as schema from '@/db/schema'
 import {
   InsertSupplierRaw,
   InsertSupplierUserRaw,
@@ -22,13 +16,13 @@ import { and, eq } from 'drizzle-orm'
 
 const supplierBaseQuery = db
   .select({
-    ...supplierColumns,
-    service: supplierServicesTable.service,
-    location: supplierLocationsTable.location,
+    ...schema.supplierColumns,
+    service: schema.supplierServices.service,
+    location: schema.supplierLocations.location,
   })
-  .from(suppliersTable)
-  .leftJoin(supplierServicesTable, eq(suppliersTable.id, supplierServicesTable.supplierId))
-  .leftJoin(supplierLocationsTable, eq(suppliersTable.id, supplierLocationsTable.supplierId))
+  .from(schema.suppliers)
+  .leftJoin(schema.supplierServices, eq(schema.suppliers.id, schema.supplierServices.supplierId))
+  .leftJoin(schema.supplierLocations, eq(schema.suppliers.id, schema.supplierLocations.supplierId))
 
 interface SupplierBaseQueryResult extends SupplierRaw {
   service: Service | null
@@ -49,16 +43,16 @@ export class SupplierModel {
   static async getAll(service?: Service, location?: Location): Promise<Supplier[]> {
     const conditions = []
 
-    if (service) conditions.push(eq(supplierServicesTable.service, service))
+    if (service) conditions.push(eq(schema.supplierServices.service, service))
 
-    if (location) conditions.push(eq(supplierLocationsTable.location, location))
+    if (location) conditions.push(eq(schema.supplierLocations.location, location))
 
     const result = await supplierBaseQuery.where(conditions.length > 0 ? and(...conditions) : undefined)
     return aggregateSupplierQueryResults(result)
   }
 
   static async getByHandle(handle: string): Promise<SupplierWithUsers | null> {
-    const result = await supplierBaseQuery.where(eq(suppliersTable.handle, handle))
+    const result = await supplierBaseQuery.where(eq(schema.suppliers.handle, handle))
 
     if (result.length === 0) {
       return null
@@ -68,7 +62,7 @@ export class SupplierModel {
 
     // There should only be one supplier with this handle because of db constraints.
     const supplier = suppliers[0]
-    const supplierUsers = await db.select().from(supplierUsersTable).where(eq(supplierUsersTable.supplierId, supplier.id))
+    const supplierUsers = await db.select().from(schema.supplierUsers).where(eq(schema.supplierUsers.supplierId, supplier.id))
 
     return {
       ...supplier,
@@ -77,7 +71,7 @@ export class SupplierModel {
   }
 
   static async create(user: AuthUser | User, insertSupplierData: InsertSupplierRaw, services: Service[], locations: Location[]): Promise<SupplierWithUsers> {
-    const suppliers = await db.insert(suppliersTable).values(insertSupplierData).returning()
+    const suppliers = await db.insert(schema.suppliers).values(insertSupplierData).returning()
     const supplier = suppliers[0]
 
     // The user who creates the supplier is automatically an admin
@@ -86,19 +80,19 @@ export class SupplierModel {
       userId: user.id,
       role: SupplierRole.ADMIN,
     }
-    const supplierUsers = await db.insert(supplierUsersTable).values(insertSupplierUserData).returning()
+    const supplierUsers = await db.insert(schema.supplierUsers).values(insertSupplierUserData).returning()
 
     const insertSupplierServiceData: InsertSupplierServiceRaw[] = services.map((service) => ({
       supplierId: supplier.id,
       service,
     }))
-    const supplierServices = await db.insert(supplierServicesTable).values(insertSupplierServiceData).returning()
+    const supplierServices = await db.insert(schema.supplierServices).values(insertSupplierServiceData).returning()
 
     const insertSupplierLocationData: InsertSupplierLocationRaw[] = locations.map((location) => ({
       supplierId: supplier.id,
       location,
     }))
-    const supplierLocations = await db.insert(supplierLocationsTable).values(insertSupplierLocationData).returning()
+    const supplierLocations = await db.insert(schema.supplierLocations).values(insertSupplierLocationData).returning()
 
     // We can assert that the services and locations exist because we just inserted them.
     // TODO: remove this assert when services and locations are non-nullable in the db schema.
