@@ -1,1 +1,1 @@
-export class SupplierModel {}
+export class StackModel {}
