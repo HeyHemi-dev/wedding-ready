@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { Location } from '@/models/constants'
+import { Location } from '@/db/constants'
 export const tileUploaderInputSchema = z.object({
   createdByUserId: z.string(),
   tileId: z.string(),
