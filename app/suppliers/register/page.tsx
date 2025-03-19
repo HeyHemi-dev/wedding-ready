@@ -7,7 +7,7 @@ import { SupplierModel } from '@/models/supplier'
 import { InsertSupplierRaw } from '@/models/types'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Location, Service } from '@/models/constants'
+import { Location, Service } from '@/db/constants'
 import { enumToPretty } from '@/utils/enum-to-pretty'
 
 export default async function SupplierRegisterPage() {

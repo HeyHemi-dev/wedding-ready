@@ -1,6 +1,6 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
-/*
+
 CREATE TYPE "public"."locations" AS ENUM('northland', 'auckland', 'waikato', 'bay_of_plenty', 'gisborne', 'hawkes_bay', 'taranakai', 'manawatu_whanganui', 'wellington', 'nelson_tasman', 'marlborough', 'west_coast', 'canterbury', 'otago', 'southland');--> statement-breakpoint
 CREATE TYPE "public"."services" AS ENUM('venue', 'accomodation', 'caterer', 'cake', 'photographer', 'videographer', 'bridal_wear', 'bridesmaids_wear', 'bridal_accessory', 'menswear', 'menswear_accessory', 'rings', 'makeup', 'hair', 'beauty', 'planner', 'celebrant', 'mc', 'florist', 'stylist', 'hire', 'stationery', 'band', 'entertainment', 'transport', 'support');--> statement-breakpoint
 CREATE TYPE "public"."supplier_roles" AS ENUM('admin', 'standard');--> statement-breakpoint
@@ -104,4 +104,3 @@ ALTER TABLE "tile_suppliers" ADD CONSTRAINT "tile_suppliers_supplier_id_supplier
 ALTER TABLE "tile_suppliers" ADD CONSTRAINT "tile_suppliers_tile_id_tiles_id_fk" FOREIGN KEY ("tile_id") REFERENCES "public"."tiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "supplier_users" ADD CONSTRAINT "supplier_users_supplier_id_suppliers_id_fk" FOREIGN KEY ("supplier_id") REFERENCES "public"."suppliers"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "supplier_users" ADD CONSTRAINT "supplier_users_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;
-*/

@@ -11,7 +11,7 @@ import {
   InsertSupplierServiceRaw,
   InsertSupplierLocationRaw,
 } from '@/models/types'
-import { Service, SupplierRole, Location } from '@/models/constants'
+import { Service, SupplierRole, Location } from '@/db/constants'
 import { and, eq } from 'drizzle-orm'
 
 const supplierBaseQuery = db

@@ -26,7 +26,7 @@ export default async function NewSupplierTilePage({ params }: { params: Promise<
     <Section>
       <Link href={`/suppliers/${handle}`} className="flex items-center gap-2 text-muted-foreground">
         <ArrowLeftIcon size={16} />
-        Back to {supplier.name}
+        {supplier.name}
       </Link>
       <h1 className="text-2xl font-semibold">Create new tiles for {supplier.name}</h1>
 

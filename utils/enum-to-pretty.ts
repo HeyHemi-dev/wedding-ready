@@ -3,7 +3,7 @@ interface PrettyEnum {
   label: string
 }
 
-function toPretty(value: string): string {
+export function valueToPretty(value: string): string {
   return value
     .split('_')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -13,6 +13,6 @@ function toPretty(value: string): string {
 export function enumToPretty<T extends { [key: string]: string }>(enumObject: T): PrettyEnum[] {
   return Object.values(enumObject).map((value) => ({
     value,
-    label: toPretty(value),
+    label: valueToPretty(value),
   }))
 }

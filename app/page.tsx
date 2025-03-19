@@ -3,7 +3,7 @@ import { cn } from '@/utils/shadcn-utils'
 import Link from 'next/link'
 import { ChevronDown } from 'lucide-react'
 import HeroTextCarousel from './hero-text-carousel'
-
+import Image from 'next/image'
 export default function Home() {
   return (
     <>
@@ -75,8 +75,8 @@ function HomePageSection({
           </Link>
         </div>
       </div>
-      <div className={cn('grid row-start-1 bg-muted', image.side === 'left' ? 'col-start-1' : 'col-start-2')}>
-        <img src={image.url} alt={image.alt} className="object-cover" />
+      <div className={cn('grid row-start-1 bg-muted relative', image.side === 'left' ? 'col-start-1' : 'col-start-2')}>
+        <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
       </div>
     </section>
   )
@@ -84,11 +84,11 @@ function HomePageSection({
 
 function HeroSection() {
   return (
-    <section className="h-svh-minus-header grid grid-rows-[1fr_auto] bg-gradient-to-b from-violet-50 to-pink-50">
+    <section className="h-svh-minus-header grid grid-rows-[1fr_auto] ">
       <div className="grid place-content-center justify-items-center gap-8">
-        <HeroTextCarousel className="text-center text-7xl font-extrabold bg-gradient-to-br from-purple-500 to-pink-400 bg-clip-text text-transparent space-y-[0.07em]" />
+        <HeroTextCarousel className="text-center text-7xl font-extrabold bg-gradient-to-br from-amber-600 to-orange-700 bg-clip-text text-transparent space-y-[0.07em]" />
         <Link href="/suppliers">
-          <Button size={'lg'} className="bg-purple-500 text-white">
+          <Button size={'lg'} className="bg-amber-700 text-white">
             Explore
           </Button>
         </Link>
@@ -99,9 +99,9 @@ function HeroSection() {
       </p>
       {/* scroll indicator positioned to bottom center with chevron down */}
 
-      <div className="p-16 bg-purple-950 flex flex-col items-center justify-center">
-        <p className="text-white/60">See how it works</p>
-        <ChevronDown className="w-8 h-8 text-white/60" />
+      <div className="p-16 bg-orange-100 flex flex-col items-center justify-center">
+        <p className="text-orange-900">See how it works</p>
+        <ChevronDown className="w-8 h-8 text-orange-900" />
       </div>
     </section>
   )

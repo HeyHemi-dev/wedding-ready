@@ -1,6 +1,6 @@
 import { InferSelectModel, InferInsertModel } from 'drizzle-orm'
 import * as schema from '@/db/schema'
-import { Service, Location } from '@/models/constants'
+import { Service, Location } from '@/db/constants'
 import { User as UserRaw } from '@supabase/supabase-js'
 
 export type AuthUser = UserRaw

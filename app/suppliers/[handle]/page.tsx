@@ -6,8 +6,11 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { TileModel } from '@/models/tile'
-import { TileList, TileListSkeleton } from '@/components/tile-list'
+import { TileList, TileListSkeleton } from '@/components/tiles/tile-list'
 import { Suspense } from 'react'
+import { ExternalLinkIcon, InfoIcon, SquarePlusIcon, StarIcon } from 'lucide-react'
+import { Supplier } from '@/models/types'
+import { valueToPretty } from '@/utils/enum-to-pretty'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -27,32 +30,47 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
   return (
     <>
       <Section>
-        {isSupplierUser && <p>You can edit this page</p>}
-        <div className="flex gap-4 items-baseline">
-          <h1 className="text-2xl font-bold">{supplier.name}</h1>
-          <p className="text-muted-foreground">{supplier.handle}</p>
+        {isSupplierUser && (
+          <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
+            <InfoIcon size="16" strokeWidth={2} />
+            You can edit this page
+          </div>
+        )}
+        <div className="grid grid-cols-[theme(spacing.textLength)_auto] gap-md">
+          <div className="grid gap-md">
+            <SupplierHeader supplier={supplier} />
+            <div className="flex gap-sm">
+              {user && (
+                <Button disabled variant={'default'} className="gap-xs">
+                  <StarIcon className="w-4 h-4" />
+                  Add to Favourites
+                </Button>
+              )}
+              {supplier.websiteUrl && (
+                <Link href={supplier.websiteUrl} target="_blank">
+                  <Button variant={'secondary'} className="gap-xs">
+                    <ExternalLinkIcon className="w-4 h-4" />
+                    Visit Website
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+          {tiles.length > 0 && (
+            <div className="flex place-self-end">
+              <Link href={`/suppliers/${handle}/new`}>
+                <Button variant={'secondary'} className="gap-xs">
+                  <SquarePlusIcon className="w-4 h-4" />
+                  Create Tile
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
-        {supplier.description && <p>{supplier.description}</p>}
-        {supplier.websiteUrl && <p>{supplier.websiteUrl}</p>}
-        <div className="flex flex-wrap gap-2">
-          {supplier.locations.map((location) => (
-            <Badge variant={'secondary'} key={location}>
-              {location}
-            </Badge>
-          ))}
-        </div>
-      </Section>
-      <Section containerClassName="pt-0">
+
         <Suspense fallback={<TileListSkeleton />}>
           {tiles.length > 0 ? (
-            <>
-              <div className="flex justify-end">
-                <Link href={`/suppliers/${handle}/new`}>
-                  <Button variant={'default'}>Add More Tiles</Button>
-                </Link>
-              </div>
-              <TileList tiles={tiles} />
-            </>
+            <TileList tiles={tiles} />
           ) : (
             noTiles({
               message: `${supplier.name} has no tiles`,
@@ -84,6 +102,37 @@ function noTiles({ message, cta }: noTilesProps) {
           <Button variant={'outline'}>{cta.text}</Button>
         </Link>
       )}
+    </div>
+  )
+}
+
+function SupplierHeader({ supplier }: { supplier: Supplier }) {
+  return (
+    <div className="grid grid-cols-[auto_1fr] gap-md">
+      <div className="avatar rounded-full bg-primary text-primary-foreground w-24 h-24 flex items-center justify-center text-6xl font-light uppercase">
+        {supplier.name.slice(0, 1)}
+      </div>
+      <div className="grid gap-xs">
+        <div className="flex gap-xs items-baseline">
+          <h1 className="text-3xl font-semibold">{supplier.name}</h1>
+          <p className="text-muted-foreground">{`@${supplier.handle}`}</p>
+        </div>
+        {supplier.description && <p>{supplier.description}</p>}
+        <div className="flex flex-wrap gap-xxs col-span-full">
+          {supplier.services.map((service) => (
+            <Badge variant={'secondary'} key={service}>
+              {valueToPretty(service)}
+            </Badge>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-xxs col-span-full">
+          {supplier.locations.map((location) => (
+            <Badge variant={'secondary'} key={location}>
+              {valueToPretty(location)}
+            </Badge>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
