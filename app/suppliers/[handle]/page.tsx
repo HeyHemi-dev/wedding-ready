@@ -36,16 +36,16 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
             You can edit this page
           </div>
         )}
-        <div className="grid grid-cols-[theme(spacing.textLength)_auto] gap-md">
+
+        <div className="grid grid-cols-[minmax(10rem,theme(spacing.textLength))_auto] gap-md">
           <div className="grid gap-md">
             <SupplierHeader supplier={supplier} />
             <div className="flex gap-sm">
-              {user && (
-                <Button disabled variant={'default'} className="gap-xs">
-                  <StarIcon className="w-4 h-4" />
-                  Add to Favourites
-                </Button>
-              )}
+              <Button disabled={!user} variant={'default'} className="gap-xs">
+                <StarIcon className="w-4 h-4" />
+                Add to Favourites
+              </Button>
+
               {supplier.websiteUrl && (
                 <Link href={supplier.websiteUrl} target="_blank">
                   <Button variant={'secondary'} className="gap-xs">
@@ -56,7 +56,8 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
               )}
             </div>
           </div>
-          {tiles.length > 0 && (
+
+          {isSupplierUser && tiles.length > 0 && (
             <div className="flex place-self-end">
               <Link href={`/suppliers/${handle}/new`}>
                 <Button variant={'secondary'} className="gap-xs">
