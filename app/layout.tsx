@@ -1,8 +1,7 @@
-import HeaderAuth from '@/components/header-auth'
+import Header from '@/components/header/header'
 import { ThemeSwitcher } from '@/components/theme-switcher'
 import { Geist } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
-import Link from 'next/link'
 import { Toaster } from '@/components/ui/sonner'
 import '@/public/styles/globals.css'
 
@@ -50,23 +49,9 @@ function Providers({ children }: { children: React.ReactNode }) {
   )
 }
 
-function Header() {
-  return (
-    <header className="border-b border-b-foreground/10 h-headerHeight grid grid-cols-siteLayout">
-      <div className="col-start-2 col-end-3 flex justify-between items-center py-3 text-sm">
-        <nav className="flex gap-5 items-center font-semibold">
-          <Link href={'/'}>WeddingReady</Link>
-          <Link href={'/suppliers'}>Suppliers</Link>
-        </nav>
-        <HeaderAuth />
-      </div>
-    </header>
-  )
-}
-
 function Footer() {
   return (
-    <footer className="grid grid-cols-siteLayout border-t border-t-foreground/10 pt-16 pb-sitePadding">
+    <footer className="grid grid-cols-siteLayout border-t border-t-border/50 pt-16 pb-sitePadding">
       <div className="col-start-2 col-end-3 flex items-center justify-between  text-xs">
         <p className="text-muted-foreground">© 2025 WeddingReady</p>
         <ThemeSwitcher />
