@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { TileModel } from '@/models/tile'
 import { TileList, TileListSkeleton } from '@/components/tiles/tile-list'
 import { Suspense } from 'react'
-import { ExternalLinkIcon, HeartIcon } from 'lucide-react'
+import { ExternalLinkIcon, HeartIcon, SquarePlusIcon } from 'lucide-react'
 import { Supplier } from '@/models/types'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
@@ -53,7 +53,10 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
           {tiles.length > 0 && (
             <div className="flex place-self-end">
               <Link href={`/suppliers/${handle}/new`}>
-                <Button variant={'secondary'}>Create Tiles</Button>
+                <Button variant={'secondary'} className="gap-xs">
+                  <SquarePlusIcon className="w-4 h-4" />
+                  Create Tile
+                </Button>
               </Link>
             </div>
           )}
