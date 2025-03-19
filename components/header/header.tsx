@@ -2,14 +2,26 @@ import Link from 'next/link'
 import { Button } from '../ui/button'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { signOutAction } from '@/actions/auth-actions'
-
+import Image from 'next/image'
 export default function Header() {
   return (
     <header className="border-b border-b-border/50 h-headerHeight grid grid-cols-siteLayout">
-      <div className="col-start-2 col-end-3 flex justify-between items-center py-3 text-sm">
-        <nav className="flex gap-5 items-center font-semibold">
-          <Link href={'/'}>WeddingReady</Link>
-          <Link href={'/suppliers'}>Suppliers</Link>
+      <div className="col-start-2 col-end-3 grid grid-cols-[auto_1fr_auto] gap-sm items-center py-xs text-sm">
+        <Link href={'/'} className="relative aspect-[3/2] h-full">
+          <Button variant={'ghost'} className="p-0" asChild>
+            <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill className="object-contain" />
+          </Button>
+        </Link>
+        <nav className="flex gap-xxs items-center font-semibold">
+          <Link href={'/suppliers'} passHref>
+            <Button variant={'ghost'}>Suppliers</Button>
+          </Link>
+          <Link href={'/locations'} passHref>
+            <Button variant={'ghost'}>Locations</Button>
+          </Link>
+          <Link href={'/articles'} passHref>
+            <Button variant={'ghost'}>Advice</Button>
+          </Link>
         </nav>
         <HeaderAuth />
       </div>
@@ -22,14 +34,14 @@ async function HeaderAuth() {
 
   return user ? (
     <div className="flex items-center gap-sm">
-      <Button variant={'ghost'} asChild>
-        <Link href={`/u/${user.extended.handle}`} className="font-normal">
+      <Link href={`/u/${user.extended.handle}`} passHref>
+        <Button variant={'ghost'} asChild>
           <div className="flex flex-col items-end gap-0">
             <div className="text-sm font-normal">Hello, {user.extended.handle}</div>
-            <div className="text-xs text-muted-foreground">view your profile</div>
+            <div className="text-xs text-muted-foreground font-normal">view your profile</div>
           </div>
-        </Link>
-      </Button>
+        </Button>
+      </Link>
       <form action={signOutAction}>
         <Button type="submit" variant={'outline'}>
           Sign out
