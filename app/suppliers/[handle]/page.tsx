@@ -8,8 +8,9 @@ import { Badge } from '@/components/ui/badge'
 import { TileModel } from '@/models/tile'
 import { TileList, TileListSkeleton } from '@/components/tiles/tile-list'
 import { Suspense } from 'react'
-import { ExternalLinkIcon, HeartIcon, SquarePlusIcon } from 'lucide-react'
+import { ExternalLinkIcon, InfoIcon, SquarePlusIcon, StarIcon } from 'lucide-react'
 import { Supplier } from '@/models/types'
+import { valueToPretty } from '@/utils/enum-to-pretty'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -29,15 +30,20 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
   return (
     <>
       <Section>
-        {isSupplierUser && <p>You can edit this page</p>}
+        {isSupplierUser && (
+          <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
+            <InfoIcon size="16" strokeWidth={2} />
+            You can edit this page
+          </div>
+        )}
         <div className="grid grid-cols-[theme(spacing.textLength)_auto] gap-md">
           <div className="grid gap-md">
             <SupplierHeader supplier={supplier} />
             <div className="flex gap-sm">
               {user && (
-                <Button variant={'default'} className="gap-xs">
-                  <HeartIcon className="w-4 h-4" />
-                  Add To Favourites
+                <Button disabled variant={'default'} className="gap-xs">
+                  <StarIcon className="w-4 h-4" />
+                  Add to Favourites
                 </Button>
               )}
               {supplier.websiteUrl && (
@@ -109,20 +115,20 @@ function SupplierHeader({ supplier }: { supplier: Supplier }) {
       <div className="grid gap-xs">
         <div className="flex gap-xs items-baseline">
           <h1 className="text-3xl font-semibold">{supplier.name}</h1>
-          <p className="text-muted-foreground">{supplier.handle}</p>
+          <p className="text-muted-foreground">{`@${supplier.handle}`}</p>
         </div>
         {supplier.description && <p>{supplier.description}</p>}
         <div className="flex flex-wrap gap-xxs col-span-full">
           {supplier.services.map((service) => (
             <Badge variant={'secondary'} key={service}>
-              {service}
+              {valueToPretty(service)}
             </Badge>
           ))}
         </div>
         <div className="flex flex-wrap gap-xxs col-span-full">
           {supplier.locations.map((location) => (
             <Badge variant={'secondary'} key={location}>
-              {location}
+              {valueToPretty(location)}
             </Badge>
           ))}
         </div>
