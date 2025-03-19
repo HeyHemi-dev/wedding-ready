@@ -43,22 +43,22 @@ export function UploadPreviewForm({
     <>
       {status === 'idle' ? (
         <div className="grid grid-cols-[1fr_3fr] gap-6">
-          <div className="aspect-square">
-            <img src={file.fileObjectUrl} alt={file.file.name} className="object-contain rounded-lg" />
+          <div className="aspect-square overflow-hidden bg-muted rounded-lg">
+            <img src={file.fileObjectUrl} alt={file.file.name} className="object-contain w-full h-full" />
           </div>
 
-          <form action={onSubmit} className="grid grid-cols-2 gap-6">
-            <div className="flex flex-col gap-2">
+          <form action={onSubmit} className="grid grid-cols-2 gap-md">
+            <div className="flex flex-col gap-xs">
               <h3 className="font-semibold">Tile Details</h3>
-              <div className="space-y-1">
+              <div className="space-y-xxs">
                 <Label htmlFor="title">Title</Label>
                 <Input id="title" name="title" defaultValue={file.file.name} />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-xxs">
                 <Label htmlFor="description">Description</Label>
                 <Textarea id="description" name="description" rows={3} />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-xxs">
                 <Label htmlFor="location">Location</Label>
                 <Select name="location">
                   <SelectTrigger>
@@ -74,9 +74,9 @@ export function UploadPreviewForm({
                 </Select>
               </div>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-xs">
               <h3 className="font-semibold">Suppliers</h3>
-              <div className="space-y-1">
+              <div className="space-y-xxs">
                 <Label>Credit suppliers</Label>
               </div>
             </div>
@@ -86,7 +86,7 @@ export function UploadPreviewForm({
           </form>
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-xs">
           <p>{status}</p>
           <Progress value={uploadProgress} />
         </div>

@@ -16,9 +16,17 @@ const config = {
     extend: {
       spacing: {
         siteWidth: '80rem',
-        sitePadding: '2rem',
+        sitePadding: '1.5rem',
         sectionPadding: '6rem',
         headerHeight: '4rem',
+        xxl: '4rem',
+        xl: '3rem',
+        lg: '2rem',
+        md: '1.5rem',
+        sm: '1rem',
+        xs: '0.5rem',
+        xxs: '0.25rem',
+        textLength: '80ch',
       },
       height: {
         'svh-minus-header': 'calc(100svh - theme(spacing.headerHeight))',
@@ -65,6 +73,7 @@ const config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        full: 'calc(var(--radius) * 999)',
       },
       keyframes: {
         'accordion-down': {

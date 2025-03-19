@@ -17,7 +17,7 @@ export function UploadPreviewList({
   return (
     <>
       <Separator />
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 gap-md">
         {files.map((file, index) => (
           <>
             <UploadPreviewForm key={file.fileObjectUrl} file={file} supplier={supplier} user={user} onCompleteAction={() => onCompleteAction(index)} />

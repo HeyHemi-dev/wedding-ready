@@ -70,13 +70,13 @@ function Dropzone({
   return (
     <div
       {...getRootProps()}
-      className="flex flex-col items-center justify-center gap-4 border-2 border-dashed rounded-lg p-12 min-h-[25svh] hover:bg-gray-50/50 cursor-pointer">
+      className="flex flex-col justify-center items-center gap-md border-2 border-dashed rounded-lg p-16 min-h-[25svh] hover:bg-muted/50 cursor-pointer">
       <input {...getInputProps()} />
       <div className="text-center">
         <p className="">Drag and drop images here</p>
-        <p className="text-sm text-muted-foreground">Must be jpg/jpeg, and less than 1 MB</p>
+        <p className="text-sm text-muted-foreground">Images must be jpg/jpeg format, and less than 1 MB</p>
       </div>
-      <Button variant="outline">Choose images</Button>
+      <Button variant={'secondary'}>Choose images</Button>
     </div>
   )
 }
