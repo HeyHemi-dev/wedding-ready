@@ -16,13 +16,15 @@ WeddingReady is a platform that transforms wedding inspiration into real purchas
 ## Project Structure
 ```yaml
 /
-├── actions/ # Server actions (Next.js)
+├── actions/ # Server actions (business logic for server-side)
 ├── app/ # Next.js App Router pages
-├── components/ # React components
-├── db/ # Database schema and migrations
+├── app/api/ # Next.js api endpoints to handle client-side requests on the server
+├── components/ # Non-context specific react components
+├── components/ui # Shadcn components
+├── db/ # Database schema, enums and migrations
 ├── docs/ # Documentation
-├── hooks/ # Custom React hooks
-├── models/ # TypeScript type definitions
+├── hooks/ # Custom hooks (business logic for client-side)
+├── models/ # Major model actions, types and zod schema (persistance layer)
 ├── public/ # Static assets
 └── utils/ # Utility functions
 ```
@@ -42,6 +44,7 @@ For architecture and development patterns, see [architecture.md](docs/architectu
    ```
 
 3. Run database migrations:
+  You may need to replace the first empty migration, with the contents of the file in `@/db/baseline`
    ```bash
    pnpm db:migrate
    ```
