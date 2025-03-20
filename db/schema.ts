@@ -10,7 +10,7 @@ export const services = pgEnum('services', enumToPgEnum(Service))
 
 export const locations = pgEnum('locations', enumToPgEnum(Location))
 
-// Maintain 1-1 relationship between user_details and auth schemausers
+// Maintain 1-1 relationship between user_details and auth.users
 export const user_details = pgTable('user_details', {
   id: uuid('id')
     .primaryKey()
@@ -18,7 +18,12 @@ export const user_details = pgTable('user_details', {
     .references(() => users.id, { onDelete: 'cascade' }),
   handle: text('handle').notNull().unique(),
   handleUpdatedAt: timestamp('handle_updated_at').notNull().defaultNow(),
+  displayName: text('display_name'),
+  bio: text('bio'),
   avatarUrl: text('avatar_url'),
+  instagramUrl: text('instagram_url'),
+  tiktokUrl: text('tiktok_url'),
+  websiteUrl: text('website_url'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
