@@ -1,0 +1,1 @@
+ALTER TABLE "user_details" ADD COLUMN "handle_updated_at" timestamp DEFAULT now() NOT NULL;

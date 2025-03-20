@@ -1,7 +1,7 @@
 import { db } from '@/db/db'
 import * as schema from '@/db/schema'
 import { eq } from 'drizzle-orm'
-import { InsertUserDetailRaw, UserDetailRaw } from '@/models/types'
+import { InsertUserDetailRaw, SetUserDetailRaw, UserDetailRaw } from '@/models/types'
 
 export class UserDetailModel {
   private userDetailRaw: UserDetailRaw
@@ -13,6 +13,12 @@ export class UserDetailModel {
   // Class method example
   static async getById(id: string): Promise<UserDetailRaw | null> {
     const userDetails = await db.select().from(schema.user_details).where(eq(schema.user_details.id, id)).limit(1)
+
+    return userDetails.length ? userDetails[0] : null
+  }
+
+  static async getByHandle(handle: string): Promise<UserDetailRaw | null> {
+    const userDetails = await db.select().from(schema.user_details).where(eq(schema.user_details.handle, handle)).limit(1)
 
     return userDetails.length ? userDetails[0] : null
   }
@@ -34,7 +40,7 @@ export class UserDetailModel {
   }
 
   // Instance method example
-  async update(userDetailRawData: InsertUserDetailRaw): Promise<UserDetailRaw> {
+  async update(userDetailRawData: SetUserDetailRaw): Promise<UserDetailRaw> {
     const userDetailsRaw = await db.update(schema.user_details).set(userDetailRawData).where(eq(schema.user_details.id, this.userDetailRaw.id)).returning()
 
     this.userDetailRaw = userDetailsRaw[0]
