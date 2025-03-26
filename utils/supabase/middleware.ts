@@ -34,5 +34,11 @@ export const updateSession = async (request: NextRequest) => {
     return NextResponse.redirect(new URL('/sign-in', request.url))
   }
 
+  // Only set the auth user header if we have one.
+  // If we try to get the header later on and it doesn't exist then next/headers will return null.
+  if (user.data.user) {
+    response.headers.set('x-auth-user-id', user.data.user.id)
+  }
+
   return response
 }
