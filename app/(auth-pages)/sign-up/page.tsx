@@ -10,7 +10,7 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
   const searchParams = await props.searchParams
   if ('message' in searchParams) {
     return (
-      <div className="grid gap-md">
+      <div className="grid gap-sm">
         <FormMessage message={searchParams} />
       </div>
     )
