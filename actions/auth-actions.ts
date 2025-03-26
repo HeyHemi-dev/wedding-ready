@@ -6,8 +6,8 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { UserDetailModel } from '@/models/user'
 import { isProtectedPath } from '@/utils/auth'
-import { revalidatePath, revalidateTag } from 'next/cache'
-import { cookies } from 'next/headers'
+import { revalidateTag } from 'next/cache'
+import { toast } from 'sonner'
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString()
@@ -137,15 +137,17 @@ export const signOutAction = async () => {
   const referer = headersList.get('referer') || '/'
   const url = new URL(referer)
 
-  // First sign out from Supabase
-  await supabase.auth.signOut()
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    console.error(error.message)
+    toast.error('Failed to sign out')
+    return
+  }
 
-  // Then clear the cache after successful sign-out
   if (userId) {
     revalidateTag(`user-${userId}`)
   }
 
-  // Force a hard redirect to ensure complete state reset
-  const redirectPath = isProtectedPath(url.pathname) ? '/sign-in' : referer
-  return redirect(redirectPath)
+  const redirectTo = isProtectedPath(url.pathname) ? '/sign-in' : referer
+  return redirect(redirectTo)
 }
