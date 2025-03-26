@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { SupplierRaw, User } from '@/models/types'
 import { ExpandedRouteConfig } from 'uploadthing/types'
 import { UploadPreviewList } from './upload-preview'
+import { toast } from 'sonner'
 
 export type FileWithMetadata = {
   file: File
@@ -20,7 +21,7 @@ export function UploadDropzone({ supplier, user }: { supplier: SupplierRaw; user
   const onDrop = React.useCallback(
     async (acceptedFiles: File[]) => {
       if (!checkFileSizes(acceptedFiles, routeConfig)) {
-        alert('File size is too large')
+        toast.error('File size is too large')
         return
       }
 
