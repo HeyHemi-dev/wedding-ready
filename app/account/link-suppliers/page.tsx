@@ -1,4 +1,3 @@
-import { getCurrentUser } from '@/actions/get-current-user'
 import { db } from '@/db/db'
 import { eq } from 'drizzle-orm'
 import { redirect } from 'next/navigation'

@@ -2,7 +2,6 @@
 
 import { UserDetailModel } from '@/models/user'
 import { User, makeUser } from '@/models/types'
-import { headers } from 'next/headers'
 import { unstable_cache } from 'next/cache'
 import { getAuthenticatedUserId } from '@/utils/auth'
 
