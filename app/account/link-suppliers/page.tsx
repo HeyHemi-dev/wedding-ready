@@ -9,10 +9,11 @@ import { valueToPretty } from '@/utils/enum-to-pretty'
 
 import { Card } from '@/components/ui/card'
 import { ArrowRightIcon } from 'lucide-react'
+import { getAuthenticatedUserId } from '@/utils/auth'
 
 export default async function LinkSuppliers() {
-  const user = await getCurrentUser()
-  if (!user) {
+  const authUserId = await getAuthenticatedUserId()
+  if (!authUserId) {
     redirect('/sign-in')
   }
 
@@ -20,7 +21,7 @@ export default async function LinkSuppliers() {
     .select({ ...schema.supplierColumns, role: schema.supplierUsers.role })
     .from(schema.suppliers)
     .innerJoin(schema.supplierUsers, eq(schema.suppliers.id, schema.supplierUsers.supplierId))
-    .where(eq(schema.supplierUsers.userId, user.id))
+    .where(eq(schema.supplierUsers.userId, authUserId))
 
   return (
     <div className="flex flex-col gap-md">

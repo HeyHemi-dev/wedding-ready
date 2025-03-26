@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Section from '@/components/ui/section'
-import { getCurrentUser } from '@/actions/get-current-user'
+import { getAuthenticatedUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import { SupplierModel } from '@/models/supplier'
 import { InsertSupplierRaw } from '@/models/types'
@@ -9,11 +9,12 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Location, Service } from '@/db/constants'
 import { enumToPretty } from '@/utils/enum-to-pretty'
+import { getCurrentUser } from '@/actions/get-current-user'
 
 export default async function SupplierRegisterPage() {
-  const user = await getCurrentUser()
+  const authUserId = await getAuthenticatedUserId()
 
-  if (!user) {
+  if (!authUserId) {
     redirect('/sign-in')
   }
 
@@ -61,7 +62,7 @@ export default async function SupplierRegisterPage() {
 
           <Label>Description</Label>
           <Input name="description" placeholder="Description" />
-          <Input name="userId" type="hidden" value={user.id} />
+          <Input name="userId" type="hidden" value={authUserId} />
           <Button type="submit" className="col-span-2">
             Register
           </Button>
