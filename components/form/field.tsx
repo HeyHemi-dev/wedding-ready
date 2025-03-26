@@ -10,7 +10,7 @@ type FieldProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
 
 export default function Field({ label, children, ...labelProps }: FieldProps) {
   return (
-    <div>
+    <div className="flex flex-col gap-xs">
       <Label {...labelProps}>{label}</Label>
       {children}
     </div>
