@@ -6,6 +6,8 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { UserDetailModel } from '@/models/user'
 import { isProtectedPath } from '@/utils/auth'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { cookies } from 'next/headers'
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString()
@@ -36,6 +38,8 @@ export const signUpAction = async (formData: FormData) => {
   if (data.user) {
     try {
       await UserDetailModel.create({ id: data.user.id, handle })
+      // Revalidate the user cache for the new user
+      revalidateTag(`user-${data.user.id}`)
     } catch (error) {
       console.error('Failed to create user details:', error)
       // Delete the auth user since we couldn't create their profile
@@ -53,13 +57,18 @@ export const signInAction = async (formData: FormData) => {
   const redirectTo = formData.get('redirectTo')?.toString() || '/feed'
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   })
 
   if (error) {
     return encodedRedirect('error', '/sign-in', error.message)
+  }
+
+  // Revalidate the user cache on successful sign in
+  if (data.user) {
+    revalidateTag(`user-${data.user.id}`)
   }
 
   return redirect(redirectTo)
@@ -105,12 +114,17 @@ export const resetPasswordAction = async (formData: FormData) => {
     encodedRedirect('error', '/account/reset-password', 'Passwords do not match')
   }
 
-  const { error } = await supabase.auth.updateUser({
+  const { data, error } = await supabase.auth.updateUser({
     password: password,
   })
 
   if (error) {
     encodedRedirect('error', '/account/reset-password', 'Password update failed')
+  }
+
+  // Revalidate the user cache after password update
+  if (data.user) {
+    revalidateTag(`user-${data.user.id}`)
   }
 
   encodedRedirect('success', '/account/reset-password', 'Password updated')
@@ -119,11 +133,19 @@ export const resetPasswordAction = async (formData: FormData) => {
 export const signOutAction = async () => {
   const supabase = await createClient()
   const headersList = await headers()
+  const userId = headersList.get('x-auth-user-id')
   const referer = headersList.get('referer') || '/'
   const url = new URL(referer)
 
+  // First sign out from Supabase
   await supabase.auth.signOut()
 
-  // If on a protected page, redirect to sign-in, otherwise stay on current page
-  return isProtectedPath(url.pathname) ? redirect('/sign-in') : redirect(referer)
+  // Then clear the cache after successful sign-out
+  if (userId) {
+    revalidateTag(`user-${userId}`)
+  }
+
+  // Force a hard redirect to ensure complete state reset
+  const redirectPath = isProtectedPath(url.pathname) ? '/sign-in' : referer
+  return redirect(redirectPath)
 }
