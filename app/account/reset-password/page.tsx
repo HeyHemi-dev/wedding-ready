@@ -1,5 +1,5 @@
 import { resetPasswordAction } from '@/actions/auth-actions'
-import { FormMessage, Message } from '@/components/form-message'
+import { FormMessage, Message } from '@/components/form/form-message'
 import Field from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'

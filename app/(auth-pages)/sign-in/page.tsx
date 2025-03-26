@@ -1,5 +1,5 @@
 import { signInAction } from '@/actions/auth-actions'
-import { FormMessage, Message } from '@/components/form-message'
+import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
