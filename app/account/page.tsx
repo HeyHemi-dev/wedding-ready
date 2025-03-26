@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation'
 import { userUpdateFormSchema } from '@/models/validations'
 import { getAuthenticatedUserId } from '@/utils/auth'
 import { Textarea } from '@/components/ui/textarea'
-import Field from '@/components/forms/field'
+import Field from '@/components/form/field'
 
 export default async function AccountPage() {
   const user = await getCurrentUser()
