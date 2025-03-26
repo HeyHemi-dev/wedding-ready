@@ -10,17 +10,16 @@ export default async function ForgotPassword(props: { searchParams: Promise<Mess
   const searchParams = await props.searchParams
   return (
     <>
-      <form action={forgotPasswordAction} className="grid gap-md">
-        <div className="grid gap-xxs">
-          <h1 className="text-2xl font-medium">Reset Password</h1>
-          <p className="text-sm text-secondary-foreground">
-            Already have an account?{' '}
-            <Link className="text-primary underline" href="/sign-in">
-              Sign in
-            </Link>
-          </p>
-        </div>
-
+      <div className="grid gap-xxs">
+        <h1 className="text-2xl font-medium">Reset Password</h1>
+        <p className="text-sm text-secondary-foreground">
+          Already have an account?{' '}
+          <Link className="text-primary underline" href="/sign-in">
+            Sign in
+          </Link>
+        </p>
+      </div>
+      <form action={forgotPasswordAction} className="grid gap-sm">
         <Field label="Email" htmlFor="email">
           <Input name="email" placeholder="you@example.com" required />
         </Field>

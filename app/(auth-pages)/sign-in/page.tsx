@@ -12,7 +12,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
   const referer = headersList.get('referer') || '/feed'
 
   return (
-    <form action={signInAction} className="grid gap-md">
+    <>
       <div className="grid gap-xxs">
         <h1 className="text-2xl font-medium">Sign in</h1>
         <p className="text-sm text-foreground">
@@ -22,18 +22,20 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           </Link>
         </p>
       </div>
-      <Field label="Email" htmlFor="email">
-        <Input name="email" placeholder="you@example.com" required />
-      </Field>
-      <Field label="Password" htmlFor="password">
-        <Input type="password" name="password" placeholder="Your password" required />
-        <Link className="text-xs text-foreground underline self-end" href="/forgot-password">
-          Forgot Password?
-        </Link>
-      </Field>
-      <Input type="hidden" name="redirectTo" value={referer} />
-      <SubmitButton pendingChildren={'Signing In...'}>Sign in</SubmitButton>
-      <FormMessage message={searchParams} />
-    </form>
+      <form action={signInAction} className="grid gap-sm">
+        <Field label="Email" htmlFor="email">
+          <Input name="email" placeholder="you@example.com" required />
+        </Field>
+        <Field label="Password" htmlFor="password">
+          <Input type="password" name="password" placeholder="Your password" required />
+          <Link className="text-xs text-foreground underline self-end" href="/forgot-password">
+            Forgot Password?
+          </Link>
+        </Field>
+        <Input type="hidden" name="redirectTo" value={referer} />
+        <SubmitButton pendingChildren={'Signing In...'}>Sign in</SubmitButton>
+        <FormMessage message={searchParams} />
+      </form>
+    </>
   )
 }

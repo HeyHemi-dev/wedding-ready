@@ -18,17 +18,16 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
 
   return (
     <>
-      <form action={signUpAction} className="grid gap-md">
-        <div className="grid gap-xxs">
-          <h1 className="text-2xl font-medium">Sign up</h1>
-          <p className="text-sm text text-foreground">
-            Already have an account?{' '}
-            <Link className="text-primary font-medium underline" href="/sign-in">
-              Sign in
-            </Link>
-          </p>
-        </div>
-
+      <div className="grid gap-xxs">
+        <h1 className="text-2xl font-medium">Sign up</h1>
+        <p className="text-sm text text-foreground">
+          Already have an account?{' '}
+          <Link className="text-primary font-medium underline" href="/sign-in">
+            Sign in
+          </Link>
+        </p>
+      </div>
+      <form action={signUpAction} className="grid gap-sm">
         <Field label="Email" htmlFor="email">
           <Input name="email" placeholder="you@example.com" required />
         </Field>

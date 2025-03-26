@@ -18,40 +18,37 @@ export default async function AccountPage() {
   }
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="grid gap-md">
       <div className="w-full">
         <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
           <InfoIcon size="16" strokeWidth={2} />
           This is a protected page that you can only see as an authenticated user
         </div>
       </div>
-      <div className="flex flex-col gap-8">
-        <h2 className="font-bold text-2xl">User details</h2>
-
-        <form action={handleUpdateUserDetail} className="flex flex-col gap-4">
-          <Field label="Handle">
-            <Input name="handle" defaultValue={user.handle} required />
-          </Field>
-          <Field label="Display name">
-            <Input name="displayName" defaultValue={user.displayName ?? ''} required />
-          </Field>
-          <Field label="Bio">
-            <Textarea name="bio" defaultValue={user.bio ?? ''} />
-          </Field>
-          <Field label="Instagram">
-            <Input name="instagramUrl" placeholder="https://www.instagram.com/your-handle" defaultValue={user.instagramUrl ?? ''} />
-          </Field>
-          <Field label="TikTok">
-            <Input name="tiktokUrl" placeholder="https://www.tiktok.com/@your-handle" defaultValue={user.tiktokUrl ?? ''} />
-          </Field>
-          <Field label="Website">
-            <Input name="websiteUrl" placeholder="https://www.your-website.com" defaultValue={user.websiteUrl ?? ''} />
-          </Field>
-          <Input name="userId" type="hidden" value={user.id} />
-          <Button type="submit">Update</Button>
-        </form>
-        <pre className="text-xs font-mono p-3 rounded border text-muted-foreground bg-muted">{JSON.stringify(user, null, 2)}</pre>
-      </div>
+      <h2 className="font-bold text-2xl">User details</h2>
+      <form action={handleUpdateUserDetail} className="grid gap-sm">
+        <Field label="Handle">
+          <Input name="handle" defaultValue={user.handle} required />
+        </Field>
+        <Field label="Display name">
+          <Input name="displayName" defaultValue={user.displayName ?? ''} required />
+        </Field>
+        <Field label="Bio">
+          <Textarea name="bio" defaultValue={user.bio ?? ''} />
+        </Field>
+        <Field label="Instagram">
+          <Input name="instagramUrl" placeholder="https://www.instagram.com/your-handle" defaultValue={user.instagramUrl ?? ''} />
+        </Field>
+        <Field label="TikTok">
+          <Input name="tiktokUrl" placeholder="https://www.tiktok.com/@your-handle" defaultValue={user.tiktokUrl ?? ''} />
+        </Field>
+        <Field label="Website">
+          <Input name="websiteUrl" placeholder="https://www.your-website.com" defaultValue={user.websiteUrl ?? ''} />
+        </Field>
+        <Input name="userId" type="hidden" value={user.id} />
+        <Button type="submit">Update</Button>
+      </form>
+      <pre className="text-xs font-mono p-3 rounded border text-muted-foreground bg-muted">{JSON.stringify(user, null, 2)}</pre>
     </div>
   )
 }
