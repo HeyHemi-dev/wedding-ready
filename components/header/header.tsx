@@ -3,6 +3,7 @@ import { Button } from '../ui/button'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { signOutAction } from '@/actions/auth-actions'
 import Image from 'next/image'
+
 export default function Header() {
   return (
     <header className="border-b border-b-border/50 h-headerHeight grid grid-cols-siteLayout">
@@ -34,10 +35,10 @@ async function HeaderAuth() {
 
   return user ? (
     <div className="flex items-center gap-sm">
-      <Link href={`/u/${user.extended.handle}`} passHref>
+      <Link href={`/u/${user.handle}`} passHref>
         <Button variant={'ghost'} asChild>
           <div className="flex flex-col items-end gap-0">
-            <div className="text-sm font-normal">Hello, {user.extended.handle}</div>
+            <div className="text-sm font-normal">Hello, {user.handle}</div>
             <div className="text-xs text-muted-foreground font-normal">view your profile</div>
           </div>
         </Button>
