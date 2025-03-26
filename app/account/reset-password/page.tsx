@@ -3,7 +3,6 @@ import { FormMessage, Message } from '@/components/form-message'
 import Field from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 
 export default async function ResetPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
