@@ -1,8 +1,8 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
-import { getCurrentUser } from '@/actions/get-current-user'
 import { TileModel } from '@/models/tile'
 import { tileUploaderInputSchema } from '@/models/validations'
+import { getAuthenticatedUserId } from '@/utils/auth'
 
 const f = createUploadthing()
 
@@ -20,8 +20,8 @@ export const uploadthingRouter = {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .middleware(async ({ req, input }) => {
       try {
-        const user = await getCurrentUser()
-        if (!user || user.id !== input.createdByUserId) throw new Error('Unauthorized')
+        const authUserId = await getAuthenticatedUserId()
+        if (!authUserId || authUserId !== input.createdByUserId) throw new Error('Unauthorized')
 
         const validInput = tileUploaderInputSchema.safeParse(input)
         if (!validInput.success) throw new Error('Invalid input')

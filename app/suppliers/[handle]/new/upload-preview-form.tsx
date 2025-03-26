@@ -13,6 +13,7 @@ import { SubmitButton } from '@/components/submit-button'
 import { useCreateTile } from '@/hooks/use-create-tile'
 import { FileWithMetadata } from './upload-dropzone'
 import { Progress } from '@/components/ui/progress'
+import Field from '@/components/form/field'
 
 export function UploadPreviewForm({
   file,
@@ -48,18 +49,15 @@ export function UploadPreviewForm({
           </div>
 
           <form action={onSubmit} className="grid grid-cols-2 gap-md">
-            <div className="flex flex-col gap-xs">
+            <div className="grid gap-xs">
               <h3 className="font-semibold">Tile Details</h3>
-              <div className="space-y-xxs">
-                <Label htmlFor="title">Title</Label>
+              <Field label="Title" htmlFor="title">
                 <Input id="title" name="title" defaultValue={file.file.name} />
-              </div>
-              <div className="space-y-xxs">
-                <Label htmlFor="description">Description</Label>
+              </Field>
+              <Field label="Description" htmlFor="description">
                 <Textarea id="description" name="description" rows={3} />
-              </div>
-              <div className="space-y-xxs">
-                <Label htmlFor="location">Location</Label>
+              </Field>
+              <Field label="Location" htmlFor="location">
                 <Select name="location">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a location" />
@@ -72,9 +70,9 @@ export function UploadPreviewForm({
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </Field>
             </div>
-            <div className="flex flex-col gap-xs">
+            <div className="grid gap-xs">
               <h3 className="font-semibold">Suppliers</h3>
               <div className="space-y-xxs">
                 <Label>Credit suppliers</Label>

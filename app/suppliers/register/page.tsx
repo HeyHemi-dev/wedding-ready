@@ -1,68 +1,77 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Section from '@/components/ui/section'
-import { getCurrentUser } from '@/actions/get-current-user'
+import { getAuthenticatedUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import { SupplierModel } from '@/models/supplier'
 import { InsertSupplierRaw } from '@/models/types'
-import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Location, Service } from '@/db/constants'
 import { enumToPretty } from '@/utils/enum-to-pretty'
+import { getCurrentUser } from '@/actions/get-current-user'
+import Field from '@/components/form/field'
+import { Textarea } from '@/components/ui/textarea'
 
 export default async function SupplierRegisterPage() {
-  const user = await getCurrentUser()
+  const authUserId = await getAuthenticatedUserId()
 
-  if (!user) {
+  if (!authUserId) {
     redirect('/sign-in')
   }
 
   return (
     <Section>
-      <div className="flex flex-col gap-6">
-        <h2 className="font-medium text-xl mb-4">Register a supplier</h2>
-        <form action={handleRegisterSupplier} className="grid grid-cols-[auto_1fr] items-center gap-4">
-          <Label>Business name</Label>
-          <Input name="name" placeholder="Name" />
+      <div className="grid gap-md max-w-md mx-auto">
+        <h2 className="font-medium text-2xl">Register a supplier</h2>
+        <form action={handleRegisterSupplier} className="grid gap-sm">
+          <Field label="Business name" htmlFor="name">
+            <Input name="name" placeholder="Business name" />
+          </Field>
 
-          <Label>Handle</Label>
-          <Input name="handle" placeholder="Handle" />
+          <Field label="Handle" htmlFor="handle">
+            <Input name="handle" placeholder="business_name" />
+          </Field>
 
-          <Label>Locations served</Label>
-          <Select name="location">
-            <SelectTrigger>
-              <SelectValue placeholder="Select location" />
-            </SelectTrigger>
-            <SelectContent>
-              {enumToPretty(Location).map((location) => (
-                <SelectItem key={location.value} value={location.value}>
-                  {location.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Field label="Locations served" htmlFor="location">
+            <Select name="location">
+              <SelectTrigger>
+                <SelectValue placeholder="Select location" />
+              </SelectTrigger>
+              <SelectContent>
+                {enumToPretty(Location).map((location) => (
+                  <SelectItem key={location.value} value={location.value}>
+                    {location.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
 
-          <Label>Services offered</Label>
-          <Select name="service">
-            <SelectTrigger>
-              <SelectValue placeholder="Select service" />
-            </SelectTrigger>
-            <SelectContent>
-              {enumToPretty(Service).map((service) => (
-                <SelectItem key={service.value} value={service.value}>
-                  {service.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Field label="Services offered" htmlFor="service">
+            <Select name="service">
+              <SelectTrigger>
+                <SelectValue placeholder="Select service" />
+              </SelectTrigger>
+              <SelectContent>
+                {enumToPretty(Service).map((service) => (
+                  <SelectItem key={service.value} value={service.value}>
+                    {service.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
 
-          <Label>Website</Label>
-          <Input name="website" placeholder="Website url" />
+          <Field label="Website" htmlFor="website">
+            <Input name="website" placeholder="Website url" />
+          </Field>
 
-          <Label>Description</Label>
-          <Input name="description" placeholder="Description" />
-          <Input name="userId" type="hidden" value={user.id} />
-          <Button type="submit" className="col-span-2">
+          <Field label="Description" htmlFor="description">
+            <Textarea name="description" placeholder="Description" />
+          </Field>
+
+          <Input name="userId" type="hidden" value={authUserId} />
+          <Button type="submit" className="self-end">
             Register
           </Button>
         </form>

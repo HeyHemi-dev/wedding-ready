@@ -10,7 +10,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
           <Link href="/account">
             <Button variant={'ghost'}>Public Profile</Button>
           </Link>
-          <Link href="/account/reset-password">
+          <Link href="/account/account-settings">
             <Button variant={'ghost'}>Account Settings</Button>
           </Link>
           <Link href="/account/link-suppliers">

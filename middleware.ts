@@ -6,6 +6,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // We do not use matcher for defining protected routes
+  // The updateSession function has isProtectedPath logic
   matcher: [
     /*
      * Match all request paths except:

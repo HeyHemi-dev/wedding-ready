@@ -1,16 +1,16 @@
 import { signUpAction } from '@/actions/auth-actions'
-import { FormMessage, Message } from '@/components/form-message'
+import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { SmtpMessage } from '../smtp-message'
+import Field from '@/components/form/field'
 
 export default async function Signup(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
   if ('message' in searchParams) {
     return (
-      <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
+      <div className="grid gap-sm">
         <FormMessage message={searchParams} />
       </div>
     )
@@ -18,7 +18,7 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
 
   return (
     <>
-      <form className="flex flex-col min-w-64 max-w-64 mx-auto">
+      <div className="grid gap-xxs">
         <h1 className="text-2xl font-medium">Sign up</h1>
         <p className="text-sm text text-foreground">
           Already have an account?{' '}
@@ -26,18 +26,23 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
             Sign in
           </Link>
         </p>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="email">Email</Label>
+      </div>
+      <form action={signUpAction} className="grid gap-sm">
+        <Field label="Email" htmlFor="email">
           <Input name="email" placeholder="you@example.com" required />
-          <Label htmlFor="handle">Handle</Label>
-          <Input name="handle" placeholder="your-handle" required />
-          <Label htmlFor="password">Password</Label>
+        </Field>
+        <Field label="Password" htmlFor="password">
           <Input type="password" name="password" placeholder="Your password" minLength={6} required />
-          <SubmitButton formAction={signUpAction} pendingChildren={'Signing up...'}>
-            Sign up
-          </SubmitButton>
-          <FormMessage message={searchParams} />
-        </div>
+        </Field>
+        <Field label="Name" htmlFor="displayName">
+          <Input name="displayName" placeholder="Your display name" required />
+        </Field>
+        <Field label="Handle" htmlFor="handle">
+          <Input name="handle" placeholder="your-handle" required />
+        </Field>
+
+        <SubmitButton pendingChildren={'Signing up...'}>Sign up</SubmitButton>
+        <FormMessage message={searchParams} />
       </form>
       <SmtpMessage />
     </>

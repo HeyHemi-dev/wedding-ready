@@ -53,20 +53,11 @@ export type StackTileRaw = InferSelectModel<typeof schema.stackTiles>
 export type InsertStackTileRaw = InferInsertModel<typeof schema.stackTiles>
 export type SetStackTileRaw = Partial<Omit<InsertStackTileRaw, 'stackId' | 'tileId'>>
 
-/**
- * UserWithDetail extends Supabase Auth user with user_details fields.
- */
-export interface User extends AuthUser {
-  extended: UserDetailRaw
-}
+export interface User extends UserDetailRaw {}
 
-/**
- * Combines a Supabase Auth user and UserDetail.
- */
-export function makeUserWithDetail(user: AuthUser, userDetail: UserDetailRaw): User {
+export function makeUser(userDetail: UserDetailRaw): User {
   return {
-    ...user,
-    extended: userDetail,
+    ...userDetail,
   } as User
 }
 

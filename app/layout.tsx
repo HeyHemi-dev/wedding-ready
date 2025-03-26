@@ -1,4 +1,4 @@
-import Header from '@/components/header/header'
+import Header from '@/components/navigation/header'
 import { ThemeSwitcher } from '@/components/theme-switcher'
 import { Geist } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
