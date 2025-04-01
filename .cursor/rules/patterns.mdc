@@ -1,0 +1,159 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Next.js Best Practices
+
+## Folders and Files
+- Use the App Router directory structure
+- Place components in `app` directory for route-specific components
+- Place shared components in `components` directory
+- Place utilities and helpers in `utils` directory
+- Use kebab case for files and directories. e.g. `components/directory-name/file-name.tsx`
+
+## Type Safety
+- Always specify the return type.
+- Model type naming: 
+   - `[model]` e.g. `Tile` shape of data with the most common fields needed for the presentation layer. Usually constructured from several table joins. Must only be used server-side
+   - `[model]Safe` e.g. `TileSafe` shape of data with only the fields that are safe to send to the client.
+   - `[model]Raw` e.g. `TileRaw` shape of data directly from a row in a table.
+   - `Insert[model]Raw` e.g. `InsertTileRaw` shape of data for creating a row in a table.
+   - `SetModelRaw` e.g. `SetTileRaw` shape of data for updating a row in a table. Removes fields that should not be updated (e.g. 'id', createdAt etc.)
+- API type naming: 
+   - `[endpoint]RequestBody` e.g. `createTileRequestBody`
+   - `[endpoint]ResponseBody` e.g. `createTileResponseBody`
+
+## Server/Client Separation
+- Use server components where possible for reduced client-side JavaScript
+- Mark client components explicitly with 'use client'
+- Wrap client components in Suspense with fallback
+- Implement proper error boundaries
+
+## Data Fetching
+- Use Server Components for data fetching when possible
+- If fetching in client component, use useQuery
+- Implement proper error handling for data fetching
+- Handle loading and error states appropriately
+- Use tryCatch util function [try-catch.ts](mdc:utils/try-catch.ts)
+
+## Forms
+- Prefer server-side rendered forms and form actions where possible. Only use client-side forms when necessary.
+- Define the action on the form element rather than the button.
+- Use react-hook-form and Zod for form validation
+- Implement proper server-side validation
+- Wrap inputs with Field component. [field.tsx](mdc:components/form/field.tsx)
+- Use Shadcn sonner for UX
+
+## State Management
+- Minimize client-side state
+- Use React Context sparingly
+- Prefer server state when possible
+
+## Styling
+- Use tailwind classes
+- Use shadcn components when possible. If the component doesn't exist, ask the user to install it with `pnpm dlx shadcn@latest`
+- Prefer grid over flex. Only use flex for items that should gather to the start or end in 1 dimension. e.g. badges, button groups etc. Everything else should use grid for layout.
+
+
+
+# Modern React/Next.js development
+Look for opportunties to take advantage of new hooks in React 19 and Next.JS 15.
+
+## Recent React additions:
+- `useId`: Generates unique IDs for consistent client and server rendering. ​
+- `useTransition`: Manages UI transitions, allowing differentiation between urgent and non-urgent updates. ​
+- `useDeferredValue`: Defers updating non-urgent parts of the UI, improving responsiveness during high-priority updates. ​
+- Actions: Simplify asynchronous state updates by allowing the use of async functions directly in transitions, automatically handling pending states, errors, and optimistic updates. ​
+- `useActionState`: Simplifies managing form states and submissions by capturing form input data, handling validation, and managing error states, reducing the need for custom state management
+- `useFormStatus`: Provides information about a form's submission status, useful for displaying loading indicators or disabling submit buttons during submission. ​
+- `useOptimistic`: Manages optimistic UI updates, allowing immediate UI feedback while awaiting server confirmation. ​
+- `use`: Simplifies reading resources like promises during rendering, enabling components to suspend until the promise resolves. ​
+
+## Recent Next.JS additions:
+- Server Actions and Mutations: Simplify server-side data manipulation by allowing functions to run directly on the server, reducing the need for separate API routes.
+- Asynchronous Request-Specific APIs: APIs like cookies, headers, params, and searchParams are now asynchronous, enhancing performance and flexibility. ​
+- New `<Form>` Component: Enhances HTML forms with client-side navigation and prefetching, improving user experience. ​
+
+
+
+# Performance
+
+## React render performance and avoid unnecessary re-renders. 
+- Minimize use of 'useEffect' and 'setState'
+- Use memoization wisely (`useMemo` and `useCallback`). -
+Lift state only when necessary. 
+- Avoid storing derived data in state if it can be computed dynamically. 
+- Keep components granular to avoid unnecessary re-renders.
+
+## Optimize Next.js data fetching. 
+- Use server components where possible to keep data-fetching efficient (but also understand when things should be run on client). 
+- Use dynamic loading for non-critical components
+- Implement proper caching strategies
+- Offload auth checks to middleware instead of full server responses.
+
+## Reduce network latency. 
+- The database (and auth) is on Supbase so optimise Drizzle queries and only fetch the data you need. 
+- Use pagination (`limit` & `offset`) for tiles and supplier tables. 
+- Cache results where applicable (useQuery). 
+- Avoid making Supabase auth calls on every render.
+
+## Images
+- Optimize images before upload. 
+- Resize, compress, and generate smaller copies (300w, 450w, 600w, 900w) of images on client-side before upload.
+
+## Optimise client-side. 
+- Use Suspense and caching (useQuery) if appropriate to provide a good UX. 
+- Use optimistic updates for mutations. 
+- Use skeleton screens instead of spinners for better UX.
+- Use srcset and lazy loading on image tags. 
+- Import only what you need (e.g., import { function } from "library" instead of import * as library from "library").
+
+
+
+# Clean Code Guidelines
+
+## Constants Over Magic Numbers
+- Replace hard-coded values with named constants
+- Use descriptive constant names that explain the value's purpose
+- Keep constants at the top of the file or in a dedicated constants file [constants.ts](mdc:db/constants.ts)
+
+## Meaningful Names
+- Variables, functions, and classes should reveal their purpose
+- Names should explain why something exists and how it's used
+- Avoid abbreviations unless they're universally understood
+
+## Smart Comments
+- Don't comment on what the code does - make the code self-documenting
+- Use comments to explain why something is done a certain way
+- Document APIs, complex algorithms, and non-obvious side effects
+
+## Single Responsibility
+- Each function should do exactly one thing
+- Functions should be small and focused
+- If a function needs a comment to explain what it does, it should be split
+
+## DRY (Don't Repeat Yourself)
+- Extract repeated code into reusable functions
+- Share common logic through proper abstraction
+- Maintain single sources of truth
+
+## Clean Structure
+- Keep related code together
+- Organize code in a logical hierarchy
+- Use consistent file and folder naming conventions
+
+## Encapsulation
+- Hide implementation details
+- Expose clear interfaces
+- Move nested conditionals into well-named functions
+
+## Code Quality Maintenance
+- Refactor continuously
+- Fix technical debt early
+- Leave code cleaner than you found it
+
+## Version Control
+- Write clear commit messages
+- Make small, focused commits
+- Use meaningful branch names 
