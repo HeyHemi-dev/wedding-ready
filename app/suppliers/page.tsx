@@ -1,3 +1,4 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Section from '@/components/ui/section'
 import { SupplierModel } from '@/models/supplier'
 import { Supplier } from '@/models/types'
@@ -20,12 +21,16 @@ export default async function SuppliersPage() {
 
 function SupplierCard({ supplier }: { supplier: Supplier }) {
   return (
-    <div className="border border-border rounded-lg p-4">
-      <h2 className="text-lg font-bold">{supplier.name}</h2>
-      <p className="text-sm text-muted-foreground">{supplier.description}</p>
-      <Link href={`/suppliers/${supplier.handle}`} className="text-sm text-muted-foreground">
-        View supplier
+    <Card>
+      <Link href={`/suppliers/${supplier.handle}`}>
+        <CardHeader>
+          <CardTitle>{supplier.name}</CardTitle>
+          <CardDescription>{supplier.description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">View supplier</p>
+        </CardContent>
       </Link>
-    </div>
+    </Card>
   )
 }

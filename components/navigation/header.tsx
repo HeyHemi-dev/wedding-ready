@@ -6,8 +6,8 @@ import Image from 'next/image'
 
 export default function Header() {
   return (
-    <header className="border-b border-b-border/50 h-headerHeight grid grid-cols-siteLayout">
-      <div className="col-start-2 col-end-3 grid grid-cols-[auto_1fr_auto] gap-sm items-center py-xs text-sm">
+    <header className="grid grid-cols-siteLayout">
+      <div className="col-start-2 col-end-3 h-headerHeight border-b border-b-border grid grid-cols-[auto_1fr_auto] gap-sm items-center py-xs text-sm">
         <Link href={'/'} className="relative aspect-[3/2] h-full">
           <Button variant={'ghost'} className="p-0" asChild>
             <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill className="object-contain" />

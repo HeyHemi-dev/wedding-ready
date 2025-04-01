@@ -1,6 +1,6 @@
 'use server'
 
-import { encodedRedirect } from '@/utils/utils'
+import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'

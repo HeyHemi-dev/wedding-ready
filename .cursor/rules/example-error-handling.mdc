@@ -1,0 +1,55 @@
+---
+description: Error handling
+globs: 
+alwaysApply: false
+---
+# Error Handling
+
+## Server-Side
+This example demonstrates best practices for handling errors in a server-side function.
+
+## Key Principles
+1. Use typed error codes
+2. Implement proper error logging
+3. Use tryCatch utility
+
+## Example Implementation
+
+```typescript
+
+enum OperationErrorCode {
+  RESOURCE_NOT_FOUND = 'Resource not found',
+  DATABASE_ERROR = 'Database error',
+}
+
+type OperationError = {
+  code: OperationErrorCode
+  message?: string
+}
+
+async function getResource(resourceId: string): Promise<Resource | null> {
+  const { data: resource, error } = await tryCatch(Model.getById(resourceId))
+
+  if (error) {
+    const dbError: OperationError = {
+      code: OperationErrorCode.DATABASE_ERROR,
+      message: `Failed to fetch resource from database`,
+    }
+    console.error(dbError)
+    return null
+  }
+
+  if (!resource) {
+    const notFoundError: OperationError = {
+      code: OperationErrorCode.RESOURCE_NOT_FOUND,
+      message: `Resource not found: ${resourceId}`,
+    }
+    console.error(notFoundError)
+    return null
+  }
+
+  return resource
+}
+```
+
+## Client-Side

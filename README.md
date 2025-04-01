@@ -2,34 +2,13 @@
 
 WeddingReady is a platform that transforms wedding inspiration into real purchases by directly connecting engaged couples with local vendors. 
 
-## Tech Stack
-
-- **Meta Framework**: [Next.js 15](https://nextjs.org/docs) with App Router and [React 19](https://react.dev/reference/react)
-- **Client Side Fetching**: [Tanstack Query](https://tanstack.com/query/latest/docs/framework/react/overview)
-- **Forms**: [Tanstack Form](https://tanstack.com/form/latest/docs/overview) with [Zod](https://zod.dev/)
-- **Database**: [Supabase PostgreSQL](https://supabase.com/docs/guides/database/overview) with [Drizzle ORM](https://orm.drizzle.team/docs/rqb)
-- **Authentication**: [Supabase Auth](https://supabase.com/docs/guides/auth) with SSR
-- **Storage**: [Uploadthing](https://docs.uploadthing.com/)
-- **Styling**: [Tailwind CSS v3](https://v3.tailwindcss.com/) with [shadcn/ui](https://ui.shadcn.com/docs) components
-- **Language**: TypeScript throughout
-
-## Project Structure
-```yaml
-/
-├── actions/ # Server actions (business logic for server-side)
-├── app/ # Next.js App Router pages
-├── app/api/ # Next.js api endpoints to handle client-side requests on the server
-├── components/ # Non-context specific react components
-├── components/ui # Shadcn components
-├── db/ # Database schema, enums and migrations
-├── docs/ # Documentation
-├── hooks/ # Custom hooks (business logic for client-side)
-├── models/ # Major model actions, types and zod schema (persistance layer)
-├── public/ # Static assets
-└── utils/ # Utility functions
-```
-
-For architecture and development patterns, see [architecture.md](docs/architecture.md).
+## Documentation
+- [Tech stack](docs/tech-stack.md)
+- [Project folders](docs/folder-structure.md)
+- [Architecture](docs/architecture.md)
+- [Development patterns and examples](docs/patterns.md)
+- [Auth](docs/auth.md)
+- [Overused hooks and substitutes](docs/substitutes.md)
 
 ## Getting Started
 
@@ -72,9 +51,9 @@ The project uses Next.js's ESLint configuration with TypeScript support. See `.e
 
 ### Database Migrations
 - Use Drizzle for database schema management
-- Generate migrations with `pnpm db:generate`
+- Generate migrations with `pnpm db:generate`. Check migration files before applying.
 - Apply migrations with `pnpm db:migrate`
-- Bypass migration pattern with `pnpm db:push` (for initial setup only)
+<!-- - Bypass migration pattern with `pnpm db:push` (for initial setup only) -->
 
 ### Code Quality
 - TypeScript for type safety

@@ -1,10 +1,9 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
-import { isProtectedPath } from '@/utils/auth'
+import { isProtectedPath, AuthHeaderName } from '@/utils/auth'
 
 export const updateSession = async (request: NextRequest) => {
-  // Create an unmodified response
-  let response = NextResponse.next({
+  let supabaseResponse = NextResponse.next({
     request: {
       headers: request.headers,
     },
@@ -17,28 +16,37 @@ export const updateSession = async (request: NextRequest) => {
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-        response = NextResponse.next({
+        supabaseResponse = NextResponse.next({
           request,
         })
-        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
+        cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
       },
     },
   })
 
-  // This will refresh session if expired - required for Server Components
+  // Do not run code between createServerClient and
+  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
+  // issues with users being randomly logged out.
   // https://supabase.com/docs/guides/auth/server-side/nextjs
-  const user = await supabase.auth.getUser()
+  // IMPORTANT: DO NOT REMOVE auth.getUser()
+
+  // getUser will refresh session if expired - required for Server Components
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
 
   // protected routes
-  if (isProtectedPath(request.nextUrl.pathname) && user.error) {
+  if (isProtectedPath(request.nextUrl.pathname) && error) {
     return NextResponse.redirect(new URL('/sign-in', request.url))
   }
 
   // Only set the auth user header if we have one.
   // If we try to get the header later on and it doesn't exist then next/headers will return null.
-  if (user.data.user) {
-    response.headers.set('x-auth-user-id', user.data.user.id)
+  if (user) {
+    supabaseResponse.headers.set(AuthHeaderName, user.id)
   }
 
-  return response
+  // IMPORTANT: You must return the supabaseResponse object as is to maintain session state
+  return supabaseResponse
 }
