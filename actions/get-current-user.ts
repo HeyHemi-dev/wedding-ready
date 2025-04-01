@@ -4,11 +4,22 @@ import { UserDetailModel } from '@/models/user'
 import { User, makeUser } from '@/models/types'
 import { unstable_cache } from 'next/cache'
 import { getAuthenticatedUserId } from '@/utils/auth'
+import { tryCatch } from '@/utils/try-catch'
 
 const USER_CACHE_DURATION = 60 * 15 // time in seconds
 
+enum UserFetchErrorCode {
+  NOT_AUTHENTICATED = 'Not authenticated',
+  USER_NOT_FOUND = 'User not found',
+  DATABASE_ERROR = 'Database error',
+}
+type UserFetchError = {
+  code: UserFetchErrorCode
+  message?: string
+}
+
 /**
- * A server-side function that retrieves the authenticated user's id from middleware and returns their user details from the database.
+ * Server-side function uses the current authenticated userId to get their user details from the database.
  * The result is cached based on the user ID from the request header.
  * This function must be called from a Server Component or server action.
  *
@@ -36,17 +47,39 @@ const USER_CACHE_DURATION = 60 * 15 // time in seconds
  * ```
  */
 export async function getCurrentUser(): Promise<User | null> {
-  const userId = await getAuthenticatedUserId()
+  const { data: userId, error } = await tryCatch(getAuthenticatedUserId())
 
-  if (!userId) return null
+  if (error || !userId) {
+    const authError: UserFetchError = {
+      code: UserFetchErrorCode.NOT_AUTHENTICATED,
+      message: 'No authenticated user ID found in request',
+    }
+    console.error('[getCurrentUser]', authError)
+    return null
+  }
 
-  const user = unstable_cache(
+  const user = await unstable_cache(
     async () => {
-      const userDetail = await UserDetailModel.getById(userId)
-      if (!userDetail) {
-        console.error(`User details missing for user: ${userId}`)
+      const { data: userDetail, error } = await tryCatch(UserDetailModel.getById(userId))
+
+      if (error) {
+        const userError: UserFetchError = {
+          code: UserFetchErrorCode.DATABASE_ERROR,
+          message: `Failed to fetch user details from database`,
+        }
+        console.error('[getCurrentUser]', userError)
         return null
       }
+
+      if (!userDetail) {
+        const userError: UserFetchError = {
+          code: UserFetchErrorCode.USER_NOT_FOUND,
+          message: `User details missing for user: ${userId}`,
+        }
+        console.error('[getCurrentUser]', userError)
+        return null
+      }
+
       return makeUser(userDetail)
     },
     [`user-${userId}`],
