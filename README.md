@@ -1,6 +1,6 @@
 # WeddingReady
 
-WeddingReady is a platform that transforms wedding inspiration into real purchases by directly connecting engaged couples with local vendors. 
+WeddingReady is a Pinterest-like wedding platform that solves the problem of turning aspirations into reality. 
 
 ## Documentation
 - [Tech stack](docs/tech-stack.md)
