@@ -1,17 +1,15 @@
 import { headers } from 'next/headers'
 
-/**
- * List of paths that require authentication.
- * Used by middleware and auth-related functions to enforce authentication.
- */
-export const PROTECTED_PATHS = ['/account', '/suppliers/register', '/suppliers/:handle/new', '/api'] as const
+export const PROTECTED_PATHS = ['/account', '/suppliers/register', '/suppliers/:handle/new', '/api']
 
 /**
- * Checks if a given pathname requires authentication
+ * Checks if a given pathname requires authentication. Used by middleware and auth-related functions to enforce authentication.
  */
 export function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PATHS.some((path) => pathname.startsWith(path))
 }
+
+export const AuthHeaderName = 'x-auth-user-id'
 
 /**
  * We set the authenticated user's id in the request headers using middleware.
@@ -19,9 +17,11 @@ export function isProtectedPath(pathname: string): boolean {
  *
  * @returns The authenticated user's id or null if not authenticated
  */
-export async function getAuthenticatedUserId() {
+export async function getAuthenticatedUserId(): Promise<string | null> {
   const headersList = await headers()
-  const userId = headersList.get('x-auth-user-id')
+
+  // userId will a valid string if authHeaderName is set. This is handled in middleware
+  const userId = headersList.get(AuthHeaderName)
 
   return userId
 }
