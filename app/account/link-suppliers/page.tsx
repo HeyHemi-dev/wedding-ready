@@ -10,7 +10,6 @@ import * as schema from '@/db/schema'
 import { getAuthenticatedUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-to-pretty'
 
-
 export default async function LinkSuppliers() {
   const authUserId = await getAuthenticatedUserId()
   if (!authUserId) {
@@ -35,7 +34,7 @@ export default async function LinkSuppliers() {
             <li key={supplier.id}>
               <Card className="grid grid-cols-[1fr_1fr_auto] items-center gap-md p-md">
                 <div className="flex items-center gap-md">
-                  <div className="w-xl h-xl rounded-full bg-muted flex items-center justify-center">
+                  <div className="flex h-xl w-xl items-center justify-center rounded-full bg-muted">
                     <p className="text-sm font-medium">{supplier.name.charAt(0)}</p>
                   </div>
                   <div className="flex flex-col">
@@ -47,7 +46,7 @@ export default async function LinkSuppliers() {
 
                 <Link href={`/suppliers/${supplier.handle}`}>
                   <Button variant={'ghost'} className="flex items-center gap-xxs">
-                    View Profile <ArrowRightIcon className="w-4 h-4" />
+                    View Profile <ArrowRightIcon className="h-4 w-4" />
                   </Button>
                 </Link>
               </Card>

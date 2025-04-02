@@ -14,7 +14,6 @@ import { valueToPretty } from '@/utils/enum-to-pretty'
 
 import { SupplierTiles } from './supplier-tiles'
 
-
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const supplier = await SupplierModel.getByHandle(handle)
@@ -34,7 +33,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
     <>
       <Section>
         {isSupplierUser && (
-          <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
+          <div className="flex items-center gap-3 rounded-md bg-accent p-3 px-5 text-sm text-foreground">
             <InfoIcon size="16" strokeWidth={2} />
             You can edit this page
           </div>
@@ -45,14 +44,14 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
             <SupplierHeader supplier={supplier} />
             <div className="flex gap-sm">
               <Button disabled={!user} variant={'default'} className="gap-xs">
-                <StarIcon className="w-4 h-4" />
+                <StarIcon className="h-4 w-4" />
                 Add to Favourites
               </Button>
 
               {supplier.websiteUrl && (
                 <Link href={supplier.websiteUrl} target="_blank">
                   <Button variant={'secondary'} className="gap-xs">
-                    <ExternalLinkIcon className="w-4 h-4" />
+                    <ExternalLinkIcon className="h-4 w-4" />
                     Visit Website
                   </Button>
                 </Link>
@@ -64,7 +63,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
             <div className="flex place-self-end">
               <Link href={`/suppliers/${handle}/new`}>
                 <Button variant={'secondary'} className="gap-xs">
-                  <SquarePlusIcon className="w-4 h-4" />
+                  <SquarePlusIcon className="h-4 w-4" />
                   Create Tiles
                 </Button>
               </Link>
@@ -72,7 +71,11 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
           )}
         </div>
 
-        <ErrorBoundary fallback={noTiles({ message: 'Error loading tiles', cta: { text: 'Retry', redirect: `/suppliers/${handle}` } })}>
+        <ErrorBoundary
+          fallback={noTiles({
+            message: 'Error loading tiles',
+            cta: { text: 'Retry', redirect: `/suppliers/${handle}` },
+          })}>
           <SupplierTiles supplier={supplier} user={user ?? undefined} />
         </ErrorBoundary>
       </Section>
@@ -83,23 +86,23 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
 function SupplierHeader({ supplier }: { supplier: Supplier }) {
   return (
     <div className="grid grid-cols-[auto_1fr] gap-md">
-      <div className="avatar rounded-full bg-primary text-primary-foreground w-24 h-24 flex items-center justify-center text-6xl font-light uppercase">
+      <div className="avatar flex h-24 w-24 items-center justify-center rounded-full bg-primary text-6xl font-light uppercase text-primary-foreground">
         {supplier.name.slice(0, 1)}
       </div>
       <div className="grid gap-xs">
-        <div className="flex gap-xs items-baseline">
+        <div className="flex items-baseline gap-xs">
           <h1 className="text-3xl font-semibold">{supplier.name}</h1>
           <p className="text-muted-foreground">{`@${supplier.handle}`}</p>
         </div>
         {supplier.description && <p>{supplier.description}</p>}
-        <div className="flex flex-wrap gap-xxs col-span-full">
+        <div className="col-span-full flex flex-wrap gap-xxs">
           {supplier.services.map((service) => (
             <Badge variant={'secondary'} key={service}>
               {valueToPretty(service)}
             </Badge>
           ))}
         </div>
-        <div className="flex flex-wrap gap-xxs col-span-full">
+        <div className="col-span-full flex flex-wrap gap-xxs">
           {supplier.locations.map((location) => (
             <Badge variant={'secondary'} key={location}>
               {valueToPretty(location)}

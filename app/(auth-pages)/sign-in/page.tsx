@@ -7,7 +7,6 @@ import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
 
-
 export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
   const headersList = await headers()
@@ -19,7 +18,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
         <h1 className="text-2xl font-medium">Sign in</h1>
         <p className="text-sm text-foreground">
           Don&apos;t have an account?{' '}
-          <Link className="text-primary font-medium underline" href="/sign-up">
+          <Link className="font-medium text-primary underline" href="/sign-up">
             Sign up
           </Link>
         </p>
@@ -30,7 +29,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
         </Field>
         <Field label="Password" htmlFor="password">
           <Input type="password" name="password" placeholder="Your password" required />
-          <Link className="text-xs text-foreground underline self-end" href="/forgot-password">
+          <Link className="self-end text-xs text-foreground underline" href="/forgot-password">
             Forgot Password?
           </Link>
         </Field>

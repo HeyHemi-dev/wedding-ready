@@ -30,7 +30,7 @@ export default function RootLayout({
     <html lang="en" className={geistSans.className} suppressHydrationWarning>
       <body className="bg-background text-foreground">
         <Providers>
-          <div className="min-h-dvh grid grid-rows-[auto_1fr_auto]">
+          <div className="grid min-h-dvh grid-rows-[auto_1fr_auto]">
             <Header />
 
             <main>{children}</main>

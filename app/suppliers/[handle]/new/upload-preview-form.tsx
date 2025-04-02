@@ -16,7 +16,6 @@ import { enumToPretty } from '@/utils/enum-to-pretty'
 
 import { FileWithMetadata } from './upload-dropzone'
 
-
 export function UploadPreviewForm({
   file,
   supplier,
@@ -28,7 +27,9 @@ export function UploadPreviewForm({
   user: User
   onCompleteAction: () => void
 }) {
-  const { startCreateTile, status, uploadProgress } = useCreateTile({ onUploadComplete: onCompleteAction })
+  const { startCreateTile, status, uploadProgress } = useCreateTile({
+    onUploadComplete: onCompleteAction,
+  })
 
   async function onSubmit(formData: FormData) {
     const tileData: InsertTileRaw = {
@@ -39,16 +40,21 @@ export function UploadPreviewForm({
       isPrivate: false,
     }
 
-    await startCreateTile({ files: [file.file], tileData, suppliers: [supplier], user })
+    await startCreateTile({
+      files: [file.file],
+      tileData,
+      suppliers: [supplier],
+      user,
+    })
   }
 
   return (
     <>
       {status === 'idle' ? (
         <div className="grid grid-cols-[1fr_3fr] gap-6">
-          <div className="aspect-square overflow-hidden bg-muted rounded-lg">
+          <div className="aspect-square overflow-hidden rounded-lg bg-muted">
             {/* eslint-disable-next-line @next/next/no-img-element -- This is a client-side preview of a local file, so Next.js Image optimization isn't needed */}
-            <img src={file.fileObjectUrl} alt={file.file.name} className="object-contain w-full h-full" />
+            <img src={file.fileObjectUrl} alt={file.file.name} className="h-full w-full object-contain" />
           </div>
 
           <form action={onSubmit} className="grid grid-cols-2 gap-md">

@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input'
 
 import { SmtpMessage } from '../smtp-message'
 
-
 export default async function Signup(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
   if ('message' in searchParams) {
@@ -23,9 +22,9 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
     <>
       <div className="grid gap-xxs">
         <h1 className="text-2xl font-medium">Sign up</h1>
-        <p className="text-sm text text-foreground">
+        <p className="text text-sm text-foreground">
           Already have an account?{' '}
-          <Link className="text-primary font-medium underline" href="/sign-in">
+          <Link className="font-medium text-primary underline" href="/sign-in">
             Sign in
           </Link>
         </p>

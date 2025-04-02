@@ -1,8 +1,9 @@
 # WeddingReady
 
-WeddingReady is a platform that transforms wedding inspiration into real purchases by directly connecting engaged couples with local vendors. 
+WeddingReady is a platform that transforms wedding inspiration into real purchases by directly connecting engaged couples with local vendors.
 
 ## Documentation
+
 - [Tech stack](docs/tech-stack.md)
 - [Project folders](docs/folder-structure.md)
 - [Architecture](docs/architecture.md)
@@ -13,22 +14,26 @@ WeddingReady is a platform that transforms wedding inspiration into real purchas
 ## Getting Started
 
 1. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 2. Set up your environment variables:
+
    ```bash
    pnpm vercel env pull
    ```
 
 3. Run database migrations:
-  You may need to replace the first empty migration, with the contents of the file in `@/db/baseline`
+   You may need to replace the first empty migration, with the contents of the file in `@/db/baseline`
+
    ```bash
    pnpm db:migrate
    ```
 
 4. Start the development server:
+
    ```bash
    pnpm dev
    ```
@@ -50,12 +55,14 @@ The project uses Next.js's ESLint configuration with TypeScript support. See `.e
 6. Submit a pull request
 
 ### Database Migrations
+
 - Use Drizzle for database schema management
 - Generate migrations with `pnpm db:generate`. Check migration files before applying.
 - Apply migrations with `pnpm db:migrate`
 <!-- - Bypass migration pattern with `pnpm db:push` (for initial setup only) -->
 
 ### Code Quality
+
 - TypeScript for type safety
 - ESLint for code quality
 - Prettier for code formatting

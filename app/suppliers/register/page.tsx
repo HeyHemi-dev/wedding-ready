@@ -22,8 +22,8 @@ export default async function SupplierRegisterPage() {
 
   return (
     <Section>
-      <div className="grid gap-md max-w-md mx-auto">
-        <h2 className="font-medium text-2xl">Register a supplier</h2>
+      <div className="mx-auto grid max-w-md gap-md">
+        <h2 className="text-2xl font-medium">Register a supplier</h2>
         <form action={handleRegisterSupplier} className="grid gap-sm">
           <Field label="Business name" htmlFor="name">
             <Input name="name" placeholder="Business name" />

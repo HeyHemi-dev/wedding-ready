@@ -1,24 +1,12 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "next/typescript"
-  ],
-  "plugins": [
-    "import"
-  ],
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "plugins": ["import"],
   "rules": {
     // Import ordering
     "import/order": [
       "error",
       {
-        "groups": [
-          ["builtin", "external"],
-          "internal",
-          ["parent", "sibling"],
-          "index",
-          "object",
-          "type"
-        ],
+        "groups": [["builtin", "external"], "internal", ["parent", "sibling"], "index", "object", "type"],
         "pathGroups": [
           {
             "pattern": "react",

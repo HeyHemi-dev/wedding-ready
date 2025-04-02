@@ -74,7 +74,7 @@ function Dropzone({
   return (
     <div
       {...getRootProps()}
-      className="flex flex-col justify-center items-center gap-md border-2 border-dashed rounded-lg p-16 min-h-[25svh] hover:bg-muted/50 cursor-pointer">
+      className="flex min-h-[25svh] cursor-pointer flex-col items-center justify-center gap-md rounded-lg border-2 border-dashed p-16 hover:bg-muted/50">
       <input {...getInputProps()} />
       <div className="text-center">
         <p className="">Drag and drop images here</p>

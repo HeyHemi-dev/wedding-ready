@@ -18,7 +18,7 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
     <Section>
       <Card>
         <div className="grid grid-cols-2">
-          <div className="aspect-[2/3] bg-muted rounded-lg overflow-hidden relative">
+          <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-muted">
             <Image src={tile.imagePath ?? ''} alt={tile.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain" />
           </div>
           <div className="grid grid-rows-[auto_1fr_auto]">

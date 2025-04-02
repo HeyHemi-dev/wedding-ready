@@ -21,7 +21,7 @@ export default function Field({ label, children, hint, ...labelProps }: FieldPro
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                <Info className="h-4 w-4 cursor-help text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent>
                 <p>{hint}</p>

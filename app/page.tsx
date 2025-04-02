@@ -27,7 +27,11 @@ export default function Home() {
 
       {/* Section 3 - Save */}
       <HomePageSection
-        image={{ url: '/images/save.jpg', alt: 'Save Inspiration', side: 'right' }}
+        image={{
+          url: '/images/save.jpg',
+          alt: 'Save Inspiration',
+          side: 'right',
+        }}
         bgClass="bg-gradient-to-br from-amber-100 to-amber-50"
         text={{
           title: 'Save inspiration.',
@@ -39,7 +43,11 @@ export default function Home() {
 
       {/* Section 4 - Bring to Life */}
       <HomePageSection
-        image={{ url: '/images/bring-to-life.jpg', alt: 'Bring to Life', side: 'left' }}
+        image={{
+          url: '/images/bring-to-life.jpg',
+          alt: 'Bring to Life',
+          side: 'left',
+        }}
         bgClass="bg-gradient-to-br from-teal-100 to-teal-50"
         text={{
           title: 'See it, save it, bring it to life.',
@@ -64,9 +72,9 @@ function HomePageSection({
   cta: { text: string; link: string }
 }) {
   return (
-    <section className="min-h-svh grid grid-cols-2">
-      <div className={cn('p-16 grid place-content-center row-start-1', bgClass, image.side === 'left' ? 'col-start-2' : 'col-start-1')}>
-        <div className="flex flex-col gap-8 max-w-lg">
+    <section className="grid min-h-svh grid-cols-2">
+      <div className={cn('row-start-1 grid place-content-center p-16', bgClass, image.side === 'left' ? 'col-start-2' : 'col-start-1')}>
+        <div className="flex max-w-lg flex-col gap-8">
           <div className="space-y-4">
             <h2 className={cn('text-6xl font-bold', text.colorClass)}>{text.title}</h2>
             <p className={cn('text-lg', text.colorClass)}>{text.description}</p>
@@ -78,7 +86,7 @@ function HomePageSection({
           </Link>
         </div>
       </div>
-      <div className={cn('grid row-start-1 bg-muted relative', image.side === 'left' ? 'col-start-1' : 'col-start-2')}>
+      <div className={cn('relative row-start-1 grid bg-muted', image.side === 'left' ? 'col-start-1' : 'col-start-2')}>
         <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
       </div>
     </section>
@@ -87,9 +95,9 @@ function HomePageSection({
 
 function HeroSection() {
   return (
-    <section className="h-svh-minus-header grid grid-rows-[1fr_auto] ">
+    <section className="grid h-svh-minus-header grid-rows-[1fr_auto]">
       <div className="grid place-content-center justify-items-center gap-8">
-        <HeroTextCarousel className="text-center text-7xl font-extrabold bg-gradient-to-br from-amber-600 to-orange-700 bg-clip-text text-transparent space-y-[0.07em]" />
+        <HeroTextCarousel className="space-y-[0.07em] bg-gradient-to-br from-amber-600 to-orange-700 bg-clip-text text-center text-7xl font-extrabold text-transparent" />
         <Link href="/suppliers">
           <Button size={'lg'} className="bg-amber-700 text-white">
             Explore
@@ -102,9 +110,9 @@ function HeroSection() {
       </p>
       {/* scroll indicator positioned to bottom center with chevron down */}
 
-      <div className="p-16 bg-orange-100 flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center bg-orange-100 p-16">
         <p className="text-orange-900">See how it works</p>
-        <ChevronDown className="w-8 h-8 text-orange-900" />
+        <ChevronDown className="h-8 w-8 text-orange-900" />
       </div>
     </section>
   )
