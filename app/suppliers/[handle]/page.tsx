@@ -5,12 +5,12 @@ import { Button } from '@/components/ui/button'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
-import { TileModel } from '@/models/tile'
-import { TileList, TileListSkeleton } from '@/components/tiles/tile-list'
-import { Suspense } from 'react'
+import { noTiles } from '@/components/tiles/tile-list'
 import { ExternalLinkIcon, InfoIcon, SquarePlusIcon, StarIcon } from 'lucide-react'
 import { Supplier } from '@/models/types'
 import { valueToPretty } from '@/utils/enum-to-pretty'
+import { SupplierTiles } from './supplier-tiles'
+import { ErrorBoundary } from 'react-error-boundary'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -25,7 +25,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
   const isSupplierUser = supplier?.users.some((u) => u.userId === user?.id)
 
   // Get tiles for supplier
-  const tiles = await TileModel.getBySupplier(supplier, user ? user : undefined)
+  // const tiles = await TileModel.getBySupplier(supplier.id, user?.id ?? undefined)
 
   return (
     <>
@@ -57,53 +57,23 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
             </div>
           </div>
 
-          {isSupplierUser && tiles.length > 0 && (
+          {isSupplierUser && (
             <div className="flex place-self-end">
               <Link href={`/suppliers/${handle}/new`}>
                 <Button variant={'secondary'} className="gap-xs">
                   <SquarePlusIcon className="w-4 h-4" />
-                  Create Tile
+                  Create Tiles
                 </Button>
               </Link>
             </div>
           )}
         </div>
 
-        <Suspense fallback={<TileListSkeleton />}>
-          {tiles.length > 0 ? (
-            <TileList tiles={tiles} />
-          ) : (
-            noTiles({
-              message: `${supplier.name} has no tiles`,
-              cta: { text: 'Add a tile', redirect: `/suppliers/${handle}/new`, show: isSupplierUser },
-            })
-          )}
-        </Suspense>
+        <ErrorBoundary fallback={noTiles({ message: 'Error loading tiles', cta: { text: 'Retry', redirect: `/suppliers/${handle}` } })}>
+          <SupplierTiles supplier={supplier} user={user ?? undefined} />
+        </ErrorBoundary>
       </Section>
     </>
-  )
-}
-
-interface noTilesProps {
-  message: string
-  cta?: {
-    text: string
-    redirect: string
-    show?: boolean
-  }
-}
-
-function noTiles({ message, cta }: noTilesProps) {
-  'use client'
-  return (
-    <div className="flex flex-col items-center justify-center h-full gap-4">
-      <p className="text-muted-foreground">{message}</p>
-      {cta && cta.show && (
-        <Link href={cta.redirect}>
-          <Button variant={'outline'}>{cta.text}</Button>
-        </Link>
-      )}
-    </div>
   )
 }
 
