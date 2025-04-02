@@ -1,16 +1,19 @@
-import { getCurrentUser } from '@/actions/get-current-user'
-import { SupplierModel } from '@/models/supplier'
-import Section from '@/components/ui/section'
-import { Button } from '@/components/ui/button'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { Badge } from '@/components/ui/badge'
-import { noTiles } from '@/components/tiles/tile-list'
 import { ExternalLinkIcon, InfoIcon, SquarePlusIcon, StarIcon } from 'lucide-react'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { ErrorBoundary } from 'react-error-boundary'
+
+import { getCurrentUser } from '@/actions/get-current-user'
+import { noTiles } from '@/components/tiles/tile-list'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import Section from '@/components/ui/section'
+import { SupplierModel } from '@/models/supplier'
 import { Supplier } from '@/models/types'
 import { valueToPretty } from '@/utils/enum-to-pretty'
+
 import { SupplierTiles } from './supplier-tiles'
-import { ErrorBoundary } from 'react-error-boundary'
+
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

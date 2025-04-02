@@ -1,13 +1,16 @@
 'use client'
 
 import * as React from 'react'
+
+import { toast } from 'sonner'
 import { generateClientDropzoneAccept, generatePermittedFileTypes, isValidFileSize } from 'uploadthing/client'
-import { useUploadThing, useDropzone } from '@/utils/uploadthing'
+import { ExpandedRouteConfig } from 'uploadthing/types'
+
 import { Button } from '@/components/ui/button'
 import { SupplierRaw, User } from '@/models/types'
-import { ExpandedRouteConfig } from 'uploadthing/types'
+import { useUploadThing, useDropzone } from '@/utils/uploadthing'
+
 import { UploadPreviewList } from './upload-preview'
-import { toast } from 'sonner'
 
 export type FileWithMetadata = {
   file: File

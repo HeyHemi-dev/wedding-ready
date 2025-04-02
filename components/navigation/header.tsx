@@ -1,8 +1,10 @@
-import Link from 'next/link'
-import { Button } from '../ui/button'
-import { getCurrentUser } from '@/actions/get-current-user'
-import { signOutAction } from '@/actions/auth-actions'
 import Image from 'next/image'
+import Link from 'next/link'
+
+import { signOutAction } from '@/actions/auth-actions'
+import { getCurrentUser } from '@/actions/get-current-user'
+
+import { Button } from '../ui/button'
 
 export default function Header() {
   return (

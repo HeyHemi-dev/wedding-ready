@@ -1,16 +1,17 @@
+import { redirect } from 'next/navigation'
+
+import { getCurrentUser } from '@/actions/get-current-user'
+import Field from '@/components/form/field'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Section from '@/components/ui/section'
-import { getAuthenticatedUserId } from '@/utils/auth'
-import { redirect } from 'next/navigation'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { Location, Service } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
 import { InsertSupplierRaw } from '@/models/types'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Location, Service } from '@/db/constants'
+import { getAuthenticatedUserId } from '@/utils/auth'
 import { enumToPretty } from '@/utils/enum-to-pretty'
-import { getCurrentUser } from '@/actions/get-current-user'
-import Field from '@/components/form/field'
-import { Textarea } from '@/components/ui/textarea'
 
 export default async function SupplierRegisterPage() {
   const authUserId = await getAuthenticatedUserId()

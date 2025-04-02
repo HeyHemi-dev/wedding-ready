@@ -1,9 +1,10 @@
+import Image from 'next/image'
+import { redirect } from 'next/navigation'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import Section from '@/components/ui/section'
 import { TileModel } from '@/models/tile'
-import Image from 'next/image'
-import { redirect } from 'next/navigation'
 
 export default async function TilePage({ params }: { params: Promise<{ tileId: string }> }) {
   const { tileId } = await params

@@ -1,14 +1,15 @@
-import { db } from '@/db/db'
 import { eq } from 'drizzle-orm'
-import { redirect } from 'next/navigation'
-import * as schema from '@/db/schema'
+import { ArrowRightIcon } from 'lucide-react'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { db } from '@/db/db'
+import * as schema from '@/db/schema'
+import { getAuthenticatedUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-to-pretty'
 
-import { Card } from '@/components/ui/card'
-import { ArrowRightIcon } from 'lucide-react'
-import { getAuthenticatedUserId } from '@/utils/auth'
 
 export default async function LinkSuppliers() {
   const authUserId = await getAuthenticatedUserId()

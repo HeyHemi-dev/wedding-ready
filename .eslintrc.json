@@ -7,53 +7,54 @@
     "import"
   ],
   "rules": {
-    // // Import ordering
-    // "import/order": [
-    //   "error",
-    //   {
-    //     "groups": [
-    //       ["builtin", "external"],
-    //       "internal",
-    //       ["parent", "sibling"],
-    //       "index",
-    //       "object",
-    //       "type"
-    //     ],
-    //     "pathGroups": [
-    //       {
-    //         "pattern": "@/**",
-    //         "group": "internal",
-    //         "position": "after"
-    //       }
-    //     ],
-    //     "pathGroupsExcludedImportTypes": ["builtin"],
-    //     "newlines-between": "always",
-    //     "alphabetize": {
-    //       "order": "asc",
-    //       "caseInsensitive": true
-    //     }
-    //   }
-    // ],
-    // // Prevent duplicate imports
-    // "import/no-duplicates": "error",
-    // // Ensure consistent use of file extension
-    // "import/extensions": [
-    //   "error",
-    //   "never",
-    //   {
-    //     "pattern": {
-    //       "json": "always",
-    //       "css": "always",
-    //       "scss": "always",
-    //       "png": "always",
-    //       "jpg": "always",
-    //       "svg": "always"
-    //     }
-    //   }
-    // ],
-    // // Ensure imports point to files/modules that can be resolved
-    // "import/no-unresolved": "off",
-    // // Ensure named imports correspond to a named export in the referenced module
-    // "import/named": "error"
+    // Import ordering
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          ["builtin", "external"],
+          "internal",
+          ["parent", "sibling"],
+          "index",
+          "object",
+          "type"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@/**",
+            "group": "internal",
+            "position": "after"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
+    // Prevent duplicate imports
+    "import/no-duplicates": "error",
+    // Ensure consistent use of file extension
+    "import/extensions": [
+      "error",
+      "never",
+      {
+        "pattern": {
+          "json": "always",
+          "css": "always",
+          "scss": "always",
+          "png": "always",
+          "jpg": "always",
+          "svg": "always"
+        }
+      }
+    ]
   }
 }

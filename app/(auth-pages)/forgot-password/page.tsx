@@ -1,10 +1,13 @@
+import Link from 'next/link'
+
 import { forgotPasswordAction } from '@/actions/auth-actions'
+import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
-import Link from 'next/link'
+
 import { SmtpMessage } from '../smtp-message'
-import Field from '@/components/form/field'
+
 
 export default async function ForgotPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams

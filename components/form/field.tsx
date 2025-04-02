@@ -1,7 +1,8 @@
-import { Label } from '@/components/ui/label'
 import * as LabelPrimitive from '@radix-ui/react-label'
 import { type VariantProps } from 'class-variance-authority'
 import { Info } from 'lucide-react'
+
+import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 type FieldProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &

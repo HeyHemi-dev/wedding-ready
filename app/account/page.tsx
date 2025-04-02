@@ -1,14 +1,15 @@
-import { UserDetailModel } from '@/models/user'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { getCurrentUser } from '@/actions/get-current-user'
 import { InfoIcon } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+
+import { getCurrentUser } from '@/actions/get-current-user'
+import Field from '@/components/form/field'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { UserDetailModel } from '@/models/user'
 import { userUpdateFormSchema } from '@/models/validations'
 import { getAuthenticatedUserId } from '@/utils/auth'
-import { Textarea } from '@/components/ui/textarea'
-import Field from '@/components/form/field'
 
 export default async function AccountPage() {
   const user = await getCurrentUser()

@@ -1,9 +1,12 @@
+import { ChevronDown } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
-import Link from 'next/link'
-import { ChevronDown } from 'lucide-react'
+
 import HeroTextCarousel from './hero-text-carousel'
-import Image from 'next/image'
+
 export default function Home() {
   return (
     <>

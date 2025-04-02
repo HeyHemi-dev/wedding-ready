@@ -1,10 +1,13 @@
-import Section from '@/components/ui/section'
-import { getCurrentUser } from '@/actions/get-current-user'
-import { redirect } from 'next/navigation'
-import { SupplierModel } from '@/models/supplier'
-import { UploadDropzone } from './upload-dropzone'
-import Link from 'next/link'
 import { ArrowLeftIcon } from 'lucide-react'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
+import { getCurrentUser } from '@/actions/get-current-user'
+import Section from '@/components/ui/section'
+import { SupplierModel } from '@/models/supplier'
+
+import { UploadDropzone } from './upload-dropzone'
+
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

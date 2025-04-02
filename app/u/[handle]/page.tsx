@@ -1,8 +1,9 @@
+import Link from 'next/link'
+
+import { getCurrentUser } from '@/actions/get-current-user'
 import { Button } from '@/components/ui/button'
 import Section from '@/components/ui/section'
 import { UserDetailModel } from '@/models/user'
-import { getCurrentUser } from '@/actions/get-current-user'
-import Link from 'next/link'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

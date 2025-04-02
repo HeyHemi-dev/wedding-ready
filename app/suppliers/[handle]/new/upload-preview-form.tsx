@@ -2,18 +2,20 @@
 
 import * as React from 'react'
 
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { InsertTileRaw, SupplierRaw, User } from '@/models/types'
-import { Location } from '@/db/constants'
-import { enumToPretty } from '@/utils/enum-to-pretty'
-import { SubmitButton } from '@/components/submit-button'
-import { useCreateTile } from '@/hooks/use-create-tile'
-import { FileWithMetadata } from './upload-dropzone'
-import { Progress } from '@/components/ui/progress'
 import Field from '@/components/form/field'
+import { SubmitButton } from '@/components/submit-button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { Location } from '@/db/constants'
+import { useCreateTile } from '@/hooks/use-create-tile'
+import { InsertTileRaw, SupplierRaw, User } from '@/models/types'
+import { enumToPretty } from '@/utils/enum-to-pretty'
+
+import { FileWithMetadata } from './upload-dropzone'
+
 
 export function UploadPreviewForm({
   file,

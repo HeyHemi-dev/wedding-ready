@@ -1,15 +1,16 @@
 // src/components/multi-select.tsx
 
 import * as React from 'react'
+
 import { cva, type VariantProps } from 'class-variance-authority'
 import { CheckIcon, XCircle, ChevronDown, XIcon, WandSparkles } from 'lucide-react'
 
-import { cn } from '@/utils/shadcn-utils'
-import { Separator } from '@/components/ui/separator'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/utils/shadcn-utils'
 
 /**
  * Variants for the multi-select component to handle different styles.

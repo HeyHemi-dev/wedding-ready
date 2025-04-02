@@ -1,7 +1,9 @@
-import { Tile } from '@/models/types'
-import { Skeleton } from '@/components/ui/skeleton'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
+
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tile } from '@/models/types'
+
 import { Button } from '../ui/button'
 
 export function TileList({ tiles }: { tiles: Tile[] }) {
