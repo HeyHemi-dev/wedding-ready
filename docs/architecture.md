@@ -4,9 +4,9 @@
 Layered architecture pattern
 
 ### Database Layer
-- Uses Drizzle ORM with type-safe schema definitions
+- Use Drizzle ORM with type-safe schema definitions
 - user_details table is used to extend the auth.users table
-- Implements Model classes with OOP principals for database operations
+- Implement Model classes with OOP principals for database operations
 - Optimise database queries to make as few calls as possible, since each query is a also a network request to Supabase
 
 ### Business Logic Layer
@@ -16,23 +16,32 @@ Layered architecture pattern
 
 ### Presentation Layer
 1. **Routes**
-   - Organized in `/app`
-   - Uses Next.js routes for navigation
-   - Uses Next.js layouts for consistent page structure
-   - Implements responsive design patterns
-   - Separates concerns between layout and content
+   - Organise in `/app`
+   - Use Next.js pages for navigation
+   - Use Next.js layouts for consistent page structure
+   - Implement responsive design patterns
+   - Separate concerns between layout and content
 
 2. **API Routes**
-   - Organised in `/app/api`
-   - Fetch with useQuery.
+   - Organise in `/app/api`
+   - Implement RESTful endpoints with proper TypeScript types for request/response
+   - Follow consistent error handling patterns
+   - Use Zod (co-located) for request validation and parsing
 
-3. **Functional Components**
+3. **Client-Side Data Fetching**
+   - Prefer server-side fetching.
+   - Use React Query (TanStack Query) for client-side data fetching
+   - Implement custom hooks in `/hooks` for reusable data fetching logic
+   - Handle loading and error states with proper UI feedback
+   - Utilize React Query's caching and revalidation features
+
+4. **Functional Components**
    - Organized in `/components`
-   - Follows atomic design principles
+   - Follow atomic design principles
 
-4. **UI Components**
+5. **UI Components**
    - Organized in `/components/ui`
-   - Follows atomic design principles
+   - Follow atomic design principles
    - Context independent
    - Uses shadcn/ui with Tailwind CSS
   
