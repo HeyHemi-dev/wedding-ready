@@ -12,7 +12,7 @@ alwaysApply: false
 - Ask the user if they would like to update documentation in `/docs`. If yes read that folder and look for anything that needs to be updated.
 
 - Draft the description section for this pull request
-- Be concise. If the change is small the description can be small.
+- Be concise. If the change is small, the description can be small.
 - Use markdown formatting in a codeblock
 - If no unit tests have been added or changed, do not write anything under the testing section.
 - Do not fill out the checklist.
