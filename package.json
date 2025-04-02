@@ -24,6 +24,7 @@
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@tanstack/react-query": "^5.71.1",
+    "@tanstack/react-query-devtools": "^5.71.5",
     "@uploadthing/react": "^7.3.0",
     "autoprefixer": "10.4.20",
     "class-variance-authority": "^0.7.0",

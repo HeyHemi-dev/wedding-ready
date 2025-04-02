@@ -46,20 +46,7 @@ export class TileModel {
 
     // Get the user's saved status for each tile
     if (userId) {
-      const { data: savedTiles, error } = await tryCatch(
-        db
-          .select()
-          .from(s.savedTiles)
-          .where(
-            and(
-              eq(s.savedTiles.userId, userId),
-              inArray(
-                s.savedTiles.tileId,
-                tiles.map((t) => t.id)
-              )
-            )
-          )
-      )
+      const { data: savedTiles, error } = await tryCatch(getSavedTilesRaw(tiles, userId))
 
       if (error) {
         throw new Error('database error')
@@ -216,6 +203,22 @@ function aggregateTileQueryResults(result: TileBaseQueryResult[]): t.TileRawWith
   }
 
   return Array.from(tileMap.values())
+}
+
+async function getSavedTilesRaw(tiles: t.TileRaw[] | t.Tile[], userId: string): Promise<t.SavedTileRaw[]> {
+  const savedTiles = await db
+    .select()
+    .from(s.savedTiles)
+    .where(
+      and(
+        eq(s.savedTiles.userId, userId),
+        inArray(
+          s.savedTiles.tileId,
+          tiles.map((t) => t.id)
+        )
+      )
+    )
+  return savedTiles
 }
 
 /**

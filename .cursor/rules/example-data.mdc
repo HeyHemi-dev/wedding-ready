@@ -1,5 +1,5 @@
 ---
-description: 
+description: Data fetching pattern; database, server components, api endpoints, hooks and client components
 globs: 
 alwaysApply: false
 ---
