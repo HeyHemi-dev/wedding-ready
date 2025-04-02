@@ -14,8 +14,8 @@ export type TilesGetRequestParams = z.infer<typeof tilesGetRequestParams>
 
 export type TilesGetResponseBody = t.Tile[]
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
-  const supplierId = params.id
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const supplierId = (await params).id
   const { userId } = parseQueryParams(req.nextUrl, tilesGetRequestParams)
 
   // Only check authentication if a userId is provided
