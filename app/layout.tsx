@@ -1,6 +1,7 @@
 import Header from '@/components/navigation/header'
 import { Geist } from 'next/font/google'
-import { ThemeProvider } from 'next-themes'
+// import { ThemeProvider } from 'next-themes'
+import { Providers } from './providers'
 import { Toaster } from '@/components/ui/sonner'
 import '@/public/styles/globals.css'
 import Footer from '@/components/navigation/footer'
@@ -38,13 +39,5 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
-  )
-}
-
-function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-      {children}
-    </ThemeProvider>
   )
 }

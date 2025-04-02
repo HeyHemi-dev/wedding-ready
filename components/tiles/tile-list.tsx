@@ -2,6 +2,7 @@ import { Tile } from '@/models/types'
 import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Button } from '../ui/button'
 
 export function TileList({ tiles }: { tiles: Tile[] }) {
   return (
@@ -40,6 +41,28 @@ export function TileListSkeleton() {
           </div>
         </div>
       ))}
+    </div>
+  )
+}
+
+interface noTilesProps {
+  message: string
+  cta?: {
+    text: string
+    redirect: string
+    show?: boolean
+  }
+}
+
+export function noTiles({ message, cta }: noTilesProps) {
+  return (
+    <div className="flex flex-col items-center justify-center h-full gap-4">
+      <p className="text-muted-foreground">{message}</p>
+      {cta && cta.show && (
+        <Link href={cta.redirect} passHref>
+          <Button variant={'outline'}>{cta.text}</Button>
+        </Link>
+      )}
     </div>
   )
 }

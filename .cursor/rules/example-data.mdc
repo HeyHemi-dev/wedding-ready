@@ -1,0 +1,117 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Database Queries (Persistance Layer)
+- drizzle/sql query only
+
+```ts
+export const tileBaseQuery = db
+  .select({
+    ...s.tileColumns,
+    supplier: s.suppliers,
+  })
+  .from(s.tiles)
+  .leftJoin(s.tileSuppliers, eq(s.tiles.id, s.tileSuppliers.tileId))
+  .leftJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
+```
+
+# Database Model (Persistance Layer)
+- minimum params required to query the db
+- keep logic to minimum required to query the db
+- define return type
+
+```ts
+export class TileModel {
+  static async getBySupplierId(supplierId: string): Promise<t.Tile[]> {
+    const result = await tileBaseQuery
+      .where(and(eq(s.tileSuppliers.supplierId, supplierId), eq(s.tiles.isPrivate, false), isNotNull(s.tiles.imagePath)))
+      .orderBy(desc(s.tiles.createdAt))
+
+    // Since we're filtering for non-null imagePath in the query, we can safely assert the type
+    const tiles = aggregateTileQueryResults(result) as t.Tile[]
+    
+    return tiles
+  }
+}
+```
+
+# Server action (Business Layer)
+- handle errors
+
+```ts
+
+```
+
+# Server component (preferred) or API endpoint
+- handle auth
+- api endpoints handle request/response types and validation
+
+```jsx
+// Server component
+export async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
+  const { handle } = await params
+  const supplier = await SupplierModel.getByHandle(handle)
+
+  if (!supplier) {
+    redirect(`/404`)
+  }
+
+  // Check if the user is the owner of the supplier to enable edit features
+  const authUserId = await getAuthenticatedUserId()
+
+  // Get tiles for supplier
+  const tiles = await TileModel.getBySupplierId(supplier.id, authUserId ?? undefined)
+
+  return (
+    <Section>
+      <TileList tiles={tiles} />
+    </Section>
+  )
+}
+
+// API endpoint
+export const tilesGetRequestParams = z.object({
+  supplierId: z.string(),
+  userId: z.string().optional(),
+})
+
+export type tilesGetResponseBody = t.Tile[]
+
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  const authUserId = await getAuthenticatedUserId()
+  const { supplierId, userId } = parseQueryParams(req.nextUrl, tilesGetRequestParams)
+
+  if (!supplierId) {
+    return new NextResponse('Missing supplierId', { status: 400 })
+  }
+
+  if (userId && authUserId !== userId) {
+    return new NextResponse('Unauthorized', { status: 401 })
+  }
+
+  const { data, error } = await tryCatch(TileModel.getBySupplier(supplierId, userId))
+
+  if (error) {
+    return new NextResponse('Error fetching tiles', { status: 500 })
+  }
+
+  const tiles: tilesGetResponseBody = data
+
+  return NextResponse.json(tiles)
+}
+
+```
+
+# API query/hook (Presentation Layer)
+
+```ts
+
+```
+
+# Client component
+
+```jsx
+'use client'
+```
