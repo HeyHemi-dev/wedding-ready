@@ -1,5 +1,5 @@
 ---
-description: When a developer asks you to write a PR.
+description: Write a PR (pull request)
 globs: 
 alwaysApply: false
 ---
@@ -8,7 +8,7 @@ alwaysApply: false
 - Review the latest version of the pull request template [pull_request_template.md](mdc:docs/pull_request_template.md)
 - Review the gif diff against the main branch
 
-- Ask the user to run `pmpm lint`
+- Ask the user to run `pmpm lint` in the terminal. Wait for this to complete so you can see the current lint errors
 - Ask the user if they would like to update documentation in `/docs`. If yes read that folder and look for anything that needs to be updated.
 
 - Draft the description section for this pull request

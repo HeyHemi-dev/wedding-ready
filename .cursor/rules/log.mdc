@@ -1,5 +1,5 @@
 ---
-description: When the user asks you to log changes
+description: Log changes
 globs: 
 alwaysApply: false
 ---
