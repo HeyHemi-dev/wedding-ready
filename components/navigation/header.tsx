@@ -10,7 +10,7 @@ export default function Header() {
       <div className="col-start-2 col-end-3 h-headerHeight border-b border-b-border grid grid-cols-[auto_1fr_auto] gap-sm items-center py-xs text-sm">
         <Link href={'/'} className="relative aspect-[3/2] h-full">
           <Button variant={'ghost'} className="p-0" asChild>
-            <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill className="object-contain" />
+            <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill sizes="300px" className="object-contain" />
           </Button>
         </Link>
         <nav className="flex gap-xxs items-center font-semibold">
