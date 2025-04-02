@@ -45,6 +45,7 @@ export function UploadPreviewForm({
       {status === 'idle' ? (
         <div className="grid grid-cols-[1fr_3fr] gap-6">
           <div className="aspect-square overflow-hidden bg-muted rounded-lg">
+            {/* eslint-disable-next-line @next/next/no-img-element -- This is a client-side preview of a local file, so Next.js Image optimization isn't needed */}
             <img src={file.fileObjectUrl} alt={file.file.name} className="object-contain w-full h-full" />
           </div>
 
