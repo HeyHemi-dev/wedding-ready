@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# When using button as a link
+Link wraps the button and passes href to the button.
+
+```jsx
+<Link href={url} passHref>
+  <Button variant={'outline'}>{text}</Button>
+</Link>
+```
