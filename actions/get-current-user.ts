@@ -9,7 +9,6 @@ import { tryCatch } from '@/utils/try-catch'
 const USER_CACHE_DURATION = 60 * 15 // time in seconds
 
 enum UserFetchErrorCode {
-  NOT_AUTHENTICATED = 'Not authenticated',
   USER_NOT_FOUND = 'User not found',
   DATABASE_ERROR = 'Database error',
 }
@@ -47,14 +46,9 @@ type UserFetchError = {
  * ```
  */
 export async function getCurrentUser(): Promise<User | null> {
-  const { data: userId, error } = await tryCatch(getAuthenticatedUserId())
+  const userId = await getAuthenticatedUserId()
 
-  if (error || !userId) {
-    const authError: UserFetchError = {
-      code: UserFetchErrorCode.NOT_AUTHENTICATED,
-      message: 'No authenticated user ID found in request',
-    }
-    console.error('[getCurrentUser]', authError)
+  if (!userId) {
     return null
   }
 
