@@ -1,10 +1,9 @@
 'use client'
 
 import { noTiles, TileList, TileListSkeleton } from '@/components/tiles/tile-list'
-import { Button } from '@/components/ui/button'
+
 import { useSupplierTiles } from '@/hooks/use-supplier-tiles'
 import { SupplierWithUsers, User } from '@/models/types'
-import Link from 'next/link'
 
 export function SupplierTiles({ supplier, user }: { supplier: SupplierWithUsers; user?: User }) {
   const isSupplierUser = supplier?.users.some((u) => u.userId === user?.id)
