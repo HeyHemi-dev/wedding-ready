@@ -7,12 +7,14 @@ import { getAuthenticatedUserId } from '@/utils/auth'
 
 import { tryCatch } from '@/utils/try-catch'
 
-export const tilesGetRequestParams = z.object({
+const tilesGetRequestParams = z.object({
   supplierId: z.string(),
   userId: z.string().optional(),
 })
 
-export type tilesGetResponseBody = t.Tile[]
+export type TilesGetRequestParams = z.infer<typeof tilesGetRequestParams>
+
+export type TilesGetResponseBody = t.Tile[]
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const authUserId = await getAuthenticatedUserId()
@@ -32,7 +34,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return new NextResponse('Error fetching tiles', { status: 500 })
   }
 
-  const tiles: tilesGetResponseBody = data
+  const tiles: TilesGetResponseBody = data
 
   return NextResponse.json(tiles)
 }
