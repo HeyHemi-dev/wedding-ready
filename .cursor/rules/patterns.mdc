@@ -14,6 +14,7 @@ alwaysApply: true
 
 ## Type Safety
 - Always specify the return type.
+- Types always start with a capital letter
 - Model type naming: 
    - `[model]` e.g. `Tile` shape of data with the most common fields needed for the presentation layer. Usually constructured from several table joins. Must only be used server-side
    - `[model]Safe` e.g. `TileSafe` shape of data with only the fields that are safe to send to the client.
