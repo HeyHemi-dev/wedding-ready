@@ -15,9 +15,21 @@ async function fetchTilesForSupplier(supplierId: string, userId?: string) {
   const getTilesParams: TilesGetRequestParams = { supplierId, userId }
   const queryParams = buildQueryParams(getTilesParams)
   const res = await fetch(`/api/tiles${queryParams}`)
+
   if (!res.ok) {
-    throw new Error(`Failed to fetch tiles: ${res.statusText}`)
+    // Try to parse the error response as JSON first
+    try {
+      const errorData = await res.json()
+      throw new Error(errorData.message || `Failed to fetch tiles: ${res.statusText}`)
+    } catch (e) {
+      // If we can't parse as JSON, it might be an auth redirect
+      if (res.status === 401 || res.status === 403) {
+        throw new Error('Please sign in to view tiles')
+      }
+      throw new Error(`Failed to fetch tiles: ${res.statusText}`)
+    }
   }
+
   const tiles: TilesGetResponseBody = await res.json()
   return tiles
 }

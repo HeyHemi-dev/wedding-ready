@@ -17,21 +17,24 @@ export type TilesGetRequestParams = z.infer<typeof tilesGetRequestParams>
 export type TilesGetResponseBody = t.Tile[]
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  const authUserId = await getAuthenticatedUserId()
   const { supplierId, userId } = parseQueryParams(req.nextUrl, tilesGetRequestParams)
 
   if (!supplierId) {
-    return new NextResponse('Missing supplierId', { status: 400 })
+    return NextResponse.json({ message: 'Missing supplierId' }, { status: 400 })
   }
 
-  if (userId && authUserId !== userId) {
-    return new NextResponse('Unauthorized', { status: 401 })
+  // Only check authentication if a userId is provided
+  if (userId) {
+    const authUserId = await getAuthenticatedUserId()
+    if (!authUserId || authUserId !== userId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+    }
   }
 
   const { data, error } = await tryCatch(TileModel.getBySupplierId(supplierId, userId))
 
   if (error) {
-    return new NextResponse('Error fetching tiles', { status: 500 })
+    return NextResponse.json({ message: 'Error fetching tiles', error: error.message }, { status: 500 })
   }
 
   const tiles: TilesGetResponseBody = data
