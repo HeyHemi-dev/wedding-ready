@@ -3,6 +3,7 @@ Home Page Content
 # Section 1
 
 Find your local...
+
 - classic bridal fit
 - perfect outdoor venue
 - bespoke wedding stationery
@@ -34,4 +35,3 @@ See it, save it, bring it to life.
 The best part of WeddingReady is discovering real options from real vendors, making planning easier and more exciting.
 
 CTA: Explore
-

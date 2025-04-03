@@ -1,8 +1,10 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { JSX, type ComponentProps } from 'react'
+
 import { useFormStatus } from 'react-dom'
+
+import { Button } from '@/components/ui/button'
 
 type Props = ComponentProps<typeof Button> & {
   pendingChildren?: string | JSX.Element

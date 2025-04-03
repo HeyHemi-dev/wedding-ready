@@ -1,13 +1,15 @@
-import { Tile } from '@/models/types'
-import { Skeleton } from '@/components/ui/skeleton'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
+
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tile } from '@/models/types'
+
 import { Button } from '../ui/button'
 
 export function TileList({ tiles }: { tiles: Tile[] }) {
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-md">
+      <div className="grid grid-cols-2 gap-md md:grid-cols-3 lg:grid-cols-5">
         {tiles.map((tile) => (
           <TileListItem key={tile.id} tile={tile} />
         ))}
@@ -18,8 +20,8 @@ export function TileList({ tiles }: { tiles: Tile[] }) {
 
 export function TileListItem({ tile }: { tile: Tile }) {
   return (
-    <div className="gap-xs grid grid-rows-[auto_1fr]">
-      <Link href={`/t/${tile.id}`} className="aspect-[2/3] bg-muted rounded-lg overflow-hidden relative">
+    <div className="grid grid-rows-[auto_1fr] gap-xs">
+      <Link href={`/t/${tile.id}`} className="relative aspect-[2/3] overflow-hidden rounded-lg bg-muted">
         <Image src={tile.imagePath} alt={tile.title} fill sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw" className="object-contain" />
       </Link>
       <div className="flex flex-col gap-1">
@@ -32,7 +34,7 @@ export function TileListItem({ tile }: { tile: Tile }) {
 
 export function TileListSkeleton() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-md">
+    <div className="grid grid-cols-2 gap-md md:grid-cols-3 lg:grid-cols-5">
       {Array.from({ length: 5 }).map((_, index) => (
         <div key={index} className="grid grid-rows-[auto_1fr] gap-xs">
           <Skeleton className="aspect-[2/3] rounded-lg" />
@@ -56,7 +58,7 @@ interface noTilesProps {
 
 export function noTiles({ message, cta }: noTilesProps) {
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-4">
+    <div className="flex h-full flex-col items-center justify-center gap-4">
       <p className="text-muted-foreground">{message}</p>
       {cta && cta.show && (
         <Link href={cta.redirect} passHref>

@@ -1,13 +1,16 @@
 'use client'
 
 import * as React from 'react'
+
+import { toast } from 'sonner'
 import { generateClientDropzoneAccept, generatePermittedFileTypes, isValidFileSize } from 'uploadthing/client'
-import { useUploadThing, useDropzone } from '@/utils/uploadthing'
+import { ExpandedRouteConfig } from 'uploadthing/types'
+
 import { Button } from '@/components/ui/button'
 import { SupplierRaw, User } from '@/models/types'
-import { ExpandedRouteConfig } from 'uploadthing/types'
+import { useUploadThing, useDropzone } from '@/utils/uploadthing'
+
 import { UploadPreviewList } from './upload-preview'
-import { toast } from 'sonner'
 
 export type FileWithMetadata = {
   file: File
@@ -71,7 +74,7 @@ function Dropzone({
   return (
     <div
       {...getRootProps()}
-      className="flex flex-col justify-center items-center gap-md border-2 border-dashed rounded-lg p-16 min-h-[25svh] hover:bg-muted/50 cursor-pointer">
+      className="flex min-h-[25svh] cursor-pointer flex-col items-center justify-center gap-md rounded-lg border-2 border-dashed p-16 hover:bg-muted/50">
       <input {...getInputProps()} />
       <div className="text-center">
         <p className="">Drag and drop images here</p>

@@ -1,8 +1,9 @@
+import Link from 'next/link'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Section from '@/components/ui/section'
 import { SupplierModel } from '@/models/supplier'
 import { Supplier } from '@/models/types'
-import Link from 'next/link'
 
 export default async function SuppliersPage() {
   const suppliers = await SupplierModel.getAll()

@@ -1,6 +1,7 @@
 [ReadMe](/README.md)
 
 # Authentication Flow
+
 The project uses Supabase Auth with a server-side implementation:
 
 1. **Server-Side Auth**: Implemented using Supabase SSR client

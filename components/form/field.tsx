@@ -1,7 +1,8 @@
-import { Label } from '@/components/ui/label'
 import * as LabelPrimitive from '@radix-ui/react-label'
 import { type VariantProps } from 'class-variance-authority'
 import { Info } from 'lucide-react'
+
+import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 type FieldProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
@@ -20,7 +21,7 @@ export default function Field({ label, children, hint, ...labelProps }: FieldPro
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                <Info className="h-4 w-4 cursor-help text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent>
                 <p>{hint}</p>
