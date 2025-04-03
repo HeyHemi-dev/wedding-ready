@@ -13,9 +13,10 @@ export type tileNewResponseBody = t.TileRawWithSuppliers
 // Create a new tile
 export async function POST(req: Request): Promise<NextResponse> {
   const body = (await req.json()) as tileNewRequestBody
+
   const authUserId = await getAuthenticatedUserId()
   if (!authUserId || authUserId !== body.createdByUserId) {
-    return new NextResponse('Unauthorized', { status: 401 })
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
   }
 
   const { suppliers, ...rest } = body
