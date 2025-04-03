@@ -104,32 +104,6 @@ export class TileModel {
   }
 
   /**
-   * Update multiple rows in the tiles table
-   * @param tilesRawData - array. overwrites the existing tile data
-   * @returns The updated tiles
-   */
-  static async updateAllRaw(tilesRawData: t.TileRaw[]): Promise<t.TileRaw[]> {
-    if (tilesRawData.length === 0) {
-      return []
-    }
-
-    const updateObj = createBatchUpdateObject(tilesRawData, 'id', s.tiles)
-
-    const tiles = await db
-      .update(s.tiles)
-      .set(updateObj)
-      .where(
-        inArray(
-          s.tiles.id,
-          tilesRawData.map((tile) => tile.id)
-        )
-      )
-      .returning()
-
-    return tiles
-  }
-
-  /**
    * Update a tile and its relationships with suppliers
    * @param tileRawData - overwrites the existing tile data
    * @param suppliersRaw - optional. If passed it will overwrite the existing tileSupplier relationships. Will not update the suppliers themselves.
@@ -179,6 +153,25 @@ export class TileModel {
       imagePath: tileRaw.imagePath!, // We can assert that imagePath exists because we already threw an error if it was missing.
       suppliers: updatedSuppliers,
     }
+  }
+
+  /**
+   * lets a user save/unsave a tile by upserting the saved tile relationship.
+   * @returns The updated saved status of the tile
+   */
+  static async saveTile(savedTileData: t.InsertSavedTileRaw): Promise<t.SavedTileRaw> {
+    const savedTiles = await db
+      .insert(s.savedTiles)
+      .values(savedTileData)
+      .onConflictDoUpdate({
+        target: [s.savedTiles.tileId, s.savedTiles.userId],
+        set: {
+          isSaved: savedTileData.isSaved,
+        },
+      })
+      .returning()
+
+    return savedTiles[0]
   }
 }
 
