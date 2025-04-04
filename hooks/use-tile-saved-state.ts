@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
-import { SaveTileRequestBody, SaveTileResponseBody } from '@/app/api/users/[id]/tiles/[tileId]/route'
+import { SaveTilePostRequestBody, SaveTilePostResponseBody } from '@/app/api/users/[id]/tiles/[tileId]/route'
 import { tryCatchFetch } from '@/utils/try-catch'
 import { toast } from 'sonner'
 import { tileKeys } from './queryKeys'
@@ -10,7 +10,6 @@ export function useTileSaveState(tileId: string, userId: string) {
   const Query = useQuery({
     queryKey: tileKeys.saveState(tileId, userId),
     queryFn: () => fetchSaveTile(userId, tileId),
-    initialData: queryClient.getQueryData(tileKeys.saveState(tileId, userId)),
     staleTime: Infinity,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -27,7 +26,11 @@ export function useTileSaveState(tileId: string, userId: string) {
       const previousSaveState = queryClient.getQueryData(tileKeys.saveState(tileId, userId))
 
       // Optimistic update
-      queryClient.setQueryData(tileKeys.saveState(tileId, userId), isSaved)
+      queryClient.setQueryData(tileKeys.saveState(tileId, userId), {
+        userId,
+        tileId,
+        isSaved,
+      })
 
       return { previousSaveState }
     },
@@ -39,6 +42,7 @@ export function useTileSaveState(tileId: string, userId: string) {
     },
     // Always refetch after error or success to ensure we have the latest data
     onSettled: (data, error, variables) => {
+      // After mutation, invalidate and refetch to ensure we have latest data
       queryClient.invalidateQueries({ queryKey: tileKeys.saveState(tileId, variables.userId) })
     },
   })
@@ -46,24 +50,23 @@ export function useTileSaveState(tileId: string, userId: string) {
   return { ...Query, ...Mutate }
 }
 
-async function fetchSaveTile(userId: string, tileId: string): Promise<SaveTileResponseBody> {
-  // const { data, error } = await tryCatchFetch<SaveTileResponseBody>(`/api/users/${userId}/tiles/${tileId}`)
+async function fetchSaveTile(userId: string, tileId: string): Promise<SaveTilePostResponseBody> {
+  const { data, error } = await tryCatchFetch<SaveTilePostResponseBody>(`/api/users/${userId}/tiles/${tileId}`)
 
-  // if (error) {
-  //   toast('Failed to get tile')
-  //   throw error
-  // }
+  if (error) {
+    toast('Failed to get tile')
+    throw error
+  }
 
-  // return data
-  return { isSaved: false, userId, tileId }
+  return data
 }
 
-async function postSaveTile(userId: string, tileId: string, isSaved: boolean): Promise<SaveTileResponseBody> {
-  const saveTileRequestBody: SaveTileRequestBody = {
+async function postSaveTile(userId: string, tileId: string, isSaved: boolean): Promise<SaveTilePostResponseBody> {
+  const saveTileRequestBody: SaveTilePostRequestBody = {
     isSaved,
   }
 
-  const { data, error } = await tryCatchFetch<SaveTileResponseBody>(`/api/users/${userId}/tiles/${tileId}`, {
+  const { data, error } = await tryCatchFetch<SaveTilePostResponseBody>(`/api/users/${userId}/tiles/${tileId}`, {
     method: 'POST',
     body: JSON.stringify(saveTileRequestBody),
   })

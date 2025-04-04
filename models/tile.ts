@@ -46,6 +46,7 @@ export class TileModel {
 
     // Get the user's saved status for each tile
     if (userId) {
+      console.log('getting savedState for', userId)
       const { data: savedTiles, error } = await tryCatch(getSavedTilesRaw(tiles, userId))
 
       if (error) {
@@ -156,6 +157,7 @@ export class TileModel {
   }
 
   static async getSavedStateRaw(tileId: string, userId: string): Promise<t.SavedTileRaw | null> {
+    console.log('getting savedState for', userId, tileId)
     const savedTiles = await db
       .select()
       .from(s.savedTiles)
