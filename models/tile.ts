@@ -155,11 +155,20 @@ export class TileModel {
     }
   }
 
+  static async getSavedStateRaw(tileId: string, userId: string): Promise<t.SavedTileRaw | null> {
+    const savedTiles = await db
+      .select()
+      .from(s.savedTiles)
+      .where(and(eq(s.savedTiles.tileId, tileId), eq(s.savedTiles.userId, userId)))
+      .limit(1)
+    return savedTiles.length ? savedTiles[0] : null
+  }
+
   /**
    * lets a user save/unsave a tile by upserting the saved tile relationship.
    * @returns The updated saved status of the tile
    */
-  static async saveTile(savedTileData: t.InsertSavedTileRaw): Promise<t.SavedTileRaw> {
+  static async updateSaveStateRaw(savedTileData: t.InsertSavedTileRaw): Promise<t.SavedTileRaw> {
     const savedTiles = await db
       .insert(s.savedTiles)
       .values(savedTileData)
