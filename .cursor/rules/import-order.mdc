@@ -1,0 +1,78 @@
+---
+description: 
+globs: *.tsx,*.ts
+alwaysApply: false
+---
+# Import Order Standards
+
+## Import Groups Order
+Imports should be ordered in the following groups, separated by a blank line:
+
+1. React and Next.js built-ins
+```typescript
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+```
+
+2. External dependencies
+```typescript
+import { toast } from 'sonner'
+import { useMutation } from '@tanstack/react-query'
+```
+
+3. Internal absolute imports (starting with @/)
+```typescript
+import { tryCatchFetch } from '@/utils/try-catch'
+import { Section } from '@/components/ui/section'
+```
+
+4. Internal relative imports
+```typescript
+import { MyComponent } from './my-component'
+import { utils } from '../utils'
+```
+
+5. Type imports (if separated)
+```typescript
+import type { MyType } from '@/types'
+```
+
+## Rules
+- Each group should be separated by a blank line
+- Within each group, imports should be alphabetically ordered
+- Use consistent quote style (prefer single quotes)
+- Always use explicit imports over namespace imports
+- Avoid default exports/imports when possible
+
+## Examples
+
+### ✅ Good
+```typescript
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+
+import { toast } from 'sonner'
+import { useMutation } from '@tanstack/react-query'
+
+import { Button } from '@/components/ui/button'
+import { tryCatchFetch } from '@/utils/try-catch'
+
+import { MyComponent } from './my-component'
+
+import type { User } from '@/types'
+```
+
+### ❌ Bad
+```typescript
+import { MyComponent } from './my-component'
+import { useMutation } from '@tanstack/react-query'
+import { Button } from '@/components/ui/button'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+```
+
+## ESLint Configuration
+This standard is enforced by the `import/order` rule in ESLint: `.eslintrc.json`
+
+
+
