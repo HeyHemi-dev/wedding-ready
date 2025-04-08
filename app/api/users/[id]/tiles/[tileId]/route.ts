@@ -13,7 +13,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   }
 
   const savedTile = await TileModel.getSavedStateRaw(tileId, id)
-  console.log('savedState', savedTile)
+
   return Response.json(savedTile)
 }
 

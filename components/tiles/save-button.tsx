@@ -23,7 +23,6 @@ export function SaveTileButton({ tileId, userId, className }: SaveTileButtonProp
 
   // Get the current saved state from the cache
   const cachedData = queryClient.getQueryData<SavedTileRaw>(tileKeys.saveState(tileId, userId))
-  console.log('SaveTileButton cache data:', { tileId, cachedData })
 
   const isSaved = cachedData?.isSaved ?? false
 
