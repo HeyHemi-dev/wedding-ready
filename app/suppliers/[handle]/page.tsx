@@ -1,3 +1,4 @@
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { ExternalLinkIcon, InfoIcon, SquarePlusIcon, StarIcon } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -8,15 +9,14 @@ import { noTiles } from '@/components/tiles/tile-list'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Section from '@/components/ui/section'
+import { tileKeys } from '@/hooks/queryKeys'
+import { setTilesSaveStateCache } from '@/hooks/use-tile-saved-state'
 import { SupplierModel } from '@/models/supplier'
+import { TileModel } from '@/models/tile'
 import { Supplier } from '@/models/types'
 import { valueToPretty } from '@/utils/enum-to-pretty'
 
 import { SupplierTiles } from './supplier-tiles'
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
-import { tileKeys } from '@/hooks/queryKeys'
-import { TileModel } from '@/models/tile'
-import { setTilesSaveStateCache } from '@/hooks/use-tile-saved-state'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
