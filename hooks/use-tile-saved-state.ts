@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
+import { useMutation, useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { SaveTilePostRequestBody, SaveTilePostResponseBody } from '@/app/api/users/[id]/tiles/[tileId]/route'
 import { tryCatchFetch } from '@/utils/try-catch'
 import { toast } from 'sonner'
 import { tileKeys } from './queryKeys'
+import * as t from '@/models/types'
 
 export function useTileSaveState(tileId: string, userId: string) {
   const queryClient = useQueryClient()
@@ -10,6 +11,7 @@ export function useTileSaveState(tileId: string, userId: string) {
   const Query = useQuery({
     queryKey: tileKeys.saveState(tileId, userId),
     queryFn: () => fetchSaveTile(userId, tileId),
+    initialData: () => queryClient.getQueryData(tileKeys.saveState(tileId, userId)),
     staleTime: Infinity,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -77,4 +79,20 @@ async function postSaveTile(userId: string, tileId: string, isSaved: boolean): P
   }
 
   return data
+}
+
+/**
+ * Sets the save state cache for an array of tiles. Use to efficiently set the cache when fetching a large number of tiles at once.
+ * @param queryClient - The query client
+ * @param tiles - The array of tiles
+ * @param userId - Optional. The id of the current authenticated user.
+ */
+export function setTilesSaveStateCache(queryClient: QueryClient, tiles: t.Tile[], userId: string) {
+  tiles.forEach((tile) => {
+    queryClient.setQueryData(tileKeys.saveState(tile.id, userId), {
+      userId,
+      tileId: tile.id,
+      isSaved: tile.isSaved ?? false,
+    })
+  })
 }
