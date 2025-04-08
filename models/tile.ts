@@ -46,7 +46,6 @@ export class TileModel {
 
     // Get the user's saved status for each tile
     if (userId) {
-      console.log('getting savedState for', userId)
       const { data: savedTiles, error } = await tryCatch(getSavedTilesRaw(tiles, userId))
 
       if (error) {
@@ -54,7 +53,7 @@ export class TileModel {
       }
 
       for (const tile of tiles) {
-        tile.isSaved = savedTiles.some((st) => st.tileId === tile.id)
+        tile.isSaved = savedTiles.find((st) => st.tileId === tile.id)?.isSaved ?? false
       }
     }
 
@@ -157,12 +156,12 @@ export class TileModel {
   }
 
   static async getSavedStateRaw(tileId: string, userId: string): Promise<t.SavedTileRaw | null> {
-    console.log('getting savedState for', userId, tileId)
     const savedTiles = await db
       .select()
       .from(s.savedTiles)
       .where(and(eq(s.savedTiles.tileId, tileId), eq(s.savedTiles.userId, userId)))
       .limit(1)
+
     return savedTiles.length ? savedTiles[0] : null
   }
 
