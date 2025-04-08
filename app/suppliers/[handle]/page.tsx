@@ -13,6 +13,10 @@ import { Supplier } from '@/models/types'
 import { valueToPretty } from '@/utils/enum-to-pretty'
 
 import { SupplierTiles } from './supplier-tiles'
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
+import { tileKeys } from '@/hooks/queryKeys'
+import { TileModel } from '@/models/tile'
+import { setTilesSaveStateCache } from '@/hooks/use-tile-saved-state'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -26,8 +30,21 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
   const user = await getCurrentUser()
   const isSupplierUser = supplier?.users.some((u) => u.userId === user?.id)
 
-  // Get tiles for supplier
-  // const tiles = await TileModel.getBySupplier(supplier.id, user?.id ?? undefined)
+  // Pre-fetch tiles for supplier
+  const queryClient = new QueryClient()
+  await queryClient.prefetchQuery({
+    queryKey: tileKeys.supplierTiles(supplier.id, user?.id ?? undefined),
+    queryFn: async () => {
+      const tiles = await TileModel.getBySupplierId(supplier.id, user?.id ?? undefined)
+
+      if (user?.id) {
+        setTilesSaveStateCache(queryClient, tiles, user.id)
+      }
+
+      return tiles
+    },
+  })
+  const dehydratedState = dehydrate(queryClient)
 
   return (
     <>
@@ -76,7 +93,9 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
             message: 'Error loading tiles',
             cta: { text: 'Retry', redirect: `/suppliers/${handle}` },
           })}>
-          <SupplierTiles supplier={supplier} user={user ?? undefined} />
+          <HydrationBoundary state={dehydratedState}>
+            <SupplierTiles supplier={supplier} user={user ?? undefined} />
+          </HydrationBoundary>
         </ErrorBoundary>
       </Section>
     </>
