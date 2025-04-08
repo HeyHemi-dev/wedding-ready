@@ -1,29 +1,31 @@
 'use client'
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
 import { TilesGetRequestParams, TilesGetResponseBody } from '@/app/api/suppliers/[id]/tiles/route'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { tryCatchFetch } from '@/utils/try-catch'
 import { tileKeys } from '@/hooks/queryKeys'
+import { setTilesSaveStateCache } from './use-tile-saved-state'
 
 export function useSupplierTiles(supplierId: string, userId?: string) {
   const queryClient = useQueryClient()
 
   const supplierTilesQuery = useQuery({
     queryKey: tileKeys.supplierTiles(supplierId, userId),
-    queryFn: () => fetchTilesForSupplier(supplierId, userId),
-    staleTime: Infinity,
-  })
+    queryFn: async () => {
+      const data = await fetchTilesForSupplier(supplierId, userId)
 
-  useEffect(() => {
-    if (userId && supplierTilesQuery.data) {
-      supplierTilesQuery.data.forEach((tile) => {
-        console.log('setting savedState cache for tile', tile.id)
-        queryClient.setQueryData(tileKeys.saveState(tile.id, userId), { userId, tileId: tile.id, isSaved: tile.isSaved })
-      })
-    }
-  }, [userId, supplierTilesQuery.data, queryClient])
+      if (userId) {
+        setTilesSaveStateCache(queryClient, data, userId)
+      }
+
+      return data
+    },
+    // Temporarily remove staleTime to ensure fresh data
+    // staleTime: Infinity,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+  })
 
   return supplierTilesQuery
 }
