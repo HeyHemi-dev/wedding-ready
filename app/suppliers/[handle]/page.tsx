@@ -9,10 +9,7 @@ import { noTiles } from '@/components/tiles/tile-list'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Section from '@/components/ui/section'
-import { tileKeys } from '@/hooks/queryKeys'
-import { setTilesSaveStateCache } from '@/hooks/use-tile-saved-state'
 import { SupplierModel } from '@/models/supplier'
-import { TileModel } from '@/models/tile'
 import { Supplier } from '@/models/types'
 import { valueToPretty } from '@/utils/enum-to-pretty'
 
@@ -29,22 +26,6 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
   // Check if the user is the owner of the supplier to enable edit features
   const user = await getCurrentUser()
   const isSupplierUser = supplier?.users.some((u) => u.userId === user?.id)
-
-  // Pre-fetch tiles for supplier
-  const queryClient = new QueryClient()
-  await queryClient.prefetchQuery({
-    queryKey: tileKeys.supplierTiles(supplier.id, user?.id ?? undefined),
-    queryFn: async () => {
-      const tiles = await TileModel.getBySupplierId(supplier.id, user?.id ?? undefined)
-
-      if (user?.id) {
-        setTilesSaveStateCache(queryClient, tiles, user.id)
-      }
-
-      return tiles
-    },
-  })
-  const dehydratedState = dehydrate(queryClient)
 
   return (
     <>
@@ -93,9 +74,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
             message: 'Error loading tiles',
             cta: { text: 'Retry', redirect: `/suppliers/${handle}` },
           })}>
-          <HydrationBoundary state={dehydratedState}>
-            <SupplierTiles supplier={supplier} user={user ?? undefined} />
-          </HydrationBoundary>
+          <SupplierTiles supplier={supplier} user={user ?? undefined} />
         </ErrorBoundary>
       </Section>
     </>
