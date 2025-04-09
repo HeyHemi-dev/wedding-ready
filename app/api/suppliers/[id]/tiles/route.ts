@@ -7,33 +7,33 @@ import { parseQueryParams } from '@/utils/api-helpers'
 import { getAuthenticatedUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
-const tilesGetRequestParams = z.object({
-  userId: z.string().optional(),
+const supplierTilesGetRequestParams = z.object({
+  authUserId: z.string().optional(),
 })
 
-export type TilesGetRequestParams = z.infer<typeof tilesGetRequestParams>
+export type SupplierTilesGetRequestParams = z.infer<typeof supplierTilesGetRequestParams>
 
-export type TilesGetResponseBody = t.Tile[]
+export type SupplierTilesGetResponseBody = t.Tile[]
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const supplierId = (await params).id
-  const { userId } = parseQueryParams(req.nextUrl, tilesGetRequestParams)
+  const parsedQueryParams = parseQueryParams(req.nextUrl, supplierTilesGetRequestParams)
 
-  // Only check authentication if a userId is provided
-  if (userId) {
+  // Only check authentication if an authUserId is provided
+  if (parsedQueryParams.authUserId) {
     const authUserId = await getAuthenticatedUserId()
-    if (!authUserId || authUserId !== userId) {
+    if (!authUserId || authUserId !== parsedQueryParams.authUserId) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     }
   }
 
-  const { data, error } = await tryCatch(TileModel.getBySupplierId(supplierId, userId))
+  const { data, error } = await tryCatch(TileModel.getBySupplierId(supplierId, parsedQueryParams.authUserId))
 
   if (error) {
     return NextResponse.json({ message: 'Error fetching tiles', error: error.message }, { status: 500 })
   }
 
-  const tiles: TilesGetResponseBody = data
+  const tiles: SupplierTilesGetResponseBody = data
 
   return NextResponse.json(tiles)
 }

@@ -1,4 +1,5 @@
 export const tileKeys = {
-  saveState: (tileId: string, userId: string) => ['tile', 'saveState', tileId, userId] as const,
-  supplierTiles: (supplierId: string, userId?: string) => ['tiles', supplierId, userId] as const,
+  saveState: (tileId: string, authUserId: string) => ['tile', 'saveState', tileId, authUserId] as const,
+  supplierTiles: (supplierId: string, authUserId?: string) => ['tiles', supplierId, authUserId] as const,
+  userTiles: (userId: string, authUserId?: string) => ['tiles', userId, authUserId] as const,
 }

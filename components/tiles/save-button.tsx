@@ -13,21 +13,21 @@ import { Button } from '../ui/button'
 
 interface SaveTileButtonProps {
   tileId: string
-  userId: string
+  authUserId: string
   className?: string
 }
 
-export function SaveTileButton({ tileId, userId, className }: SaveTileButtonProps) {
+export function SaveTileButton({ tileId, authUserId, className }: SaveTileButtonProps) {
   const queryClient = useQueryClient()
-  const saveState = useTileSaveState(tileId, userId)
+  const saveState = useTileSaveState(tileId, authUserId)
 
   // Get the current saved state from the cache
-  const cachedData = queryClient.getQueryData<SavedTileRaw>(tileKeys.saveState(tileId, userId))
+  const cachedData = queryClient.getQueryData<SavedTileRaw>(tileKeys.saveState(tileId, authUserId))
 
   const isSaved = cachedData?.isSaved ?? false
 
   const handleClick = async () => {
-    await saveState.mutate({ userId, isSaved: !isSaved })
+    await saveState.mutate({ authUserId, isSaved: !isSaved })
   }
 
   return (
