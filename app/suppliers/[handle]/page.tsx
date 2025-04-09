@@ -1,4 +1,3 @@
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { ExternalLinkIcon, InfoIcon, SquarePlusIcon, StarIcon } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
