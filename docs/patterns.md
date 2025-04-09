@@ -13,6 +13,10 @@
 - Follow React Query patterns for caching and revalidation
 - Implement proper error boundaries and loading states. Do not use Suspense
 - Keep query keys consistent and well-typed
+- Use optimistic updates for better UX when appropriate
+- When fetching an array of tiles, set saveState cache using React Query's queryClient
+- Use optimistic updates with React Query for immediate UI feedback
+
 
 ### Environment Configuration
 

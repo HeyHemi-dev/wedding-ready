@@ -36,18 +36,30 @@ Layered architecture pattern
 
 3. **Client-Side Data Fetching**
 
-   - Prefer server-side fetching.
+   - Prefer server-side fetching
    - Use React Query (TanStack Query) for client-side data fetching
    - Implement custom hooks in `/hooks` for reusable data fetching logic
    - Handle loading and error states with proper UI feedback
    - Utilize React Query's caching and revalidation features
+   - Implement optimistic updates for better UX
+   - Use consistent stale time configuration
+   - Cache related data for cross-component consistency
 
-4. **Functional Components**
+4. **Loading States**
+
+   - Use dedicated loading components for consistent UX
+   - Implement skeleton loaders for content-heavy pages
+   - Show loading states during data fetching and mutations
+   - Use optimistic UI updates to reduce perceived loading time
+   - Place loading components in `/app/[route]/loading.tsx`
+   - Reuse loading components across similar layouts
+
+5. **Functional Components**
 
    - Organized in `/components`
    - Follow atomic design principles
 
-5. **UI Components**
+6. **UI Components**
    - Organized in `/components/ui`
    - Follow atomic design principles
    - Context independent

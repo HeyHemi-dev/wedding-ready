@@ -26,9 +26,6 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
   const user = await getCurrentUser()
   const isSupplierUser = supplier?.users.some((u) => u.userId === user?.id)
 
-  // Get tiles for supplier
-  // const tiles = await TileModel.getBySupplier(supplier.id, user?.id ?? undefined)
-
   return (
     <>
       <Section>
@@ -45,7 +42,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
             <div className="flex gap-sm">
               <Button disabled={!user} variant={'default'} className="gap-xs">
                 <StarIcon className="h-4 w-4" />
-                Add to Favourites
+                Follow
               </Button>
 
               {supplier.websiteUrl && (
