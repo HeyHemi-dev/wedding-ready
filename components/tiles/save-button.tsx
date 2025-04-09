@@ -32,7 +32,12 @@ export function SaveTileButton({ tileId, userId, className }: SaveTileButtonProp
 
   return (
     <Form action={handleClick} className={cn('group/save-button', className)}>
-      <Button variant={'link'} size={'icon'} type="submit" disabled={saveState.isPending} className={cn('rounded-full bg-accent-foreground/30')}>
+      <Button
+        variant={'link'}
+        size={'icon'}
+        type="submit"
+        disabled={saveState.isPending}
+        className={cn('rounded-full group-hover/save-button:bg-accent-foreground/30')}>
         <Heart
           className={cn('h-md w-md stroke-accent transition-colors', {
             'fill-accent': isSaved,

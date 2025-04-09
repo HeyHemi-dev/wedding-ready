@@ -42,7 +42,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
             <div className="flex gap-sm">
               <Button disabled={!user} variant={'default'} className="gap-xs">
                 <StarIcon className="h-4 w-4" />
-                Add to Favourites
+                Follow
               </Button>
 
               {supplier.websiteUrl && (
