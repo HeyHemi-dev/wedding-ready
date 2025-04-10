@@ -30,7 +30,7 @@ export class TileModel {
     return tilesRaw.length ? tilesRaw[0] : null
   }
 
-  static async getBySupplierId(supplierId: string, userId?: string): Promise<t.Tile[]> {
+  static async getBySupplierId(supplierId: string, authUserId?: string): Promise<t.Tile[]> {
     const { data: result, error } = await tryCatch(
       tileBaseQuery
         .where(and(eq(s.tileSuppliers.supplierId, supplierId), eq(s.tiles.isPrivate, false), isNotNull(s.tiles.imagePath)))
@@ -45,8 +45,46 @@ export class TileModel {
     const tiles = aggregateTileQueryResults(result) as t.Tile[]
 
     // Get the user's saved status for each tile
-    if (userId) {
-      const { data: savedTiles, error } = await tryCatch(getSavedTilesRaw(tiles, userId))
+    if (authUserId) {
+      const { data: savedTiles, error } = await tryCatch(getSavedTilesRaw(tiles, authUserId))
+
+      if (error) {
+        throw new Error('database error')
+      }
+
+      for (const tile of tiles) {
+        tile.isSaved = savedTiles.find((st) => st.tileId === tile.id)?.isSaved ?? false
+      }
+    }
+
+    return tiles
+  }
+
+  static async getByUserId(userId: string, authUserId?: string): Promise<t.Tile[]> {
+    // Get all the tiles saved by a user.
+    const { data: result, error } = await tryCatch(
+      db
+        .select({
+          ...s.tileColumns,
+          supplier: s.suppliers,
+        })
+        .from(s.tiles)
+        .innerJoin(s.savedTiles, eq(s.tiles.id, s.savedTiles.tileId))
+        .leftJoin(s.tileSuppliers, eq(s.tiles.id, s.tileSuppliers.tileId))
+        .leftJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
+        .where(and(eq(s.savedTiles.userId, userId), isNotNull(s.tiles.imagePath), eq(s.savedTiles.isSaved, true)))
+    )
+
+    if (error) {
+      throw new Error('database error')
+    }
+
+    const tiles = aggregateTileQueryResults(result) as t.Tile[]
+
+    // Get the current auth user's saved status for each tile
+    // Note: the authUser can be the same or different from the user we're getting tiles for
+    if (authUserId) {
+      const { data: savedTiles, error } = await tryCatch(getSavedTilesRaw(tiles, authUserId))
 
       if (error) {
         throw new Error('database error')

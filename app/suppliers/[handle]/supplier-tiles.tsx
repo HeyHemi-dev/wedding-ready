@@ -27,5 +27,5 @@ export function SupplierTiles({ supplier, user }: { supplier: SupplierWithUsers;
     })
   }
 
-  return <TileList tiles={tiles} userId={user?.id} />
+  return <TileList tiles={tiles} authUserId={user?.id} />
 }
