@@ -1,0 +1,188 @@
+---
+description: Data fetching pattern; database, server components, api endpoints, hooks and client components
+globs: 
+alwaysApply: false
+---
+# Database Queries (Persistance Layer)
+- drizzle/sql query only
+
+```ts
+export const tileBaseQuery = db
+  .select({
+    ...s.tileColumns,
+    supplier: s.suppliers,
+  })
+  .from(s.tiles)
+  .leftJoin(s.tileSuppliers, eq(s.tiles.id, s.tileSuppliers.tileId))
+  .leftJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
+```
+
+# Database Model (Persistance Layer)
+- minimum params required to query the db
+- keep logic to minimum required to query the db
+- define return type
+- handle data aggregation and joins
+- handle saved state if authUserId is provided
+
+```ts
+export class TileModel {
+  static async getBySupplierId(supplierId: string, authUserId?: string): Promise<t.Tile[]> {
+    const { data: result, error } = await tryCatch(
+      tileBaseQuery
+        .where(and(eq(s.tileSuppliers.supplierId, supplierId), eq(s.tiles.isPrivate, false), isNotNull(s.tiles.imagePath)))
+        .orderBy(desc(s.tiles.createdAt))
+    )
+
+    if (error) {
+      throw new Error('database error')
+    }
+
+    const tiles = aggregateTileQueryResults(result) as t.Tile[]
+    
+    // Get the user's saved status for each tile if authUserId is provided
+    if (authUserId) {
+      const { data: savedTiles, error } = await tryCatch(getSavedTilesRaw(tiles, authUserId))
+
+      if (error) {
+        throw new Error('database error')
+      }
+
+      for (const tile of tiles) {
+        tile.isSaved = savedTiles.find((st) => st.tileId === tile.id)?.isSaved ?? false
+      }
+    }
+    
+    return tiles
+  }
+}
+```
+
+# Server component (preferred) or API endpoint
+- handle auth
+- api endpoints handle request/response types and validation
+- use authUserId for authentication checks
+- use userId for filtering data by user
+
+```tsx
+// Server component
+export async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
+  const { handle } = await params
+  const supplier = await SupplierModel.getByHandle(handle)
+
+  if (!supplier) {
+    redirect(`/404`)
+  }
+
+  // Get the authenticated user's ID to enable features like saving tiles
+  const authUserId = await getAuthenticatedUserId()
+
+  // Get tiles for supplier, including saved state if user is authenticated
+  const tiles = await TileModel.getBySupplierId(supplier.id, authUserId ?? undefined)
+
+  return (
+    <Section>
+      <TileList tiles={tiles} authUserId={authUserId} />
+    </Section>
+  )
+}
+
+// API endpoint
+export const supplierTilesGetRequestParams = z.object({
+  authUserId: z.string().optional(),
+})
+
+export type SupplierTilesGetRequestParams = z.infer<typeof supplierTilesGetRequestParams>
+export type SupplierTilesGetResponseBody = t.Tile[]
+
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const supplierId = (await params).id
+  const parsedQueryParams = parseQueryParams(req.nextUrl, supplierTilesGetRequestParams)
+
+  // Only check authentication if an authUserId is provided
+  if (parsedQueryParams.authUserId) {
+    const authUserId = await getAuthenticatedUserId()
+    if (!authUserId || authUserId !== parsedQueryParams.authUserId) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+    }
+  }
+
+  const { data, error } = await tryCatch(TileModel.getBySupplierId(supplierId, parsedQueryParams.authUserId))
+
+  if (error) {
+    return NextResponse.json({ message: 'Error fetching tiles', error: error.message }, { status: 500 })
+  }
+
+  const tiles: SupplierTilesGetResponseBody = data
+
+  return NextResponse.json(tiles)
+}
+```
+
+# API query/hook (Presentation Layer)
+- handle client-side data fetching and caching
+- handle optimistic updates
+- use authUserId for authenticated operations
+
+```ts
+export function useSupplierTiles(supplierId: string, authUserId?: string) {
+  const queryClient = useQueryClient()
+
+  const supplierTilesQuery = useQuery({
+    queryKey: tileKeys.supplierTiles(supplierId, authUserId),
+    queryFn: async () => {
+      const data = await fetchTilesForSupplier(supplierId, authUserId)
+
+      if (authUserId) {
+        setTilesSaveStateCache(queryClient, data, authUserId)
+      }
+
+      return data
+    },
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
+  return supplierTilesQuery
+}
+
+export function useTileSaveState(tileId: string, authUserId: string) {
+  const queryClient = useQueryClient()
+
+  const Query = useQuery({
+    queryKey: tileKeys.saveState(tileId, authUserId),
+    queryFn: () => fetchSaveTile(authUserId, tileId),
+    initialData: () => queryClient.getQueryData(tileKeys.saveState(tileId, authUserId)),
+    staleTime: Infinity,
+  })
+
+  const Mutate = useMutation({
+    mutationFn: ({ authUserId, isSaved }: { authUserId: string; isSaved: boolean }) => 
+      postSaveTile(authUserId, tileId, isSaved),
+    onMutate: async ({ authUserId, isSaved }) => {
+      await queryClient.cancelQueries({ queryKey: tileKeys.saveState(tileId, authUserId) })
+      const previousSaveState = queryClient.getQueryData(tileKeys.saveState(tileId, authUserId))
+
+      // Optimistic update
+      queryClient.setQueryData(tileKeys.saveState(tileId, authUserId), {
+        authUserId,
+        tileId,
+        isSaved,
+      })
+
+      return { previousSaveState }
+    },
+  })
+
+  return { ...Query, ...Mutate }
+}
+```
+
+# Client component
+- use authUserId for authenticated features
+- handle loading and error states
+- implement optimistic updates
+
+```tsx
+'use client'
+
+
+```

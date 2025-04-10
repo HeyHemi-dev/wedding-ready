@@ -1,14 +1,15 @@
-import { UserDetailModel } from '@/models/user'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { getCurrentUser } from '@/actions/get-current-user'
 import { InfoIcon } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+
+import { getCurrentUser } from '@/actions/get-current-user'
+import Field from '@/components/form/field'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { UserDetailModel } from '@/models/user'
 import { userUpdateFormSchema } from '@/models/validations'
 import { getAuthenticatedUserId } from '@/utils/auth'
-import { Textarea } from '@/components/ui/textarea'
-import Field from '@/components/form/field'
 
 export default async function AccountPage() {
   const user = await getCurrentUser()
@@ -20,12 +21,12 @@ export default async function AccountPage() {
   return (
     <div className="grid gap-md">
       <div className="w-full">
-        <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
+        <div className="flex items-center gap-3 rounded-md bg-accent p-3 px-5 text-sm text-foreground">
           <InfoIcon size="16" strokeWidth={2} />
           This is a protected page that you can only see as an authenticated user
         </div>
       </div>
-      <h2 className="font-bold text-2xl">User details</h2>
+      <h2 className="text-2xl font-bold">User details</h2>
       <form action={handleUpdateUserDetail} className="grid gap-sm">
         <Field label="Handle">
           <Input name="handle" defaultValue={user.handle} required />
@@ -48,7 +49,7 @@ export default async function AccountPage() {
         <Input name="userId" type="hidden" value={user.id} />
         <Button type="submit">Update</Button>
       </form>
-      <pre className="text-xs font-mono p-3 rounded border text-muted-foreground bg-muted">{JSON.stringify(user, null, 2)}</pre>
+      <pre className="rounded border bg-muted p-3 font-mono text-xs text-muted-foreground">{JSON.stringify(user, null, 2)}</pre>
     </div>
   )
 }

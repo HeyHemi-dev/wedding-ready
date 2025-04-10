@@ -1,6 +1,48 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "next/typescript"
-  ]
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "plugins": ["import"],
+  "rules": {
+    // Import ordering
+    "import/order": [
+      "error",
+      {
+        "groups": [["builtin", "external"], "internal", ["parent", "sibling"], "index", "object", "type"],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@/**",
+            "group": "internal",
+            "position": "after"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
+    // Prevent duplicate imports
+    "import/no-duplicates": "error",
+    // Ensure consistent use of file extension
+    "import/extensions": [
+      "error",
+      "never",
+      {
+        "pattern": {
+          "json": "always",
+          "css": "always",
+          "scss": "always",
+          "png": "always",
+          "jpg": "always",
+          "svg": "always"
+        }
+      }
+    ]
+  }
 }

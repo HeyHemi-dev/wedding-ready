@@ -1,8 +1,10 @@
+import React from 'react'
+
+import { Separator } from '@/components/ui/separator'
 import { SupplierRaw, User } from '@/models/types'
+
 import { FileWithMetadata } from './upload-dropzone'
 import { UploadPreviewForm } from './upload-preview-form'
-import { Separator } from '@/components/ui/separator'
-import React from 'react'
 
 export function UploadPreviewList({
   files,

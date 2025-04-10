@@ -1,13 +1,15 @@
-import type * as types from '@/models/types'
+import type * as t from '@/models/types'
 import { useUploadThing } from '@/utils/uploadthing'
 import { toast } from 'sonner'
 import * as React from 'react'
 import { tileNewRequestBody, tileNewResponseBody } from '@/app/api/tiles/route'
+import { tryCatchFetch } from '@/utils/try-catch'
 
 type CreateTileStatus = 'idle' | 'creating' | 'uploading' | 'complete' | 'error'
 
 /**
  * Creates a tile in the database, and then uploads the image to UploadThing
+ * Updating the tile with the image url is handled in the Uploadthing Endpoint
  */
 export function useCreateTile(options: { signal?: AbortSignal; onUploadComplete?: () => void }) {
   const [status, setStatus] = React.useState<CreateTileStatus>('idle')
@@ -40,9 +42,9 @@ export function useCreateTile(options: { signal?: AbortSignal; onUploadComplete?
     user,
   }: {
     files: File[]
-    tileData: types.InsertTileRaw
-    suppliers: types.SupplierRaw[]
-    user: types.User
+    tileData: t.InsertTileRaw
+    suppliers: t.SupplierRaw[]
+    user: t.User
   }): Promise<void> {
     setStatus('creating')
 
@@ -52,19 +54,17 @@ export function useCreateTile(options: { signal?: AbortSignal; onUploadComplete?
     }
 
     // Create the tile in the database
-    const res = await fetch('/api/tiles', {
+    const { data: tile, error } = await tryCatchFetch<tileNewResponseBody>('/api/tiles', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(reqBody),
     })
 
-    if (!res.ok) {
+    if (error) {
       setStatus('error')
-      toast.error('Failed to create tile')
+      toast.error(error?.message || 'Failed to create tile')
       return
     }
-
-    const tile = (await res.json()) as tileNewResponseBody
 
     // Upload the file with some metadata so we can authorize the upload
     await startUpload(files, {

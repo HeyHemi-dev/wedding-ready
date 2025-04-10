@@ -147,7 +147,10 @@ export const supplierServices = pgTable(
       foreignColumns: [suppliers.id],
       name: 'supplier_services_supplier_id_suppliers_id_fk',
     }).onDelete('cascade'),
-    primaryKey({ columns: [table.supplierId, table.service], name: 'supplier_services_supplier_id_service_pk' }),
+    primaryKey({
+      columns: [table.supplierId, table.service],
+      name: 'supplier_services_supplier_id_service_pk',
+    }),
   ]
 )
 
@@ -168,7 +171,10 @@ export const stackTiles = pgTable(
       foreignColumns: [tiles.id],
       name: 'stack_tiles_tile_id_tiles_id_fk',
     }).onDelete('cascade'),
-    primaryKey({ columns: [table.stackId, table.tileId], name: 'stack_tiles_stack_id_tile_id_pk' }),
+    primaryKey({
+      columns: [table.stackId, table.tileId],
+      name: 'stack_tiles_stack_id_tile_id_pk',
+    }),
   ]
 )
 
@@ -184,7 +190,10 @@ export const supplierLocations = pgTable(
       foreignColumns: [suppliers.id],
       name: 'supplier_locations_supplier_id_suppliers_id_fk',
     }).onDelete('cascade'),
-    primaryKey({ columns: [table.supplierId, table.location], name: 'supplier_locations_supplier_id_location_pk' }),
+    primaryKey({
+      columns: [table.supplierId, table.location],
+      name: 'supplier_locations_supplier_id_location_pk',
+    }),
   ]
 )
 
@@ -206,7 +215,10 @@ export const savedTiles = pgTable(
       foreignColumns: [users.id],
       name: 'saved_tiles_user_id_users_id_fk',
     }).onDelete('cascade'),
-    primaryKey({ columns: [table.userId, table.tileId], name: 'saved_tiles_user_id_tile_id_pk' }),
+    primaryKey({
+      columns: [table.userId, table.tileId],
+      name: 'saved_tiles_user_id_tile_id_pk',
+    }),
   ]
 )
 
@@ -229,7 +241,10 @@ export const tileSuppliers = pgTable(
       foreignColumns: [tiles.id],
       name: 'tile_suppliers_tile_id_tiles_id_fk',
     }).onDelete('cascade'),
-    primaryKey({ columns: [table.tileId, table.supplierId], name: 'tile_suppliers_tile_id_supplier_id_pk' }),
+    primaryKey({
+      columns: [table.tileId, table.supplierId],
+      name: 'tile_suppliers_tile_id_supplier_id_pk',
+    }),
   ]
 )
 
@@ -253,6 +268,9 @@ export const supplierUsers = pgTable(
       foreignColumns: [users.id],
       name: 'supplier_users_user_id_users_id_fk',
     }).onDelete('cascade'),
-    primaryKey({ columns: [table.supplierId, table.userId], name: 'supplier_users_supplier_id_user_id_pk' }),
+    primaryKey({
+      columns: [table.supplierId, table.userId],
+      name: 'supplier_users_supplier_id_user_id_pk',
+    }),
   ]
 )

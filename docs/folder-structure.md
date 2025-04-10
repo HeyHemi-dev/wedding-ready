@@ -1,6 +1,7 @@
 [ReadMe](/README.md)
 
 # Project Structure
+
 ```yaml
 /
 ├── actions/ # Server actions (business logic for server-side)
@@ -15,4 +16,3 @@
 ├── public/ # Static assets
 └── utils/ # Utility, helper and library functions
 ```
-

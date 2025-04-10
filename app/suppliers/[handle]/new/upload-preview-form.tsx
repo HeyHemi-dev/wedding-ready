@@ -2,18 +2,19 @@
 
 import * as React from 'react'
 
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { InsertTileRaw, SupplierRaw, User } from '@/models/types'
-import { Location } from '@/db/constants'
-import { enumToPretty } from '@/utils/enum-to-pretty'
-import { SubmitButton } from '@/components/submit-button'
-import { useCreateTile } from '@/hooks/use-create-tile'
-import { FileWithMetadata } from './upload-dropzone'
-import { Progress } from '@/components/ui/progress'
 import Field from '@/components/form/field'
+import { SubmitButton } from '@/components/submit-button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { Location } from '@/db/constants'
+import { useCreateTile } from '@/hooks/use-create-tile'
+import { InsertTileRaw, SupplierRaw, User } from '@/models/types'
+import { enumToPretty } from '@/utils/enum-to-pretty'
+
+import { FileWithMetadata } from './upload-dropzone'
 
 export function UploadPreviewForm({
   file,
@@ -26,7 +27,9 @@ export function UploadPreviewForm({
   user: User
   onCompleteAction: () => void
 }) {
-  const { startCreateTile, status, uploadProgress } = useCreateTile({ onUploadComplete: onCompleteAction })
+  const { startCreateTile, status, uploadProgress } = useCreateTile({
+    onUploadComplete: onCompleteAction,
+  })
 
   async function onSubmit(formData: FormData) {
     const tileData: InsertTileRaw = {
@@ -37,15 +40,21 @@ export function UploadPreviewForm({
       isPrivate: false,
     }
 
-    await startCreateTile({ files: [file.file], tileData, suppliers: [supplier], user })
+    await startCreateTile({
+      files: [file.file],
+      tileData,
+      suppliers: [supplier],
+      user,
+    })
   }
 
   return (
     <>
       {status === 'idle' ? (
         <div className="grid grid-cols-[1fr_3fr] gap-6">
-          <div className="aspect-square overflow-hidden bg-muted rounded-lg">
-            <img src={file.fileObjectUrl} alt={file.file.name} className="object-contain w-full h-full" />
+          <div className="aspect-square overflow-hidden rounded-lg bg-muted">
+            {/* eslint-disable-next-line @next/next/no-img-element -- This is a client-side preview of a local file, so Next.js Image optimization isn't needed */}
+            <img src={file.fileObjectUrl} alt={file.file.name} className="h-full w-full object-contain" />
           </div>
 
           <form action={onSubmit} className="grid grid-cols-2 gap-md">

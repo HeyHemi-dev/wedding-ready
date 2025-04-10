@@ -75,12 +75,8 @@
           "tableFrom": "tiles",
           "tableTo": "users",
           "schemaTo": "auth",
-          "columnsFrom": [
-            "created_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -88,9 +84,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "tiles_image_path_unique": {
-          "columns": [
-            "image_path"
-          ],
+          "columns": ["image_path"],
           "nullsNotDistinct": false,
           "name": "tiles_image_path_unique"
         }
@@ -143,12 +137,8 @@
           "tableFrom": "user_details",
           "tableTo": "users",
           "schemaTo": "auth",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -156,9 +146,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "user_details_handle_unique": {
-          "columns": [
-            "handle"
-          ],
+          "columns": ["handle"],
           "nullsNotDistinct": false,
           "name": "user_details_handle_unique"
         }
@@ -218,12 +206,8 @@
           "tableFrom": "stacks",
           "tableTo": "users",
           "schemaTo": "auth",
-          "columnsFrom": [
-            "owned_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owned_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -304,12 +288,8 @@
           "tableFrom": "suppliers",
           "tableTo": "users",
           "schemaTo": "auth",
-          "columnsFrom": [
-            "created_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -317,9 +297,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "suppliers_handle_unique": {
-          "columns": [
-            "handle"
-          ],
+          "columns": ["handle"],
           "nullsNotDistinct": false,
           "name": "suppliers_handle_unique"
         }
@@ -353,12 +331,8 @@
           "tableFrom": "supplier_services",
           "tableTo": "suppliers",
           "schemaTo": "public",
-          "columnsFrom": [
-            "supplier_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["supplier_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -366,10 +340,7 @@
       "compositePrimaryKeys": {
         "supplier_services_supplier_id_service_pk": {
           "name": "supplier_services_supplier_id_service_pk",
-          "columns": [
-            "supplier_id",
-            "service"
-          ]
+          "columns": ["supplier_id", "service"]
         }
       },
       "uniqueConstraints": {},
@@ -401,12 +372,8 @@
           "tableFrom": "stack_tiles",
           "tableTo": "stacks",
           "schemaTo": "public",
-          "columnsFrom": [
-            "stack_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["stack_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -415,12 +382,8 @@
           "tableFrom": "stack_tiles",
           "tableTo": "tiles",
           "schemaTo": "public",
-          "columnsFrom": [
-            "tile_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tile_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -428,10 +391,7 @@
       "compositePrimaryKeys": {
         "stack_tiles_stack_id_tile_id_pk": {
           "name": "stack_tiles_stack_id_tile_id_pk",
-          "columns": [
-            "stack_id",
-            "tile_id"
-          ]
+          "columns": ["stack_id", "tile_id"]
         }
       },
       "uniqueConstraints": {},
@@ -464,12 +424,8 @@
           "tableFrom": "supplier_locations",
           "tableTo": "suppliers",
           "schemaTo": "public",
-          "columnsFrom": [
-            "supplier_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["supplier_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -477,10 +433,7 @@
       "compositePrimaryKeys": {
         "supplier_locations_supplier_id_location_pk": {
           "name": "supplier_locations_supplier_id_location_pk",
-          "columns": [
-            "supplier_id",
-            "location"
-          ]
+          "columns": ["supplier_id", "location"]
         }
       },
       "uniqueConstraints": {},
@@ -518,12 +471,8 @@
           "tableFrom": "saved_tiles",
           "tableTo": "tiles",
           "schemaTo": "public",
-          "columnsFrom": [
-            "tile_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tile_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -532,12 +481,8 @@
           "tableFrom": "saved_tiles",
           "tableTo": "users",
           "schemaTo": "auth",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -545,10 +490,7 @@
       "compositePrimaryKeys": {
         "saved_tiles_user_id_tile_id_pk": {
           "name": "saved_tiles_user_id_tile_id_pk",
-          "columns": [
-            "user_id",
-            "tile_id"
-          ]
+          "columns": ["user_id", "tile_id"]
         }
       },
       "uniqueConstraints": {},
@@ -593,12 +535,8 @@
           "tableFrom": "tile_suppliers",
           "tableTo": "suppliers",
           "schemaTo": "public",
-          "columnsFrom": [
-            "supplier_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["supplier_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -607,12 +545,8 @@
           "tableFrom": "tile_suppliers",
           "tableTo": "tiles",
           "schemaTo": "public",
-          "columnsFrom": [
-            "tile_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tile_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -620,10 +554,7 @@
       "compositePrimaryKeys": {
         "tile_suppliers_tile_id_supplier_id_pk": {
           "name": "tile_suppliers_tile_id_supplier_id_pk",
-          "columns": [
-            "tile_id",
-            "supplier_id"
-          ]
+          "columns": ["tile_id", "supplier_id"]
         }
       },
       "uniqueConstraints": {},
@@ -677,12 +608,8 @@
           "tableFrom": "supplier_users",
           "tableTo": "suppliers",
           "schemaTo": "public",
-          "columnsFrom": [
-            "supplier_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["supplier_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -691,12 +618,8 @@
           "tableFrom": "supplier_users",
           "tableTo": "users",
           "schemaTo": "auth",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -704,10 +627,7 @@
       "compositePrimaryKeys": {
         "supplier_users_supplier_id_user_id_pk": {
           "name": "supplier_users_supplier_id_user_id_pk",
-          "columns": [
-            "supplier_id",
-            "user_id"
-          ]
+          "columns": ["supplier_id", "user_id"]
         }
       },
       "uniqueConstraints": {},
@@ -772,10 +692,7 @@
     },
     "public.supplier_roles": {
       "name": "supplier_roles",
-      "values": [
-        "admin",
-        "standard"
-      ],
+      "values": ["admin", "standard"],
       "schema": "public"
     }
   },
