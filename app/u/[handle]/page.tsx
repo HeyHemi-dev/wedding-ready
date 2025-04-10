@@ -1,12 +1,13 @@
 import Link from 'next/link'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import { getCurrentUser } from '@/actions/get-current-user'
+import { noTiles } from '@/components/tiles/tile-list'
 import { Button } from '@/components/ui/button'
 import Section from '@/components/ui/section'
 import { UserDetailModel } from '@/models/user'
+
 import { UserTiles } from './user-tiles'
-import { ErrorBoundary } from 'react-error-boundary'
-import { noTiles } from '@/components/tiles/tile-list'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
