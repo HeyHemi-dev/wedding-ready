@@ -1,119 +1,139 @@
-import { ChevronDown } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
+import Image from 'next/image'
+import * as motion from 'motion/react-client'
 
 import { Button } from '@/components/ui/button'
-import { cn } from '@/utils/shadcn-utils'
+import Section from '@/components/ui/section'
 
-import HeroTextCarousel from './hero-text-carousel'
+import { ArrowRight } from 'lucide-react'
 
 export default function Home() {
   return (
     <>
-      {/* Section 1 - Hero */}
-      <HeroSection />
+      <Section sectionClassName="h-svh-minus-header">
+        <div className="grid grid-cols-3 grid-rows-4 gap-md">
+          <div className="col-span-2 row-span-full grid place-items-center rounded-3xl bg-secondary p-xxl">
+            <div className="flex flex-col gap-md pr-xxl">
+              <h1 className="text-balance font-serif text-6xl">Wedding inspiration you can actually book.</h1>
+              <p className="text-pretty text-xl">Explore local ideas, save what you love, and connect with real NZ suppliers—all for free.</p>
+              <div className="flex gap-xs pt-md">
+                <Button size={'lg'} asChild>
+                  <Link href="/sign-up" className="flex items-center gap-xs">
+                    <span>Sign up now</span>
+                    <ArrowRight />
+                  </Link>
+                </Button>
+                <Button variant={'ghost'} size={'lg'} asChild>
+                  <Link href="/feed">
+                    <span className="font-semibold">Start exploring</span>
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="relative col-span-1 row-span-3 overflow-hidden rounded-3xl bg-secondary">
+            <Image className="object-cover" src="/assets/home-hero.jpg" alt="Wedding rings" fill sizes="100vw" />
+          </div>
+          <div className="col-span-1 row-span-1 rounded-3xl bg-primary p-xxl">
+            <div className="flex flex-col gap-md"></div>
+          </div>
+        </div>
+      </Section>
 
-      {/* Section 2 - Search */}
-      <HomePageSection
-        image={{ url: '/images/search.jpg', alt: 'Search', side: 'left' }}
-        bgClass="bg-gradient-to-br from-red-200 to-red-100"
-        text={{
-          title: 'Find ideas that fit your wedding.',
-          description: 'Looking for something unique? Search for styles, themes, or local vendors—like "boho wedding florals"—and see what\'s possible in NZ.',
-          colorClass: 'text-red-900',
-        }}
-        cta={{ text: 'Explore', link: '/search' }}
-      />
+      <CardsContainer>
+        <Card
+          title="Explore inspiration that fits your wedding."
+          description="From dreamy boho florals to modern table settings, search by style, vibe, or keyword—every result is available from local New&nbsp;Zealand suppliers."
+          cta={{
+            text: 'Start exploring',
+            href: '/feed',
+          }}
+        />
+        <Card
+          title="Find your dream team, not just a moodboard."
+          description="Every image is tagged with the real suppliers who created it, so turning your inspiration into reality is just a click away."
+          cta={{
+            text: 'Search local suppliers',
+            href: '/suppliers',
+          }}
+        />
+        <Card
+          title="Save what you love."
+          description="Create collections of your favourite tiles. Every saved idea is 100% bookable—no more falling for overseas Pinterest dreams you can't have."
+          cta={{
+            text: 'Save your favourites',
+            href: '/sign-up',
+          }}
+        />
+        <Card
+          title="From inspo to 'I do.'"
+          description="WeddingReady connects you with real local options to make planning easier, faster, and way more fun."
+          cta={{
+            text: 'Sign up now',
+            href: '/sign-up',
+          }}
+        />
+      </CardsContainer>
 
-      {/* Section 3 - Save */}
-      <HomePageSection
-        image={{
-          url: '/images/save.jpg',
-          alt: 'Save Inspiration',
-          side: 'right',
-        }}
-        bgClass="bg-gradient-to-br from-amber-100 to-amber-50"
-        text={{
-          title: 'Save inspiration.',
-          description: 'Gather your favorite ideas, knowing every option is available through local vendors.',
-          colorClass: 'text-amber-900',
-        }}
-        cta={{ text: 'Explore', link: '/search' }}
-      />
-
-      {/* Section 4 - Bring to Life */}
-      <HomePageSection
-        image={{
-          url: '/images/bring-to-life.jpg',
-          alt: 'Bring to Life',
-          side: 'left',
-        }}
-        bgClass="bg-gradient-to-br from-teal-100 to-teal-50"
-        text={{
-          title: 'See it, save it, bring it to life.',
-          description: 'The best part of WeddingReady is discovering real options from real vendors, making planning easier and more exciting.',
-          colorClass: 'text-teal-900',
-        }}
-        cta={{ text: 'Explore', link: '/search' }}
-      />
+      <Section>
+        <div className="grid min-h-[33svh] grid-cols-3 grid-rows-1 gap-md">
+          <div className="relative col-span-1 row-span-full overflow-hidden rounded-3xl bg-secondary">
+            <div className="col-span-1 row-span-full grid place-items-center rounded-3xl bg-secondary p-xxl">
+              <Image className="object-cover" src="/assets/home-hero.jpg" alt="Wedding rings" fill sizes="100vw" />
+            </div>
+          </div>
+          <div className="col-span-2 row-span-full grid place-items-center rounded-3xl bg-secondary p-xxl">
+            <div className="flex flex-col gap-md pr-xxl">
+              <h2 className="text-balance font-serif text-4xl">Are you a wedding supplier?</h2>
+              <p className="text-pretty">
+                Reach more couples, showcase your work, and get discovered on WeddingReady. It's free to join, and only takes a few minutes to set up.
+              </p>
+              <div className="flex gap-xs pt-md">
+                <Button asChild size="lg">
+                  <Link href="/suppliers/join">Join as a supplier</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Section>
     </>
   )
 }
 
-function HomePageSection({
-  image,
-  bgClass,
-  text,
-  cta,
-}: {
-  image: { url: string; alt: string; side: 'left' | 'right' }
-  bgClass: string
-  text: { title: string; description: string; colorClass: string }
-  cta: { text: string; link: string }
-}) {
-  return (
-    <section className="grid min-h-svh grid-cols-2">
-      <div className={cn('row-start-1 grid place-content-center p-16', bgClass, image.side === 'left' ? 'col-start-2' : 'col-start-1')}>
-        <div className="flex max-w-lg flex-col gap-8">
-          <div className="space-y-4">
-            <h2 className={cn('text-6xl font-bold', text.colorClass)}>{text.title}</h2>
-            <p className={cn('text-lg', text.colorClass)}>{text.description}</p>
-          </div>
-          <Link href={cta.link}>
-            <Button size="lg" variant={'secondary'}>
-              {cta.text}
-            </Button>
-          </Link>
-        </div>
-      </div>
-      <div className={cn('relative row-start-1 grid bg-muted', image.side === 'left' ? 'col-start-1' : 'col-start-2')}>
-        <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
-      </div>
-    </section>
-  )
+function CardsContainer({ children }: { children: React.ReactNode }) {
+  'use client'
+  return <div className="relative">{children}</div>
 }
 
-function HeroSection() {
-  return (
-    <section className="grid h-svh-minus-header grid-rows-[1fr_auto]">
-      <div className="grid place-content-center justify-items-center gap-8">
-        <HeroTextCarousel className="space-y-[0.07em] bg-gradient-to-br from-amber-600 to-orange-700 bg-clip-text text-center text-7xl font-extrabold text-transparent" />
-        <Link href="/suppliers">
-          <Button size={'lg'} className="bg-amber-700 text-white">
-            Explore
-          </Button>
-        </Link>
-      </div>
-      <p className="hidden">
-        WeddingReady transforms your wedding vision into reality with inspiration sourced from real vendors in New Zealand. No more endless searching - just
-        beautiful ideas you can actually have.
-      </p>
-      {/* scroll indicator positioned to bottom center with chevron down */}
+interface CardProps {
+  title: string
+  description: string
+  cta: {
+    text: string
+    href: string
+  }
+}
 
-      <div className="flex flex-col items-center justify-center bg-orange-100 p-16">
-        <p className="text-orange-900">See how it works</p>
-        <ChevronDown className="h-8 w-8 text-orange-900" />
+function Card({ title, description, cta }: CardProps) {
+  return (
+    <Section sectionClassName="h-svh-minus-header">
+      <div className="grid place-items-center rounded-3xl bg-secondary p-xxl">
+        <div className="flex flex-col items-center gap-md">
+          <div className="flex max-w-[60ch] flex-col items-center gap-md text-center">
+            <h2 className="text-balance font-serif text-6xl">{title}</h2>
+            <p className="text-pretty text-xl">{description}</p>
+          </div>
+          <div className="flex gap-xs pt-md">
+            <Button asChild size="lg">
+              <Link href={cta.href} className="flex items-center gap-xs">
+                <span>{cta.text}</span>
+                <ArrowRight />
+              </Link>
+            </Button>
+          </div>
+        </div>
       </div>
-    </section>
+    </Section>
   )
 }
