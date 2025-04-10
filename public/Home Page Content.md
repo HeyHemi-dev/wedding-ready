@@ -1,37 +1,50 @@
-Home Page Content
+<!-- Full height hero section -->
 
-# Section 1
+### Wedding inspiration you can actually book.
 
-Find your local...
+**Explore local ideas, save what you love, and connect with real NZ suppliers—all for free.**
 
-- classic bridal fit
-- perfect outdoor venue
-- bespoke wedding stationery
-- seasonal wedding florals
-- pastel arch hire
+**→ Sign up now**
+**→ Explore inspo**
 
-_Hidden Content_
-WeddingReady transforms your wedding vision into reality with inspiration sourced from real vendors in New Zealand. No more endless searching—just beautiful ideas you can actually have.
+<!-- Full height cards that stack on each as scroll -->
+<!-- Card 01 -->
 
-Scroll Hint: Here’s how it works
+### Explore inspiration that fits your wedding.
 
-# Section 2
+From dreamy boho florals to modern table settings, search by style, vibe, or keyword—every result is available from local New Zealand suppliers.
 
-Find ideas that fit your wedding.
-Looking for something unique? Search for styles, themes, or local vendors—like “boho wedding florals”—and see what’s possible in NZ.
+**→ Start exploring**
 
-CTA: Explore
+<!-- Card 02 -->
 
-# Section 3
+### Find your dream team, not just a moodboard.
 
-Save inspiration.
-Gather your favorite ideas, knowing every option is available through local vendors.
+Every image is tagged with the real suppliers who created it, so turning your inspiration into reality is just a click away.
 
-CTA: Explore
+**→ Search local suppliers**
 
-# Section 4
+<!-- Card 03 -->
 
-See it, save it, bring it to life.
-The best part of WeddingReady is discovering real options from real vendors, making planning easier and more exciting.
+### Save what you love.
 
-CTA: Explore
+Create collections of your favourite tiles. Every saved idea is 100% bookable—no more falling for overseas Pinterest dreams you can’t have.
+
+**→ Save your favourites**
+
+<!-- Card 04 -->
+
+### From inspo to “I do.”
+
+WeddingReady connects you with real local options to make planning easier, faster, and way more fun.
+
+**→ Sign up now**
+
+<!-- Full height end section -->
+
+### Are you a wedding supplier?
+
+Reach more couples, showcase your work, and get discovered on WeddingReady. It’s free to join, and only takes a few minutes to set up.
+
+**→ Join as a supplier**
+
