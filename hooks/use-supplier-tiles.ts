@@ -12,7 +12,7 @@ export function useSupplierTiles(supplierId: string, authUserId?: string) {
   const queryClient = useQueryClient()
 
   const supplierTilesQuery = useQuery({
-    queryKey: tileKeys.supplierTiles(supplierId, authUserId),
+    queryKey: tileKeys.supplierTiles(supplierId),
     queryFn: async () => {
       console.log('Fetching supplier tiles...')
       const data = await fetchTilesForSupplier(supplierId, authUserId)

@@ -7,13 +7,12 @@ import { tryCatchFetch } from '@/utils/try-catch'
 import { tileKeys } from '@/hooks/queryKeys'
 import { setTilesSaveStateCache } from './use-tile-saved-state'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
-import { useCurrentUserOnClient } from './use-current-user'
 
 export function useUserTiles(userId: string, authUserId?: string) {
   const queryClient = useQueryClient()
 
   const userTilesQuery = useQuery({
-    queryKey: tileKeys.userTiles(userId, authUserId),
+    queryKey: tileKeys.userTiles(userId),
     queryFn: async () => {
       console.log('Fetching user tiles...')
       const data = await fetchTilesForUser(userId, authUserId)
