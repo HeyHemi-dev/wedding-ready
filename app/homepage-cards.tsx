@@ -1,13 +1,14 @@
 'use client'
 
-import Link from 'next/link'
 import { useRef } from 'react'
+
+import { ArrowRight } from 'lucide-react'
+import { motion, MotionValue, useScroll, useTransform } from 'motion/react'
+import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 import Section from '@/components/ui/section'
 
-import { ArrowRight } from 'lucide-react'
-import { motion, MotionValue, useScroll, useTransform } from 'motion/react'
 
 export interface CardContent {
   title: string

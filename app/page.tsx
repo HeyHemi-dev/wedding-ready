@@ -1,10 +1,9 @@
-import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 import Section from '@/components/ui/section'
-
-import { ArrowRight } from 'lucide-react'
 
 import { CardsContainer, CardContent } from './homepage-cards'
 
@@ -90,7 +89,7 @@ export default function Home() {
             <div className="flex flex-col gap-md pr-xxl">
               <h2 className="text-balance font-serif text-4xl">Are you a wedding supplier?</h2>
               <p className="text-pretty">
-                Reach more couples, showcase your work, and get discovered on WeddingReady. It's free to join, and only takes a few minutes to set up.
+                Reach more couples, showcase your work, and get discovered on WeddingReady. It&apos;s free to join, and only takes a few minutes to set up.
               </p>
               <div className="flex gap-xs pt-md">
                 <Button asChild size="lg">
