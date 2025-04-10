@@ -61,8 +61,18 @@ export class TileModel {
   }
 
   static async getByUserId(userId: string, authUserId?: string): Promise<t.Tile[]> {
+    // Get all the tiles saved by a user.
     const { data: result, error } = await tryCatch(
-      tileBaseQuery.leftJoin(s.savedTiles, eq(s.tiles.id, s.savedTiles.tileId)).where(and(eq(s.savedTiles.userId, userId), isNotNull(s.tiles.imagePath)))
+      db
+        .select({
+          ...s.tileColumns,
+          supplier: s.suppliers,
+        })
+        .from(s.tiles)
+        .innerJoin(s.savedTiles, eq(s.tiles.id, s.savedTiles.tileId))
+        .leftJoin(s.tileSuppliers, eq(s.tiles.id, s.tileSuppliers.tileId))
+        .leftJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
+        .where(and(eq(s.savedTiles.userId, userId), isNotNull(s.tiles.imagePath), eq(s.savedTiles.isSaved, true)))
     )
 
     if (error) {
@@ -71,6 +81,8 @@ export class TileModel {
 
     const tiles = aggregateTileQueryResults(result) as t.Tile[]
 
+    // Get the current auth user's saved status for each tile
+    // Note: the authUser can be the same or different from the user we're getting tiles for
     if (authUserId) {
       const { data: savedTiles, error } = await tryCatch(getSavedTilesRaw(tiles, authUserId))
 
