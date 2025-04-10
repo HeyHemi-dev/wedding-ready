@@ -44,8 +44,13 @@ export function useTileSaveState(tileId: string, authUserId: string) {
     },
     // Always refetch after error or success to ensure we have the latest data
     onSettled: (data, error, variables) => {
-      // After mutation, invalidate and refetch to ensure we have latest data
+      // Invalidate the save state for this specific tile/user combination
       queryClient.invalidateQueries({ queryKey: tileKeys.saveState(tileId, variables.authUserId) })
+      console.log('Invalidate', tileKeys.saveState(tileId, variables.authUserId))
+
+      // Invalidate the authuser's saved tiles
+      queryClient.invalidateQueries({ queryKey: tileKeys.userTiles(variables.authUserId) })
+      console.log('Invalidate', tileKeys.userTiles(variables.authUserId))
     },
   })
 
