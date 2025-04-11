@@ -10,8 +10,7 @@ import { CardsContainer, CardContent } from './homepage-cards'
 const cards: CardContent[] = [
   {
     title: 'Explore inspiration that fits your wedding.',
-    description:
-      'From dreamy boho florals to modern table settings, search by style, vibe, or keyword—every result is available from local New&nbsp;Zealand suppliers.',
+    description: 'From dreamy boho florals to modern table settings, search by style, vibe, or keyword—every result is available from local NZ suppliers.',
     cta: {
       text: 'Start exploring',
       href: '/feed',
@@ -46,7 +45,7 @@ const cards: CardContent[] = [
 export default function Home() {
   return (
     <>
-      <Section sectionClassName="h-svh-minus-header">
+      <Section sectionClassName="h-svh-minus-header" containerClassName="pt-md">
         <div className="grid grid-cols-3 grid-rows-4 gap-md">
           <div className="col-span-2 row-span-full grid place-items-center rounded-3xl bg-secondary p-xxl">
             <div className="flex flex-col gap-md pr-xxl">
@@ -68,7 +67,7 @@ export default function Home() {
             </div>
           </div>
           <div className="relative col-span-1 row-span-3 overflow-hidden rounded-3xl bg-secondary">
-            <Image className="object-cover" src="/assets/home-hero.jpg" alt="Wedding rings" fill sizes="100vw" />
+            <Image className="object-cover" src="/assets/home-hero.jpg" alt="Couple just married celebrating with confetti" fill sizes="100vw" />
           </div>
           <div className="col-span-1 row-span-1 rounded-3xl bg-primary p-xxl">
             <div className="flex flex-col gap-md"></div>
@@ -82,7 +81,7 @@ export default function Home() {
         <div className="grid min-h-[33svh] grid-cols-3 grid-rows-1 gap-md">
           <div className="relative col-span-1 row-span-full overflow-hidden rounded-3xl bg-secondary">
             <div className="col-span-1 row-span-full grid place-items-center rounded-3xl bg-secondary p-xxl">
-              <Image className="object-cover" src="/assets/home-hero.jpg" alt="Wedding rings" fill sizes="100vw" />
+              <Image className="object-cover" src="/assets/home-supplier2.jpg" alt="Indian wedding couple exchanging garlands" fill sizes="33vw" />
             </div>
           </div>
           <div className="col-span-2 row-span-full grid place-items-center rounded-3xl bg-secondary p-xxl">
@@ -93,7 +92,13 @@ export default function Home() {
               </p>
               <div className="flex gap-xs pt-md">
                 <Button asChild size="lg">
-                  <Link href="/suppliers/join">Join as a supplier</Link>
+                  <Link href="/suppliers/join" className="flex items-center gap-xs">
+                    <span>Join as a supplier</span>
+                    <ArrowRight />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant={'ghost'}>
+                  <Link href="/suppliers/join">Learn more</Link>
                 </Button>
               </div>
             </div>
