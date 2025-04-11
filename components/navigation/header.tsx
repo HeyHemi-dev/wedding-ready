@@ -9,7 +9,7 @@ import { Button } from '../ui/button'
 export default function Header() {
   return (
     <header className="grid grid-cols-siteLayout">
-      <div className="col-start-2 col-end-3 grid h-headerHeight grid-cols-[auto_1fr_auto] items-center gap-sm border-b border-b-border py-xs text-sm">
+      <div className="col-start-2 col-end-3 grid h-headerHeight grid-cols-[auto_1fr_auto] items-center gap-sm py-xs text-sm">
         <Link href={'/'} className="relative aspect-[3/2] h-full" passHref>
           <Button variant={'ghost'} className="p-0" asChild>
             <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill sizes="300px" className="object-contain" priority />

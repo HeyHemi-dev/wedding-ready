@@ -57,11 +57,11 @@ export async function getCurrentUser(): Promise<User | null> {
       const { data: userDetail, error } = await tryCatch(UserDetailModel.getById(userId))
 
       if (error) {
-        const userError: UserFetchError = {
+        const databaseError: UserFetchError = {
           code: UserFetchErrorCode.DATABASE_ERROR,
-          message: `Failed to fetch user details from database`,
+          message: error.message,
         }
-        console.error('[getCurrentUser]', userError)
+        console.error(databaseError)
         return null
       }
 
@@ -70,7 +70,7 @@ export async function getCurrentUser(): Promise<User | null> {
           code: UserFetchErrorCode.USER_NOT_FOUND,
           message: `User details missing for user: ${userId}`,
         }
-        console.error('[getCurrentUser]', userError)
+        console.error(userError)
         return null
       }
 
