@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import Section from '@/components/ui/section'
 
-export interface CardContent {
+export interface StackingCardContent {
   title: string
   description: string
   cta: {
@@ -18,7 +18,7 @@ export interface CardContent {
   }
 }
 
-export function CardsContainer({ cards }: { cards: CardContent[] }) {
+export function StackingCardsContainer({ cards }: { cards: StackingCardContent[] }) {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -28,19 +28,19 @@ export function CardsContainer({ cards }: { cards: CardContent[] }) {
   return (
     <motion.div className="relative" ref={ref}>
       {cards.map((card, index) => {
-        return <Card key={index} {...card} index={index} arrayLength={cards.length} scrollProgress={scrollYProgress} />
+        return <StackingCard key={index} {...card} index={index} arrayLength={cards.length} scrollProgress={scrollYProgress} />
       })}
     </motion.div>
   )
 }
 
-interface CardProps extends CardContent {
+interface StackingCardProps extends StackingCardContent {
   index: number
   arrayLength: number
   scrollProgress: MotionValue<number>
 }
 
-function Card({ title, description, cta, index, arrayLength, scrollProgress }: CardProps) {
+function StackingCard({ title, description, cta, index, arrayLength, scrollProgress }: StackingCardProps) {
   // adjust for each card as we go down the list.
   const scaleFinal = 1 - 0.05 * (arrayLength - index - 1)
   const opacityFinal = 0.3 * (arrayLength - index - 1)

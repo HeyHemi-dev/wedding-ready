@@ -5,9 +5,9 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import Section from '@/components/ui/section'
 
-import { CardsContainer, CardContent } from './homepage-cards'
+import { StackingCardsContainer, StackingCardContent } from './stacking-cards'
 
-const cards: CardContent[] = [
+const cards: StackingCardContent[] = [
   {
     title: 'Explore inspiration that fits your wedding.',
     description: 'From dreamy boho florals to modern table settings, search by style, vibe, or keyword—every result is available from local NZ suppliers.',
@@ -75,7 +75,7 @@ export default function Home() {
         </div>
       </Section>
 
-      <CardsContainer cards={cards} />
+      <StackingCardsContainer cards={cards} />
 
       <Section>
         <div className="grid min-h-[33svh] grid-cols-3 grid-rows-1 gap-md">
