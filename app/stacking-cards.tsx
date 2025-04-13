@@ -54,7 +54,7 @@ function StackingCard({ title, description, cta, index, arrayLength, scrollProgr
 
   return (
     <div className="sticky top-0 h-svh" style={{ paddingTop: index * 24 }}>
-      <Section sectionClassName="h-full">
+      <Section className="h-full">
         <motion.div className="grid" style={{ scale, transformOrigin: 'top' }}>
           <Area className="grid place-items-center">
             <div className="flex flex-col items-center gap-md">

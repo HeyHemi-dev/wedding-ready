@@ -4,12 +4,12 @@ import { cn } from '@/utils/shadcn-utils'
 
 interface SectionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
-  sectionClassName?: string
+  className?: string
 }
 
-export const Section = React.forwardRef<HTMLDivElement, SectionProps>(({ children, sectionClassName, ...props }, ref) => {
+export const Section = React.forwardRef<HTMLDivElement, SectionProps>(({ children, className, ...props }, ref) => {
   return (
-    <section ref={ref} className={cn('grid grid-cols-siteLayout py-sectionPadding', sectionClassName)} {...props}>
+    <section ref={ref} className={cn('grid grid-cols-siteLayout py-sectionPadding', className)} {...props}>
       <div className="col-start-2 col-end-3 grid grid-cols-1 gap-md">{children}</div>
     </section>
   )
