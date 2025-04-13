@@ -3,7 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
-import Section from '@/components/ui/section'
+import { Section } from '@/components/ui/section'
+import { Area } from '@/components/ui/area'
 
 import { StackingCardsContainer, StackingCardContent } from './stacking-cards'
 
@@ -45,9 +46,9 @@ const cards: StackingCardContent[] = [
 export default function Home() {
   return (
     <>
-      <Section sectionClassName="h-svh-minus-header" containerClassName="pt-md">
+      <Section sectionClassName="h-svh-minus-header pt-md">
         <div className="grid grid-cols-3 grid-rows-4 gap-md">
-          <div className="col-span-2 row-span-full grid place-items-center rounded-3xl bg-secondary p-xxl">
+          <Area className="col-span-2 row-span-full grid place-items-center">
             <div className="flex flex-col gap-md pr-xxl">
               <h1 className="text-balance font-serif text-6xl">Wedding inspiration you can actually book.</h1>
               <p className="text-pretty text-xl">Explore local ideas, save what you love, and connect with real NZ suppliers—all for free.</p>
@@ -65,13 +66,13 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-          </div>
-          <div className="relative col-span-1 row-span-3 overflow-hidden rounded-3xl bg-secondary">
+          </Area>
+          <Area className="relative col-span-1 row-span-3 overflow-hidden">
             <Image className="object-cover" src="/assets/home-hero.jpg" alt="Couple just married celebrating with confetti" fill sizes="100vw" />
-          </div>
-          <div className="col-span-1 row-span-1 rounded-3xl bg-primary p-xxl">
+          </Area>
+          <Area className="col-span-1 row-span-1 bg-primary">
             <div className="flex flex-col gap-md"></div>
-          </div>
+          </Area>
         </div>
       </Section>
 
@@ -79,12 +80,10 @@ export default function Home() {
 
       <Section>
         <div className="grid min-h-[33svh] grid-cols-3 grid-rows-1 gap-md">
-          <div className="relative col-span-1 row-span-full overflow-hidden rounded-3xl bg-secondary">
-            <div className="col-span-1 row-span-full grid place-items-center rounded-3xl bg-secondary p-xxl">
-              <Image className="object-cover" src="/assets/home-supplier2.jpg" alt="Indian wedding couple exchanging garlands" fill sizes="33vw" />
-            </div>
-          </div>
-          <div className="col-span-2 row-span-full grid place-items-center rounded-3xl bg-secondary p-xxl">
+          <Area className="relative col-span-1 row-span-full overflow-hidden">
+            <Image className="object-cover" src="/assets/home-supplier2.jpg" alt="Indian wedding couple exchanging garlands" fill sizes="33vw" />
+          </Area>
+          <Area className="col-span-2 row-span-full grid place-items-center">
             <div className="flex flex-col gap-md pr-xxl">
               <h2 className="text-balance font-serif text-4xl">Are you a wedding supplier?</h2>
               <p className="text-pretty">
@@ -102,7 +101,7 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-          </div>
+          </Area>
         </div>
       </Section>
     </>

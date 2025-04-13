@@ -7,7 +7,8 @@ import { motion, MotionValue, useScroll, useTransform } from 'motion/react'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
-import Section from '@/components/ui/section'
+import { Section } from '@/components/ui/section'
+import { Area } from '@/components/ui/area'
 
 export interface StackingCardContent {
   title: string
@@ -52,24 +53,26 @@ function StackingCard({ title, description, cta, index, arrayLength, scrollProgr
   const opacity = useTransform(scrollProgress, range, [0, 0, opacityFinal])
 
   return (
-    <div className="sticky top-0" style={{ paddingTop: index * 24 }}>
-      <Section sectionClassName="h-svh">
-        <motion.div className="grid place-items-center overflow-hidden rounded-3xl bg-secondary p-xxl" style={{ scale, transformOrigin: 'top' }}>
-          <div className="flex flex-col items-center gap-md">
-            <div className="flex max-w-[60ch] flex-col items-center gap-md text-center">
-              <h2 className="text-balance font-serif text-6xl">{title}</h2>
-              <p className="text-pretty text-xl">{description}</p>
+    <div className="sticky top-0 h-svh" style={{ paddingTop: index * 24 }}>
+      <Section sectionClassName="h-full">
+        <motion.div className="grid" style={{ scale, transformOrigin: 'top' }}>
+          <Area className="grid place-items-center">
+            <div className="flex flex-col items-center gap-md">
+              <div className="flex max-w-[60ch] flex-col items-center gap-md text-center">
+                <h2 className="text-balance font-serif text-6xl">{title}</h2>
+                <p className="text-pretty text-xl">{description}</p>
+              </div>
+              <div className="flex gap-xs pt-md">
+                <Button asChild size="lg">
+                  <Link href={cta.href} className="flex items-center gap-xs">
+                    <span>{cta.text}</span>
+                    <ArrowRight />
+                  </Link>
+                </Button>
+              </div>
             </div>
-            <div className="flex gap-xs pt-md">
-              <Button asChild size="lg">
-                <Link href={cta.href} className="flex items-center gap-xs">
-                  <span>{cta.text}</span>
-                  <ArrowRight />
-                </Link>
-              </Button>
-            </div>
-          </div>
-          <motion.div className="absolute inset-0 bg-background" style={{ opacity }} />
+            <motion.div className="absolute inset-0 bg-background" style={{ opacity }} />
+          </Area>
         </motion.div>
       </Section>
     </div>
