@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { getCurrentUser } from '@/actions/get-current-user'
-import Section from '@/components/ui/section'
+import { Section } from '@/components/ui/section'
 import { SupplierModel } from '@/models/supplier'
 
 import { UploadDropzone } from './upload-dropzone'

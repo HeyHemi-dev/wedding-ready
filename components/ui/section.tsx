@@ -1,15 +1,17 @@
+import * as React from 'react'
+
 import { cn } from '@/utils/shadcn-utils'
 
-interface SectionProps {
+interface SectionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
-  sectionClassName?: string
-  containerClassName?: string
+  className?: string
 }
 
-export default function Section({ children, sectionClassName, containerClassName }: SectionProps) {
+export const Section = React.forwardRef<HTMLDivElement, SectionProps>(({ children, className, ...props }, ref) => {
   return (
-    <section className={cn('grid grid-cols-siteLayout', sectionClassName)}>
-      <div className={cn('col-start-2 col-end-3 grid grid-cols-1 gap-md py-sectionPadding', containerClassName)}>{children}</div>
+    <section ref={ref} className={cn('grid grid-cols-siteLayout py-sectionPadding', className)} {...props}>
+      <div className="col-start-2 col-end-3 grid grid-cols-1 gap-md">{children}</div>
     </section>
   )
-}
+})
+Section.displayName = 'Section'

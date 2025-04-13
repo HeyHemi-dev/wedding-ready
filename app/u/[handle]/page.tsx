@@ -4,7 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { getCurrentUser } from '@/actions/get-current-user'
 import { noTiles } from '@/components/tiles/tile-list'
 import { Button } from '@/components/ui/button'
-import Section from '@/components/ui/section'
+import { Section } from '@/components/ui/section'
 import { UserDetailModel } from '@/models/user'
 
 import { UserTiles } from './user-tiles'
