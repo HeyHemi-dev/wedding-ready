@@ -9,7 +9,6 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import Section from '@/components/ui/section'
 
-
 export interface CardContent {
   title: string
   description: string
@@ -29,8 +28,7 @@ export function CardsContainer({ cards }: { cards: CardContent[] }) {
   return (
     <motion.div className="relative" ref={ref}>
       {cards.map((card, index) => {
-        const targetScale = 1 - (cards.length - index) * 0.05
-        return <Card key={index} {...card} index={index} range={[0, 1]} targetScale={targetScale} scrollProgress={scrollYProgress} />
+        return <Card key={index} {...card} index={index} arrayLength={cards.length} scrollProgress={scrollYProgress} />
       })}
     </motion.div>
   )
@@ -38,18 +36,25 @@ export function CardsContainer({ cards }: { cards: CardContent[] }) {
 
 interface CardProps extends CardContent {
   index: number
-  range: [number, number]
-  targetScale: number
+  arrayLength: number
   scrollProgress: MotionValue<number>
 }
 
-function Card({ title, description, cta, index, range, targetScale, scrollProgress }: CardProps) {
-  const scale = useTransform(scrollProgress, range, [1, targetScale])
+function Card({ title, description, cta, index, arrayLength, scrollProgress }: CardProps) {
+  // adjust for each card as we go down the list.
+  const scaleFinal = 1 - 0.05 * (arrayLength - index - 1)
+  const opacityFinal = 0.3 * (arrayLength - index - 1)
+
+  // start transformations only once the next card is in view.
+  const range = [0, index * (1 / arrayLength), 1]
+
+  const scale = useTransform(scrollProgress, range, [1, 1, scaleFinal])
+  const opacity = useTransform(scrollProgress, range, [0, 0, opacityFinal])
 
   return (
     <div className="sticky top-0" style={{ paddingTop: index * 24 }}>
       <Section sectionClassName="h-svh">
-        <motion.div className="grid place-items-center rounded-3xl bg-secondary p-xxl" style={{ scale, transformOrigin: 'top' }}>
+        <motion.div className="grid place-items-center overflow-hidden rounded-3xl bg-secondary p-xxl" style={{ scale, transformOrigin: 'top' }}>
           <div className="flex flex-col items-center gap-md">
             <div className="flex max-w-[60ch] flex-col items-center gap-md text-center">
               <h2 className="text-balance font-serif text-6xl">{title}</h2>
@@ -64,6 +69,7 @@ function Card({ title, description, cta, index, range, targetScale, scrollProgre
               </Button>
             </div>
           </div>
+          <motion.div className="absolute inset-0 bg-background" style={{ opacity }} />
         </motion.div>
       </Section>
     </div>
