@@ -14,3 +14,4 @@ export const Section = React.forwardRef<HTMLDivElement, SectionProps>(({ childre
     </section>
   )
 })
+Section.displayName = 'Section'
