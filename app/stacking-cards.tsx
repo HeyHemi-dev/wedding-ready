@@ -6,9 +6,9 @@ import { ArrowRight } from 'lucide-react'
 import { motion, MotionValue, useScroll, useTransform } from 'motion/react'
 import Link from 'next/link'
 
+import { Area } from '@/components/ui/area'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
-import { Area } from '@/components/ui/area'
 
 export interface StackingCardContent {
   title: string

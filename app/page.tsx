@@ -2,9 +2,9 @@ import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { Area } from '@/components/ui/area'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
-import { Area } from '@/components/ui/area'
 
 import { StackingCardsContainer, StackingCardContent } from './stacking-cards'
 
