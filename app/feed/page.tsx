@@ -1,6 +1,3 @@
-import { redirect } from 'next/navigation'
-
-import { getCurrentUser } from '@/actions/get-current-user'
 import { Section } from '@/components/ui/section'
 import { db } from '@/db/db'
 import * as schema from '@/db/schema'
