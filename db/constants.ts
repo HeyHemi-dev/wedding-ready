@@ -49,7 +49,7 @@ export enum Location {
   BAY_OF_PLENTY = 'bay_of_plenty',
   GISBORNE = 'gisborne',
   HAWKES_BAY = 'hawkes_bay',
-  TARANAKI = 'taranakai',
+  TARANAKI = 'taranaki',
   MANAWATU_WHANGANUI = 'manawatu_whanganui',
   WELLINGTON = 'wellington',
   NELSON_TASMAN = 'nelson_tasman',
