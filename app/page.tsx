@@ -22,7 +22,7 @@ const cards: StackingCardContent[] = [
     description: 'Every image is tagged with the real suppliers who created it, so turning your inspiration into reality is just a click away.',
     cta: {
       text: 'Search local suppliers',
-      href: '/suppliers',
+      href: '/find-suppliers',
     },
   },
   {

@@ -63,15 +63,15 @@ function StackingCard({ title, description, cta, index, arrayLength, scrollProgr
                 <p className="text-pretty text-xl">{description}</p>
               </div>
               <div className="flex gap-xs pt-md">
-                <Button asChild size="lg">
-                  <Link href={cta.href} className="flex items-center gap-xs">
+                <Link href={cta.href} className="flex items-center gap-xs" passHref>
+                  <Button size="lg">
                     <span>{cta.text}</span>
                     <ArrowRight />
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               </div>
             </div>
-            <motion.div className="absolute inset-0 bg-background" style={{ opacity }} />
+            <motion.div className="pointer-events-none absolute inset-0 bg-background" style={{ opacity }} />
           </Area>
         </motion.div>
       </Section>

@@ -1,14 +1,23 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import { signUpAction } from '@/actions/auth-actions'
 import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
+import { getAuthenticatedUserId } from '@/utils/auth'
 
 import { SmtpMessage } from '../smtp-message'
 
 export default async function Signup(props: { searchParams: Promise<Message> }) {
+  // If user is already logged in, they don't need to be here.
+  const authUserId = await getAuthenticatedUserId()
+
+  if (authUserId) {
+    redirect('/feed')
+  }
+
   const searchParams = await props.searchParams
   if ('message' in searchParams) {
     return (

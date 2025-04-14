@@ -1,6 +1,6 @@
 import { headers } from 'next/headers'
 
-export const PROTECTED_PATHS = ['/account', '/suppliers/register', '/suppliers/:handle/new']
+export const PROTECTED_PATHS = ['/feed', '/account', '/suppliers/register', '/suppliers/:handle/new']
 
 /**
  * Checks if a given pathname requires authentication. Used by middleware and auth-related functions to enforce authentication.
