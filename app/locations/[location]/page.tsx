@@ -1,3 +1,4 @@
+import { SuppliersList } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { Location } from '@/db/constants'
@@ -22,6 +23,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
           <div className="flex flex-col gap-xs">
             <h1 className="font-serif text-4xl">{valueToPretty(location)}</h1>
           </div>
+          <SuppliersList suppliers={suppliers} />
         </div>
       </Area>
     </Section>
