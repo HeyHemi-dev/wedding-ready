@@ -1,5 +1,5 @@
 import { Service, SupplierRole, Location } from '@/db/constants'
-import { enumToPgEnum } from '@/utils/enum-to-pgEnum'
+import { enumToPgEnum } from '@/utils/enum-helpers'
 import { getTableColumns } from 'drizzle-orm'
 import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
 import { authUsers as users } from 'drizzle-orm/supabase'
