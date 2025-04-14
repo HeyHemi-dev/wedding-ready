@@ -6,8 +6,16 @@ import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
+import { getAuthenticatedUserId } from '@/utils/auth'
+import { redirect } from 'next/navigation'
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
+  // If user is already logged in, they don't need to be here.
+  const authUserId = await getAuthenticatedUserId()
+  if (authUserId) {
+    redirect('/feed')
+  }
+
   const searchParams = await props.searchParams
   const headersList = await headers()
   const referer = headersList.get('referer') || '/feed'

@@ -7,8 +7,17 @@ import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
 
 import { SmtpMessage } from '../smtp-message'
+import { getAuthenticatedUserId } from '@/utils/auth'
+import { redirect } from 'next/navigation'
 
 export default async function Signup(props: { searchParams: Promise<Message> }) {
+  // If user is already logged in, they don't need to be here.
+  const authUserId = await getAuthenticatedUserId()
+
+  if (authUserId) {
+    redirect('/feed')
+  }
+
   const searchParams = await props.searchParams
   if ('message' in searchParams) {
     return (
