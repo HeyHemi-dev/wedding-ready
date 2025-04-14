@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export default function LocationsPage() {
   return (
-    <Section className="h-svh-minus-header">
+    <Section className="min-h-svh-minus-header">
       <Area>
         <div className="flex flex-col gap-md">
           <div className="flex flex-col gap-xs">
