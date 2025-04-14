@@ -11,7 +11,7 @@ import { Location, Service } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
 import { InsertSupplierRaw } from '@/models/types'
 import { getAuthenticatedUserId } from '@/utils/auth'
-import { enumToPretty } from '@/utils/enum-to-pretty'
+import { enumToPretty } from '@/utils/enum-helpers'
 
 export default async function SupplierRegisterPage() {
   const authUserId = await getAuthenticatedUserId()

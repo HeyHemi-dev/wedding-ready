@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Location } from '@/db/constants'
 import { useCreateTile } from '@/hooks/use-create-tile'
 import { InsertTileRaw, SupplierRaw, User } from '@/models/types'
-import { enumToPretty } from '@/utils/enum-to-pretty'
+import { enumToPretty } from '@/utils/enum-helpers'
 
 import { FileWithMetadata } from './upload-dropzone'
 
