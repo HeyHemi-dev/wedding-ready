@@ -40,7 +40,7 @@ export class SupplierModel {
     }
   }
 
-  static async getAll(service?: Service, location?: Location): Promise<Supplier[]> {
+  static async getAll({ service, location }: { service?: Service; location?: Location } = {}): Promise<Supplier[]> {
     const conditions = []
 
     if (service) conditions.push(eq(schema.supplierServices.service, service))
