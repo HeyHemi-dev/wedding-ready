@@ -1,6 +1,7 @@
-import { Supplier } from '@/models/types'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Supplier } from '@/models/types'
 
 export function SuppliersList({ suppliers }: { suppliers: Supplier[] }) {
   return (

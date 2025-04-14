@@ -1,7 +1,7 @@
+import { SuppliersList } from '@/components/suppliers/suppliers-list'
 import { Section } from '@/components/ui/section'
 import { SupplierModel } from '@/models/supplier'
 
-import { SuppliersList } from '@/components/suppliers/suppliers-list'
 
 export default async function SuppliersPage() {
   const suppliers = await SupplierModel.getAll()

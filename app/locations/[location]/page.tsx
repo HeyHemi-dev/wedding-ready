@@ -1,10 +1,11 @@
+import { notFound } from 'next/navigation'
+
 import { SuppliersList } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { Location } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
 import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
-import { notFound } from 'next/navigation'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
   const locationKey = paramToEnumKey((await params).location, Location)
