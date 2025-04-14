@@ -2,7 +2,7 @@ import { db } from '@/db/db'
 import type * as t from './types'
 import * as s from '@/db/schema'
 import { eq, and, inArray, isNotNull, desc } from 'drizzle-orm'
-import { createBatchUpdateObject } from '@/utils/db-utils'
+
 import { tryCatch } from '@/utils/try-catch'
 
 const tileBaseQuery = db
@@ -25,9 +25,28 @@ export class TileModel {
     this.tile = tile
   }
 
-  static async getRawById(id: string): Promise<t.TileRaw | null> {
-    const tilesRaw = await db.select().from(s.tiles).where(eq(s.tiles.id, id)).limit(1)
-    return tilesRaw.length ? tilesRaw[0] : null
+  static async getById(id: string, authUserId?: string): Promise<t.Tile | null> {
+    const { data: result, error } = await tryCatch(tileBaseQuery.where(and(eq(s.tiles.id, id), isNotNull(s.tiles.imagePath))))
+
+    if (error) {
+      throw new Error('database error')
+    }
+
+    // Since we're filtering for non-null imagePath in the query, we can safely assert the type
+    const tiles = aggregateTileQueryResults(result) as t.Tile[]
+    const tile = tiles[0]
+
+    if (authUserId) {
+      const { data: savedTile, error } = await tryCatch(this.getSavedStateRaw(tile.id, authUserId))
+
+      if (error) {
+        throw new Error('database error')
+      }
+
+      tile.isSaved = savedTile?.isSaved ?? false
+    }
+
+    return tile
   }
 
   static async getBySupplierId(supplierId: string, authUserId?: string): Promise<t.Tile[]> {
@@ -79,6 +98,7 @@ export class TileModel {
       throw new Error('database error')
     }
 
+    // Since we're filtering for non-null imagePath in the query, we can safely assert the type
     const tiles = aggregateTileQueryResults(result) as t.Tile[]
 
     // Get the current auth user's saved status for each tile
