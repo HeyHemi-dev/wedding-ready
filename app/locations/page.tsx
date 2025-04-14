@@ -1,27 +1,31 @@
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { Location } from '@/db/constants'
-import { enumToPretty } from '@/utils/enum-to-pretty'
+import { enumKeyToParam, enumToPretty } from '@/utils/enum-helpers'
 import Link from 'next/link'
 
 export default function LocationsPage() {
   return (
-    <Section>
+    <Section className="h-svh-minus-header">
       <Area>
         <div className="flex flex-col gap-md">
           <div className="flex flex-col gap-xs">
             <h1 className="font-serif text-4xl">Locations</h1>
-            <p className="text-muted-foreground">View suppliers by location.</p>
+            <p className="text-muted-foreground">Explore suppliers by location.</p>
           </div>
-          <div className="columns-3 gap-md">
-            {enumToPretty(Location).map((location) => (
-              <div key={location.value}>
-                <Link href={`/locations/${location.value.toLowerCase()}`}>
-                  <h2 className="py-xs text-lg">{location.label}</h2>
-                </Link>
-              </div>
-            ))}
-          </div>
+          <ul className="columns-3 gap-md">
+            {enumToPretty(Location).map((location) => {
+              const locationParam = enumKeyToParam(location.key)
+
+              return (
+                <li key={location.key} className="py-xs">
+                  <h2 className="text-lg">
+                    <Link href={`/locations/${locationParam}`}>{location.label}</Link>
+                  </h2>
+                </li>
+              )
+            })}
+          </ul>
         </div>
       </Area>
     </Section>
