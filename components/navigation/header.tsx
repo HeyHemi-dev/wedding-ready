@@ -16,11 +16,8 @@ export default function Header() {
           </Button>
         </Link>
         <nav className="flex items-center gap-xxs font-semibold">
-          <Link href={'/suppliers'} passHref>
-            <Button variant={'ghost'}>Suppliers</Button>
-          </Link>
-          <Link href={'/locations'} passHref>
-            <Button variant={'ghost'}>Locations</Button>
+          <Link href={'/find-suppliers'} passHref>
+            <Button variant={'ghost'}>Find Suppliers</Button>
           </Link>
           <Link href={'/articles'} passHref>
             <Button variant={'ghost'}>Advice</Button>
