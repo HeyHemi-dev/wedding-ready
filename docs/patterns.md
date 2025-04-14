@@ -23,3 +23,9 @@
 - Manage via Vercel dashboard
 - Separate configurations for development and production
 - Supabase environment variables are automatically injected into the project
+
+### Enum Handling
+
+- Use `enum-helpers.ts` utilities for consistent enum handling
+- Convert between URL parameters and enum values using `paramToEnumKey`
+- Format enum values for display using `valueToPretty`

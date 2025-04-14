@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
 import { SupplierModel } from '@/models/supplier'
 import { Supplier } from '@/models/types'
-import { valueToPretty } from '@/utils/enum-to-pretty'
+import { valueToPretty } from '@/utils/enum-helpers'
 
 import { SupplierTiles } from './supplier-tiles'
 

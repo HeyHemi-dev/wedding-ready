@@ -31,6 +31,9 @@ const config = {
       height: {
         'svh-minus-header': 'calc(100svh - theme(spacing.headerHeight))',
       },
+      minHeight: {
+        'svh-minus-header': 'calc(100svh - theme(spacing.headerHeight))',
+      },
       gridTemplateColumns: {
         siteLayout: 'minmax(theme(spacing.sitePadding), auto) minmax(0, theme(spacing.siteWidth)) minmax(theme(spacing.sitePadding), auto)',
       },

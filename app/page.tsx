@@ -46,7 +46,7 @@ const cards: StackingCardContent[] = [
 export default function Home() {
   return (
     <>
-      <Section className="h-svh-minus-header pt-md">
+      <Section className="min-h-svh-minus-header pt-md">
         <div className="grid grid-cols-3 grid-rows-4 gap-md">
           <Area className="col-span-2 row-span-full grid place-items-center">
             <div className="flex flex-col gap-md pr-xxl">
