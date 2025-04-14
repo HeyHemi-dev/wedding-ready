@@ -46,11 +46,9 @@ export function useTileSaveState(tileId: string, authUserId: string) {
     onSettled: (data, error, variables) => {
       // Invalidate the save state for this specific tile/user combination
       queryClient.invalidateQueries({ queryKey: tileKeys.saveState(tileId, variables.authUserId) })
-      console.log('Invalidate', tileKeys.saveState(tileId, variables.authUserId))
 
       // Invalidate the authuser's saved tiles
       queryClient.invalidateQueries({ queryKey: tileKeys.userTiles(variables.authUserId) })
-      console.log('Invalidate', tileKeys.userTiles(variables.authUserId))
     },
   })
 

@@ -89,8 +89,7 @@ export interface TileRawWithSuppliers extends TileRaw {
  * @requires imagePath - Since we allow a raw tile to be created before the image is uploaded, we require the imagePath to be set here to  ensure we have a valid tile object.
  * @requires suppliers - List of suppliers that are associated with the tile.
  */
-export interface Tile extends TileRaw {
+export interface Tile extends TileRawWithSuppliers {
   imagePath: string
-  suppliers: SupplierRaw[]
   isSaved?: boolean
 }

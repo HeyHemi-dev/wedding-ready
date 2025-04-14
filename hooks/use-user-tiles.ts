@@ -14,7 +14,6 @@ export function useUserTiles(userId: string, authUserId?: string) {
   const userTilesQuery = useQuery({
     queryKey: tileKeys.userTiles(userId),
     queryFn: async () => {
-      console.log('Fetching user tiles...')
       const data = await fetchTilesForUser(userId, authUserId)
 
       if (authUserId) {
