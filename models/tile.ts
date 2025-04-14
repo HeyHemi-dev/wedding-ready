@@ -25,6 +25,16 @@ export class TileModel {
     this.tile = tile
   }
 
+  static async getRawById(id: string): Promise<t.TileRaw | null> {
+    const { data: result, error } = await tryCatch(db.select().from(s.tiles).where(eq(s.tiles.id, id)))
+
+    if (error) {
+      throw new Error('database error')
+    }
+
+    return result[0] ?? null
+  }
+
   static async getById(id: string, authUserId?: string): Promise<t.Tile | null> {
     const { data: result, error } = await tryCatch(tileBaseQuery.where(and(eq(s.tiles.id, id), isNotNull(s.tiles.imagePath))))
 
