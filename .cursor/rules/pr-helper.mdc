@@ -8,13 +8,12 @@ alwaysApply: false
 - Review the latest version of the pull request template [pull_request_template.md](mdc:docs/pull_request_template.md)
 - Review the gif diff against the main branch
 
-- Always ask the user to run `pmpm lint` in the terminal. Wait for this to complete so you can see any current lint errors.
+- Always ask the user to run `pmpm lint` in the terminal, even if it has just been run. Wait for this to complete so you can see any current lint errors.
 - Always ask the user if they would like to update documentation in `/docs`. If yes, read that folder and look for anything that needs to be updated.
 
-- Draft the description section for this pull request
+- ONLY draft the description section for this pull request.
+- Do not draft any other sections e.g. testing, checklists, etc.
 - Be concise. If the change is small, the description can be small.
-- Use markdown formatting in a codeblock
-- If no unit tests have been added or changed, do not write anything under the testing section.
-- Do not fill out the checklist.
+- Use markdown formatting in a codeblock.
 
 
