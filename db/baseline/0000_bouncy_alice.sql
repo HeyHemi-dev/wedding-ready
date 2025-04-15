@@ -1,5 +1,5 @@
 -- Current sql file was generated after introspecting the database
--- If you want to run this migration please uncomment this code before executing migrations
+-- If you want to run this migration please copy the contents of this file into migration file of the same name.
 
 CREATE TYPE "public"."locations" AS ENUM('northland', 'auckland', 'waikato', 'bay_of_plenty', 'gisborne', 'hawkes_bay', 'taranakai', 'manawatu_whanganui', 'wellington', 'nelson_tasman', 'marlborough', 'west_coast', 'canterbury', 'otago', 'southland');--> statement-breakpoint
 CREATE TYPE "public"."services" AS ENUM('venue', 'accomodation', 'caterer', 'cake', 'photographer', 'videographer', 'bridal_wear', 'bridesmaids_wear', 'bridal_accessory', 'menswear', 'menswear_accessory', 'rings', 'makeup', 'hair', 'beauty', 'planner', 'celebrant', 'mc', 'florist', 'stylist', 'hire', 'stationery', 'band', 'entertainment', 'transport', 'support');--> statement-breakpoint
