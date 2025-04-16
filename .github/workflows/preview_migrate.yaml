@@ -14,13 +14,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 22 # Change this if 22 is invalid
-
-      # Debug step to confirm Node.js and cache setup
-      - name: Verify Node.js installation
-        run: |
-          node --version
-          npm --version
+          node-version: 22
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
@@ -33,5 +27,5 @@ jobs:
 
       - name: Run migrations
         env:
-          DATABASE_URL: ${{ secrets.PREVIEW_DATABASE_URL_SESSION_POOLER }}
+          DATABASE_URL_SESSION_POOLER: ${{ secrets.PREVIEW_DATABASE_URL_SESSION_POOLER }}
         run: npm run db:migrate
