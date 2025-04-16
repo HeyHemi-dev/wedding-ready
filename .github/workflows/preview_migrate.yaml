@@ -15,7 +15,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 22 # Change this if 22 is invalid
-          cache: 'pnpm'
 
       # Debug step to confirm Node.js and cache setup
       - name: Verify Node.js installation
