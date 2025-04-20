@@ -1,11 +1,26 @@
 import { z } from 'zod'
-import { Location } from '@/db/constants'
+import { Location, Service } from '@/db/constants'
 import { SetUserDetailRaw } from '@/models/types'
 
 export const tileUploaderInputSchema = z.object({
   createdByUserId: z.string(),
   tileId: z.string(),
 })
+
+export const supplierSignupFormSchema = z.object({
+  name: z.string().min(1),
+  handle: z
+    .string()
+    .trim()
+    .min(3, 'Handle is required and must be at least 3 characters')
+    .max(30, 'Handle can’t exceed 30 characters')
+    .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores'),
+  websiteUrl: z.string().url(),
+  description: z.string().nullable(),
+  locations: z.array(z.nativeEnum(Location)),
+  services: z.array(z.nativeEnum(Service)),
+})
+export type SupplierSignupForm = z.infer<typeof supplierSignupFormSchema>
 
 const supplierSchema = z.object({
   id: z.string(),
@@ -28,15 +43,26 @@ export const tileUpdateFormSchema = z.object({
   suppliers: z.array(supplierSchema),
 })
 
-// Create base schema from the database schema
-export const userUpdateFormSchema = z.object({
+export const userSignupFormSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  displayName: z.string().trim().min(1, 'Display name is required').max(30, 'Display name can’t exceed 30 characters'),
   handle: z
     .string()
     .trim()
     .min(3, 'Handle is required and must be at least 3 characters')
     .max(30, 'Handle can’t exceed 30 characters')
     .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores'),
-  displayName: z.string().trim().min(1, 'Display name is required').max(255, 'Display name can’t exceed 255 characters'),
+})
+export type UserSignupForm = z.infer<typeof userSignupFormSchema>
+
+const userOmitAuth = userSignupFormSchema.omit({
+  email: true,
+  password: true,
+})
+
+// Create base schema from the database schema
+export const userUpdateFormSchema = userOmitAuth.extend({
   bio: z.string().max(160, 'Bio can’t exceed 160 characters').nullable(),
   avatarUrl: z.string().url('Avatar must be a valid URL').or(z.literal('')).nullable(),
   instagramUrl: z.string().url('Instagram URL must be valid').or(z.literal('')).nullable(),

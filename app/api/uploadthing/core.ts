@@ -2,7 +2,7 @@ import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
 
 import { TileModel } from '@/models/tile'
-import { tileUploaderInputSchema } from '@/models/validations'
+import { tileUploaderInputSchema } from '@/app/_types/validations'
 import { getAuthenticatedUserId } from '@/utils/auth'
 
 const f = createUploadthing()

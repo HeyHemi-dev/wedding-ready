@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { UserDetailModel } from '@/models/user'
-import { userUpdateFormSchema } from '@/models/validations'
+import { userUpdateFormSchema } from '@/app/_types/validations'
 import { getAuthenticatedUserId } from '@/utils/auth'
 
 export default async function AccountPage() {
