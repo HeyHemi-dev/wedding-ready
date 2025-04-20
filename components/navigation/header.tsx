@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { signOutAction } from '@/app/_actions/auth-actions'
-import { getCurrentUser } from '@/actions/get-current-user'
+import { getCurrentUser } from '@/app/_actions/get-current-user'
 
 import { Button } from '../ui/button'
 

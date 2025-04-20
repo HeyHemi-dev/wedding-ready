@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { getCurrentUser } from '@/actions/get-current-user'
+import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { noTiles } from '@/components/tiles/tile-list'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
