@@ -18,7 +18,7 @@ export const user_details = pgTable('user_details', {
     .references(() => users.id, { onDelete: 'cascade' }),
   handle: text('handle').notNull().unique(),
   handleUpdatedAt: timestamp('handle_updated_at').notNull().defaultNow(),
-  displayName: text('display_name'),
+  displayName: text('display_name').notNull(),
   bio: text('bio'),
   avatarUrl: text('avatar_url'),
   instagramUrl: text('instagram_url'),

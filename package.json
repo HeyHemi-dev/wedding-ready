@@ -11,7 +11,8 @@
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
-    "db:pull": "drizzle-kit pull --config drizzle.config.ts"
+    "db:pull": "drizzle-kit pull --config drizzle.config.ts",
+    "db:check": "drizzle-kit check --config drizzle.config.ts"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.1.1",
@@ -59,10 +60,19 @@
     "postcss": "8.4.49",
     "prettier": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "supabase": "^2.20.12",
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.19.3",
     "typescript": "5.7.2"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "supabase"
+    ],
+    "onlyBuiltDependencies": [
+      "supabase"
+    ]
   }
 }

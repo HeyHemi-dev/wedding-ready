@@ -1,0 +1,31 @@
+name: Run Drizzle Migrations For Preview
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run migrations
+        env:
+          DATABASE_URL_SESSION_POOLER: ${{ secrets.PREVIEW_DATABASE_URL_SESSION_POOLER }}
+        run: npm run db:migrate
