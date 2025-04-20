@@ -1,4 +1,5 @@
 import { z } from 'zod'
+
 import { Location, Service } from '@/db/constants'
 import { SetUserDetailRaw } from '@/models/types'
 

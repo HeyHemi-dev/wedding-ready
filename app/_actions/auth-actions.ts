@@ -1,13 +1,14 @@
 'use server'
 
-import { encodedRedirect } from '@/utils/encoded-redirect'
-import { createClient, createAdminClient } from '@/utils/supabase/server'
+import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { toast } from 'sonner'
+
 import { UserDetailModel } from '@/models/user'
 import { isProtectedPath } from '@/utils/auth'
-import { revalidateTag } from 'next/cache'
-import { toast } from 'sonner'
+import { encodedRedirect } from '@/utils/encoded-redirect'
+import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
 export const signUpAction = async (formData: FormData) => {
