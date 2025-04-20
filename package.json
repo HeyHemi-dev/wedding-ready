@@ -11,7 +11,8 @@
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
-    "db:pull": "drizzle-kit pull --config drizzle.config.ts"
+    "db:pull": "drizzle-kit pull --config drizzle.config.ts",
+    "db:check": "drizzle-kit check --config drizzle.config.ts"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.1.1",
