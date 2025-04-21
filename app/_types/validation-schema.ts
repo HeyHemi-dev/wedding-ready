@@ -8,7 +8,7 @@ export const tileUploaderInputSchema = z.object({
   tileId: z.string(),
 })
 
-export const supplierSignupFormSchema = z.object({
+export const supplierRegistrationFormSchema = z.object({
   name: z.string().min(1),
   handle: z
     .string()
@@ -21,7 +21,7 @@ export const supplierSignupFormSchema = z.object({
   locations: z.array(z.nativeEnum(Location)),
   services: z.array(z.nativeEnum(Service)),
 })
-export type SupplierSignupForm = z.infer<typeof supplierSignupFormSchema>
+export type SupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>
 
 const supplierSchema = z.object({
   id: z.string(),
