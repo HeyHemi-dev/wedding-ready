@@ -13,9 +13,10 @@ Layered architecture pattern
 
 ### Business Logic Layer
 
-- functions and logic that have utility app-wide (as opposed to the specific context)
-- Save in `/actions` for server side functions
+- Functions and logic that have utility app-wide (as opposed to the specific context)
+- Save in `/app/_actions` for server side functions
 - Save in `/hooks` for client side functions
+- Save in `/app/_types` for form validation and front-end types
 
 ### Presentation Layer
 
