@@ -1,5 +1,3 @@
-'use client'
-
 import Field from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
