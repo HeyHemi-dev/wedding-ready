@@ -1,16 +1,17 @@
+import { headers } from 'next/headers'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
+import { authActions } from '@/app/_actions/auth-actions'
 import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
+import { encodedRedirect } from '@/utils/encoded-redirect'
+import { tryCatch } from '@/utils/try-catch'
 
 import { SmtpMessage } from '../smtp-message'
-import { encodedRedirect } from '@/utils/encoded-redirect'
-import { headers } from 'next/headers'
-import { tryCatch } from '@/utils/try-catch'
-import { authActions } from '@/app/_actions/auth-actions'
-import { redirect } from 'next/navigation'
+
 
 export default async function ForgotPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams

@@ -1,8 +1,7 @@
+import { AuthUser, UserDetailRaw } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
-
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-import { AuthUser, UserDetailRaw } from '@/models/types'
 
 export const authActions = {
   signUp,
@@ -92,7 +91,7 @@ async function forgotPassword({ email, origin }: { email: string; origin: string
   }
 }
 
-async function resetPassword({ password, confirmPassword }: { password: string; confirmPassword: string }): Promise<AuthUser> {
+async function resetPassword({ password }: { password: string }): Promise<AuthUser> {
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.updateUser({

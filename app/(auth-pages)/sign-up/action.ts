@@ -1,12 +1,12 @@
 'use server'
 
+import { revalidateTag } from 'next/cache'
+import { headers } from 'next/headers'
+
 import { authActions } from '@/app/_actions/auth-actions'
 import { userSignupFormSchema } from '@/app/_types/validation-schema'
-
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { tryCatch } from '@/utils/try-catch'
-import { headers } from 'next/headers'
-import { revalidateTag } from 'next/cache'
 
 export async function signUpFormAction(formData: FormData) {
   'use server'

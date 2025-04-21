@@ -1,16 +1,16 @@
+import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
+import { authActions } from '@/app/_actions/auth-actions'
 import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
 import { getAuthenticatedUserId } from '@/utils/auth'
-import { tryCatch } from '@/utils/try-catch'
 import { encodedRedirect } from '@/utils/encoded-redirect'
-import { revalidateTag } from 'next/cache'
-import { authActions } from '@/app/_actions/auth-actions'
+import { tryCatch } from '@/utils/try-catch'
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
   // If user is already logged in, they don't need to be here.

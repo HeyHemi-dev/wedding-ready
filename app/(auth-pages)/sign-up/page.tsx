@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { FormMessage, Message } from '@/components/form/form-message'
-
 import { getAuthenticatedUserId } from '@/utils/auth'
 
 import { SmtpMessage } from '../smtp-message'

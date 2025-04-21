@@ -1,16 +1,16 @@
+import { revalidateTag } from 'next/cache'
+import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { toast } from 'sonner'
 
 import { authActions } from '@/app/_actions/auth-actions'
 import { getCurrentUser } from '@/app/_actions/get-current-user'
+import { isProtectedPath } from '@/utils/auth'
+import { tryCatch } from '@/utils/try-catch'
 
 import { Button } from '../ui/button'
-import { headers } from 'next/headers'
-import { toast } from 'sonner'
-import { tryCatch } from '@/utils/try-catch'
-import { revalidateTag } from 'next/cache'
-import { isProtectedPath } from '@/utils/auth'
-import { redirect } from 'next/navigation'
 
 export default function Header() {
   return (
@@ -73,7 +73,7 @@ async function SignOutFormAction() {
   const referer = headersList.get('referer') || '/'
   const url = new URL(referer)
 
-  const { data, error } = await tryCatch(authActions.signOut())
+  const { error } = await tryCatch(authActions.signOut())
 
   if (error) {
     toast.error('Failed to sign out')
