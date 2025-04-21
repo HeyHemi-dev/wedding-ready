@@ -3,11 +3,9 @@
 import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { toast } from 'sonner'
 
-import { isProtectedPath } from '@/utils/auth'
 import { encodedRedirect } from '@/utils/encoded-redirect'
-import { createClient } from '@/utils/supabase/server'
+
 import { authActions } from './auth-actions'
 import { tryCatch } from '@/utils/try-catch'
 
@@ -53,8 +51,6 @@ export const forgotPasswordAction = async (formData: FormData) => {
 }
 
 export const resetPasswordAction = async (formData: FormData) => {
-  const supabase = await createClient()
-
   const password = formData.get('password') as string
   const confirmPassword = formData.get('confirmPassword') as string
 
@@ -66,17 +62,15 @@ export const resetPasswordAction = async (formData: FormData) => {
     encodedRedirect('error', '/account/reset-password', 'Passwords do not match')
   }
 
-  const { data, error } = await supabase.auth.updateUser({
-    password: password,
-  })
+  const { data: authUser, error } = await tryCatch(authActions.resetPassword({ password, confirmPassword }))
 
   if (error) {
     encodedRedirect('error', '/account/reset-password', 'Password update failed')
   }
 
   // Revalidate the user cache after password update
-  if (data.user) {
-    revalidateTag(`user-${data.user.id}`)
+  if (authUser) {
+    revalidateTag(`user-${authUser.id}`)
   }
 
   encodedRedirect('success', '/account/reset-password', 'Password updated')

@@ -9,6 +9,7 @@ export const authActions = {
   signIn,
   signOut,
   forgotPassword,
+  resetPassword,
 }
 
 async function signUp({
@@ -89,4 +90,18 @@ async function forgotPassword({ email, origin }: { email: string; origin: string
     console.error(error.message)
     throw new Error()
   }
+}
+
+async function resetPassword({ password, confirmPassword }: { password: string; confirmPassword: string }): Promise<AuthUser> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.updateUser({
+    password,
+  })
+
+  if (error) {
+    console.error(error.message)
+    throw new Error()
+  }
+  return data.user
 }
