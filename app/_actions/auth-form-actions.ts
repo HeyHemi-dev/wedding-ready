@@ -49,29 +49,3 @@ export const forgotPasswordAction = async (formData: FormData) => {
 
   return encodedRedirect('success', '/forgot-password', 'Check your email for a link to reset your password.')
 }
-
-export const resetPasswordAction = async (formData: FormData) => {
-  const password = formData.get('password') as string
-  const confirmPassword = formData.get('confirmPassword') as string
-
-  if (!password || !confirmPassword) {
-    encodedRedirect('error', '/account/reset-password', 'Password and confirm password are required')
-  }
-
-  if (password !== confirmPassword) {
-    encodedRedirect('error', '/account/reset-password', 'Passwords do not match')
-  }
-
-  const { data: authUser, error } = await tryCatch(authActions.resetPassword({ password, confirmPassword }))
-
-  if (error) {
-    encodedRedirect('error', '/account/reset-password', 'Password update failed')
-  }
-
-  // Revalidate the user cache after password update
-  if (authUser) {
-    revalidateTag(`user-${authUser.id}`)
-  }
-
-  encodedRedirect('success', '/account/reset-password', 'Password updated')
-}
