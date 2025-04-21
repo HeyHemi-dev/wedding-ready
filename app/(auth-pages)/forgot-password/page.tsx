@@ -1,12 +1,16 @@
 import Link from 'next/link'
 
-import { forgotPasswordAction } from '@/app/_actions/auth-form-actions'
 import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
 
 import { SmtpMessage } from '../smtp-message'
+import { encodedRedirect } from '@/utils/encoded-redirect'
+import { headers } from 'next/headers'
+import { tryCatch } from '@/utils/try-catch'
+import { authActions } from '@/app/_actions/auth-actions'
+import { redirect } from 'next/navigation'
 
 export default async function ForgotPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
@@ -21,7 +25,7 @@ export default async function ForgotPassword(props: { searchParams: Promise<Mess
           </Link>
         </p>
       </div>
-      <form action={forgotPasswordAction} className="grid gap-sm">
+      <form action={forgotPasswordFormAction} className="grid gap-sm">
         <Field label="Email" htmlFor="email">
           <Input name="email" placeholder="you@example.com" required />
         </Field>
@@ -31,4 +35,27 @@ export default async function ForgotPassword(props: { searchParams: Promise<Mess
       <SmtpMessage />
     </>
   )
+}
+
+async function forgotPasswordFormAction(formData: FormData) {
+  'use server'
+  const email = formData.get('email')?.toString()
+  const origin = (await headers()).get('origin')
+  const callbackUrl = formData.get('callbackUrl')?.toString()
+
+  if (!email) {
+    return encodedRedirect('error', '/forgot-password', 'Email is required')
+  }
+
+  const { error } = await tryCatch(authActions.forgotPassword({ email, origin }))
+
+  if (error) {
+    return encodedRedirect('error', '/forgot-password', 'Could not reset password')
+  }
+
+  if (callbackUrl) {
+    return redirect(callbackUrl)
+  }
+
+  return encodedRedirect('success', '/forgot-password', 'Check your email for a link to reset your password.')
 }
