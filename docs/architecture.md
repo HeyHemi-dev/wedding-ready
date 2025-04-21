@@ -15,7 +15,7 @@ Layered architecture pattern
 
 - Functions and logic that have utility app-wide (as opposed to the specific context)
 - Save in `/app/_actions` for server side functions
-- Save in `/hooks` for client side functions
+- Save in `/app/_hooks` for client side functions
 - Save in `/app/_types` for form validation and front-end types
 
 ### Presentation Layer
@@ -39,7 +39,7 @@ Layered architecture pattern
 
    - Prefer server-side fetching
    - Use React Query (TanStack Query) for client-side data fetching
-   - Implement custom hooks in `/hooks` for reusable data fetching logic
+   - Implement custom app/_hooks in `/app/_hooks` for reusable data fetching logic
    - Handle loading and error states with proper UI feedback
    - Utilize React Query's caching and revalidation features
    - Implement optimistic updates for better UX
