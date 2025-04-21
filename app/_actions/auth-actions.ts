@@ -1,4 +1,4 @@
-'use server'
+// 'use server'
 
 import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
@@ -10,19 +10,27 @@ import { isProtectedPath } from '@/utils/auth'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
+import { UserDetailRaw } from '@/models/types'
 
-export const signUpAction = async (formData: FormData) => {
-  const email = formData.get('email')?.toString()
-  const password = formData.get('password')?.toString()
-  const handle = formData.get('handle')?.toString()
-  const displayName = formData.get('displayName')?.toString()
+export const authActions = {
+  signUp,
+}
+
+async function signUp({
+  email,
+  password,
+  handle,
+  displayName,
+  origin,
+}: {
+  email: string
+  password: string
+  handle: string
+  displayName: string
+  origin: string | null
+}): Promise<UserDetailRaw> {
   const supabase = await createClient()
   const supabaseAdmin = createAdminClient()
-  const origin = (await headers()).get('origin')
-
-  if (!email || !password || !handle || !displayName) {
-    return encodedRedirect('error', '/sign-up', 'Email, password, name and handle are required')
-  }
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -32,26 +40,21 @@ export const signUpAction = async (formData: FormData) => {
     },
   })
 
-  if (error) {
-    console.error(error.code + ' ' + error.message)
-    return encodedRedirect('error', '/sign-up', error.message)
+  if (error || !data.user) {
+    console.error(error?.message || 'no auth user')
+    throw new Error()
   }
 
   // Create userDetail record if auth signup succeeded
-  if (data.user) {
-    const { data: user, error } = await tryCatch(UserDetailModel.create({ id: data.user.id, handle, displayName }))
+  const { data: user, error: dbError } = await tryCatch(UserDetailModel.create({ id: data.user.id, handle, displayName }))
 
-    if (error) {
-      console.error('Failed to create user details:', error)
-      // Delete the auth user since we couldn't create their profile
-      await supabaseAdmin.auth.admin.deleteUser(data.user.id)
-      return encodedRedirect('error', '/sign-up', 'Failed to complete signup. Please try again.')
-    }
-    // Revalidate the user cache for the new user
-    revalidateTag(`user-${user.id}`)
+  if (dbError) {
+    console.error('Failed to create user details:', dbError)
+    await supabaseAdmin.auth.admin.deleteUser(data.user.id)
+    throw new Error()
   }
 
-  return encodedRedirect('success', '/sign-up', 'Thanks for signing up! Please check your email for a verification link.')
+  return user
 }
 
 export const signInAction = async (formData: FormData) => {
