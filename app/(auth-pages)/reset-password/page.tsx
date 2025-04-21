@@ -43,7 +43,7 @@ async function resetPasswordFormAction(formData: FormData) {
     encodedRedirect('error', '/account/reset-password', 'Passwords do not match')
   }
 
-  const { data: authUser, error } = await tryCatch(authActions.resetPassword({ password, confirmPassword }))
+  const { data: authUser, error } = await tryCatch(authActions.resetPassword({ password }))
 
   if (error) {
     encodedRedirect('error', '/account/reset-password', 'Password update failed')
