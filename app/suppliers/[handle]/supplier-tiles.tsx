@@ -1,7 +1,7 @@
 'use client'
 
-import { noTiles, TileList, TileListSkeleton } from '@/components/tiles/tile-list'
 import { useSupplierTiles } from '@/app/_hooks/use-supplier-tiles'
+import { noTiles, TileList, TileListSkeleton } from '@/components/tiles/tile-list'
 import { SupplierWithUsers, User } from '@/models/types'
 
 export function SupplierTiles({ supplier, user }: { supplier: SupplierWithUsers; user?: User }) {
