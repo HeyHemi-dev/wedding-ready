@@ -2,11 +2,13 @@ import { UserDetailModel } from '@/models/user'
 
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-import { UserDetailRaw } from '@/models/types'
+import { AuthUser, UserDetailRaw } from '@/models/types'
 
 export const authActions = {
   signUp,
+  signIn,
   signOut,
+  forgotPassword,
 }
 
 async function signUp({
@@ -50,10 +52,39 @@ async function signUp({
   return user
 }
 
+async function signIn({ email, password }: { email: string; password: string }): Promise<AuthUser> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+
+  if (error) {
+    console.error(error.message)
+    throw new Error()
+  }
+
+  return data.user
+}
+
 async function signOut() {
   const supabase = await createClient()
 
   const { error } = await supabase.auth.signOut()
+  if (error) {
+    console.error(error.message)
+    throw new Error()
+  }
+}
+
+async function forgotPassword({ email, origin }: { email: string; origin: string | null }) {
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/callback?redirect_to=/account/reset-password`,
+  })
+
   if (error) {
     console.error(error.message)
     throw new Error()

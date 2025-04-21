@@ -8,25 +8,23 @@ import { toast } from 'sonner'
 import { isProtectedPath } from '@/utils/auth'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient } from '@/utils/supabase/server'
+import { authActions } from './auth-actions'
+import { tryCatch } from '@/utils/try-catch'
 
 export const signInAction = async (formData: FormData) => {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const redirectTo = formData.get('redirectTo')?.toString() || '/feed'
-  const supabase = await createClient()
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
+  const { data: authUser, error } = await tryCatch(authActions.signIn({ email, password }))
 
   if (error) {
     return encodedRedirect('error', '/sign-in', error.message)
   }
 
   // Revalidate the user cache on successful sign in
-  if (data.user) {
-    revalidateTag(`user-${data.user.id}`)
+  if (authUser) {
+    revalidateTag(`user-${authUser.id}`)
   }
 
   return redirect(redirectTo)
@@ -34,7 +32,6 @@ export const signInAction = async (formData: FormData) => {
 
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString()
-  const supabase = await createClient()
   const origin = (await headers()).get('origin')
   const callbackUrl = formData.get('callbackUrl')?.toString()
 
@@ -42,12 +39,9 @@ export const forgotPasswordAction = async (formData: FormData) => {
     return encodedRedirect('error', '/forgot-password', 'Email is required')
   }
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?redirect_to=/account/reset-password`,
-  })
+  const { error } = await tryCatch(authActions.forgotPassword({ email, origin }))
 
   if (error) {
-    console.error(error.message)
     return encodedRedirect('error', '/forgot-password', 'Could not reset password')
   }
 
@@ -86,26 +80,4 @@ export const resetPasswordAction = async (formData: FormData) => {
   }
 
   encodedRedirect('success', '/account/reset-password', 'Password updated')
-}
-
-export const signOutAction = async () => {
-  const supabase = await createClient()
-  const headersList = await headers()
-  const userId = headersList.get('x-auth-user-id')
-  const referer = headersList.get('referer') || '/'
-  const url = new URL(referer)
-
-  const { error } = await supabase.auth.signOut()
-  if (error) {
-    console.error(error.message)
-    toast.error('Failed to sign out')
-    return
-  }
-
-  if (userId) {
-    revalidateTag(`user-${userId}`)
-  }
-
-  const redirectTo = isProtectedPath(url.pathname) ? '/sign-in' : referer
-  return redirect(redirectTo)
 }
