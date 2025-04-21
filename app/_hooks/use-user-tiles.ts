@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { UserTilesGetRequestParams, UserTilesGetResponseBody } from '@/app/api/users/[id]/tiles/route'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { tryCatchFetch } from '@/utils/try-catch'
-import { tileKeys } from '@/hooks/queryKeys'
+import { tileKeys } from '@/app/_hooks/queryKeys'
 import { setTilesSaveStateCache } from './use-tile-saved-state'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 
