@@ -1,8 +1,12 @@
-import { resetPasswordAction } from '@/app/_actions/auth-actions'
+import { revalidateTag } from 'next/cache'
+
+import { authActions } from '@/app/_actions/auth-actions'
 import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
+import { encodedRedirect } from '@/utils/encoded-redirect'
+import { tryCatch } from '@/utils/try-catch'
 
 export default async function ResetPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
@@ -12,7 +16,7 @@ export default async function ResetPassword(props: { searchParams: Promise<Messa
         <h1 className="text-2xl font-medium">Reset password</h1>
         <p className="text-sm text-foreground/60">Please enter your new password below.</p>
       </div>
-      <form action={resetPasswordAction} className="grid gap-sm">
+      <form action={resetPasswordFormAction} className="grid gap-sm">
         <Field label="New password" htmlFor="password">
           <Input type="password" name="password" placeholder="New password" required />
         </Field>
@@ -24,4 +28,31 @@ export default async function ResetPassword(props: { searchParams: Promise<Messa
       </form>
     </>
   )
+}
+
+async function resetPasswordFormAction(formData: FormData) {
+  'use server'
+  const password = formData.get('password') as string
+  const confirmPassword = formData.get('confirmPassword') as string
+
+  if (!password || !confirmPassword) {
+    encodedRedirect('error', '/account/reset-password', 'Password and confirm password are required')
+  }
+
+  if (password !== confirmPassword) {
+    encodedRedirect('error', '/account/reset-password', 'Passwords do not match')
+  }
+
+  const { data: authUser, error } = await tryCatch(authActions.resetPassword({ password }))
+
+  if (error) {
+    encodedRedirect('error', '/account/reset-password', 'Password update failed')
+  }
+
+  // Revalidate the user cache after password update
+  if (authUser) {
+    revalidateTag(`user-${authUser.id}`)
+  }
+
+  encodedRedirect('success', '/account/reset-password', 'Password updated')
 }

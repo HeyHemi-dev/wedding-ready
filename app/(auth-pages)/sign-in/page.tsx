@@ -1,13 +1,16 @@
+import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { signInAction } from '@/app/_actions/auth-actions'
+import { authActions } from '@/app/_actions/auth-actions'
 import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
 import { getAuthenticatedUserId } from '@/utils/auth'
+import { encodedRedirect } from '@/utils/encoded-redirect'
+import { tryCatch } from '@/utils/try-catch'
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
   // If user is already logged in, they don't need to be here.
@@ -31,7 +34,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           </Link>
         </p>
       </div>
-      <form action={signInAction} className="grid gap-sm">
+      <form action={signInFormAction} className="grid gap-sm">
         <Field label="Email" htmlFor="email">
           <Input name="email" placeholder="you@example.com" required />
         </Field>
@@ -47,4 +50,24 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
       </form>
     </>
   )
+}
+
+async function signInFormAction(formData: FormData) {
+  'use server'
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+  const redirectTo = formData.get('redirectTo')?.toString() || '/feed'
+
+  const { data: authUser, error } = await tryCatch(authActions.signIn({ email, password }))
+
+  if (error) {
+    return encodedRedirect('error', '/sign-in', error.message)
+  }
+
+  // Revalidate the user cache on successful sign in
+  if (authUser) {
+    revalidateTag(`user-${authUser.id}`)
+  }
+
+  return redirect(redirectTo)
 }

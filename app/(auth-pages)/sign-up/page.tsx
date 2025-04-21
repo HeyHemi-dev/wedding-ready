@@ -1,14 +1,11 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { signUpAction } from '@/app/_actions/auth-actions'
-import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
-import { SubmitButton } from '@/components/submit-button'
-import { Input } from '@/components/ui/input'
 import { getAuthenticatedUserId } from '@/utils/auth'
 
 import { SmtpMessage } from '../smtp-message'
+import SignUpForm from './sign-up-form'
 
 export default async function Signup(props: { searchParams: Promise<Message> }) {
   // If user is already logged in, they don't need to be here.
@@ -38,23 +35,8 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
           </Link>
         </p>
       </div>
-      <form action={signUpAction} className="grid gap-sm">
-        <Field label="Email" htmlFor="email">
-          <Input name="email" placeholder="you@example.com" required />
-        </Field>
-        <Field label="Password" htmlFor="password">
-          <Input type="password" name="password" placeholder="Your password" minLength={6} required />
-        </Field>
-        <Field label="Name" htmlFor="displayName">
-          <Input name="displayName" placeholder="Your display name" required />
-        </Field>
-        <Field label="Handle" htmlFor="handle">
-          <Input name="handle" placeholder="your-handle" required />
-        </Field>
-
-        <SubmitButton pendingChildren={'Signing up...'}>Sign up</SubmitButton>
-        <FormMessage message={searchParams} />
-      </form>
+      <SignUpForm />
+      <FormMessage message={searchParams} />
       <SmtpMessage />
     </>
   )

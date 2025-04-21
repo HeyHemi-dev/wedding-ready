@@ -1,8 +1,14 @@
+import { revalidateTag } from 'next/cache'
+import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { toast } from 'sonner'
 
-import { signOutAction } from '@/app/_actions/auth-actions'
+import { authActions } from '@/app/_actions/auth-actions'
 import { getCurrentUser } from '@/app/_actions/get-current-user'
+import { isProtectedPath } from '@/utils/auth'
+import { tryCatch } from '@/utils/try-catch'
 
 import { Button } from '../ui/button'
 
@@ -42,7 +48,7 @@ async function HeaderAuth() {
           </div>
         </Button>
       </Link>
-      <form action={signOutAction}>
+      <form action={SignOutFormAction}>
         <Button type="submit" variant={'outline'}>
           Sign out
         </Button>
@@ -58,4 +64,26 @@ async function HeaderAuth() {
       </Button>
     </div>
   )
+}
+
+async function SignOutFormAction() {
+  'use server'
+  const headersList = await headers()
+  const userId = headersList.get('x-auth-user-id')
+  const referer = headersList.get('referer') || '/'
+  const url = new URL(referer)
+
+  const { error } = await tryCatch(authActions.signOut())
+
+  if (error) {
+    toast.error('Failed to sign out')
+    return
+  }
+
+  if (userId) {
+    revalidateTag(`user-${userId}`)
+  }
+
+  const redirectTo = isProtectedPath(url.pathname) ? '/sign-in' : referer
+  return redirect(redirectTo)
 }
