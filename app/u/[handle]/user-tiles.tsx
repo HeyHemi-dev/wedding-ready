@@ -1,7 +1,7 @@
 'use client'
 
+import { useUserTiles } from '@/app/_hooks/use-user-tiles'
 import { noTiles, TileList, TileListSkeleton } from '@/components/tiles/tile-list'
-import { useUserTiles } from '@/hooks/use-user-tiles'
 import * as t from '@/models/types'
 
 export function UserTiles({ user, authUserId }: { user: t.User; authUserId?: string }) {
@@ -17,10 +17,10 @@ export function UserTiles({ user, authUserId }: { user: t.User; authUserId?: str
 
   if (!tiles || tiles.length === 0) {
     return noTiles({
-      message: `${user.displayName} has no tiles`,
+      message: `${user.displayName} has no saved tiles`,
       cta: {
-        text: 'Add a tile',
-        redirect: `/u/${user.handle}/new`,
+        text: 'Start exploring',
+        redirect: `/feed`,
         show: authUserId === user.id,
       },
     })

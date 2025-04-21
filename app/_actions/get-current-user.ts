@@ -1,8 +1,9 @@
 'use server'
 
-import { UserDetailModel } from '@/models/user'
-import { User, makeUser } from '@/models/types'
 import { unstable_cache } from 'next/cache'
+
+import { User, makeUser } from '@/models/types'
+import { UserDetailModel } from '@/models/user'
 import { getAuthenticatedUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 

@@ -2,13 +2,13 @@ import { InfoIcon } from 'lucide-react'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import { getCurrentUser } from '@/actions/get-current-user'
+import { getCurrentUser } from '@/app/_actions/get-current-user'
+import { userUpdateFormSchema } from '@/app/_types/validation-schema'
 import Field from '@/components/form/field'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { UserDetailModel } from '@/models/user'
-import { userUpdateFormSchema } from '@/models/validations'
 import { getAuthenticatedUserId } from '@/utils/auth'
 
 export default async function AccountPage() {

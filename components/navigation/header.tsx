@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { signOutAction } from '@/actions/auth-actions'
-import { getCurrentUser } from '@/actions/get-current-user'
+import { signOutAction } from '@/app/_actions/auth-actions'
+import { getCurrentUser } from '@/app/_actions/get-current-user'
 
 import { Button } from '../ui/button'
 

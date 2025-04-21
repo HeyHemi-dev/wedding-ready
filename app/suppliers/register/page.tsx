@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-import { getCurrentUser } from '@/actions/get-current-user'
+import { getCurrentUser } from '@/app/_actions/get-current-user'
 import Field from '@/components/form/field'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
