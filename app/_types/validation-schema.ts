@@ -9,18 +9,18 @@ export const tileUploaderInputSchema = z.object({
 })
 
 export const supplierRegistrationFormSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().trim().min(1, 'Name is required').max(50, "Name can't exceed 50 characters"),
   handle: z
     .string()
     .trim()
     .min(3, 'Handle is required and must be at least 3 characters')
     .max(30, "Handle can't exceed 30 characters")
     .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores'),
-  websiteUrl: z.string().url(),
-  description: z.string().nullable(),
+  websiteUrl: z.string().trim().optional(),
+  description: z.string().optional(),
   locations: z.array(z.nativeEnum(Location)),
   services: z.array(z.nativeEnum(Service)),
-  createdByUserId: z.string(),
+  createdByUserId: z.string().uuid(),
 })
 export type SupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>
 

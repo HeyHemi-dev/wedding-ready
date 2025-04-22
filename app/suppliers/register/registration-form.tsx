@@ -1,18 +1,19 @@
 'use client'
 
-import Field, { FormFieldItem } from '@/components/form/field'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Location, Service } from '@/db/constants'
 
-import { enumToPretty } from '@/utils/enum-helpers'
+import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
 
 import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/_types/validation-schema'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form'
+import { registrationFormAction } from './registration-form-action'
+import { Checkbox } from '@/components/ui/checkbox'
+import { FormFieldItem } from '@/components/form/field'
 
 export default function RegistrationForm({ createdByUserId }: { createdByUserId: string }) {
   const form = useForm<SupplierRegistrationForm>({
@@ -22,13 +23,17 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
       handle: '',
       websiteUrl: '',
       description: '',
-      locations: [Location.AUCKLAND],
-      services: [Service.VENUE],
+      locations: [],
+      services: [],
+      createdByUserId,
     },
+    mode: 'onBlur',
   })
 
-  function onSubmit(data: SupplierRegistrationForm) {
-    console.log(data)
+  // OnSubmit handles sending the data to a matching server action
+  async function onSubmit(data: SupplierRegistrationForm) {
+    console.log('onSubmit')
+    await registrationFormAction({ data })
   }
 
   return (
@@ -39,54 +44,123 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
           name="name"
           render={({ field }) => (
             <FormFieldItem label="Business name">
-              <Input {...field} placeholder="Business name" />
+              <FormControl>
+                <Input {...field} placeholder="Business name" />
+              </FormControl>
             </FormFieldItem>
           )}
         />
 
-        <Field label="Handle" htmlFor="handle">
-          <Input name="handle" placeholder="business_name" />
-        </Field>
+        <FormField
+          control={form.control}
+          name="handle"
+          render={({ field }) => (
+            <FormFieldItem label="Handle">
+              <FormControl>
+                <Input {...field} placeholder="business_name" />
+              </FormControl>
+            </FormFieldItem>
+          )}
+        />
 
-        <Field label="Locations served" htmlFor="location">
-          <Select name="location">
-            <SelectTrigger>
-              <SelectValue placeholder="Select location" />
-            </SelectTrigger>
-            <SelectContent>
-              {enumToPretty(Location).map((location) => (
-                <SelectItem key={location.value} value={location.value}>
-                  {location.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+        <FormField
+          control={form.control}
+          name="locations"
+          render={() => (
+            <FormFieldItem label="Locations">
+              <FormDescription>Select the regions your business serves. You can select multiple regions.</FormDescription>
+              <div className="grid grid-cols-2 gap-xs">
+                {enumToPretty(Location).map((location) => (
+                  <FormField
+                    key={location.value}
+                    control={form.control}
+                    name="locations"
+                    render={({ field }) => {
+                      return (
+                        <FormItem key={location.value} className="flex flex-row items-center gap-xs">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(keyToEnum(Location, location.key))}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...field.value, keyToEnum(Location, location.key)])
+                                  : field.onChange(field.value?.filter((value) => value !== keyToEnum(Location, location.key)))
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">{location.label}</FormLabel>
+                        </FormItem>
+                      )
+                    }}
+                  />
+                ))}
+              </div>
+            </FormFieldItem>
+          )}
+        />
 
-        <Field label="Services offered" htmlFor="service">
-          <Select name="service">
-            <SelectTrigger>
-              <SelectValue placeholder="Select service" />
-            </SelectTrigger>
-            <SelectContent>
-              {enumToPretty(Service).map((service) => (
-                <SelectItem key={service.value} value={service.value}>
-                  {service.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+        <FormField
+          control={form.control}
+          name="services"
+          render={() => (
+            <FormFieldItem label="Services">
+              <FormDescription>Select the services your business offers. You can select multiple services.</FormDescription>
+              <div className="grid grid-cols-2 gap-xs">
+                {enumToPretty(Service).map((service) => (
+                  <FormField
+                    key={service.value}
+                    control={form.control}
+                    name="services"
+                    render={({ field }) => {
+                      return (
+                        <FormItem key={service.value} className="flex flex-row items-center gap-xs">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(keyToEnum(Service, service.key))}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...field.value, keyToEnum(Service, service.key)])
+                                  : field.onChange(field.value?.filter((value) => value !== keyToEnum(Service, service.key)))
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">{service.label}</FormLabel>
+                        </FormItem>
+                      )
+                    }}
+                  />
+                ))}
+              </div>
+            </FormFieldItem>
+          )}
+        />
 
-        <Field label="Website" htmlFor="website">
-          <Input name="website" placeholder="Website url" />
-        </Field>
+        <FormField
+          control={form.control}
+          name="websiteUrl"
+          render={({ field }) => (
+            <FormFieldItem label="Website">
+              <FormControl>
+                <Input {...field} placeholder="https://www.business-name.co.nz" />
+              </FormControl>
+            </FormFieldItem>
+          )}
+        />
 
-        <Field label="Description" htmlFor="description">
-          <Textarea name="description" placeholder="Description" />
-        </Field>
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormFieldItem label="Description">
+              <FormControl>
+                <Textarea {...field} placeholder="Description" />
+              </FormControl>
+            </FormFieldItem>
+          )}
+        />
 
-        <Input name="userId" type="hidden" value={createdByUserId} />
+        <FormField control={form.control} name="createdByUserId" render={({ field }) => <Input {...field} type="hidden" value={createdByUserId} />} />
+
         <Button type="submit" className="self-end">
           Register
         </Button>
