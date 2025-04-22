@@ -2,11 +2,11 @@ import { redirect } from 'next/navigation'
 
 import { Section } from '@/components/ui/section'
 
-import { getAuthenticatedUserId } from '@/utils/auth'
+import { getAuthUserId } from '@/utils/auth'
 import RegistrationForm from './registration-form'
 
 export default async function SupplierRegisterPage() {
-  const authUserId = await getAuthenticatedUserId()
+  const authUserId = await getAuthUserId()
 
   if (!authUserId) {
     redirect('/sign-in')

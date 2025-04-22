@@ -1,13 +1,13 @@
 import { TileModel } from '@/models/tile'
 import * as t from '@/models/types'
-import { getAuthenticatedUserId } from '@/utils/auth'
+import { getAuthUserId } from '@/utils/auth'
 
 export type SaveTileGetResponseBody = t.SavedTileRaw
 
 // Get the saved state of a tile
 export async function GET(req: Request, { params }: { params: Promise<{ id: string; tileId: string }> }): Promise<Response> {
   const { id, tileId } = await params
-  const authUserId = await getAuthenticatedUserId()
+  const authUserId = await getAuthUserId()
   if (!authUserId || authUserId !== id) {
     return Response.json({ message: 'Unauthorized' }, { status: 401 })
   }
@@ -25,7 +25,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { id, tileId } = await params
   const body = (await req.json()) as SaveTilePostRequestBody
 
-  const authUserId = await getAuthenticatedUserId()
+  const authUserId = await getAuthUserId()
   if (!authUserId || authUserId !== id) {
     return Response.json({ message: 'Unauthorized' }, { status: 401 })
   }

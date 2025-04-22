@@ -4,7 +4,7 @@ import { unstable_cache } from 'next/cache'
 
 import { User, makeUser } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
-import { getAuthenticatedUserId } from '@/utils/auth'
+import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
 const USER_CACHE_DURATION = 60 * 15 // time in seconds
@@ -23,7 +23,7 @@ type UserFetchError = {
  * The result is cached based on the user ID from the request header.
  * This function must be called from a Server Component or server action.
  *
- * @important Use getAuthenticatedUserId() instead if you don't need the user details.
+ * @important Use getAuthUserId() instead if you don't need the user details.
  *
  * @returns UserDetailRaw object if authenticated
  * @returns null if not authenticated
@@ -47,7 +47,7 @@ type UserFetchError = {
  * ```
  */
 export async function getCurrentUser(): Promise<User | null> {
-  const userId = await getAuthenticatedUserId()
+  const userId = await getAuthUserId()
 
   if (!userId) {
     return null

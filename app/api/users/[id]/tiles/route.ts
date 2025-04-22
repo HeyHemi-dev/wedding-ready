@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { TileModel } from '@/models/tile'
 import * as t from '@/models/types'
 import { parseQueryParams } from '@/utils/api-helpers'
-import { getAuthenticatedUserId } from '@/utils/auth'
+import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
 const userTilesGetRequestParams = z.object({
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   // Only check authentication if an authUserId is provided
   if (parsedQueryParams.authUserId) {
-    const authUserId = await getAuthenticatedUserId()
+    const authUserId = await getAuthUserId()
     if (!authUserId || authUserId !== parsedQueryParams.authUserId) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     }

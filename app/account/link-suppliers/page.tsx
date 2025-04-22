@@ -7,11 +7,11 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { db } from '@/db/db'
 import * as schema from '@/db/schema'
-import { getAuthenticatedUserId } from '@/utils/auth'
+import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
 
 export default async function LinkSuppliers() {
-  const authUserId = await getAuthenticatedUserId()
+  const authUserId = await getAuthUserId()
   if (!authUserId) {
     redirect('/sign-in')
   }

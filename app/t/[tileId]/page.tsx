@@ -11,12 +11,12 @@ import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
 import { Separator } from '@/components/ui/separator'
 import { TileModel } from '@/models/tile'
-import { getAuthenticatedUserId } from '@/utils/auth'
+import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
 
 export default async function TilePage({ params }: { params: Promise<{ tileId: string }> }) {
   const { tileId } = await params
-  const authUserId = await getAuthenticatedUserId()
+  const authUserId = await getAuthUserId()
   const tile = await TileModel.getById(tileId, authUserId ?? undefined)
 
   if (!tile) {
