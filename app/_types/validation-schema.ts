@@ -20,6 +20,7 @@ export const supplierRegistrationFormSchema = z.object({
   description: z.string().nullable(),
   locations: z.array(z.nativeEnum(Location)),
   services: z.array(z.nativeEnum(Service)),
+  createdByUserId: z.string(),
 })
 export type SupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>
 
