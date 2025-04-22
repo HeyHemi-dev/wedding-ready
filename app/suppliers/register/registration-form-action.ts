@@ -1,28 +1,26 @@
 'use server'
 
-import { redirect } from 'next/navigation'
-
 import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/_types/validation-schema'
 import { supplierActions } from '@/app/_actions/supplier-actions'
 import { getAuthUserIdForAction } from '@/utils/auth'
+import { tryCatch } from '@/utils/try-catch'
 
-// Form Action takes the request server-side
-// Handles validation, authentication, before handing off to the action
-// Also handles redirection, toasts etc.
-export async function registrationFormAction({ data }: { data: SupplierRegistrationForm }) {
+export async function registrationFormAction({ data }: { data: SupplierRegistrationForm }): Promise<{ handle: string }> {
   const { success, error, data: validatedData } = supplierRegistrationFormSchema.safeParse(data)
   if (!success || error) {
-    return { error: error?.flatten().fieldErrors }
+    throw new Error(JSON.stringify(error?.flatten().fieldErrors))
   }
 
-  const authUserId = await getAuthUserIdForAction()
-  if (!authUserId || validatedData.createdByUserId !== authUserId) {
-    return { error: 'Unauthorized' }
+  const { data: authUserId, error: authUserIdError } = await tryCatch(getAuthUserIdForAction())
+  if (authUserIdError || !authUserId || validatedData.createdByUserId !== authUserId) {
+    throw new Error('Unauthorized')
   }
 
-  console.log('registrationFormAction', validatedData)
+  const { data: supplier, error: supplierError } = await tryCatch(supplierActions.register({ supplierRegistrationFormData: validatedData }))
 
-  const supplier = await supplierActions.register({ supplierRegistrationFormData: validatedData })
+  if (supplierError || !supplier) {
+    throw new Error(supplierError?.message || 'Failed to register supplier')
+  }
 
-  redirect(`/suppliers/${supplier.handle}`)
+  return { handle: supplier.handle }
 }

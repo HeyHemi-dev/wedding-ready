@@ -14,8 +14,12 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } fr
 import { registrationFormAction } from './registration-form-action'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormFieldItem } from '@/components/form/field'
+import { useRouter } from 'next/navigation'
+import { tryCatch } from '@/utils/try-catch'
+import { toast } from 'sonner'
 
 export default function RegistrationForm({ createdByUserId }: { createdByUserId: string }) {
+  const router = useRouter()
   const form = useForm<SupplierRegistrationForm>({
     resolver: zodResolver(supplierRegistrationFormSchema),
     defaultValues: {
@@ -30,10 +34,15 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
     mode: 'onBlur',
   })
 
-  // OnSubmit handles sending the data to a matching server action
   async function onSubmit(data: SupplierRegistrationForm) {
-    console.log('onSubmit')
-    await registrationFormAction({ data })
+    const { data: supplier, error } = await tryCatch(registrationFormAction({ data }))
+    if (error) {
+      toast.error(error.message)
+    }
+    if (supplier) {
+      toast.success('Supplier registered')
+      router.push(`/suppliers/${supplier.handle}`)
+    }
   }
 
   return (
@@ -69,7 +78,7 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
           render={() => (
             <FormFieldItem label="Locations">
               <FormDescription>Select the regions your business serves. You can select multiple regions.</FormDescription>
-              <div className="grid grid-cols-2 gap-xs">
+              <div className="grid grid-cols-2 gap-sm">
                 {enumToPretty(Location).map((location) => (
                   <FormField
                     key={location.value}
@@ -105,7 +114,7 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
           render={() => (
             <FormFieldItem label="Services">
               <FormDescription>Select the services your business offers. You can select multiple services.</FormDescription>
-              <div className="grid grid-cols-2 gap-xs">
+              <div className="grid grid-cols-2 gap-sm">
                 {enumToPretty(Service).map((service) => (
                   <FormField
                     key={service.value}
@@ -162,7 +171,7 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
         <FormField control={form.control} name="createdByUserId" render={({ field }) => <Input {...field} type="hidden" value={createdByUserId} />} />
 
         <Button type="submit" className="self-end">
-          Register
+          {form.formState.isSubmitting ? 'Registering...' : 'Register'}
         </Button>
       </form>
     </Form>
