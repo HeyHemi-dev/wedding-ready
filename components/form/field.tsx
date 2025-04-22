@@ -40,7 +40,7 @@ export default function Field({ label, children, hint, ...labelProps }: FieldPro
 
 export function FormFieldItem({ children, label, hint, ...labelProps }: FieldProps) {
   return (
-    <FormItem>
+    <FormItem className="flex flex-col gap-xs">
       <FormLabel {...labelProps}>{label}</FormLabel>
       {children}
       {hint && <FormDescription>{hint}</FormDescription>}
