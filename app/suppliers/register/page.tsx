@@ -14,7 +14,7 @@ export default async function SupplierRegisterPage() {
 
   return (
     <Section>
-      <div className="mx-auto grid max-w-md gap-md">
+      <div className="mx-auto grid w-full max-w-md gap-md">
         <h2 className="text-2xl font-medium">Register a supplier</h2>
         <RegistrationForm createdByUserId={authUserId} />
       </div>
