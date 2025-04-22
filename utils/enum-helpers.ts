@@ -31,6 +31,10 @@ export function enumToPretty<T extends { [key: string]: string }>(enumObject: T)
   }))
 }
 
+export function keyToEnum<T extends Record<string, string>>(enumObject: T, key: string): T[keyof T] {
+  return enumObject[key as keyof T]
+}
+
 /**
  * Converts an enum key to a URL-friendly parameter
  * @example BAY_OF_PLENTY -> bay-of-plenty
@@ -43,6 +47,15 @@ export function enumKeyToParam(key: string): string {
  * Converts a URL parameter back to an enum key
  * @example bay-of-plenty -> BAY_OF_PLENTY
  */
-export function paramToEnumKey<T extends { [K in string]: string }>(param: string, enumObj: T): keyof T {
+export function paramToEnumKey<T extends { [K in string]: string }>(param: string, enumObject: T): keyof T {
   return param.replace(/-/g, '_').toUpperCase() as keyof T
+}
+
+/**
+ * Converts a URL parameter back to an enum
+ * @example bay-of-plenty -> Location.BAY_OF_PLENTY
+ */
+export function paramToEnum<T extends { [K in string]: string }>(enumObject: T, param: string): T[keyof T] {
+  const key = param.replace(/-/g, '_').toUpperCase()
+  return enumObject[key as keyof T]
 }
