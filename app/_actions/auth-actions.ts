@@ -1,4 +1,4 @@
-import { AuthUser, UserDetailRaw } from '@/models/types'
+import { AuthUser, User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
@@ -23,7 +23,7 @@ async function signUp({
   handle: string
   displayName: string
   origin: string | null
-}): Promise<UserDetailRaw> {
+}): Promise<User> {
   const supabase = await createClient()
   const supabaseAdmin = createAdminClient()
 
