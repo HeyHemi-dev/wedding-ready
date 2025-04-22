@@ -4,7 +4,7 @@ import { Info } from 'lucide-react'
 
 import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { FormLabel, FormMessage } from '../ui/form'
+import { FormDescription, FormLabel, FormMessage } from '../ui/form'
 import { FormControl } from '../ui/form'
 import { FormItem } from '../ui/form'
 
@@ -38,11 +38,12 @@ export default function Field({ label, children, hint, ...labelProps }: FieldPro
   )
 }
 
-export function FormFieldItem({ label, children }: { label: string; children: React.ReactNode }) {
+export function FormFieldItem({ children, label, hint, ...labelProps }: FieldProps) {
   return (
     <FormItem>
-      <FormLabel>{label}</FormLabel>
-      <FormControl>{children}</FormControl>
+      <FormLabel {...labelProps}>{label}</FormLabel>
+      {children}
+      {hint && <FormDescription>{hint}</FormDescription>}
       <FormMessage />
     </FormItem>
   )
