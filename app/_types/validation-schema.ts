@@ -18,8 +18,8 @@ export const supplierRegistrationFormSchema = z.object({
     .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores'),
   websiteUrl: z.string().trim().optional(),
   description: z.string().optional(),
-  locations: z.array(z.nativeEnum(Location)),
-  services: z.array(z.nativeEnum(Service)),
+  locations: z.array(z.nativeEnum(Location)).min(1, 'At least one location is required'),
+  services: z.array(z.nativeEnum(Service)).min(1, 'At least one service is required'),
   createdByUserId: z.string().uuid(),
 })
 export type SupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>
