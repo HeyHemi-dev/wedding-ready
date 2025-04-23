@@ -1,6 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server'
 
-import { SupplierModel } from '@/models/supplier'
 import { ErrorResponse } from '@/utils/api-helpers'
 import { tryCatch } from '@/utils/try-catch'
 import { UserDetailModel } from '@/models/user'
