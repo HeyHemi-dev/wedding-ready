@@ -1,9 +1,12 @@
 import { NextResponse, NextRequest } from 'next/server'
 
-import { HandleGetResponseBody } from '@/app/_hooks/use-handle-availability'
 import { SupplierModel } from '@/models/supplier'
 import { ErrorResponse } from '@/utils/api-helpers'
 import { tryCatch } from '@/utils/try-catch'
+
+export type HandleGetResponseBody = {
+  isAvailable: boolean
+}
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ handle: string }> }): Promise<NextResponse<HandleGetResponseBody | ErrorResponse>> {
   const handle = (await params).handle
