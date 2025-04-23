@@ -29,3 +29,11 @@
 - Use `enum-helpers.ts` utilities for consistent enum handling
 - Convert between URL parameters and enum values using `paramToEnumKey`
 - Format enum values for display using `valueToPretty`
+
+### Forms
+
+- Follow the form validation pattern in [patterns-form.md](./patterns-form.md)
+- Use Zod schemas for type-safe validation
+- Use react-hook-forms and onSubmit to trigger server actions
+- Use Shadcn form components with our custom `FormFieldItem`
+- Keep form actions co-located with form components
