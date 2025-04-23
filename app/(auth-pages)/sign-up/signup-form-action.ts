@@ -4,44 +4,25 @@ import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 
 import { authActions } from '@/app/_actions/auth-actions'
-import { userSignupFormSchema } from '@/app/_types/validation-schema'
-import { encodedRedirect } from '@/utils/encoded-redirect'
+import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
 import { tryCatch } from '@/utils/try-catch'
 
-export async function signUpFormAction(formData: FormData) {
-  'use server'
-  const email = formData.get('email')?.toString()
-  const password = formData.get('password')?.toString()
-  const handle = formData.get('handle')?.toString()
-  const displayName = formData.get('displayName')?.toString()
+export async function signUpFormAction({ data }: { data: UserSignupForm }): Promise<{ handle: string }> {
+  const { success, error: parseError, data: validatedData } = userSignupFormSchema.safeParse(data)
+  if (!success || parseError) {
+    throw new Error(JSON.stringify(parseError?.flatten().fieldErrors))
+  }
   const origin = (await headers()).get('origin')
 
-  if (!email || !password || !handle || !displayName) {
-    return encodedRedirect('error', '/sign-up', 'Email, password, name and handle are required')
-  }
+  const { email, password, handle, displayName } = validatedData
+  const { data: user, error: signUpError } = await tryCatch(authActions.signUp({ email, password, handle, displayName, origin }))
 
-  // Validate form data using Zod schema
-  const validationResult = userSignupFormSchema.safeParse({
-    email,
-    password,
-    handle,
-    displayName,
-  })
-
-  if (!validationResult.success) {
-    // Get the first error message
-    const errorMessage = validationResult.error.errors[0]?.message || 'Invalid form data'
-    return encodedRedirect('error', '/sign-up', errorMessage)
-  }
-
-  const { data: user, error } = await tryCatch(authActions.signUp({ email, password, handle, displayName, origin }))
-
-  if (error) {
-    return encodedRedirect('error', '/sign-up', 'Failed to sign up')
+  if (signUpError || !user) {
+    throw new Error(signUpError?.message || 'Failed to sign up')
   }
 
   // Revalidate the user cache for the new user
   revalidateTag(`user-${user.id}`)
 
-  return encodedRedirect('success', '/sign-up', 'Thanks for signing up! Please check your email for a verification link.')
+  return { handle: user.handle }
 }
