@@ -14,8 +14,12 @@ import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { tryCatch } from '@/utils/try-catch'
+import { HandleGetResponseBody } from '@/app/api/users/check-handle/[handle]/route'
+import { tryCatchFetch } from '@/utils/try-catch'
 
 import { signUpFormAction } from './signup-form-action'
+import { CheckCircle, XCircle } from 'lucide-react'
+import { LoaderCircle } from 'lucide-react'
 
 export default function SignUpForm() {
   const router = useRouter()
@@ -31,6 +35,26 @@ export default function SignUpForm() {
     },
     mode: 'onBlur',
   })
+
+  async function fetchHandleAvailability(value: string) {
+    setHandleStatus(status.Pending)
+
+    // Abort any existing request and create a new controller for this request
+    controller.current.abort()
+    controller.current = new AbortController()
+
+    const { data, error } = await tryCatchFetch<HandleGetResponseBody>(`/api/users/check-handle/${value}`, { signal: controller.current.signal })
+
+    if (error) {
+      setHandleStatus(status.Error)
+      return
+    }
+    if (data?.isAvailable) {
+      setHandleStatus(status.Available)
+    } else {
+      setHandleStatus(status.Taken)
+    }
+  }
 
   // Cleanup fetch request on unmount
   useEffect(() => {
@@ -99,7 +123,24 @@ export default function SignUpForm() {
           render={({ field }) => (
             <FormFieldItem label="Handle">
               <FormControl>
-                <Input {...field} placeholder="your-handle" />
+                <div className="flex flex-row items-center gap-xs">
+                  <Input
+                    {...field}
+                    placeholder="your-handle"
+                    onBlur={async (e) => {
+                      field.onBlur()
+                      const isValid = await form.trigger('handle')
+                      if (!isValid) {
+                        setHandleStatus(status.Undefined)
+                        return
+                      }
+                      await fetchHandleAvailability(e.target.value)
+                    }}
+                  />
+                  {handleStatus === status.Pending && <LoaderCircle className="h-6 w-6 animate-spin" />}
+                  {handleStatus === status.Available && <CheckCircle className="h-6 w-6 text-green-500" />}
+                  {handleStatus === status.Taken && <XCircle className="h-6 w-6 text-red-500" />}
+                </div>
               </FormControl>
             </FormFieldItem>
           )}
