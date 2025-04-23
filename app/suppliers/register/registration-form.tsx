@@ -15,11 +15,26 @@ import { registrationFormAction } from './registration-form-action'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormFieldItem } from '@/components/form/field'
 import { useRouter } from 'next/navigation'
-import { tryCatch } from '@/utils/try-catch'
+import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 import { toast } from 'sonner'
+
+import type { HandleGetResponseBody } from '@/app/_hooks/use-handle-availability'
+import { useState, useRef, useEffect } from 'react'
+import { XCircle, CheckCircle, LoaderCircle } from 'lucide-react'
+
+export const status = {
+  Undefined: undefined,
+  Pending: 'Pending',
+  Error: 'Error',
+  Available: true,
+  Taken: false,
+} as const
+type HandleStatus = (typeof status)[keyof typeof status]
 
 export default function RegistrationForm({ createdByUserId }: { createdByUserId: string }) {
   const router = useRouter()
+  const controller = useRef(new AbortController())
+  const [handleStatus, setHandleStatus] = useState<HandleStatus>(status.Undefined)
   const form = useForm<SupplierRegistrationForm>({
     resolver: zodResolver(supplierRegistrationFormSchema),
     defaultValues: {
@@ -34,7 +49,38 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
     mode: 'onBlur',
   })
 
+  async function fetchHandleAvailability(value: string) {
+    setHandleStatus(status.Pending)
+
+    // Abort any existing request and create a new controller for this request
+    controller.current.abort()
+    controller.current = new AbortController()
+
+    const { data, error } = await tryCatchFetch<HandleGetResponseBody>(`/api/suppliers/check-handle/${value}`, { signal: controller.current.signal })
+
+    if (error) {
+      setHandleStatus(status.Error)
+      return
+    }
+    if (data?.isAvailable) {
+      setHandleStatus(status.Available)
+    } else {
+      setHandleStatus(status.Taken)
+    }
+  }
+
+  // Cleanup fetch request on unmount
+  useEffect(() => {
+    return () => {
+      controller.current.abort()
+    }
+  }, [])
+
   async function onSubmit(data: SupplierRegistrationForm) {
+    if (handleStatus !== status.Available) {
+      toast.error('Handle is already taken')
+      return
+    }
     const { data: supplier, error } = await tryCatch(registrationFormAction({ data }))
     if (error) {
       toast.error(error.message)
@@ -66,7 +112,24 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
           render={({ field }) => (
             <FormFieldItem label="Handle">
               <FormControl>
-                <Input {...field} placeholder="business_name" />
+                <div className="flex flex-row items-center gap-xs">
+                  <Input
+                    {...field}
+                    placeholder="business_name"
+                    onBlur={async (e) => {
+                      field.onBlur()
+                      const isValid = await form.trigger('handle')
+                      if (!isValid) {
+                        setHandleStatus(status.Undefined)
+                        return
+                      }
+                      await fetchHandleAvailability(e.target.value)
+                    }}
+                  />
+                  {handleStatus === status.Pending && <LoaderCircle className="h-6 w-6 animate-spin" />}
+                  {handleStatus === status.Available && <CheckCircle className="h-6 w-6 text-green-500" />}
+                  {handleStatus === status.Taken && <XCircle className="h-6 w-6 text-red-500" />}
+                </div>
               </FormControl>
             </FormFieldItem>
           )}
