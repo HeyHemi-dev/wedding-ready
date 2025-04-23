@@ -49,8 +49,8 @@ export default function SignUpForm() {
       toast.error(error.message)
     }
     if (user) {
-      toast.success('Supplier registered')
-      router.push(`/`)
+      toast.success('Thanks for signing up! Please check your email for a verification link.')
+      router.push(`/u/${user.handle}`)
     }
   }
 
