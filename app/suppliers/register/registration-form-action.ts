@@ -4,6 +4,7 @@ import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/
 import { supplierActions } from '@/app/_actions/supplier-actions'
 import { getAuthUserIdForAction } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
+import { SupplierModel } from '@/models/supplier'
 
 export async function registrationFormAction({ data }: { data: SupplierRegistrationForm }): Promise<{ handle: string }> {
   const { success, error, data: validatedData } = supplierRegistrationFormSchema.safeParse(data)
@@ -14,6 +15,11 @@ export async function registrationFormAction({ data }: { data: SupplierRegistrat
   const { data: authUserId, error: authUserIdError } = await tryCatch(getAuthUserIdForAction())
   if (authUserIdError || !authUserId || validatedData.createdByUserId !== authUserId) {
     throw new Error('Unauthorized')
+  }
+
+  const { data: isAvailable, error: isAvailableError } = await tryCatch(SupplierModel.isHandleAvailable({ handle: validatedData.handle }))
+  if (isAvailableError || !isAvailable) {
+    throw new Error(isAvailableError?.message || 'Handle is already taken')
   }
 
   const { data: supplier, error: supplierError } = await tryCatch(supplierActions.register({ supplierRegistrationFormData: validatedData }))
