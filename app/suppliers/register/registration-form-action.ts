@@ -1,10 +1,10 @@
 'use server'
 
-import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/_types/validation-schema'
 import { supplierActions } from '@/app/_actions/supplier-actions'
+import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/_types/validation-schema'
+import { SupplierModel } from '@/models/supplier'
 import { getAuthUserIdForAction } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
-import { SupplierModel } from '@/models/supplier'
 
 export async function registrationFormAction({ data }: { data: SupplierRegistrationForm }): Promise<{ handle: string }> {
   const { success, error, data: validatedData } = supplierRegistrationFormSchema.safeParse(data)

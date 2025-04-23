@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 
 import { Section } from '@/components/ui/section'
-
 import { getAuthUserId } from '@/utils/auth'
+
 import RegistrationForm from './registration-form'
 
 export default async function SupplierRegisterPage() {

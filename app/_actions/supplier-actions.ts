@@ -1,8 +1,8 @@
-import { SupplierRegistrationForm } from '../_types/validation-schema'
-import { InsertSupplierRaw, SupplierWithUsers, UserDetailRaw } from '@/models/types'
 import { SupplierModel } from '@/models/supplier'
+import { InsertSupplierRaw, SupplierWithUsers } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
-import { Location, Service } from '@/db/constants'
+
+import { SupplierRegistrationForm } from '../_types/validation-schema'
 
 export const supplierActions = {
   register,

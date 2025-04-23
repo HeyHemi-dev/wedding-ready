@@ -1,26 +1,26 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Location, Service } from '@/db/constants'
+import { useState, useRef, useEffect } from 'react'
 
-import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
-
-import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/_types/validation-schema'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form'
-import { registrationFormAction } from './registration-form-action'
-import { Checkbox } from '@/components/ui/checkbox'
-import { FormFieldItem } from '@/components/form/field'
+import { XCircle, CheckCircle, LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import type { HandleGetResponseBody } from '@/app/_hooks/use-handle-availability'
-import { useState, useRef, useEffect } from 'react'
-import { XCircle, CheckCircle, LoaderCircle } from 'lucide-react'
+import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/_types/validation-schema'
+import { FormFieldItem } from '@/components/form/field'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Location, Service } from '@/db/constants'
+import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
+import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
+
+import { registrationFormAction } from './registration-form-action'
 
 export const status = {
   Undefined: undefined,

@@ -2,11 +2,10 @@ import * as LabelPrimitive from '@radix-ui/react-label'
 import { type VariantProps } from 'class-variance-authority'
 import { Info } from 'lucide-react'
 
+import { FormDescription, FormLabel, FormMessage, FormItem } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { FormDescription, FormLabel, FormMessage } from '../ui/form'
-import { FormControl } from '../ui/form'
-import { FormItem } from '../ui/form'
+
 
 type FieldProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
   VariantProps<typeof Label> & {
