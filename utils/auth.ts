@@ -13,8 +13,8 @@ export function isProtectedPath(pathname: string): boolean {
 export const AUTH_HEADER_NAME = 'x-auth-user-id'
 
 /**
- * We set the authenticated user's id in the request headers using middleware.
- * This function retrieves the id from the headers.
+ * Gets the authenticated user's ID from request headers.
+ * Set via middleware.
  *
  * @returns The authenticated user's id or null if not authenticated
  */
@@ -27,7 +27,13 @@ export async function getAuthUserId(): Promise<string | null> {
   return userId
 }
 
-export async function getAuthUserIdForAction(): Promise<string | null> {
+/**
+ * Gets the authenticated user's ID from Supabase Auth.
+ * Use only when middleware hasn't run (e.g. form actions).
+ *
+ * @returns The authenticated user's id or null if not authenticated
+ */
+export async function getAuthUserIdFromSupabase(): Promise<string | null> {
   const supabase = await createClient()
   const {
     data: { user },
