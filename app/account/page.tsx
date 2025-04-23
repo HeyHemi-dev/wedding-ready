@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { UserDetailModel } from '@/models/user'
-import { getAuthenticatedUserId } from '@/utils/auth'
+import { getAuthUserId } from '@/utils/auth'
 
 export default async function AccountPage() {
   const user = await getCurrentUser()
@@ -57,7 +57,7 @@ export default async function AccountPage() {
 async function handleUpdateUserDetail(formData: FormData) {
   'use server'
   const userId = formData.get('userId')?.toString()
-  const authUserId = await getAuthenticatedUserId()
+  const authUserId = await getAuthUserId()
 
   if (!authUserId || authUserId !== userId) {
     throw new Error('Unauthorized')

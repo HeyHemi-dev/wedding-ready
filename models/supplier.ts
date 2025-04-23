@@ -12,7 +12,7 @@ import {
   InsertSupplierLocationRaw,
 } from '@/models/types'
 import { Service, SupplierRole, Location } from '@/db/constants'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, ne } from 'drizzle-orm'
 
 const supplierBaseQuery = db
   .select({
@@ -102,6 +102,11 @@ export class SupplierModel {
       services: supplierServices.map((service) => service.service!),
       locations: supplierLocations.map((location) => location.location!),
     }
+  }
+
+  static async isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {
+    const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
+    return suppliers.length === 0
   }
 }
 

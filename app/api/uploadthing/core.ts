@@ -3,7 +3,7 @@ import { UploadThingError } from 'uploadthing/server'
 
 import { tileUploaderInputSchema } from '@/app/_types/validation-schema'
 import { TileModel } from '@/models/tile'
-import { getAuthenticatedUserId } from '@/utils/auth'
+import { getAuthUserId } from '@/utils/auth'
 
 const f = createUploadthing()
 
@@ -21,7 +21,7 @@ export const uploadthingRouter = {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .middleware(async ({ req, input }) => {
       try {
-        const authUserId = await getAuthenticatedUserId()
+        const authUserId = await getAuthUserId()
         if (!authUserId || authUserId !== input.createdByUserId) throw new Error('Unauthorized')
 
         const validInput = tileUploaderInputSchema.safeParse(input)

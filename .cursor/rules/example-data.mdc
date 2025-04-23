@@ -74,7 +74,7 @@ export async function SupplierPage({ params }: { params: Promise<{ handle: strin
   }
 
   // Get the authenticated user's ID to enable features like saving tiles
-  const authUserId = await getAuthenticatedUserId()
+  const authUserId = await getAuthUserId()
 
   // Get tiles for supplier, including saved state if user is authenticated
   const tiles = await TileModel.getBySupplierId(supplier.id, authUserId ?? undefined)
@@ -100,7 +100,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   // Only check authentication if an authUserId is provided
   if (parsedQueryParams.authUserId) {
-    const authUserId = await getAuthenticatedUserId()
+    const authUserId = await getAuthUserId()
     if (!authUserId || authUserId !== parsedQueryParams.authUserId) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     }

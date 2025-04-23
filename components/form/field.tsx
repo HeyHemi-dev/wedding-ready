@@ -2,8 +2,10 @@ import * as LabelPrimitive from '@radix-ui/react-label'
 import { type VariantProps } from 'class-variance-authority'
 import { Info } from 'lucide-react'
 
+import { FormDescription, FormLabel, FormMessage, FormItem } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+
 
 type FieldProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
   VariantProps<typeof Label> & {
@@ -32,5 +34,16 @@ export default function Field({ label, children, hint, ...labelProps }: FieldPro
       </div>
       {children}
     </div>
+  )
+}
+
+export function FormFieldItem({ children, label, hint, ...labelProps }: FieldProps) {
+  return (
+    <FormItem className="flex flex-col gap-xs">
+      <FormLabel {...labelProps}>{label}</FormLabel>
+      {children}
+      {hint && <FormDescription>{hint}</FormDescription>}
+      <FormMessage />
+    </FormItem>
   )
 }

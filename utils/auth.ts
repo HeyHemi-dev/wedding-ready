@@ -1,4 +1,5 @@
 import { headers } from 'next/headers'
+import { createClient } from './supabase/server'
 
 export const PROTECTED_PATHS = ['/feed', '/account', '/suppliers/register', '/suppliers/:handle/new']
 
@@ -12,16 +13,40 @@ export function isProtectedPath(pathname: string): boolean {
 export const AUTH_HEADER_NAME = 'x-auth-user-id'
 
 /**
- * We set the authenticated user's id in the request headers using middleware.
- * This function retrieves the id from the headers.
+ * Gets the authenticated user's ID from request headers.
+ * Set via middleware.
  *
  * @returns The authenticated user's id or null if not authenticated
  */
-export async function getAuthenticatedUserId(): Promise<string | null> {
+export async function getAuthUserId(): Promise<string | null> {
   const headersList = await headers()
 
   // userId will a valid string if authHeaderName is set. This is handled in middleware
   const userId = headersList.get(AUTH_HEADER_NAME)
 
   return userId
+}
+
+/**
+ * Gets the authenticated user's ID from Supabase Auth.
+ * Use only when middleware hasn't run (e.g. form actions).
+ *
+ * @returns The authenticated user's id or null if not authenticated
+ */
+export async function getAuthUserIdFromSupabase(): Promise<string | null> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
+
+  if (error) {
+    throw new Error('Failed to get authenticated user')
+  }
+
+  if (!user) {
+    return null
+  }
+
+  return user.id
 }

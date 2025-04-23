@@ -8,20 +8,21 @@ export const tileUploaderInputSchema = z.object({
   tileId: z.string(),
 })
 
-export const supplierSignupFormSchema = z.object({
-  name: z.string().min(1),
+export const supplierRegistrationFormSchema = z.object({
+  name: z.string().trim().min(1, 'Name is required').max(50, "Name can't exceed 50 characters"),
   handle: z
     .string()
     .trim()
     .min(3, 'Handle is required and must be at least 3 characters')
     .max(30, "Handle can't exceed 30 characters")
     .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores'),
-  websiteUrl: z.string().url(),
-  description: z.string().nullable(),
-  locations: z.array(z.nativeEnum(Location)),
-  services: z.array(z.nativeEnum(Service)),
+  websiteUrl: z.string().trim().optional(),
+  description: z.string().optional(),
+  locations: z.array(z.nativeEnum(Location)).min(1, 'At least one location is required'),
+  services: z.array(z.nativeEnum(Service)).min(1, 'At least one service is required'),
+  createdByUserId: z.string().uuid(),
 })
-export type SupplierSignupForm = z.infer<typeof supplierSignupFormSchema>
+export type SupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>
 
 const supplierSchema = z.object({
   id: z.string(),

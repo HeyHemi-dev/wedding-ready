@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { TileModel } from '@/models/tile'
 import * as t from '@/models/types'
-import { getAuthenticatedUserId } from '@/utils/auth'
+import { getAuthUserId } from '@/utils/auth'
 
 export interface tileNewRequestBody extends t.InsertTileRaw {
   suppliers: t.SupplierRaw[]
@@ -14,7 +14,7 @@ export type tileNewResponseBody = t.TileRawWithSuppliers
 export async function POST(req: Request): Promise<NextResponse> {
   const body = (await req.json()) as tileNewRequestBody
 
-  const authUserId = await getAuthenticatedUserId()
+  const authUserId = await getAuthUserId()
   if (!authUserId || authUserId !== body.createdByUserId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
   }
