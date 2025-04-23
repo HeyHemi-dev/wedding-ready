@@ -46,8 +46,8 @@ export const tileUpdateFormSchema = z.object({
 })
 
 export const userSignupFormSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+  email: z.string().trim().email('Invalid email'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
   displayName: z.string().trim().min(1, 'Display name is required').max(30, "Display name can't exceed 30 characters"),
   handle: z
     .string()
