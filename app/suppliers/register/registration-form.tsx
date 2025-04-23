@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 
 import { HandleStatus, status } from '@/app/_types/handle-available-status'
 import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/_types/validation-schema'
-import type { HandleGetResponseBody } from '@/app/api/suppliers/[handle]/check-availability/route'
+import type { HandleGetResponseBody } from '@/app/api/suppliers/check-handle/[handle]/route'
 import { FormFieldItem } from '@/components/form/field'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -48,7 +48,7 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
     controller.current.abort()
     controller.current = new AbortController()
 
-    const { data, error } = await tryCatchFetch<HandleGetResponseBody>(`/api/suppliers/${value}/check-availability`, { signal: controller.current.signal })
+    const { data, error } = await tryCatchFetch<HandleGetResponseBody>(`/api/suppliers/check-handle/${value}`, { signal: controller.current.signal })
 
     if (error) {
       setHandleStatus(status.Error)
@@ -107,7 +107,7 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
                 <div className="flex flex-row items-center gap-xs">
                   <Input
                     {...field}
-                    placeholder="business_name"
+                    placeholder="business-name"
                     onBlur={async (e) => {
                       field.onBlur()
                       const isValid = await form.trigger('handle')
