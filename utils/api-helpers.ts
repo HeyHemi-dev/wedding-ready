@@ -1,5 +1,10 @@
 import { ZodObject, z } from 'zod'
 
+// Error response type for API responses
+export type ErrorResponse = {
+  message: string
+}
+
 /**
  * Builds a query string from a record of parameters.
  * @param params - The record of parameters to build the query string from.
