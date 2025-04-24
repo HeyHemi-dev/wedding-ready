@@ -13,8 +13,9 @@ import { FormFieldItem } from '@/components/form/field'
 import { Textarea } from '@/components/ui/textarea'
 import { SubmitButton } from '@/components/submit-button'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/utils/shadcn-utils'
 
-export default function UpdateProfileForm({ defaultValues }: { defaultValues: UserUpdateForm }) {
+export default function UpdateProfileForm({ defaultValues, className }: { defaultValues: UserUpdateForm; className?: string }) {
   const form = useForm<UserUpdateForm>({
     resolver: zodResolver(userUpdateFormSchema),
     defaultValues: {
@@ -36,7 +37,7 @@ export default function UpdateProfileForm({ defaultValues }: { defaultValues: Us
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-sm">
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn('grid gap-sm', className)}>
         <FormField
           control={form.control}
           name="displayName"
