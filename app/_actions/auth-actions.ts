@@ -2,6 +2,9 @@ import { AuthUser, User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
+import { headers } from 'next/headers'
+import { AuthResponse } from '@supabase/supabase-js'
+import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 
 export const authActions = {
   signUp,
@@ -11,45 +14,44 @@ export const authActions = {
   resetPassword,
 }
 
-async function signUp({
-  email,
-  password,
-  handle,
-  displayName,
-  origin,
-}: {
-  email: string
-  password: string
-  handle: string
-  displayName: string
-  origin: string | null
-}): Promise<User> {
+async function signUp({ email, password, handle, displayName }: { email: string; password: string; handle: string; displayName: string }): Promise<User> {
   const supabase = await createClient()
   const supabaseAdmin = createAdminClient()
+  const origin = (await headers()).get('origin')
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${origin}/auth/callback`,
-    },
-  })
+  const { data: authResponse, error: signUpError } = await tryCatch(
+    supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback`,
+      },
+    })
+  )
 
-  if (error || !data.user) {
-    console.error(error?.message || 'no auth user')
-    throw new Error()
+  if (signUpError) {
+    // Complete failure (network, etc)
+    console.error('Auth error:', signUpError)
+    throw new Error('Failed to create account')
   }
+  const user = handleSupabaseSignUpAuthResponse(authResponse)
 
-  // Create userDetail record if auth signup succeeded
-  const { data: user, error: dbError } = await tryCatch(UserDetailModel.create({ id: data.user.id, handle, displayName }))
+  // Create userDetail record
+  const { data: userDetails, error: dbError } = await tryCatch(
+    UserDetailModel.create({
+      id: user.id,
+      handle,
+      displayName,
+    })
+  )
 
   if (dbError) {
     console.error('Failed to create user details:', dbError)
-    await supabaseAdmin.auth.admin.deleteUser(data.user.id)
-    throw new Error()
+    await supabaseAdmin.auth.admin.deleteUser(user.id)
+    throw new Error('Failed to create account')
   }
 
-  return user
+  return userDetails
 }
 
 async function signIn({ email, password }: { email: string; password: string }): Promise<AuthUser> {
