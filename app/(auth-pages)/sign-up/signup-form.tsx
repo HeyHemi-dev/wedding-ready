@@ -3,23 +3,21 @@
 import { useEffect, useState, useRef } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { CheckCircle, XCircle , LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { HandleStatus, status } from '@/app/_types/handle-available-status'
 import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
+import { HandleGetResponseBody } from '@/app/api/users/check-handle/[handle]/route'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { tryCatch } from '@/utils/try-catch'
-import { HandleGetResponseBody } from '@/app/api/users/check-handle/[handle]/route'
-import { tryCatchFetch } from '@/utils/try-catch'
+import { tryCatch , tryCatchFetch } from '@/utils/try-catch'
 
 import { signUpFormAction } from './signup-form-action'
-import { CheckCircle, XCircle } from 'lucide-react'
-import { LoaderCircle } from 'lucide-react'
 
 export default function SignUpForm() {
   const router = useRouter()

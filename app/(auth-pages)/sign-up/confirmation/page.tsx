@@ -1,14 +1,13 @@
-import { Button } from '@/components/ui/button'
-import { getAuthUserId } from '@/utils/auth'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+
+import { Button } from '@/components/ui/button'
 
 export default function SignUpConfirmation() {
   return (
     <>
       <div className="grid gap-xs text-center">
         <h1 className="font-serif text-4xl font-medium">Thanks for signing up!</h1>
-        <p className="text text-sm text-foreground">We've sent you an email to confirm your account.</p>
+        <p className="text text-sm text-foreground">We&apos;ve sent you an email to confirm your account.</p>
       </div>
       <div className="flex flex-col gap-sm">
         <Button variant="outline" asChild>

@@ -1,7 +1,6 @@
 'use server'
 
 import { revalidateTag } from 'next/cache'
-import { headers } from 'next/headers'
 
 import { authActions } from '@/app/_actions/auth-actions'
 import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'

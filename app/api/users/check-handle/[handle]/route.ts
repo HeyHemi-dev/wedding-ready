@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from 'next/server'
 
+import { UserDetailModel } from '@/models/user'
 import { ErrorResponse } from '@/utils/api-helpers'
 import { tryCatch } from '@/utils/try-catch'
-import { UserDetailModel } from '@/models/user'
 
 export type HandleGetResponseBody = {
   isAvailable: boolean

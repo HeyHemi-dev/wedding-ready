@@ -1,10 +1,11 @@
+import { headers } from 'next/headers'
+
 import { AuthUser, User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
+import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-import { headers } from 'next/headers'
-import { AuthResponse } from '@supabase/supabase-js'
-import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
+
 import { UserSignupForm } from '../_types/validation-schema'
 
 export const authActions = {
