@@ -15,7 +15,7 @@ export type UserDetailRaw = InferSelectModel<typeof schema.user_details>
  * @requires id - must match the id of the Supabase Auth user
  */
 export type InsertUserDetailRaw = InferInsertModel<typeof schema.user_details>
-export type SetUserDetailRaw = Partial<Omit<InsertUserDetailRaw, 'id' | 'createdAt'>>
+export type SetUserDetailRaw = Partial<Omit<InsertUserDetailRaw, 'id' | 'createdAt' | 'handleUpdatedAt'>>
 
 export type SupplierRaw = InferSelectModel<typeof schema.suppliers>
 export type InsertSupplierRaw = InferInsertModel<typeof schema.suppliers>

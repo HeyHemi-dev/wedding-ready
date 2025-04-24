@@ -61,13 +61,16 @@ export type UserSignupForm = z.infer<typeof userSignupFormSchema>
 const userOmitAuth = userSignupFormSchema.omit({
   email: true,
   password: true,
+  handle: true,
 })
 
 // Create base schema from the database schema
 export const userUpdateFormSchema = userOmitAuth.extend({
+  id: z.string().uuid(),
   bio: z.string().max(160, "Bio can't exceed 160 characters").optional(),
   avatarUrl: z.string().trim().url('Avatar must be a valid URL').optional(),
   instagramUrl: z.string().trim().url('Instagram URL must be valid').optional(),
   tiktokUrl: z.string().trim().url('TikTok URL must be valid').optional(),
   websiteUrl: z.string().trim().url('Website URL must be valid').optional(),
 }) satisfies z.ZodType<SetUserDetailRaw>
+export type UserUpdateForm = z.infer<typeof userUpdateFormSchema>
