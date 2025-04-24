@@ -2,7 +2,31 @@
 
 This document outlines the pattern for creating client-side forms with validation and server actions.
 
-## Schema Definition
+## Best Practices
+
+1. **Schema Organization**
+   - Keep all form schemas in `_types/validation-schema.ts`
+   - Use descriptive error messages in schema definitions
+   - Leverage Zod's built-in validation methods
+
+2. **Component Structure**
+   - Use Shadcn form components for consistent styling
+   - Implement `FormFieldItem` for standardized field layout
+   - Keep form state management in the client component
+
+3. **Error Handling**
+   - Use toast notifications for user feedback
+   - Implement proper error boundaries
+   - Handle both client and server-side validation errors
+
+4. **Performance**
+   - Use debouncing for high-frequency changes
+   - Validate on blur
+   - Implement proper loading states
+
+## Complete Pattern Example
+
+### Schema Definition
 Define the schema using Zod for type safety and validation. Place all schemas in `_types/validation-schema.ts`.
 
 ```typescript
@@ -10,7 +34,7 @@ export const formSchema = z.object({})
 export type FormData = z.infer<typeof formSchema>
 ```
 
-## Form Client Component
+### Form Client Component
 Extract the form UI into a separate `use client` component. Use react-hook-form with zodResolver for validation. Use Shadcn's `<Form>` components with our custom `<FormFieldItem>` to handle labels, errors, and descriptions. Handle user feedback and navigation on client,
 
 ```tsx
@@ -39,7 +63,7 @@ return (
 
 ```
 
-## Form Server Action
+### Form Server Action
 Keep the form action in the same folder as the form component. Use `use server` for backend logic: validation, auth checks, and business actions.
 
 ```typescript
@@ -71,25 +95,67 @@ export async function formAction({ data }: { data: FormData }) {
 }
 ```
 
+## Real-time Validation Example
 
-## Best Practices
+For fields that require server-side validation (e.g., checking handle availability):
 
-1. **Schema Organization**
-   - Keep all form schemas in `_types/validation-schema.ts`
-   - Use descriptive error messages in schema definitions
-   - Leverage Zod's built-in validation methods
+1. **API Endpoint**
+   - Create a dedicated API endpoint for validation (e.g., `/api/users/check-handle/[handle]`)
+   - Return clear validation results (e.g., `{ isAvailable: boolean }`)
+   - Create type helpers for request/response bodies
 
 2. **Component Structure**
-   - Use Shadcn form components for consistent styling
-   - Implement `FormFieldItem` for standardized field layout
-   - Keep form state management in the client component
+   - Use strongly typed status enums for validation states
+   - Implement proper cleanup of in-flight requests
+   - Show clear visual feedback during validation
+   - Validate on blur after schema validation passes so we aren't making unnecesssary api calls
 
-3. **Error Handling**
-   - Use toast notifications for user feedback
-   - Implement proper error boundaries
-   - Handle both client and server-side validation errors
 
-4. **Performance**
-   - Use debouncing for real-time validations
-   - Validate on blur for better UX
-   - Implement proper loading states
+3. **Implementation Pattern**
+```tsx
+'use client'
+import { HandleStatus, status } from '@/app/_types/handle-available-status'
+
+const [handleStatus, setHandleStatus] = useState<HandleStatus>(status.Undefined)
+const controller = useRef(new AbortController())
+
+useEffect(() => {
+  return () => {
+    controller.current.abort()
+  }
+}, [])
+
+async function validateHandle(value: string) {
+  setHandleStatus(status.Pending)
+  
+  // Abort previous request
+  controller.current.abort()
+  controller.current = new AbortController()
+
+  const { data, error } = await tryCatchfetch(
+    `/api/users/check-handle/${value}`, 
+    { signal: controller.current.signal })
+  
+  
+  if (error) {
+    setHandleStatus(status.Error)
+    return
+  }
+  
+  setHandleStatus(data.isAvailable ? status.Available : status.Taken)
+}
+
+return (
+  <Input
+    onBlur={async (e) => {
+      field.onBlur()
+      const isValid = await form.trigger('handle')
+      if (!isValid) {
+        setHandleStatus(status.Undefined)
+        return
+      }
+      await validateHandle(e.target.value)
+    }}
+  />
+)
+```
