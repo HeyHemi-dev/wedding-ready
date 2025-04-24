@@ -49,7 +49,7 @@ export default async function AccountPage() {
         <Input name="userId" type="hidden" value={user.id} />
         <Button type="submit">Update</Button>
       </form>
-      <pre className="rounded border bg-muted p-3 font-mono text-xs text-muted-foreground">{JSON.stringify(user, null, 2)}</pre>
+      <pre className="whitespace-pre-wrap rounded border bg-muted p-3 font-mono text-xs text-muted-foreground">{JSON.stringify(user, null, 2)}</pre>
     </div>
   )
 }
