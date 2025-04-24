@@ -5,6 +5,7 @@ import { tryCatch } from '@/utils/try-catch'
 import { headers } from 'next/headers'
 import { AuthResponse } from '@supabase/supabase-js'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
+import { UserSignupForm } from '../_types/validation-schema'
 
 export const authActions = {
   signUp,
@@ -14,7 +15,7 @@ export const authActions = {
   resetPassword,
 }
 
-async function signUp({ email, password, handle, displayName }: { email: string; password: string; handle: string; displayName: string }): Promise<User> {
+async function signUp({ email, password, handle, displayName }: UserSignupForm): Promise<User> {
   const supabase = await createClient()
   const supabaseAdmin = createAdminClient()
   const origin = (await headers()).get('origin')

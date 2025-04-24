@@ -12,12 +12,10 @@ export async function signUpFormAction({ data }: { data: UserSignupForm }): Prom
   if (!success || parseError) {
     throw new Error(JSON.stringify(parseError?.flatten().fieldErrors))
   }
-  const origin = (await headers()).get('origin')
 
-  const { email, password, handle, displayName } = validatedData
-  const { data: user, error: signUpError } = await tryCatch(authActions.signUp({ email, password, handle, displayName, origin }))
+  const { data: user, error: signUpError } = await tryCatch(authActions.signUp(validatedData))
 
-  if (signUpError || !user) {
+  if (signUpError) {
     throw new Error(signUpError?.message || 'Failed to sign up')
   }
 
