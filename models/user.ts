@@ -54,7 +54,7 @@ export class UserDetailModel {
   /**
    * @returns true if the handle is available, false otherwise
    */
-  static async isHandleAvailable(handle: string): Promise<boolean> {
+  static async isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {
     const userDetails = await db.select().from(schema.user_details).where(eq(schema.user_details.handle, handle))
     return userDetails.length === 0
   }

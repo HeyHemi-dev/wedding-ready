@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
+import { HandleStatus, status } from '@/app/_types/handle-available-status'
 import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/_types/validation-schema'
 import type { HandleGetResponseBody } from '@/app/api/suppliers/check-handle/[handle]/route'
 import { FormFieldItem } from '@/components/form/field'
@@ -21,15 +22,6 @@ import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
 import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 
 import { registrationFormAction } from './registration-form-action'
-
-export const status = {
-  Undefined: undefined,
-  Pending: 'Pending',
-  Error: 'Error',
-  Available: true,
-  Taken: false,
-} as const
-type HandleStatus = (typeof status)[keyof typeof status]
 
 export default function RegistrationForm({ createdByUserId }: { createdByUserId: string }) {
   const router = useRouter()
@@ -115,7 +107,7 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
                 <div className="flex flex-row items-center gap-xs">
                   <Input
                     {...field}
-                    placeholder="business_name"
+                    placeholder="business-name"
                     onBlur={async (e) => {
                       field.onBlur()
                       const isValid = await form.trigger('handle')

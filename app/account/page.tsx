@@ -89,7 +89,7 @@ async function handleUpdateUserDetail(formData: FormData) {
 
   // Only check handle availability if it's being changed
   if (userDetailData.handle && userDetailData.handle !== user.handle) {
-    if (!(await UserDetailModel.isHandleAvailable(userDetailData.handle))) {
+    if (!(await UserDetailModel.isHandleAvailable({ handle: userDetailData.handle }))) {
       throw new Error('Handle is already taken')
     }
   }

@@ -16,7 +16,7 @@ export async function registrationFormAction({ data }: { data: SupplierRegistrat
     throw new Error('Unauthorized')
   }
 
-  const { data: supplier, error: supplierError } = await tryCatch(supplierActions.register({ supplierRegistrationFormData: validatedData }))
+  const { data: supplier, error: supplierError } = await tryCatch(supplierActions.register(validatedData))
 
   if (supplierError || !supplier) {
     throw new Error(supplierError?.message || 'Failed to register supplier')

@@ -1,5 +1,6 @@
 import { headers } from 'next/headers'
 import { createClient } from './supabase/server'
+import { AuthResponse, User } from '@supabase/supabase-js'
 
 export const PROTECTED_PATHS = ['/feed', '/account', '/suppliers/register', '/suppliers/:handle/new']
 
@@ -49,4 +50,44 @@ export async function getAuthUserIdFromSupabase(): Promise<string | null> {
   }
 
   return user.id
+}
+
+export function handleSupabaseSignUpAuthResponse({ data, error }: AuthResponse): User {
+  // Supabase Auth Response Types according to docs.
+  // https://supabase.com/docs/reference/javascript/auth-signup
+
+  // New User, Email Confirmation Enabled:
+  // data.user: User,
+  // data.session: null,
+  // error: null:
+
+  // New User, Email Confirmation Disabled:
+  // data.user: User,
+  // data.session: Session,
+  // error: null
+
+  // Existing Confirmed User, Both Confirm Email & Phone Enabled:
+  // data.user: ObfuscatedUser,
+  // data.session: null,
+  // error: null
+
+  // Existing Confirmed User, Either Confirm Email or Phone Disabled:
+  // data.user: null,
+  // data.session: null,
+  // error: { message: "User already registered" }
+
+  if (error) {
+    if (error.message === 'User already registered') {
+      // existing confirmed user
+      throw new Error('User already exists')
+    } else {
+      // some other error
+      console.error(error.message)
+    }
+  } else if (!data.session) {
+    throw new Error('Check your email')
+  }
+
+  // We can assert that data.user exists because we have handled all other possible cases.
+  return data.user!
 }
