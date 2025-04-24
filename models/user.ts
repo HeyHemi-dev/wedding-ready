@@ -39,12 +39,15 @@ export class UserDetailModel {
     return userDetailsRaw[0]
   }
 
-  // Instance method example
-  async update(userDetailRawData: SetUserDetailRaw): Promise<UserDetailRaw> {
-    const userDetailsRaw = await db.update(schema.user_details).set(userDetailRawData).where(eq(schema.user_details.id, this.userDetailRaw.id)).returning()
+  static async update(id: string, userDetailRawData: SetUserDetailRaw): Promise<UserDetailRaw> {
+    if (userDetailRawData.handle) {
+      userDetailRawData.handleUpdatedAt = new Date()
+    }
+    userDetailRawData.updatedAt = new Date()
 
-    this.userDetailRaw = userDetailsRaw[0]
-    return this.userDetailRaw
+    const userDetailsRaw = await db.update(schema.user_details).set(userDetailRawData).where(eq(schema.user_details.id, id)).returning()
+
+    return userDetailsRaw[0]
   }
 
   // Hybrid method example
