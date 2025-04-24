@@ -12,30 +12,31 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
   return (
     <Section>
-      <div className="grid grid-cols-1 gap-md md:grid-cols-[minmax(200px,1fr)_3fr]">
-        <nav className="grid auto-rows-fr gap-xxs self-start">
-          <AccountNavLink
-            href="/account"
-            currentPathname={pathname}
-            title="Profile"
-            description="Personalize your name, avatar, bio and social links."
-            Icon={User}
-          />
-          <AccountNavLink
-            href="/account/account-settings"
-            currentPathname={pathname}
-            title="Account & Security"
-            description="Update your email, password and user handle."
-            Icon={Settings}
-          />
-          <AccountNavLink
-            href="/account/manage-suppliers"
-            currentPathname={pathname}
-            title="My Suppliers"
-            description="Add, edit or remove the suppliers you manage."
-            Icon={Contact}
-          />
-          {/* <AccountNavLink
+      <div className="grid grid-cols-1 gap-md md:grid-cols-[minmax(200px,1fr)_3fr] md:grid-rows-[auto_1fr]">
+        <div className="grid gap-md md:col-start-1 md:row-span-full md:grid-rows-subgrid">
+          <nav className="row-start-2 grid auto-rows-fr gap-xxs self-start">
+            <AccountNavLink
+              href="/account"
+              currentPathname={pathname}
+              title="Profile"
+              description="Personalize your name, avatar, bio and social links."
+              Icon={User}
+            />
+            <AccountNavLink
+              href="/account/account-settings"
+              currentPathname={pathname}
+              title="Account & Security"
+              description="Update your email, password and user handle."
+              Icon={Settings}
+            />
+            <AccountNavLink
+              href="/account/manage-suppliers"
+              currentPathname={pathname}
+              title="My Suppliers"
+              description="Add, edit or remove the suppliers you manage."
+              Icon={Contact}
+            />
+            {/* <AccountNavLink
             href="/account/notifications"
             currentPathname={pathname}
             title="Notifications"
@@ -49,8 +50,9 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             description="Control your data, visibility and permissions."
             Icon={Lock}
           /> */}
-        </nav>
-        {children}
+          </nav>
+        </div>
+        <div className="grid gap-sm md:col-start-2 md:row-span-full md:grid-rows-subgrid">{children}</div>
       </div>
     </Section>
   )
