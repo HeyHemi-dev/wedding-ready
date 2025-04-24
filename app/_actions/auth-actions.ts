@@ -17,8 +17,12 @@ export const authActions = {
 
 async function signUp({ email, password, handle, displayName }: UserSignupForm): Promise<User> {
   const supabase = await createClient()
-  const supabaseAdmin = createAdminClient()
   const origin = (await headers()).get('origin')
+
+  const isAvailable = await UserDetailModel.isHandleAvailable({ handle })
+  if (!isAvailable) {
+    throw new Error('Handle is already taken')
+  }
 
   const { data: authResponse, error: signUpError } = await tryCatch(
     supabase.auth.signUp({
@@ -47,6 +51,7 @@ async function signUp({ email, password, handle, displayName }: UserSignupForm):
   )
 
   if (dbError) {
+    const supabaseAdmin = createAdminClient()
     console.error('Failed to create user details:', dbError)
     await supabaseAdmin.auth.admin.deleteUser(user.id)
     throw new Error('Failed to create account')
