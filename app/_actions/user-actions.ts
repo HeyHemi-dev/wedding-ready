@@ -1,7 +1,6 @@
 import { UserUpdateForm } from '@/app/_types/validation-schema'
 import { SetUserDetailRaw, User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
-
 export const userActions = {
   updateProfile,
 }
@@ -13,6 +12,7 @@ async function updateProfile({ id, displayName, bio, avatarUrl, instagramUrl, ti
   }
 
   const setUserDetailData: SetUserDetailRaw = {
+    displayName,
     bio,
     avatarUrl,
     instagramUrl,
