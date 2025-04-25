@@ -67,10 +67,10 @@ const userOmitAuth = userSignupFormSchema.omit({
 // Create base schema from the database schema
 export const userUpdateFormSchema = userOmitAuth.extend({
   id: z.string().uuid(),
-  bio: z.string().max(160, "Bio can't exceed 160 characters").optional(),
-  avatarUrl: z.string().trim().url('Avatar must be a valid URL').optional().or(z.literal('')),
-  instagramUrl: z.string().trim().url('Instagram URL must be valid').optional().or(z.literal('')),
-  tiktokUrl: z.string().trim().url('TikTok URL must be valid').optional().or(z.literal('')),
-  websiteUrl: z.string().trim().url('Website URL must be valid').optional().or(z.literal('')),
+  bio: z.string().max(160, "Bio can't exceed 160 characters").or(z.literal('')),
+  avatarUrl: z.string().trim().or(z.literal('')),
+  instagramUrl: z.string().trim().url('Must be a valid Instagram URL').or(z.literal('')),
+  tiktokUrl: z.string().trim().url('Must be a valid TikTok URL').or(z.literal('')),
+  websiteUrl: z.string().trim().url('Must be a valid website URL').or(z.literal('')),
 }) satisfies z.ZodType<SetUserDetailRaw>
 export type UserUpdateForm = z.infer<typeof userUpdateFormSchema>

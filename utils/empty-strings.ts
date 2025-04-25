@@ -17,6 +17,15 @@ export function emptyStringToUndefined<T extends Record<string, any>>(object: T)
 }
 
 /**
+ * Convert empty strings to null
+ * @param object - The object to convert
+ * @returns A new object with empty strings converted to null
+ */
+export function emptyStringToNull<T extends Record<string, any>>(object: T): { [K in keyof T]: Exclude<T[K], ''> | null } {
+  return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, value === '' ? null : value])) as any
+}
+
+/**
  * A helper mapped type that only “transforms” properties that allow null
  */
 type NullableEmptyStrings<T> = {
@@ -30,6 +39,6 @@ type NullableEmptyStrings<T> = {
  * @param object - The object to convert
  * @returns A new object with empty strings converted to null
  */
-export function emptyStringToNull<T extends Record<string, any>>(object: T): NullableEmptyStrings<T> {
+export function emptyStringToNullIfAllowed<T extends Record<string, any>>(object: T): NullableEmptyStrings<T> {
   return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, value === '' ? null : value])) as NullableEmptyStrings<T>
 }

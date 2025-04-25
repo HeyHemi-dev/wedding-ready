@@ -2,6 +2,7 @@ import { db } from '@/db/db'
 import * as schema from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { InsertUserDetailRaw, SetUserDetailRaw, UserDetailRaw } from '@/models/types'
+import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export class UserDetailModel {
   private userDetailRaw: UserDetailRaw
@@ -45,7 +46,11 @@ export class UserDetailModel {
     }
     userDetailRawData.updatedAt = new Date()
 
-    const userDetailsRaw = await db.update(schema.user_details).set(userDetailRawData).where(eq(schema.user_details.id, id)).returning()
+    const userDetailsRaw = await db
+      .update(schema.user_details)
+      .set(emptyStringToNullIfAllowed(userDetailRawData))
+      .where(eq(schema.user_details.id, id))
+      .returning()
 
     return userDetailsRaw[0]
   }
