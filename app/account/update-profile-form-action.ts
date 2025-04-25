@@ -3,10 +3,11 @@
 import { revalidateTag } from 'next/cache'
 
 import { UserUpdateForm, userUpdateFormSchema } from '@/app/_types/validation-schema'
-import { tryCatch } from '@/utils/try-catch'
-import { userActions } from '../_actions/user-actions'
 import { getAuthUserIdFromSupabase } from '@/utils/auth'
-import { nullishToEmptyString, emptyStringToNull } from '@/utils/empty-strings'
+import { nullishToEmptyString } from '@/utils/empty-strings'
+import { tryCatch } from '@/utils/try-catch'
+
+import { userActions } from '../_actions/user-actions'
 
 export async function updateProfileFormAction({ data }: { data: UserUpdateForm }): Promise<UserUpdateForm> {
   const { success, error: parseError, data: validatedData } = userUpdateFormSchema.safeParse(data)

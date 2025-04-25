@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
-import UpdateProfileForm from './update-profile-form'
 import { nullishToEmptyString } from '@/utils/empty-strings'
+
+import UpdateProfileForm from './update-profile-form'
 export default async function AccountPage() {
   const user = await getCurrentUser()
 
