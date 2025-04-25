@@ -6,9 +6,10 @@ import { UserUpdateForm, userUpdateFormSchema } from '@/app/_types/validation-sc
 import { tryCatch } from '@/utils/try-catch'
 import { userActions } from '../_actions/user-actions'
 import { getAuthUserIdFromSupabase } from '@/utils/auth'
+import { nullishToEmptyString, emptyStringToUndefined } from '@/utils/empty-strings'
 
 export async function updateProfileFormAction({ data }: { data: UserUpdateForm }): Promise<UserUpdateForm> {
-  const { success, error: parseError, data: validatedData } = userUpdateFormSchema.safeParse(data)
+  const { success, error: parseError, data: validatedData } = userUpdateFormSchema.safeParse(emptyStringToUndefined(data))
   if (!success || parseError) {
     throw new Error(JSON.stringify(parseError?.flatten().fieldErrors))
   }
@@ -26,13 +27,13 @@ export async function updateProfileFormAction({ data }: { data: UserUpdateForm }
 
   revalidateTag(`user-${user.id}`)
 
-  return {
+  return nullishToEmptyString({
     id: user.id,
     displayName: user.displayName,
-    bio: user.bio ?? '',
-    avatarUrl: user.avatarUrl ?? '',
-    instagramUrl: user.instagramUrl ?? '',
-    tiktokUrl: user.tiktokUrl ?? '',
-    websiteUrl: user.websiteUrl ?? '',
-  }
+    bio: user.bio,
+    avatarUrl: user.avatarUrl,
+    instagramUrl: user.instagramUrl,
+    tiktokUrl: user.tiktokUrl,
+    websiteUrl: user.websiteUrl,
+  })
 }
