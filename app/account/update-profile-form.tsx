@@ -100,7 +100,7 @@ export default function UpdateProfileForm({ defaultValues, className }: { defaul
 
         <FormField control={form.control} name="id" render={({ field }) => <Input {...field} type="hidden" />} />
 
-        <SubmitButton pendingChildren="Updating..." type="submit" className="self-end">
+        <SubmitButton pendingChildren="Updating..." type="submit" className="self-end" disabled={!form.formState.isDirty || form.formState.isSubmitting}>
           Update
         </SubmitButton>
       </form>
