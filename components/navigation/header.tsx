@@ -23,10 +23,14 @@ export default function Header() {
         </Link>
         <nav className="flex items-center gap-xxs font-semibold">
           <Link href={'/find-suppliers'} passHref>
-            <Button variant={'ghost'}>Find Suppliers</Button>
+            <Button variant={'ghost'} asChild>
+              <span>Find Suppliers</span>
+            </Button>
           </Link>
           <Link href={'/articles'} passHref>
-            <Button variant={'ghost'}>Advice</Button>
+            <Button variant={'ghost'} asChild>
+              <span>Advice</span>
+            </Button>
           </Link>
         </nav>
         <HeaderAuth />

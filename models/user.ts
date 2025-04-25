@@ -2,6 +2,7 @@ import { db } from '@/db/db'
 import * as schema from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { InsertUserDetailRaw, SetUserDetailRaw, UserDetailRaw } from '@/models/types'
+import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export class UserDetailModel {
   private userDetailRaw: UserDetailRaw
@@ -39,12 +40,19 @@ export class UserDetailModel {
     return userDetailsRaw[0]
   }
 
-  // Instance method example
-  async update(userDetailRawData: SetUserDetailRaw): Promise<UserDetailRaw> {
-    const userDetailsRaw = await db.update(schema.user_details).set(userDetailRawData).where(eq(schema.user_details.id, this.userDetailRaw.id)).returning()
+  static async update(id: string, userDetailRawData: SetUserDetailRaw): Promise<UserDetailRaw> {
+    if (userDetailRawData.handle) {
+      userDetailRawData.handleUpdatedAt = new Date()
+    }
+    userDetailRawData.updatedAt = new Date()
 
-    this.userDetailRaw = userDetailsRaw[0]
-    return this.userDetailRaw
+    const userDetailsRaw = await db
+      .update(schema.user_details)
+      .set(emptyStringToNullIfAllowed(userDetailRawData))
+      .where(eq(schema.user_details.id, id))
+      .returning()
+
+    return userDetailsRaw[0]
   }
 
   // Hybrid method example
