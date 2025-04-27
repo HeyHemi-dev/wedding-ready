@@ -41,7 +41,7 @@ export function SupplierCard({ name, subtitle, mainImage, thumbnailImages, stat,
         </div>
         <div className="flex items-center gap-xxs self-start text-sm text-muted-foreground">
           <Star size={16} />
-          <p>1.5k</p>
+          <p>{stat}</p>
         </div>
       </div>
     </Link>
