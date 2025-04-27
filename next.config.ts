@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
         hostname: 'jjoptcpwkl.ufs.sh',
         pathname: '/f/*',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
     ],
   },
   /* config options here */
