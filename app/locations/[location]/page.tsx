@@ -35,7 +35,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
                   'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb',
                 ]}
                 name={supplier.name}
-                subtitle={supplier.locations.map((location) => valueToPretty(location)).join(', ')}
+                subtitle={supplier.services.map((service) => valueToPretty(service)).join(', ')}
                 stat={150}
               />
             ))}
