@@ -1,26 +1,10 @@
 import Link from 'next/link'
 
-import { Supplier } from '@/models/types'
-import { valueToPretty } from '@/utils/enum-helpers'
 import { Star } from 'lucide-react'
 import Image from 'next/image'
 
-export function SuppliersList({ suppliers }: { suppliers: Supplier[] }) {
-  return (
-    <div className="grid grid-cols-1 gap-lg md:grid-cols-2 lg:grid-cols-3">
-      {suppliers.map((supplier) => (
-        <SupplierCard
-          key={supplier.id}
-          href={`/suppliers/${supplier.handle}`}
-          mainImage={'https://images.unsplash.com/photo-1606216794074-735e91aa2c92'}
-          thumbnailImages={['https://images.unsplash.com/photo-1649615644622-6d83f48e69c5', 'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb']}
-          name={supplier.name}
-          subtitle={supplier.locations.map((location) => valueToPretty(location)).join(', ')}
-          stat={150}
-        />
-      ))}
-    </div>
-  )
+export function SuppliersGrid({ children }: { children: React.ReactNode }) {
+  return <div className="grid grid-cols-1 gap-lg md:grid-cols-2 lg:grid-cols-3">{children}</div>
 }
 
 type SupplierCardProps = {
