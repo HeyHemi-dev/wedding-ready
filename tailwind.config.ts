@@ -29,7 +29,7 @@ const config = {
         sitePadding: '1.5rem',
         sectionPadding: '6rem',
         headerHeight: '4rem',
-        contour: '2px',
+        contour: '0.25rem',
         hairline: '1px',
         xxl: '4rem',
         xl: '3rem',
@@ -99,6 +99,9 @@ const config = {
         md: 'calc(var(--radius) * 1.5)',
         sm: 'calc(var(--radius) * 0.5)',
         full: 'calc(var(--radius) * 999)',
+      },
+      boxShadow: {
+        contour: '0 0 0 theme(spacing.contour) hsl(var(--primary))',
       },
       keyframes: {
         'accordion-down': {
