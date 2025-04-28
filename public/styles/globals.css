@@ -76,6 +76,7 @@
 
     /* width */
     --width-site: 80rem;
+    --width-prose: 80ch;
 
     /* border radius */
     --radius: 0.5rem;
@@ -99,18 +100,41 @@
     border-radius: var(--radius-area);
     padding: var(--padding-area);
   }
+
+  .supplier-header {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: clamp(30ch, 66%, var(--width-prose)) 1fr;
+    gap: var(--gap-friend);
+  }
+
+  .supplier-header .top-row {
+    grid-row: 1;
+    grid-column: 1 / -1;
+  }
+
+  .supplier-header .left-column {
+    grid-column: 1;
+  }
+
+  .supplier-header .right-column {
+    grid-column: 2;
+  }
 }
 
 @layer utilities {
   .heading-xl {
+    font-family: serif;
     font-size: 3rem;
     line-height: 1.2;
   }
   .heading-lg {
+    font-family: serif;
     font-size: 2.5rem;
     line-height: 1.2;
   }
   .heading-md {
+    font-family: serif;
     font-size: 2rem;
     line-height: 1.2;
   }
