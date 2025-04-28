@@ -1,5 +1,9 @@
 import { MasonryLoader } from '@/components/loader'
 
 export default function Loading() {
-  return <MasonryLoader />
+  return (
+    <div className="row-span-full">
+      <MasonryLoader />
+    </div>
+  )
 }

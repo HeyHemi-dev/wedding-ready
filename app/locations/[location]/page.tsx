@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { SuppliersList } from '@/components/suppliers/suppliers-list'
+import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { Location } from '@/db/constants'
@@ -24,7 +24,22 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
           <div className="flex flex-col gap-xs">
             <h1 className="font-serif text-4xl">{valueToPretty(location)}</h1>
           </div>
-          <SuppliersList suppliers={suppliers} />
+          <SuppliersGrid>
+            {suppliers.map((supplier) => (
+              <SupplierCard
+                key={supplier.id}
+                href={`/suppliers/${supplier.handle}`}
+                mainImage={'https://images.unsplash.com/photo-1606216794074-735e91aa2c92'}
+                thumbnailImages={[
+                  'https://images.unsplash.com/photo-1649615644622-6d83f48e69c5',
+                  'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb',
+                ]}
+                name={supplier.name}
+                subtitle={supplier.services.map((service) => valueToPretty(service)).join(', ')}
+                stat={150}
+              />
+            ))}
+          </SuppliersGrid>
         </div>
       </Area>
     </Section>
