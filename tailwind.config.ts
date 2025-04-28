@@ -15,13 +15,13 @@ const config = {
     },
     extend: {
       gap: {
-        strangers: '8rem',
-        acquaintances: '4rem',
-        friends: '2rem',
-        'close-friends': '1.5rem',
-        bffs: '1rem',
-        siblings: '0.5rem',
-        spouses: '0.25rem',
+        stranger: 'var(--gap-stranger)',
+        acquaintance: 'var(--gap-acquaintance)',
+        friend: 'var(--gap-friend)',
+        'close-friend': 'var(--gap-close-friend)',
+        bff: 'var(--gap-bff)',
+        sibling: 'var(--gap-sibling)',
+        spouse: 'var(--gap-spouse)',
       },
       spacing: {
         siteWidth: '80rem',
