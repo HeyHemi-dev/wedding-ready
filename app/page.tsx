@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <>
       <Section className="min-h-svh-minus-header pt-md">
-        <div className="grid grid-cols-3 grid-rows-4 gap-md">
+        <div className="gap-area grid grid-cols-3 grid-rows-4">
           <Area className="col-span-2 row-span-full grid place-items-center">
             <div className="flex flex-col gap-md pr-xxl">
               <h1 className="text-balance font-serif text-6xl">Wedding inspiration you can actually book.</h1>
@@ -59,7 +59,7 @@ export default function Home() {
                     <ArrowRight />
                   </Link>
                 </Button>
-                <Button variant={'ghost'} size={'lg'} asChild>
+                <Button variant={'outline'} size={'lg'} asChild>
                   <Link href="/feed">
                     <span className="font-semibold">Start exploring</span>
                   </Link>
@@ -70,7 +70,7 @@ export default function Home() {
           <Area className="relative col-span-1 row-span-3 overflow-hidden">
             <Image className="object-cover" src="/assets/home-hero.jpg" alt="Couple just married celebrating with confetti" fill sizes="100vw" />
           </Area>
-          <Area className="col-span-1 row-span-1 bg-primary">
+          <Area className="col-span-1 row-span-1">
             <div className="flex flex-col gap-md"></div>
           </Area>
         </div>
@@ -96,7 +96,7 @@ export default function Home() {
                     <ArrowRight />
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant={'ghost'}>
+                <Button asChild size="lg" variant={'outline'}>
                   <Link href="/suppliers/join">Learn more</Link>
                 </Button>
               </div>
