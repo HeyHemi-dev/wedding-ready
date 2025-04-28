@@ -32,11 +32,11 @@ export function SupplierCard({ name, subtitle, mainImage, thumbnailImages, stat,
         </div>
       </div>
       <div className="grid grid-cols-[1fr_auto] gap-xs px-xs">
-        <div className="flex gap-xs">
+        <div className="flex max-w-[200px] gap-xs">
           {avatar && <Image src={avatar} alt={name} className="h-[32px] w-[32px] rounded-full bg-white" />}
-          <div>
-            <h2 className="text-sm font-medium">{name}</h2>
-            <p className="text-sm text-muted-foreground">{subtitle}</p>
+          <div className="w-full text-sm">
+            <h2 className="truncate font-medium">{name}</h2>
+            <p className="truncate text-muted-foreground">{subtitle}</p>
           </div>
         </div>
         <div className="flex items-center gap-xxs self-start text-sm text-muted-foreground">
