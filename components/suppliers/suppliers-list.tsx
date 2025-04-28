@@ -1,7 +1,7 @@
-import Link from 'next/link'
 
 import { Star } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export function SuppliersGrid({ children }: { children: React.ReactNode }) {
   return <div className="grid grid-cols-1 gap-lg md:grid-cols-2 lg:grid-cols-3">{children}</div>
