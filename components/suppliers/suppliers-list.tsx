@@ -1,4 +1,3 @@
-
 import { Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -19,8 +18,8 @@ type SupplierCardProps = {
 
 export function SupplierCard({ name, subtitle, mainImage, thumbnailImages, stat, href, avatar }: SupplierCardProps) {
   return (
-    <Link href={href} className="grid gap-xs transition-colors hover:bg-accent/80 focus:bg-accent/80">
-      <div className="grid max-w-full grid-cols-3 grid-rows-2 gap-[1px] overflow-hidden rounded-md">
+    <Link href={href} className="hover:shadow-contour grid gap-xs rounded transition-all hover:bg-primary/80 focus:bg-primary/80">
+      <div className="grid max-w-full grid-cols-3 grid-rows-2 gap-[1px] overflow-hidden rounded">
         <div className="relative col-span-2 row-span-2 aspect-square bg-white">
           <Image src={mainImage} alt={name} fill sizes="100vw" className="object-cover" />
         </div>

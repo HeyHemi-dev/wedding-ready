@@ -4,26 +4,27 @@
 
 @layer base {
   :root {
-    --background: 32 6% 98%;
-    --foreground: 32 5% 10%;
-    --card: 32 6% 98%;
-    --card-foreground: 32 5% 15%;
-    --popover: 32 6% 98%;
-    --popover-foreground: 32 95% 10%;
-    --primary: 32 14% 37%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 32 10% 90%;
-    --secondary-foreground: 0 0% 0%;
-    --muted: -6 10% 95%;
-    --muted-foreground: 32 5% 40%;
-    --accent: -6 10% 90%;
-    --accent-foreground: 32 5% 15%;
+    --background: 39 16% 98%;
+    --foreground: 210 5% 10%;
+    --muted: 39 17% 95%;
+    --muted-foreground: 39 5% 49%;
+    --card: 39 17% 91%;
+    --card-foreground: var(--foreground);
+    --area: var(--card);
+    --area-foreground: var(--card-foreground);
+    --popover: 0 0% 100%;
+    --popover-foreground: var(--foreground);
+    --primary: 66 100% 73%;
+    --primary-foreground: 66 100% 15%;
+    --secondary: 290 100% 94%;
+    --secondary-foreground: 290 100% 29%;
+    --accent: 154 83% 91%;
+    --accent-foreground: 154 79% 23%;
     --destructive: 0 50% 50%;
     --destructive-foreground: 32 5% 98%;
-    --border: 32 8% 82%;
-    --input: 32 8% 82%;
-    --ring: 32 14% 37%;
-    --radius: 0.5rem;
+    --border: 0 0% 100%;
+    --input: var(--border);
+    --ring: var(--primary);
   }
   .dark {
     --background: 32 10% 10%;
@@ -50,11 +51,115 @@
 }
 
 @layer base {
+  :root {
+    --hairline: 1px;
+
+    /* gap */
+    --gap-stranger: 8rem;
+    --gap-acquaintance: 4rem;
+    --gap-friend: 2rem;
+    --gap-close-friend: 1.5rem;
+    --gap-bff: 1rem;
+    --gap-sibling: 0.5rem;
+    --gap-spouse: 0.25rem;
+    --gap-area: var(--gap-friend);
+
+    /* padding */
+    --padding-site-gutter: calc(var(--gap-friend) / 2);
+    --padding-section: calc(var(--gap-stranger) / 2);
+    --padding-contour: 2px;
+
+    /* height */
+    --height-header: 4rem;
+    --height-page: 100svh;
+    --height-first-section: calc(var(--height-page) - var(--height-header));
+
+    /* width */
+    --width-site: 80rem;
+    --width-prose: 80ch;
+
+    /* border radius */
+    --radius: 0.5rem;
+  }
+
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
     scrollbar-gutter: stable;
+  }
+}
+
+@layer components {
+  .area {
+    --radius-area: calc(var(--radius) * 3);
+    --padding-area: calc(var(--radius-area) * 3);
+
+    background-color: hsl(var(--area));
+    border-radius: var(--radius-area);
+    padding: var(--padding-area);
+  }
+
+  .supplier-header {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: clamp(30ch, 66%, var(--width-prose)) 1fr;
+    gap: var(--gap-friend);
+  }
+
+  .supplier-header .top-row {
+    grid-row: 1;
+    grid-column: 1 / -1;
+  }
+
+  .supplier-header .left-column {
+    grid-column: 1;
+  }
+
+  .supplier-header .right-column {
+    grid-column: 2;
+  }
+}
+
+@layer utilities {
+  .heading-xl {
+    font-family: serif;
+    font-size: 3rem;
+    line-height: 1.2;
+  }
+  .heading-lg {
+    font-family: serif;
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+  .heading-md {
+    font-family: serif;
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+  .ui {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .ui-s1 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .ui-s2 {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .ui-small {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .ui-small-s1 {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .ui-small-s2 {
+    font-size: 0.875rem;
+    font-weight: 700;
   }
 }
