@@ -62,6 +62,7 @@
     --gap-bff: 1rem;
     --gap-sibling: 0.5rem;
     --gap-spouse: 0.25rem;
+    --gap-area: var(--gap-friend);
 
     /* padding */
     --padding-site-gutter: calc(var(--gap-friend) / 2);
@@ -78,7 +79,6 @@
 
     /* border radius */
     --radius: 0.5rem;
-    --area-radius: calc(var(--radius) * 3);
   }
 
   * {
@@ -87,6 +87,17 @@
   body {
     @apply bg-background text-foreground;
     scrollbar-gutter: stable;
+  }
+}
+
+@layer components {
+  .area {
+    --radius-area: calc(var(--radius) * 3);
+    --padding-area: calc(var(--radius-area) * 3);
+
+    background-color: hsl(var(--area));
+    border-radius: var(--radius-area);
+    padding: var(--padding-area);
   }
 }
 

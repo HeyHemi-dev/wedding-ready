@@ -22,6 +22,7 @@ const config = {
         bff: 'var(--gap-bff)',
         sibling: 'var(--gap-sibling)',
         spouse: 'var(--gap-spouse)',
+        area: 'var(--gap-area)',
       },
       spacing: {
         siteWidth: '80rem',
