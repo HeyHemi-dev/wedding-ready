@@ -47,7 +47,7 @@ export const supplierColumns = getTableColumns(suppliers)
 export const tiles = pgTable('tiles', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   imagePath: text('image_path').unique(),
-  title: text('title').notNull(),
+  title: text('title'),
   description: text('description'),
   createdByUserId: uuid('created_by_user_id')
     .notNull()

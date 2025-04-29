@@ -36,6 +36,13 @@
       "when": 1745188631575,
       "tag": "0004_unknown_union_jack",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1745884616998,
+      "tag": "0005_open_dragon_lord",
+      "breakpoints": true
     }
   ]
 }
