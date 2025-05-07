@@ -1,9 +1,10 @@
-import { db } from '@/db/db'
-import type * as t from './types'
-import * as s from '@/db/schema'
 import { eq, and, inArray, isNotNull, desc } from 'drizzle-orm'
 
+import { db } from '@/db/db'
+import * as s from '@/db/schema'
 import { tryCatch } from '@/utils/try-catch'
+
+import type * as t from './types'
 
 const tileBaseQuery = db
   .select({
@@ -129,13 +130,9 @@ export class TileModel {
   }
 
   /**
-   * Create a placeholder tile
-   * @note Do not use this function to create a tile with an imagePath
+   * Create a tile
    */
   static async createRaw(tileRawData: t.InsertTileRaw): Promise<t.TileRaw> {
-    if (tileRawData.imagePath) {
-      throw new Error('imagePath must not be set')
-    }
     const tilesRaw = await db.insert(s.tiles).values(tileRawData).returning()
     return tilesRaw[0]
   }
@@ -221,6 +218,16 @@ export class TileModel {
       imagePath: tileRaw.imagePath!, // We can assert that imagePath exists because we already threw an error if it was missing.
       suppliers: updatedSuppliers,
     }
+  }
+
+  static async addSuppliers(tileId: string, supplierIds: string[]): Promise<t.TileSupplierRaw[]> {
+    const tileSuppliers = await db.insert(s.tileSuppliers).values(
+      supplierIds.map((supplierId) => ({
+        tileId,
+        supplierId,
+      }))
+    )
+    return tileSuppliers
   }
 
   static async getSavedStateRaw(tileId: string, userId: string): Promise<t.SavedTileRaw | null> {
