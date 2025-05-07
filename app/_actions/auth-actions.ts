@@ -1,4 +1,4 @@
-import { headers } from 'next/headers'
+import { SupabaseClient } from '@supabase/supabase-js'
 
 import { AuthUser, User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
@@ -16,9 +16,16 @@ export const authActions = {
   resetPassword,
 }
 
-async function signUp({ email, password, handle, displayName }: UserSignupForm): Promise<User> {
-  const supabase = await createClient()
-  const origin = (await headers()).get('origin')
+async function signUp({
+  userSignFormData,
+  supabaseClient,
+  origin,
+}: {
+  userSignFormData: UserSignupForm
+  supabaseClient: SupabaseClient
+  origin: string
+}): Promise<User> {
+  const { email, password, handle, displayName } = userSignFormData
 
   const isAvailable = await UserDetailModel.isHandleAvailable({ handle })
   if (!isAvailable) {
@@ -26,7 +33,7 @@ async function signUp({ email, password, handle, displayName }: UserSignupForm):
   }
 
   const { data: authResponse, error: signUpError } = await tryCatch(
-    supabase.auth.signUp({
+    supabaseClient.auth.signUp({
       email,
       password,
       options: {
