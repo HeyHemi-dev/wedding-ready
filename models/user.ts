@@ -1,6 +1,7 @@
+import { eq } from 'drizzle-orm'
+
 import { db } from '@/db/db'
 import * as schema from '@/db/schema'
-import { eq } from 'drizzle-orm'
 import { InsertUserDetailRaw, SetUserDetailRaw, UserDetailRaw } from '@/models/types'
 import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 

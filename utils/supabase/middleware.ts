@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
+
 import { isProtectedPath, AUTH_HEADER_NAME } from '@/utils/auth'
 
 export const updateSession = async (request: NextRequest) => {
