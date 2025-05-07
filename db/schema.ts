@@ -1,8 +1,9 @@
-import { Service, SupplierRole, Location } from '@/db/constants'
-import { enumToPgEnum } from '@/utils/enum-helpers'
 import { getTableColumns } from 'drizzle-orm'
 import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
 import { authUsers as users } from 'drizzle-orm/supabase'
+
+import { Service, SupplierRole, Location } from '@/db/constants'
+import { enumToPgEnum } from '@/utils/enum-helpers'
 
 export const supplierRoles = pgEnum('supplier_roles', enumToPgEnum(SupplierRole))
 
@@ -47,7 +48,7 @@ export const supplierColumns = getTableColumns(suppliers)
 export const tiles = pgTable('tiles', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   imagePath: text('image_path').unique(),
-  title: text('title').notNull(),
+  title: text('title'),
   description: text('description'),
   createdByUserId: uuid('created_by_user_id')
     .notNull()

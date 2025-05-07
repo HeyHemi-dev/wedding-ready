@@ -1,3 +1,6 @@
+import { and, eq } from 'drizzle-orm'
+
+import { Service, SupplierRole, Location } from '@/db/constants'
 import { db } from '@/db/db'
 import * as schema from '@/db/schema'
 import {
@@ -11,8 +14,6 @@ import {
   InsertSupplierServiceRaw,
   InsertSupplierLocationRaw,
 } from '@/models/types'
-import { Service, SupplierRole, Location } from '@/db/constants'
-import { and, eq, ne } from 'drizzle-orm'
 
 const supplierBaseQuery = db
   .select({
@@ -49,6 +50,16 @@ export class SupplierModel {
 
     const result = await supplierBaseQuery.where(conditions.length > 0 ? and(...conditions) : undefined)
     return aggregateSupplierQueryResults(result)
+  }
+
+  static async getAllByTileId(tileId: string): Promise<SupplierRaw[]> {
+    const suppliers = await db
+      .select({ ...schema.supplierColumns })
+      .from(schema.suppliers)
+      .innerJoin(schema.tileSuppliers, eq(schema.suppliers.id, schema.tileSuppliers.supplierId))
+      .where(eq(schema.tileSuppliers.tileId, tileId))
+
+    return suppliers
   }
 
   static async getByHandle(handle: string): Promise<SupplierWithUsers | null> {

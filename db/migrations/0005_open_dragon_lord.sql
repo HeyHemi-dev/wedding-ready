@@ -1,0 +1,1 @@
+ALTER TABLE "tiles" ALTER COLUMN "title" DROP NOT NULL;

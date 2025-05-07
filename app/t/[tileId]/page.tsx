@@ -32,7 +32,7 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
     <Section className="min-h-svh-minus-header">
       <Area className="grid grid-cols-1 gap-md md:grid-cols-2">
         <div className="relative bg-muted">
-          <Image src={tile.imagePath} alt={tile.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain" />
+          <Image src={tile.imagePath} alt={tile.title ?? ''} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain" />
 
           {authUserId && <SaveTileButton tileId={tile.id} authUserId={authUserId} className="absolute right-0 top-0 p-2" />}
         </div>

@@ -1,6 +1,7 @@
-import { headers } from 'next/headers'
-import { createClient } from './supabase/server'
 import { AuthResponse, User } from '@supabase/supabase-js'
+import { headers } from 'next/headers'
+
+import { createClient } from './supabase/server'
 
 export const PROTECTED_PATHS = ['/feed', '/account', '/suppliers/register', '/suppliers/:handle/new']
 

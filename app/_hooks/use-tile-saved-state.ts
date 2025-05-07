@@ -7,7 +7,6 @@ import { tryCatchFetch } from '@/utils/try-catch'
 
 import { tileKeys } from './queryKeys'
 
-
 export function useTileSaveState(tileId: string, authUserId: string) {
   const queryClient = useQueryClient()
 
@@ -91,7 +90,7 @@ async function postSaveTile(authUserId: string, tileId: string, isSaved: boolean
  * Sets the save state cache for an array of tiles. Use to efficiently set the cache when fetching a large number of tiles at once.
  * @param queryClient - The query client
  * @param tiles - The array of tiles
- * @param authUserId - Optional. The id of the current authenticated user.
+ * @param authUserId - The id of the current authenticated user.
  */
 export function setTilesSaveStateCache(queryClient: QueryClient, tiles: t.Tile[], authUserId: string) {
   tiles.forEach((tile) => {

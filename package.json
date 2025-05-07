@@ -12,7 +12,10 @@
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "db:pull": "drizzle-kit pull --config drizzle.config.ts",
-    "db:check": "drizzle-kit check --config drizzle.config.ts"
+    "db:check": "drizzle-kit check --config drizzle.config.ts",
+    "db:reset": "supabase db reset && drizzle-kit migrate --config drizzle.config.ts && tsx db/seed.ts",
+    "db:seed": "tsx db/seed.ts",
+    "test": "vitest"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -51,23 +54,32 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/node": "22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "19.0.2",
+    "@vitejs/plugin-react": "^4.4.1",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.4",
     "eslint": "^9",
     "eslint-config-next": "15.2.0",
     "eslint-plugin-import": "^2.31.0",
+    "jsdom": "^26.1.0",
     "postcss": "8.4.49",
     "prettier": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "stylelint": "^16.19.1",
+    "stylelint-config-tailwindcss": "^1.0.0",
     "supabase": "^2.20.12",
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.19.3",
-    "typescript": "5.7.2"
+    "typescript": "5.7.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.1.2"
   },
   "pnpm": {
     "ignoredBuiltDependencies": [
@@ -76,5 +88,6 @@
     "onlyBuiltDependencies": [
       "supabase"
     ]
-  }
+  },
+  "type": "module"
 }
