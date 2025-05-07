@@ -1,4 +1,4 @@
-import { and, eq, ne } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 
 import { Service, SupplierRole, Location } from '@/db/constants'
 import { db } from '@/db/db'
