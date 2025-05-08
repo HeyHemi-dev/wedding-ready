@@ -28,7 +28,6 @@ const config = {
         siteWidth: '80rem',
         sitePadding: '1.5rem',
         sectionPadding: '6rem',
-        headerHeight: '6rem',
         contour: '0.25rem',
         hairline: '1px',
         xxl: '4rem',
@@ -41,11 +40,11 @@ const config = {
         textLength: '80ch',
       },
       height: {
-        'svh-minus-header': 'calc(100svh - theme(spacing.headerHeight))',
+        header: '6rem',
         'action-bar': 'calc(var(--radius-area) * 2)',
       },
       minHeight: {
-        'svh-minus-header': 'calc(100svh - theme(spacing.headerHeight))',
+        'svh-minus-header': 'calc(100svh - theme(height.header))',
       },
       gridTemplateColumns: {
         siteLayout: 'minmax(theme(spacing.sitePadding), auto) minmax(0, theme(spacing.siteWidth)) minmax(theme(spacing.sitePadding), auto)',
