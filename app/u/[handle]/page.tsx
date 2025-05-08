@@ -8,6 +8,9 @@ import { Section } from '@/components/ui/section'
 import { UserDetailModel } from '@/models/user'
 
 import { UserTiles } from './user-tiles'
+import { Area } from '@/components/ui/area'
+import { InstagramIcon, Settings2Icon, Share, SquarePenIcon, SquarePlusIcon } from 'lucide-react'
+import { ActionBar } from '@/components/action-bar/action-bar'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -21,23 +24,54 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
 
   return (
     <Section>
-      <h1>{userDetail.displayName}</h1>
-      <p>{userDetail.bio}</p>
-      {isCurrentUser && (
-        <div>
-          <Button asChild>
-            <Link href={`/account`}>Edit Account Settings</Link>
-          </Button>
+      <div className="grid grid-cols-2 gap-area">
+        <Area className="grid auto-rows-max gap-close-friend">
+          <p className="ui-small text-muted-foreground">@{userDetail.handle}</p>
+          <div className="flex flex-col gap-sibling">
+            <h1 className="heading-lg">{userDetail.displayName}</h1>
+            <p>{userDetail.bio}</p>
+          </div>
+          <div className="flex items-center gap-sibling text-muted-foreground">
+            {userDetail.instagramUrl && <p>Instagram</p>}
+            {userDetail.tiktokUrl && <p>Tiktok</p>}
+            {userDetail.websiteUrl && <p>Website</p>}
+          </div>
+        </Area>
+        <Area className="grid auto-rows-max gap-friend">
+          {isCurrentUser && (
+            <>
+              <QuickLink href={`/account`} label="Edit Profile" Icon={SquarePenIcon} />
+              <QuickLink href={`/account`} label="Manage Preferences" Icon={Settings2Icon} />
+              <QuickLink href={''} label="Get Public Share Link" Icon={Share} />
+            </>
+          )}
+        </Area>
+        {isCurrentUser && (
+          <ActionBar className="col-span-full">
+            <div className="flex place-self-end"></div>
+          </ActionBar>
+        )}
+        <div className="col-span-full">
+          <ErrorBoundary
+            fallback={noTiles({
+              message: 'Error loading tiles',
+              cta: { text: 'Retry', redirect: `/u/${handle}` },
+            })}>
+            <UserTiles user={userDetail} authUserId={authUser?.id} />
+          </ErrorBoundary>
         </div>
-      )}
-
-      <ErrorBoundary
-        fallback={noTiles({
-          message: 'Error loading tiles',
-          cta: { text: 'Retry', redirect: `/u/${handle}` },
-        })}>
-        <UserTiles user={userDetail} authUserId={authUser?.id} />
-      </ErrorBoundary>
+      </div>
     </Section>
+  )
+}
+
+function QuickLink({ href, label, Icon }: { href: string; label: string; Icon: React.ElementType }) {
+  return (
+    <Link href={href} className="flex items-center gap-sibling">
+      <div className="grid h-14 w-14 place-items-center rounded-full bg-primary p-0 text-primary-foreground">
+        <Icon className="h-6 w-6" />
+      </div>
+      <p>{label}</p>
+    </Link>
   )
 }
