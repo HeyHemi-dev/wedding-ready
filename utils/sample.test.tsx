@@ -4,7 +4,7 @@ import { expect, test } from 'vitest'
 import { Button } from '@/components/ui/button'
 
 test('Page', () => {
-  render(<Button>Click</Button>)
+  render(<Button>Click me</Button>)
 
   const button = screen.getByRole('button', { name: 'Click me' })
 
