@@ -14,6 +14,7 @@ import { Supplier } from '@/models/types'
 import { valueToPretty } from '@/utils/enum-helpers'
 
 import { SupplierTiles } from './supplier-tiles'
+import { ActionBar } from '@/components/action-bar/action-bar'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -48,20 +49,20 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
                 </Link>
               )}
             </div>
-            <SupplierHeader supplier={supplier} />{' '}
+            <SupplierHeader supplier={supplier} />
           </div>
         </Area>
         {isSupplierUser && (
-          <div className="grid place-items-center rounded-full bg-secondary p-xxs">
+          <ActionBar className="col-span-full">
             <div className="flex place-self-end">
               <Link href={`/suppliers/${handle}/new`}>
-                <Button variant={'secondary'} className="gap-xs">
+                <Button variant={'secondary'} className="gap-spouse">
                   <SquarePlusIcon className="h-4 w-4" />
                   Create Tiles
                 </Button>
               </Link>
             </div>
-          </div>
+          </ActionBar>
         )}
 
         <ErrorBoundary

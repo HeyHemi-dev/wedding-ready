@@ -80,6 +80,7 @@
 
     /* border radius */
     --radius: 0.5rem;
+    --radius-area: calc(var(--radius) * 3);
   }
 
   * {
@@ -93,7 +94,6 @@
 
 @layer components {
   .area {
-    --radius-area: calc(var(--radius) * 3);
     --padding-area: calc(var(--radius-area) * 3);
 
     background-color: hsl(var(--area));
@@ -144,22 +144,22 @@
   }
   .ui-s1 {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 500;
   }
   .ui-s2 {
     font-size: 1rem;
-    font-weight: 700;
+    font-weight: 600;
   }
   .ui-small {
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 400;
   }
   .ui-small-s1 {
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 500;
   }
   .ui-small-s2 {
     font-size: 0.875rem;
-    font-weight: 700;
+    font-weight: 600;
   }
 }
