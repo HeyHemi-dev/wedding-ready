@@ -104,7 +104,7 @@ export default function UpdateProfileForm({ defaultValues, className }: { defaul
         </div>
 
         <div className="flex justify-end gap-close-friend">
-          <Button variant={'ghost'} type="button" disabled={!form.formState.isDirty || form.formState.isSubmitting}>
+          <Button variant={'ghost'} type="button" onClick={() => form.reset(defaultValues)} disabled={!form.formState.isDirty || form.formState.isSubmitting}>
             Cancel
           </Button>
           <SubmitButton pendingChildren="Saving..." type="submit" disabled={!form.formState.isDirty || form.formState.isSubmitting}>
