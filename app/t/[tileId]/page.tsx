@@ -47,10 +47,10 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
           </div>
           <div className="flex flex-col gap-sibling">
             <div className="flex items-center justify-between gap-friend">
-              <h3 className="ui-s1">Supplier Credits</h3>
+              <h3 className="ui-s1">Supplier credits</h3>
               <Button variant={'ghost'} size="sm" className="flex items-center gap-spouse">
                 <Plus className="h-4 w-4" />
-                <span>Add Supplier</span>
+                <span>Add supplier</span>
               </Button>
             </div>
             {tile.suppliers.map((supplier) => (
