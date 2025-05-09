@@ -81,7 +81,7 @@ function SupplierHeader({ supplier }: { supplier: Supplier }) {
   return (
     <>
       <div className="left-column grid place-content-start gap-spouse">
-        <div className="flex items-end gap-sibling">
+        <div className="gap-partner flex items-end">
           <div className="avatar flex h-16 w-16 items-center justify-center rounded-full bg-white text-4xl font-light uppercase">
             {supplier.name.slice(0, 1)}
           </div>
@@ -92,7 +92,7 @@ function SupplierHeader({ supplier }: { supplier: Supplier }) {
       <div className="right-column grid gap-friend">
         <div className="grid gap-spouse">
           <h2 className="ui-small-s2">Services Offered</h2>
-          <div className="col-span-full flex flex-wrap gap-sibling">
+          <div className="gap-partner col-span-full flex flex-wrap">
             {supplier.services.map((service) => (
               <Badge key={service}>{valueToPretty(service)}</Badge>
             ))}
@@ -100,7 +100,7 @@ function SupplierHeader({ supplier }: { supplier: Supplier }) {
         </div>
         <div className="grid gap-spouse">
           <h2 className="ui-small-s2">Areas Served</h2>
-          <div className="col-span-full flex flex-wrap gap-sibling">
+          <div className="gap-partner col-span-full flex flex-wrap">
             {supplier.locations.map((location) => (
               <Badge key={location}>{valueToPretty(location)}</Badge>
             ))}

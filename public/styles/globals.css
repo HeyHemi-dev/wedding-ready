@@ -55,13 +55,13 @@
     --hairline: 1px;
 
     /* gap */
-    --gap-stranger: 8rem;
-    --gap-acquaintance: 4rem;
-    --gap-friend: 2rem;
-    --gap-close-friend: 1.5rem;
-    --gap-bff: 1rem;
-    --gap-sibling: 0.5rem;
-    --gap-spouse: 0.25rem;
+    --gap-stranger: 8rem; /* stranger */
+    --gap-acquaintance: 4rem; /* acquaintance */
+    --gap-friend: 2rem; /* friend */
+    --gap-close-friend: 1.5rem; /* close-friend */
+    --gap-sibling: 1rem; /* sibling */
+    --gap-partner: 0.5rem; /* partner */
+    --gap-spouse: 0.25rem; /* spouse */
     --gap-area: var(--gap-friend);
 
     /* padding */

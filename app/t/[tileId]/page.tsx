@@ -36,8 +36,8 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
           {authUserId && <SaveTileButton tileId={tile.id} authUserId={authUserId} className="absolute right-0 top-0 p-2" />}
         </Area>
         <Area className="grid grid-rows-[auto_1fr_auto] gap-acquaintance bg-transparent">
-          <div className="flex flex-col gap-bff">
-            <div className="ui-small flex flex-row gap-sibling text-muted-foreground">
+          <div className="flex flex-col gap-sibling">
+            <div className="ui-small gap-partner flex flex-row text-muted-foreground">
               <span>{formatRelativeDate(tile.createdAt)}</span>
               <span>•</span>
               {tile.location && <span>{valueToPretty(tile.location as string)}</span>}
@@ -45,7 +45,7 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
             <h1 className="heading-lg">{tile.title ?? 'Untitled'}</h1>
             {tile.description && <p className="text-muted-foreground">{tile.description}</p>}
           </div>
-          <div className="flex flex-col gap-bff">
+          <div className="flex flex-col gap-sibling">
             <div className="flex items-center justify-between gap-friend">
               <h3 className="ui-s1">Supplier Credits</h3>
               <Button variant={'ghost'} size="sm" className="flex items-center gap-spouse">
@@ -70,8 +70,8 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
 
 function SupplierCredit({ name, contribution, href }: { name: string; contribution: string; href: string }) {
   return (
-    <div className="flex flex-row items-center justify-between gap-bff">
-      <div className="flex gap-sibling">
+    <div className="flex flex-row items-center justify-between gap-sibling">
+      <div className="gap-partner flex">
         <Link href={href} className="ui-small">
           {name}
         </Link>

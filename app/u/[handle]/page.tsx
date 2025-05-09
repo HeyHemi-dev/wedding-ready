@@ -27,11 +27,11 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
       <div className="grid grid-cols-2 grid-rows-[auto_1fr] gap-area">
         <Area className="grid auto-rows-max gap-close-friend">
           <p className="ui-small text-muted-foreground">@{userDetail.handle}</p>
-          <div className="flex flex-col gap-sibling">
+          <div className="gap-partner flex flex-col">
             <h1 className="heading-lg">{userDetail.displayName}</h1>
             <p>{userDetail.bio}</p>
           </div>
-          <div className="flex items-center gap-sibling text-muted-foreground">
+          <div className="gap-partner flex items-center text-muted-foreground">
             {userDetail.instagramUrl && <p>Instagram</p>}
             {userDetail.tiktokUrl && <p>Tiktok</p>}
             {userDetail.websiteUrl && <p>Website</p>}
@@ -68,7 +68,7 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
 
 function QuickLink({ href, label, Icon }: { href: string; label: string; Icon: React.ElementType }) {
   return (
-    <Link href={href} className="flex items-center gap-sibling">
+    <Link href={href} className="gap-partner flex items-center">
       <div className="grid h-14 w-14 place-items-center rounded-full bg-primary p-0 text-primary-foreground">
         <Icon className="h-6 w-6" />
       </div>
