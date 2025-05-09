@@ -23,8 +23,8 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
   const isCurrentUser = authUser?.id === userDetail.id
 
   return (
-    <Section>
-      <div className="grid grid-cols-2 gap-area">
+    <Section className="min-h-svh-minus-header pt-0">
+      <div className="grid grid-cols-2 grid-rows-[auto_1fr] gap-area">
         <Area className="grid auto-rows-max gap-close-friend">
           <p className="ui-small text-muted-foreground">@{userDetail.handle}</p>
           <div className="flex flex-col gap-sibling">
@@ -46,17 +46,18 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
             </>
           )}
         </Area>
-        {isCurrentUser && (
-          <ActionBar className="col-span-full">
-            <div className="flex place-self-end"></div>
-          </ActionBar>
-        )}
-        <div className="col-span-full">
+
+        <div className="col-span-full grid grid-rows-[auto_1fr] gap-area">
           <ErrorBoundary
             fallback={noTiles({
               message: 'Error loading tiles',
               cta: { text: 'Retry', redirect: `/u/${handle}` },
             })}>
+            {isCurrentUser && (
+              <ActionBar className="col-span-full">
+                <div className="flex place-self-end"></div>
+              </ActionBar>
+            )}
             <UserTiles user={userDetail} authUserId={authUser?.id} />
           </ErrorBoundary>
         </div>
