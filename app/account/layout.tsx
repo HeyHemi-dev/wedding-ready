@@ -13,7 +13,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
-      <div className="grid grid-cols-1 gap-area md:grid-cols-[minmax(200px,1fr)_3fr] md:grid-rows-[auto_1fr]">
+      <div className="grid grid-cols-1 gap-area md:grid-cols-[minmax(200px,1fr)_3fr]">
         <nav className="grid auto-rows-fr gap-sibling self-start md:pt-10">
           <AccountNavLink
             href="/account"
