@@ -51,17 +51,17 @@ export function UploadPreviewForm({
   return (
     <>
       {status === 'idle' ? (
-        <div className="grid grid-cols-[1fr_3fr] gap-6">
-          <div className="aspect-square overflow-hidden rounded-lg bg-muted">
+        <div className="grid grid-cols-[1fr_3fr] gap-friend">
+          <div className="aspect-square overflow-hidden rounded bg-muted">
             {/* eslint-disable-next-line @next/next/no-img-element -- This is a client-side preview of a local file, so Next.js Image optimization isn't needed */}
             <img src={file.fileObjectUrl} alt={file.file.name} className="h-full w-full object-contain" />
           </div>
 
-          <form action={onSubmit} className="grid grid-cols-2 gap-md">
-            <div className="grid gap-xs">
-              <h3 className="font-semibold">Tile Details</h3>
+          <form action={onSubmit} className="grid grid-cols-2 gap-friend">
+            <div className="grid gap-sibling">
+              <h3 className="ui-s1">Tile Details</h3>
               <Field label="Title" htmlFor="title">
-                <Input id="title" name="title" defaultValue={file.file.name} />
+                <Input id="title" name="title" defaultValue={''} />
               </Field>
               <Field label="Description" htmlFor="description">
                 <Textarea id="description" name="description" rows={3} />
@@ -81,11 +81,10 @@ export function UploadPreviewForm({
                 </Select>
               </Field>
             </div>
-            <div className="grid gap-xs">
-              <h3 className="font-semibold">Suppliers</h3>
-              <div className="space-y-xxs">
-                <Label>Credit suppliers</Label>
-              </div>
+            <div className="grid auto-rows-max gap-sibling">
+              <h3 className="ui-s1">Suppliers</h3>
+
+              <Label>Credit suppliers</Label>
             </div>
             <div className="col-span-full">
               <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
@@ -93,7 +92,7 @@ export function UploadPreviewForm({
           </form>
         </div>
       ) : (
-        <div className="flex flex-col gap-xs">
+        <div className="flex flex-col gap-spouse">
           <p>{status}</p>
           <Progress value={uploadProgress} />
         </div>
