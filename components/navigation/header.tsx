@@ -15,27 +15,30 @@ import { Button } from '../ui/button'
 export default function Header() {
   return (
     <header className="grid grid-cols-siteLayout">
-      <div className="h-header col-start-2 col-end-3 grid grid-cols-[auto_1fr_auto] items-center gap-sm py-xs text-sm">
-        <Link href={'/'} className="relative aspect-[3/2] h-full max-h-12" passHref>
-          <Button variant={'ghost'} className="p-0" asChild>
-            <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill sizes="300px" className="object-contain" priority />
-          </Button>
+      <div className="col-start-2 col-end-3 grid h-header grid-cols-[auto_1fr_auto] items-center gap-friend">
+        <Link href={'/'} className="relative aspect-[3/2] h-full max-h-12 rounded hover:bg-primary/80" passHref>
+          <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill sizes="300px" className="object-contain" priority />
         </Link>
-        <nav className="flex items-center gap-xxs font-semibold">
-          <Link href={'/find-suppliers'} passHref>
-            <Button variant={'ghost'} asChild>
-              <span>Find Suppliers</span>
-            </Button>
-          </Link>
-          <Link href={'/articles'} passHref>
-            <Button variant={'ghost'} asChild>
-              <span>Advice</span>
-            </Button>
-          </Link>
+        <nav className="flex items-center gap-sibling">
+          <NavLink link={{ href: '/find-suppliers', label: 'Find Suppliers' }} />
+          <NavLink link={{ href: '/articles', label: 'Advice' }} />
         </nav>
         <HeaderAuth />
       </div>
     </header>
+  )
+}
+
+type LinkType = {
+  href: string
+  label: string
+}
+
+function NavLink({ link }: { link: LinkType }) {
+  return (
+    <Link href={link.href} className="ui-small-s1 rounded px-4 py-2 hover:bg-primary/80">
+      {link.label}
+    </Link>
   )
 }
 
