@@ -8,11 +8,13 @@ export const serviceDescriptions = {
   },
   [Service.BAND]: {
     title: 'New Zealand Wedding Bands & DJs',
-    description: '',
+    description:
+      'From soulful acoustic sets to high-energy dance floors, Kiwi musicians know how to read a room. Whether you want a jazz trio for cocktail hour, a DJ spinning vinyl, or full band energy, these performers bring the right vibe—and know when to turn it up.',
   },
   [Service.BEAUTY]: {
     title: 'New Zealand Wedding Beauty Services',
-    description: '',
+    description:
+      'These artists understand that less is often more, and that the best makeup is the kind that makes you feel like the best version of yourself. They’ll work with your skin, your style, and the elements—because a Kiwi wedding might mean anything from beach breezes to alpine air.',
   },
   [Service.BRIDAL_ACCESSORY]: {
     title: 'New Zealand Bridal Jewellery & Accessories',
@@ -26,7 +28,8 @@ export const serviceDescriptions = {
   },
   [Service.BRIDESMAIDS_WEAR]: {
     title: 'New Zealand Bridesmaid Dresses',
-    description: '',
+    description:
+      'Gone are the days of one-size-fits-all bridesmaid looks. Here, you’ll find designers and boutiques that understand that your squad is as unique as your friendship. Let them help you mix-and-match styles, source sustainable fabrics, choose pieces your team will actually wear again.',
   },
   [Service.CAKE]: {
     title: 'New Zealand Wedding Cakes',
@@ -50,19 +53,23 @@ export const serviceDescriptions = {
   },
   [Service.FLORIST]: {
     title: 'New Zealand Wedding Florists',
-    description: '',
+    description:
+      'Kiwi florists have an incredible palette to work with. From delicate pōhutukawa to bold proteas, these creatives know how to work with what’s local and in season. They’ll help you create arrangements that feel organic, intentional, and true to the landscape you’re celebrating in.',
   },
   [Service.HAIR]: {
     title: 'New Zealand Wedding Hair Stylists',
-    description: '',
+    description:
+      'Are you after a relaxed beach wave that’ll hold through a coastal ceremony or an elegant updo that can handle a dance floor? These stylists get it. They understand that your hair should work with you, not against you—and that the best style is one that lets you forget about it and enjoy your day.',
   },
   [Service.HIRE]: {
     title: 'New Zealand Wedding Hire Services',
-    description: '',
+    description:
+      'From vintage furniture to modern glassware, hire companies help you build your vision without the commitment. They’re the practical solution to creating that perfect atmosphere, whether you’re after rustic charm, minimalist elegance, or something entirely unexpected. Let them handle the heavy lifting—literally.',
   },
   [Service.MAKEUP]: {
     title: 'New Zealand Wedding Makeup Artists',
-    description: '',
+    description:
+      'Kiwi makeup artists understand that natural beauty isn’t about looking like you’re not wearing makeup—it’s about looking like the best version of you. They’ll work with your skin, your style, and the elements to create a look that’s camera-ready but still feels authentic. Think glowing skin, defined features, and staying power that lasts from first look to last dance.',
   },
   [Service.MC]: {
     title: 'New Zealand Professional Wedding MCs',
@@ -81,11 +88,13 @@ export const serviceDescriptions = {
   },
   [Service.PHOTOGRAPHER]: {
     title: 'New Zealand Wedding Photographers',
-    description: '',
+    description:
+      'Kiwi photographers understand our unique light —brilliantly clear but often challenging —and know how to work with it to create magic. They’ll help you feel at ease in front of the lens, whether you’re on a windswept beach or in a hidden forest clearing. With a natural, relaxed approach that’s distinctly Kiwi, they capture both the epic landscapes and the intimate moments, creating images that feel authentic to you and your day.',
   },
   [Service.PLANNER]: {
     title: 'New Zealand Wedding Planners',
-    description: '',
+    description:
+      'Planning a wedding from afar can be daunting, but Kiwi planners are experts at turning your vision into reality. They’ll connect you with trusted local suppliers, keep you accountable and on track, and coordinate everything on the day. Whether you’re an expat or just busy, they take the pressure off, ensuring your celebration is seamless and stress-free.',
   },
   [Service.RINGS]: {
     title: 'New Zealand Wedding Rings',
@@ -94,7 +103,8 @@ export const serviceDescriptions = {
   },
   [Service.STATIONERY]: {
     title: 'New Zealand Wedding Stationery',
-    description: '',
+    description:
+      'From writing the perfect invite to hand-printed menus, and signage, Kiwi stationery designers blend traditional craft with modern style. They understand that your stationery sets the tone for your celebration and can guide you to incorporate local flora, cultural elements, or personal touches.',
   },
   [Service.STYLIST]: {
     title: 'New Zealand Wedding Stylists',
@@ -108,7 +118,8 @@ export const serviceDescriptions = {
   },
   [Service.TRANSPORT]: {
     title: 'New Zealand Wedding Transportation Services',
-    description: '',
+    description:
+      'Getting your guests from A to B in style is part of the adventure. Whether it’s a vintage car for the newlyweds, a helicopter for that remote photo op, or a boat to whisk your guests across the Marlborough Sounds, these transport providers know how to make the journey as memorable as the destination. They’ll help you navigate everything from mountain roads to coastal tracks.',
   },
   [Service.VENUE]: {
     title: 'New Zealand Wedding Venues',
@@ -117,6 +128,7 @@ export const serviceDescriptions = {
   },
   [Service.VIDEOGRAPHER]: {
     title: 'New Zealand Wedding Videographers',
-    description: '',
+    description:
+      'Kiwi videographers and content creators bring a relaxed, cinematic approach to capturing your day. Whether it’s the heartfelt vows, the wild dance floor, or quiet moments in between, they’ll stitch together a story that reflects the real feel of your celebration. Many also offer short-form edits perfect for sharing with friends or posting on socials — so you can relive the magic and share it your way.',
   },
 } as const
