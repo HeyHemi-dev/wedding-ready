@@ -1,11 +1,11 @@
 import React from 'react'
 
+import { Area } from '@/components/ui/area'
 import { Separator } from '@/components/ui/separator'
 import { SupplierRaw, User } from '@/models/types'
 
 import { FileWithMetadata } from './upload-dropzone'
 import { UploadPreviewForm } from './upload-preview-form'
-import { Area } from '@/components/ui/area'
 
 export function UploadPreviewList({
   files,

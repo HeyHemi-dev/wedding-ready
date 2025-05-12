@@ -1,6 +1,5 @@
 import Field from '@/components/form/field'
 import { Input } from '@/components/ui/input'
-import { Separator } from '@/components/ui/separator'
 import { cn } from '@/utils/shadcn-utils'
 
 export default function AccountSettings() {
@@ -9,7 +8,7 @@ export default function AccountSettings() {
       <h1 className="heading-lg">Account & Security</h1>
 
       <div className="grid max-w-lg gap-friend">
-        <div className="gap-partner grid">
+        <div className="grid gap-partner">
           <h2 className="ui-s2">Change handle</h2>
           <p className="ui-small text-muted-foreground">
             Changing your account handle will also change your profile URL. This cannot be undone. You can only do this once every 30 days.

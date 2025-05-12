@@ -1,16 +1,15 @@
+import { SquarePenIcon } from 'lucide-react'
 import Link from 'next/link'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
+import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles } from '@/components/tiles/tile-list'
-import { Button } from '@/components/ui/button'
+import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { UserDetailModel } from '@/models/user'
 
 import { UserTiles } from './user-tiles'
-import { Area } from '@/components/ui/area'
-import { InstagramIcon, Settings2Icon, Share, SquarePenIcon, SquarePlusIcon } from 'lucide-react'
-import { ActionBar } from '@/components/action-bar/action-bar'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

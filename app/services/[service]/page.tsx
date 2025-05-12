@@ -5,8 +5,8 @@ import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { Service } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
-import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
 import { serviceDescriptions } from '@/public/service-descriptions'
+import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
   const serviceKey = paramToEnumKey((await params).service, Service)
   const service = Service[serviceKey]

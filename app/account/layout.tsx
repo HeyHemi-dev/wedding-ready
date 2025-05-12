@@ -1,12 +1,12 @@
 'use client'
 
-import { User, Settings, Contact, LucideIcon } from 'lucide-react'
+import { User, Contact, LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { cn } from '@/utils/shadcn-utils'
-import { Area } from '@/components/ui/area'
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()

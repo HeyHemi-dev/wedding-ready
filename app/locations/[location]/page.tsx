@@ -4,8 +4,8 @@ import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-li
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { Location } from '@/db/constants'
-import { locationDescriptions } from '@/public/location-descriptions'
 import { SupplierModel } from '@/models/supplier'
+import { locationDescriptions } from '@/public/location-descriptions'
 import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {

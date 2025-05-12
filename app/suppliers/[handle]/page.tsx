@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
+import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
@@ -14,7 +15,6 @@ import { Supplier } from '@/models/types'
 import { valueToPretty } from '@/utils/enum-helpers'
 
 import { SupplierTiles } from './supplier-tiles'
-import { ActionBar } from '@/components/action-bar/action-bar'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

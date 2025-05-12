@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-
 import { db } from '@/db/db'
 import * as schema from '@/db/schema'
 import { getAuthUserId } from '@/utils/auth'
