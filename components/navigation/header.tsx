@@ -21,7 +21,7 @@ export default function Header() {
         </Link>
         <nav className="flex items-center gap-sibling">
           <NavLink link={{ href: '/find-suppliers', label: 'Find Suppliers' }} />
-          <NavLink link={{ href: '/articles', label: 'Advice' }} />
+          {/* <NavLink link={{ href: '/articles', label: 'Advice' }} /> */}
         </nav>
         <HeaderAuth />
       </div>
