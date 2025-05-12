@@ -71,8 +71,7 @@ function AccountNavLink({
   description: string
   Icon: LucideIcon
 }) {
-  console.log({ currentPathname, href })
-  const isActive = currentPathname.includes(href)
+  const isActive = currentPathname === href
 
   return (
     <Link
