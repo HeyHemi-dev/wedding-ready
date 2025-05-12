@@ -37,7 +37,7 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
         </Area>
         <Area className="grid grid-rows-[auto_1fr_auto] gap-acquaintance bg-transparent">
           <div className="flex flex-col gap-sibling">
-            <div className="ui-small gap-partner flex flex-row text-muted-foreground">
+            <div className="ui-small flex flex-row gap-partner text-muted-foreground">
               <span>{formatRelativeDate(tile.createdAt)}</span>
               <span>•</span>
               {tile.location && <span>{valueToPretty(tile.location as string)}</span>}
@@ -47,21 +47,21 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
           </div>
           <div className="flex flex-col gap-sibling">
             <div className="flex items-center justify-between gap-friend">
-              <h3 className="ui-s1">Supplier credits</h3>
-              <Button variant={'ghost'} size="sm" className="flex items-center gap-spouse">
+              <h2 className="ui-s1">Supplier credits</h2>
+              {/* <Button variant={'ghost'} size="sm" className="flex items-center gap-spouse">
                 <Plus className="h-4 w-4" />
                 <span>Add supplier</span>
-              </Button>
+              </Button> */}
             </div>
             {tile.suppliers.map((supplier) => (
               <SupplierCredit key={supplier.id} name={supplier.name} contribution={'Contribution description'} href={`/suppliers/${supplier.handle}`} />
             ))}
           </div>
-          <div className="flex flex-row-reverse">
+          {/* <div className="flex flex-row-reverse">
             <Button variant={'link'} size="sm">
               Report
             </Button>
-          </div>
+          </div> */}
         </Area>
       </div>
     </Section>
@@ -71,9 +71,9 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
 function SupplierCredit({ name, contribution, href }: { name: string; contribution: string; href: string }) {
   return (
     <div className="flex flex-row items-center justify-between gap-sibling">
-      <div className="gap-partner flex">
-        <Link href={href} className="ui-small">
-          {name}
+      <div className="flex gap-partner">
+        <Link href={href} passHref>
+          <h3 className="ui-small-s1">{name}</h3>
         </Link>
         <span className="ui-small text-muted-foreground">{contribution}</span>
       </div>
