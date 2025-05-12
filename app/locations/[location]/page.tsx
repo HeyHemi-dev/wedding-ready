@@ -22,13 +22,13 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
     <Section className="min-h-svh-minus-header pt-0">
       <div className="grid grid-rows-[auto_1fr] gap-area">
         <Area className="bg-transparent">
-          <div className="gap-partner flex max-w-prose flex-col">
+          <div className="flex max-w-prose flex-col gap-partner">
             <h1 className="heading-xl">{locationDescriptions[location].title}</h1>
             <p className="text-muted-foreground">{locationDescriptions[location].description}</p>
           </div>
         </Area>
         <Area>
-          <div className="flex flex-col gap-md">
+          <div className="flex flex-col gap-acquaintance">
             <SuppliersGrid>
               {suppliers.map((supplier) => (
                 <SupplierCard
