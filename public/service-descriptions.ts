@@ -4,27 +4,27 @@ export const serviceDescriptions = {
   [Service.ACCOMODATION]: {
     title: 'New Zealand Wedding Accommodation',
     description:
-      'If you’re bringing people together from all over, accommodation can make or break the weekend. Luckily, Aotearoa does hospitality better than most. Think boutique cabins, lakeside lodges, and family-run motels where the kettle’s always on. These places aren’t just somewhere to sleep—they help set the tone for a relaxed and memorable weekend.',
+      'If you’re bringing people together from all over, good accommodation can make or break the visit. Luckily, Aotearoa does hospitality well; think boutique cabins, lakeside lodges, and family-run motels where the kettle’s always on. These places aren’t just somewhere to sleep —they help set the tone for a relaxed and memorable weekend.',
   },
   [Service.BAND]: {
     title: 'New Zealand Wedding Bands & DJs',
     description:
-      'From soulful acoustic sets to high-energy dance floors, Kiwi musicians know how to read a room. Whether you want a jazz trio for cocktail hour, a DJ spinning vinyl, or full band energy, these performers bring the right vibe—and know when to turn it up.',
+      'From soulful acoustic sets to high-energy dance floors, Kiwi musicians know how to read a room. Whether you want a jazz trio for cocktail hour, a DJ spinning vinyl, or full band energy, these performers bring the right vibe —and know when to turn it up.',
   },
   [Service.BEAUTY]: {
     title: 'New Zealand Wedding Beauty Services',
     description:
-      'These artists understand that less is often more, and that the best makeup is the kind that makes you feel like the best version of yourself. They’ll work with your skin, your style, and the elements—because a Kiwi wedding might mean anything from beach breezes to alpine air.',
+      'These artists understand that less is often more, and that the best makeup is the kind that makes you feel like the best version of yourself. They’ll work with your skin, your style, and the elements —because a Kiwi wedding might mean anything from beach breezes to alpine air.',
   },
   [Service.BRIDAL_ACCESSORY]: {
     title: 'New Zealand Bridal Jewellery & Accessories',
     description:
-      'Jewellery, veils, capes, headpieces—these are the little details that bring the whole look together. Whether you’re making a statement or keeping things simple, the right piece should feel like an extension of you.',
+      'Jewellery, veils, capes, headpieces —these are the little details that bring the whole look together. Whether you’re making a statement or keeping things simple, the right piece should feel like an extension of you.',
   },
   [Service.BRIDAL_WEAR]: {
     title: 'New Zealand Wedding Dresses',
     description:
-      'Whether you’re after minimalist tailoring, vintage glamour, or something entirely off-script, Aotearoa’s bridal scene has the range. These bridalwear specialists know how to listen, offer honest direction, and guide you toward something that feels like you—comfortable, expressive, and right for the day you’re planning.',
+      'Whether you’re after minimalist tailoring, vintage glamour, or something entirely off-script, Aotearoa’s bridal scene has the range. These bridalwear specialists know how to listen, offer honest direction, and guide you toward something that feels like you —comfortable, expressive, and right for the day you’re planning.',
   },
   [Service.BRIDESMAIDS_WEAR]: {
     title: 'New Zealand Bridesmaid Dresses',
@@ -39,7 +39,7 @@ export const serviceDescriptions = {
   [Service.CATERER]: {
     title: 'New Zealand Wedding Caterers',
     description:
-      'Aotearoa’s food scene is a reflection of its rich, multicultural roots—grounded in the land, shaped by migration, and always evolving. From pāua fritters to biryani bowls, local caterers bring together flavours from across the globe with a distinct Kiwi ease. Expect menus built around local produce, relaxed service, and dishes that invite people to gather, share, and celebrate.',
+      'Aotearoa’s food scene is a reflection of its rich, multicultural roots —grounded in the land, shaped by migration, and always evolving. From pāua fritters to biryani bowls, local caterers bring together flavours from across the globe with a distinct Kiwi ease. Expect menus built around local produce, relaxed service, and dishes that invite people to gather, share, and celebrate.',
   },
   [Service.CELEBRANT]: {
     title: 'New Zealand Wedding Celebrants',
@@ -49,32 +49,32 @@ export const serviceDescriptions = {
   [Service.ENTERTAINMENT]: {
     title: 'New Zealand Wedding Entertainment Services',
     description:
-      'Looking for something a bit unexpected? From lawn games to live painting —entertainment goes beyond the dance floor. These suppliers can help you set the tone, break the ice, or just keep the fun rolling.',
+      'Looking for something a bit unexpected? From lawn games to live painting —entertainment goes beyond the dance floor. These suppliers can help you create a mood, break the ice, or just keep the fun rolling.',
   },
   [Service.FLORIST]: {
     title: 'New Zealand Wedding Florists',
     description:
-      'Kiwi florists have an incredible palette to work with. From delicate pōhutukawa to bold proteas, these creatives know how to work with what’s local and in season. They’ll help you create arrangements that feel organic, intentional, and true to the landscape you’re celebrating in.',
+      'Our local florists have an incredible palette to work with. From delicate pōhutukawa to bold proteas, these creatives know how to work with what’s local and in season. They’ll help you create arrangements that feel organic, intentional, and true to the landscape you’re celebrating in.',
   },
   [Service.HAIR]: {
     title: 'New Zealand Wedding Hair Stylists',
     description:
-      'Are you after a relaxed beach wave that’ll hold through a coastal ceremony or an elegant updo that can handle a dance floor? These stylists get it. They understand that your hair should work with you, not against you—and that the best style is one that lets you forget about it and enjoy your day.',
+      'Are you after a relaxed beach wave that’ll hold through a coastal ceremony or an elegant updo that can handle a dance floor? These stylists get it. They understand that your hair should work with you, not against you —and that the best style is one that lets you forget about it and enjoy your day.',
   },
   [Service.HIRE]: {
     title: 'New Zealand Wedding Hire Services',
     description:
-      'From vintage furniture to modern glassware, hire companies help you build your vision without the commitment. They’re the practical solution to creating that perfect atmosphere, whether you’re after rustic charm, minimalist elegance, or something entirely unexpected. Let them handle the heavy lifting—literally.',
+      'From vintage furniture to modern glassware, hire companies help you build your vision without the commitment. They’re the practical solution to creating that perfect atmosphere, whether you’re after rustic charm, minimalist elegance, or something entirely unexpected. Let them handle the heavy lifting —literally.',
   },
   [Service.MAKEUP]: {
     title: 'New Zealand Wedding Makeup Artists',
     description:
-      'Kiwi makeup artists understand that natural beauty isn’t about looking like you’re not wearing makeup—it’s about looking like the best version of you. They’ll work with your skin, your style, and the elements to create a look that’s camera-ready but still feels authentic. Think glowing skin, defined features, and staying power that lasts from first look to last dance.',
+      'Makeup artists understand that natural beauty isn’t about looking like you’re not wearing makeup —it’s about looking like the best version of you. They’ll work with your skin, your style, and the elements to create a look that’s camera-ready but still feels authentic. Think glowing skin, defined features, and staying power that lasts from first look to last dance.',
   },
   [Service.MC]: {
     title: 'New Zealand Professional Wedding MCs',
     description:
-      'A good MC knows when to speak up and when to get out of the way. These pros can wrangle a rowdy crowd, smooth out the transitions, and keep the night on track—without becoming the centre of attention themselves',
+      'A good MC knows when to speak up and when to get out of the way. These pros can wrangle a rowdy crowd, smooth out the transitions, and keep the night on track —without becoming the centre of attention themselves',
   },
   [Service.MENSWEAR]: {
     title: 'New Zealand Wedding Suits and Menswear',
@@ -109,7 +109,7 @@ export const serviceDescriptions = {
   [Service.STYLIST]: {
     title: 'New Zealand Wedding Stylists',
     description:
-      'Stylists don’t just make things look pretty—they create an atmosphere. They’ll think about lighting, textures, flow, and how it all ties together. Whether you’re going for refined or rustic, these creatives bring an editor’s eye and a practical mind.',
+      'Stylists don’t just make things look pretty —they create an atmosphere. They’ll think about lighting, textures, flow, and how it all ties together. Whether you’re going for refined or rustic, these creatives bring an editor’s eye and a practical mind.',
   },
   [Service.SUPPORT]: {
     title: 'New Zealand Wedding Support Services',
@@ -124,11 +124,11 @@ export const serviceDescriptions = {
   [Service.VENUE]: {
     title: 'New Zealand Wedding Venues',
     description:
-      'Kiwi weddings rarely stick to one mould, and these venues don’t either. From beachfront baches and vineyard barns to sleek city spots and high-country lodges, there’s a space here for every kind of celebration—big, small, traditional, or offbeat. Whether you’re after something laid-back or luxurious, what you’ll find is choice, character, and often, a view.',
+      'Kiwi weddings rarely stick to one mould, and these venues don’t either. From beachfront baches and vineyard barns to sleek city spots and high-country lodges, there’s a space here for every kind of celebration —big, small, traditional, or offbeat. Whether you’re after something laid-back or luxurious, what you’ll find is choice, character, and often, a view.',
   },
   [Service.VIDEOGRAPHER]: {
     title: 'New Zealand Wedding Videographers',
     description:
-      'Kiwi videographers and content creators bring a relaxed, cinematic approach to capturing your day. Whether it’s the heartfelt vows, the wild dance floor, or quiet moments in between, they’ll stitch together a story that reflects the real feel of your celebration. Many also offer short-form edits perfect for sharing with friends or posting on socials — so you can relive the magic and share it your way.',
+      'Videographers and content creators bring a relaxed, cinematic approach to capturing your day. Whether it’s the heartfelt vows, the wild dance floor, or quiet moments in between, they’ll stitch together a story that reflects the real feel of your celebration. Many also offer short-form edits perfect for sharing with friends or posting on socials — so you can relive the magic and share it your way.',
   },
 } as const
