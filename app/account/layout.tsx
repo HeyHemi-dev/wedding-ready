@@ -22,13 +22,13 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             description="Personalize your name, avatar, bio and social links."
             Icon={User}
           />
-          <AccountNavLink
+          {/* <AccountNavLink
             href="/account/account-settings"
             currentPathname={pathname}
             title="Account & Security"
             description="Update your email, password and user handle."
             Icon={Settings}
-          />
+          /> */}
           <AccountNavLink
             href="/account/manage-suppliers"
             currentPathname={pathname}
@@ -71,13 +71,14 @@ function AccountNavLink({
   description: string
   Icon: LucideIcon
 }) {
-  const isActive = currentPathname === href
+  console.log({ currentPathname, href })
+  const isActive = currentPathname.includes(href)
 
   return (
     <Link
       href={href}
       className={cn(
-        'gap-x-partner grid h-auto max-w-full grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-y-spouse rounded-area px-4 py-4 hover:bg-primary/80',
+        'grid h-auto max-w-full grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-x-partner gap-y-spouse rounded-area px-4 py-4 hover:bg-primary/80',
         isActive && 'bg-white'
       )}>
       <Icon className="row-span-2 self-start text-muted-foreground" size={20} strokeWidth={1.5} />
