@@ -1,6 +1,7 @@
 import { ArrowUpRight, InfoIcon } from 'lucide-react'
 import Link from 'next/link'
 
+
 export function SmtpMessage() {
   return (
     <div className="gap-partner flex rounded bg-secondary px-5 py-3">

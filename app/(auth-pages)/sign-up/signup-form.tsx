@@ -19,6 +19,7 @@ import { tryCatch , tryCatchFetch } from '@/utils/try-catch'
 
 import { signUpFormAction } from './signup-form-action'
 
+
 export default function SignUpForm() {
   const router = useRouter()
   const controller = useRef(new AbortController())

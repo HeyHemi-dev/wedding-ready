@@ -16,6 +16,7 @@ import { tryCatch } from '@/utils/try-catch'
 import { updateProfileFormAction } from './update-profile-form-action'
 import { userUpdateFormSchema, UserUpdateForm } from '../_types/validation-schema'
 
+
 export default function UpdateProfileForm({ defaultValues, className }: { defaultValues: UserUpdateForm; className?: string }) {
   const form = useForm<UserUpdateForm>({
     resolver: zodResolver(userUpdateFormSchema),

@@ -5,6 +5,7 @@ import { tileUploaderInputSchema } from '@/app/_types/validation-schema'
 import { TileModel } from '@/models/tile'
 import { getAuthUserId } from '@/utils/auth'
 
+
 const f = createUploadthing()
 
 export const uploadthingRouter = {

@@ -8,6 +8,7 @@ import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { cn } from '@/utils/shadcn-utils'
 
+
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 

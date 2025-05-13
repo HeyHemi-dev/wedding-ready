@@ -12,6 +12,7 @@ import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { UploadPreviewList } from './upload-preview'
 
+
 export type FileWithMetadata = {
   file: File
   fileObjectUrl: string

@@ -12,6 +12,7 @@ import { getAuthUserId } from '@/utils/auth'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { tryCatch } from '@/utils/try-catch'
 
+
 export default async function Login(props: { searchParams: Promise<Message> }) {
   // If user is already logged in, they don't need to be here.
   const authUserId = await getAuthUserId()

@@ -9,6 +9,7 @@ import * as schema from '@/db/schema'
 import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
 
+
 export default async function ManageSuppliers() {
   const authUserId = await getAuthUserId()
   if (!authUserId) {

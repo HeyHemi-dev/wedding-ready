@@ -2,6 +2,7 @@ import React from 'react'
 
 import { cn } from '@/utils/shadcn-utils'
 
+
 export function MasonryLoader() {
   const items = [
     { id: 1, ratio: 'aspect-[2/3]' },

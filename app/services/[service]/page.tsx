@@ -7,6 +7,8 @@ import { Service } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
 import { serviceDescriptions } from '@/public/service-descriptions'
 import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
+
+
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
   const serviceKey = paramToEnumKey((await params).service, Service)
   const service = Service[serviceKey]

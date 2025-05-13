@@ -5,6 +5,7 @@ import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/
 import { getAuthUserIdFromSupabase } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
+
 export async function registrationFormAction({ data }: { data: SupplierRegistrationForm }): Promise<{ handle: string }> {
   const { success, error, data: validatedData } = supplierRegistrationFormSchema.safeParse(data)
   if (!success || error) {

@@ -7,6 +7,7 @@ import { SupplierRaw, User } from '@/models/types'
 import { FileWithMetadata } from './upload-dropzone'
 import { UploadPreviewForm } from './upload-preview-form'
 
+
 export function UploadPreviewList({
   files,
   supplier,

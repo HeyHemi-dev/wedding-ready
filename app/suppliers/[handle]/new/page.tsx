@@ -8,6 +8,7 @@ import { SupplierModel } from '@/models/supplier'
 
 import { UploadDropzone } from './upload-dropzone'
 
+
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const supplier = await SupplierModel.getByHandle(handle)
