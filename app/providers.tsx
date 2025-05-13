@@ -7,6 +7,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider } from 'next-themes'
 
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
+
+
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {

@@ -1,5 +1,6 @@
 import { ThemeSwitcher } from '../theme-switcher'
 
+
 export default function Footer() {
   return (
     <footer className="grid grid-cols-siteLayout pb-sitePadding">

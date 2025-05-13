@@ -6,6 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tile } from '@/models/types'
 
 import { SaveTileButton } from './save-button'
+
+
 export function TileList({ tiles, authUserId }: { tiles: Tile[]; authUserId?: string }) {
   return (
     <>
@@ -64,9 +66,11 @@ export function noTiles({ message, cta }: noTilesProps) {
     <div className="flex h-full flex-col items-center justify-center gap-4">
       <p className="text-muted-foreground">{message}</p>
       {cta && cta.show && (
-        <Link href={cta.redirect} passHref>
-          <Button variant={'outline'}>{cta.text}</Button>
-        </Link>
+        <Button variant={'default'} asChild>
+          <Link href={cta.redirect} passHref>
+            {cta.text}
+          </Link>
+        </Button>
       )}
     </div>
   )

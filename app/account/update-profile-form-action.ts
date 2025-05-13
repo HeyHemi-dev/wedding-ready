@@ -9,6 +9,7 @@ import { tryCatch } from '@/utils/try-catch'
 
 import { userActions } from '../_actions/user-actions'
 
+
 export async function updateProfileFormAction({ data }: { data: UserUpdateForm }): Promise<UserUpdateForm> {
   const { success, error: parseError, data: validatedData } = userUpdateFormSchema.safeParse(data)
   if (!success || parseError) {

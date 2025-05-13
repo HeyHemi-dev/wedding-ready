@@ -4,6 +4,7 @@ import { UserDetailModel } from '@/models/user'
 import { ErrorResponse } from '@/utils/api-helpers'
 import { tryCatch } from '@/utils/try-catch'
 
+
 export type HandleGetResponseBody = {
   isAvailable: boolean
 }

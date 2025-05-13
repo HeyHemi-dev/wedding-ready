@@ -8,6 +8,7 @@ import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-sc
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
+
 export async function signUpFormAction({ data }: { data: UserSignupForm }): Promise<{ handle: string }> {
   const { success, error: parseError, data: validatedData } = userSignupFormSchema.safeParse(data)
   if (!success || parseError) {

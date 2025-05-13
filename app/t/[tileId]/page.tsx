@@ -1,5 +1,4 @@
 import { QueryClient } from '@tanstack/react-query'
-import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -7,12 +6,12 @@ import { notFound } from 'next/navigation'
 import { tileKeys } from '@/app/_hooks/queryKeys'
 import { SaveTileButton } from '@/components/tiles/save-button'
 import { Area } from '@/components/ui/area'
-import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
-import { Separator } from '@/components/ui/separator'
 import { TileModel } from '@/models/tile'
 import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
+import { formatRelativeDate } from '@/utils/format-date'
+
 
 export default async function TilePage({ params }: { params: Promise<{ tileId: string }> }) {
   const { tileId } = await params
@@ -30,41 +29,53 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
 
   return (
     <Section className="min-h-svh-minus-header">
-      <Area className="grid grid-cols-1 gap-md md:grid-cols-2">
-        <div className="relative bg-muted">
+      <div className="grid grid-cols-1 gap-area md:grid-cols-2">
+        <Area className="relative overflow-clip rounded-area p-contour">
           <Image src={tile.imagePath} alt={tile.title ?? ''} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain" />
-
           {authUserId && <SaveTileButton tileId={tile.id} authUserId={authUserId} className="absolute right-0 top-0 p-2" />}
-        </div>
-        <div className="grid grid-rows-[auto_1fr_auto] gap-md">
-          <div className="flex flex-col gap-xs">
-            <h1 className="font-serif text-4xl">{tile.title}</h1>
-            {tile.location && <p className="text-sm text-muted-foreground">{valueToPretty(tile.location as string)}</p>}
-            {tile.description && <p className="text-sm text-muted-foreground">{tile.description}</p>}
+        </Area>
+        <Area className="grid grid-rows-[auto_1fr_auto] gap-acquaintance bg-transparent">
+          <div className="flex flex-col gap-sibling">
+            <div className="ui-small flex flex-row gap-partner text-muted-foreground">
+              <span>{formatRelativeDate(tile.createdAt)}</span>
+              <span>•</span>
+              {tile.location && <span>{valueToPretty(tile.location as string)}</span>}
+            </div>
+            <h1 className="heading-lg">{tile.title ?? 'Untitled'}</h1>
+            {tile.description && <p className="text-muted-foreground">{tile.description}</p>}
           </div>
-          <div className="flex flex-col gap-sm">
-            <Separator />
-            <h3 className="text-lg font-semibold">Featured Suppliers</h3>
+          <div className="flex flex-col gap-sibling">
+            <div className="flex items-center justify-between gap-friend">
+              <h2 className="ui-s1">Supplier credits</h2>
+              {/* <Button variant={'ghost'} size="sm" className="flex items-center gap-spouse">
+                <Plus className="h-4 w-4" />
+                <span>Add supplier</span>
+              </Button> */}
+            </div>
             {tile.suppliers.map((supplier) => (
-              <div key={supplier.id} className="flex flex-row items-center justify-between">
-                <div>{supplier.name}</div>
-                <Link href={`/suppliers/${supplier.handle}`} className="text-sm text-muted-foreground">
-                  <Button variant={'ghost'} size="sm" className="flex items-center gap-xxs">
-                    <span>{supplier.handle}</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
+              <SupplierCredit key={supplier.id} name={supplier.name} contribution={'Contribution description'} href={`/suppliers/${supplier.handle}`} />
             ))}
-            <Button variant={'outline'}>Add Supplier</Button>
           </div>
-          <div className="flex flex-row-reverse">
+          {/* <div className="flex flex-row-reverse">
             <Button variant={'link'} size="sm">
               Report
             </Button>
-          </div>
-        </div>
-      </Area>
+          </div> */}
+        </Area>
+      </div>
     </Section>
+  )
+}
+
+function SupplierCredit({ name, contribution, href }: { name: string; contribution: string; href: string }) {
+  return (
+    <div className="flex flex-row items-center justify-between gap-sibling">
+      <div className="flex gap-partner">
+        <Link href={href} passHref>
+          <h3 className="ui-small-s1">{name}</h3>
+        </Link>
+        <span className="ui-small text-muted-foreground">{contribution}</span>
+      </div>
+    </div>
   )
 }

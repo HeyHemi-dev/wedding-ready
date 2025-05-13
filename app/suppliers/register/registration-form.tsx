@@ -23,6 +23,7 @@ import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 
 import { registrationFormAction } from './registration-form-action'
 
+
 export default function RegistrationForm({ createdByUserId }: { createdByUserId: string }) {
   const router = useRouter()
   const controller = useRef(new AbortController())

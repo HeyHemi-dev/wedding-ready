@@ -4,6 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/utils/shadcn-utils'
 
+
 const badgeVariants = cva(
   'inline-flex items-center border px-sm py-xs text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded',
   {

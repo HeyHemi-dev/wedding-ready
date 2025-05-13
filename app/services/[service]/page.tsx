@@ -5,7 +5,9 @@ import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { Service } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
+import { serviceDescriptions } from '@/public/service-descriptions'
 import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
+
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
   const serviceKey = paramToEnumKey((await params).service, Service)
@@ -18,30 +20,35 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
   const suppliers = await SupplierModel.getAll({ service })
 
   return (
-    <Section>
-      <Area>
-        <div className="flex flex-col gap-md">
-          <div className="flex flex-col gap-xs">
-            <h1 className="font-serif text-4xl">{valueToPretty(service)}</h1>
+    <Section className="min-h-svh-minus-header pt-0">
+      <div className="grid grid-rows-[auto_1fr] gap-area">
+        <Area className="bg-transparent">
+          <div className="flex max-w-prose flex-col gap-partner">
+            <h1 className="heading-xl">{serviceDescriptions[service].title}</h1>
+            <p className="text-muted-foreground">{serviceDescriptions[service].description}</p>
           </div>
-          <SuppliersGrid>
-            {suppliers.map((supplier) => (
-              <SupplierCard
-                key={supplier.id}
-                href={`/suppliers/${supplier.handle}`}
-                mainImage={'https://images.unsplash.com/photo-1606216794074-735e91aa2c92'}
-                thumbnailImages={[
-                  'https://images.unsplash.com/photo-1649615644622-6d83f48e69c5',
-                  'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb',
-                ]}
-                name={supplier.name}
-                subtitle={supplier.locations.map((location) => valueToPretty(location)).join(', ')}
-                stat={150}
-              />
-            ))}
-          </SuppliersGrid>
-        </div>
-      </Area>
+        </Area>
+        <Area>
+          <div className="flex flex-col gap-acquaintance">
+            <SuppliersGrid>
+              {suppliers.map((supplier) => (
+                <SupplierCard
+                  key={supplier.id}
+                  href={`/suppliers/${supplier.handle}`}
+                  mainImage={'https://images.unsplash.com/photo-1606216794074-735e91aa2c92'}
+                  thumbnailImages={[
+                    'https://images.unsplash.com/photo-1649615644622-6d83f48e69c5',
+                    'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb',
+                  ]}
+                  name={supplier.name}
+                  subtitle={supplier.locations.map((location) => valueToPretty(location)).join(', ')}
+                  stat={150}
+                />
+              ))}
+            </SuppliersGrid>
+          </div>
+        </Area>
+      </div>
     </Section>
   )
 }

@@ -5,6 +5,7 @@ import { getAuthUserId } from '@/utils/auth'
 
 import RegistrationForm from './registration-form'
 
+
 export default async function SupplierRegisterPage() {
   const authUserId = await getAuthUserId()
 

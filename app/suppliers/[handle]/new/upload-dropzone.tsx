@@ -12,6 +12,7 @@ import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { UploadPreviewList } from './upload-preview'
 
+
 export type FileWithMetadata = {
   file: File
   fileObjectUrl: string
@@ -74,7 +75,7 @@ function Dropzone({
   return (
     <div
       {...getRootProps()}
-      className="flex min-h-[25svh] cursor-pointer flex-col items-center justify-center gap-md rounded-lg border-2 border-dashed p-16 hover:bg-muted/50">
+      className="flex min-h-[25svh] cursor-pointer flex-col items-center justify-center gap-md rounded-area border-2 border-dashed border-secondary p-16 hover:bg-secondary/50">
       <input {...getInputProps()} />
       <div className="text-center">
         <p className="">Drag and drop images here</p>

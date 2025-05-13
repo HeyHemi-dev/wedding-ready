@@ -7,6 +7,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/utils/shadcn-utils'
 
+
 const labelVariants = cva('text-xs text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70')
 
 const Label = React.forwardRef<

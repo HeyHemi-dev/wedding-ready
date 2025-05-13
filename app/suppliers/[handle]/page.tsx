@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
+import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
@@ -14,6 +15,7 @@ import { Supplier } from '@/models/types'
 import { valueToPretty } from '@/utils/enum-helpers'
 
 import { SupplierTiles } from './supplier-tiles'
+
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -48,20 +50,20 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
                 </Link>
               )}
             </div>
-            <SupplierHeader supplier={supplier} />{' '}
+            <SupplierHeader supplier={supplier} />
           </div>
         </Area>
         {isSupplierUser && (
-          <div className="grid place-items-center rounded-full bg-secondary p-xxs">
+          <ActionBar className="col-span-full">
             <div className="flex place-self-end">
               <Link href={`/suppliers/${handle}/new`}>
-                <Button variant={'secondary'} className="gap-xs">
+                <Button variant={'secondary'} className="gap-spouse">
                   <SquarePlusIcon className="h-4 w-4" />
                   Create Tiles
                 </Button>
               </Link>
             </div>
-          </div>
+          </ActionBar>
         )}
 
         <ErrorBoundary
@@ -80,7 +82,7 @@ function SupplierHeader({ supplier }: { supplier: Supplier }) {
   return (
     <>
       <div className="left-column grid place-content-start gap-spouse">
-        <div className="flex items-end gap-sibling">
+        <div className="gap-partner flex items-end">
           <div className="avatar flex h-16 w-16 items-center justify-center rounded-full bg-white text-4xl font-light uppercase">
             {supplier.name.slice(0, 1)}
           </div>
@@ -91,7 +93,7 @@ function SupplierHeader({ supplier }: { supplier: Supplier }) {
       <div className="right-column grid gap-friend">
         <div className="grid gap-spouse">
           <h2 className="ui-small-s2">Services Offered</h2>
-          <div className="col-span-full flex flex-wrap gap-sibling">
+          <div className="gap-partner col-span-full flex flex-wrap">
             {supplier.services.map((service) => (
               <Badge key={service}>{valueToPretty(service)}</Badge>
             ))}
@@ -99,7 +101,7 @@ function SupplierHeader({ supplier }: { supplier: Supplier }) {
         </div>
         <div className="grid gap-spouse">
           <h2 className="ui-small-s2">Areas Served</h2>
-          <div className="col-span-full flex flex-wrap gap-sibling">
+          <div className="gap-partner col-span-full flex flex-wrap">
             {supplier.locations.map((location) => (
               <Badge key={location}>{valueToPretty(location)}</Badge>
             ))}

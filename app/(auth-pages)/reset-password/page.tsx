@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { tryCatch } from '@/utils/try-catch'
 
+
 export default async function ResetPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
   return (

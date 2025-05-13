@@ -8,6 +8,7 @@ import { Section } from '@/components/ui/section'
 
 import { StackingCardsContainer, StackingCardContent } from './stacking-cards'
 
+
 const cards: StackingCardContent[] = [
   {
     title: 'Explore inspiration that fits your wedding.',
