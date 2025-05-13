@@ -16,7 +16,6 @@ import { valueToPretty } from '@/utils/enum-helpers'
 
 import { SupplierTiles } from './supplier-tiles'
 
-
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const supplier = await SupplierModel.getByHandle(handle)
@@ -31,19 +30,18 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
 
   return (
     <>
-      <Section>
+      <Section className="min-h-svh-minus-header pt-0">
         <Area>
           <div className="supplier-header">
             <div className="top-row flex items-center gap-friend">
-              <p className="text-muted-foreground">{`@${supplier.handle}`}</p>
-              <Button disabled={!user} className="gap-xs">
+              <Button disabled={!user} className="gap-spouse">
                 <StarIcon className="h-4 w-4" />
-                Follow
+                {`Follow @${supplier.handle}`}
               </Button>
 
               {supplier.websiteUrl && (
                 <Link href={supplier.websiteUrl} target="_blank">
-                  <Button variant={'outline'} className="gap-xs">
+                  <Button variant={'outline'} className="gap-spouse">
                     <ExternalLinkIcon className="h-4 w-4" />
                     Visit Website
                   </Button>
@@ -82,18 +80,13 @@ function SupplierHeader({ supplier }: { supplier: Supplier }) {
   return (
     <>
       <div className="left-column grid place-content-start gap-spouse">
-        <div className="gap-partner flex items-end">
-          <div className="avatar flex h-16 w-16 items-center justify-center rounded-full bg-white text-4xl font-light uppercase">
-            {supplier.name.slice(0, 1)}
-          </div>
-          <h1 className="heading-lg">{supplier.name}</h1>
-        </div>
+        <h1 className="heading-lg">{supplier.name}</h1>
         {supplier.description && <p className="prose">{supplier.description}</p>}
       </div>
       <div className="right-column grid gap-friend">
         <div className="grid gap-spouse">
           <h2 className="ui-small-s2">Services Offered</h2>
-          <div className="gap-partner col-span-full flex flex-wrap">
+          <div className="col-span-full flex flex-wrap gap-partner">
             {supplier.services.map((service) => (
               <Badge key={service}>{valueToPretty(service)}</Badge>
             ))}
@@ -101,7 +94,7 @@ function SupplierHeader({ supplier }: { supplier: Supplier }) {
         </div>
         <div className="grid gap-spouse">
           <h2 className="ui-small-s2">Areas Served</h2>
-          <div className="gap-partner col-span-full flex flex-wrap">
+          <div className="col-span-full flex flex-wrap gap-partner">
             {supplier.locations.map((location) => (
               <Badge key={location}>{valueToPretty(location)}</Badge>
             ))}
