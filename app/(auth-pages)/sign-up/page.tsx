@@ -7,7 +7,6 @@ import { getAuthUserId } from '@/utils/auth'
 import { SmtpMessage } from '../smtp-message'
 import SignUpForm from './signup-form'
 
-
 export default async function Signup(props: { searchParams: Promise<Message> }) {
   // If user is already logged in, they don't need to be here.
   const authUserId = await getAuthUserId()
@@ -27,18 +26,17 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
 
   return (
     <>
-      <div className="grid gap-xxs">
-        <h1 className="text-2xl font-medium">Sign up</h1>
-        <p className="text text-sm text-foreground">
+      <div className="grid gap-spouse">
+        <h1 className="heading-md">Sign up</h1>
+        <p className="ui-small">
           Already have an account?{' '}
-          <Link className="font-medium text-primary-foreground underline" href="/sign-in">
-            Sign in
+          <Link className="ui-small-s1 text-primary-foreground underline" href="/sign-in">
+            Log in
           </Link>
         </p>
       </div>
       <SignUpForm />
       <FormMessage message={searchParams} />
-      <SmtpMessage />
     </>
   )
 }

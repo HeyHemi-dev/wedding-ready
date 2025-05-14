@@ -8,23 +8,24 @@ import { Input } from '@/components/ui/input'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { tryCatch } from '@/utils/try-catch'
 
-
 export default async function ResetPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
   return (
     <>
-      <div className="grid gap-xxs">
-        <h1 className="text-2xl font-medium">Reset password</h1>
-        <p className="text-sm text-foreground/60">Please enter your new password below.</p>
+      <div className="grid gap-spouse">
+        <h1 className="heading-md">Reset password</h1>
+        <p className="ui-small">Please enter your new password below.</p>
       </div>
-      <form action={resetPasswordFormAction} className="grid gap-sm">
-        <Field label="New password" htmlFor="password">
-          <Input type="password" name="password" placeholder="New password" required />
-        </Field>
-        <Field label="Confirm password" htmlFor="confirmPassword">
-          <Input type="password" name="confirmPassword" placeholder="Confirm password" required />
-        </Field>
-        <SubmitButton>Reset password</SubmitButton>
+      <form action={resetPasswordFormAction} className="grid gap-close-friend">
+        <div className="grid gap-sibling">
+          <Field label="New password" htmlFor="password">
+            <Input type="password" name="password" placeholder="New password" required />
+          </Field>
+          <Field label="Confirm password" htmlFor="confirmPassword">
+            <Input type="password" name="confirmPassword" placeholder="Confirm password" required />
+          </Field>
+        </div>
+        <SubmitButton>Reset Password</SubmitButton>
         <FormMessage message={searchParams} />
       </form>
     </>

@@ -10,30 +10,26 @@ import { Input } from '@/components/ui/input'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { tryCatch } from '@/utils/try-catch'
 
-import { SmtpMessage } from '../smtp-message'
-
-
 export default async function ForgotPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
   return (
     <>
-      <div className="grid gap-xxs">
-        <h1 className="text-2xl font-medium">Reset Password</h1>
-        <p className="text-sm text-secondary-foreground">
+      <div className="grid gap-spouse">
+        <h1 className="heading-md">Reset password</h1>
+        <p className="ui-small">
           Already have an account?{' '}
-          <Link className="text-primary underline" href="/sign-in">
+          <Link className="ui-small-s1 text-primary-foreground underline" href="/sign-in">
             Sign in
           </Link>
         </p>
       </div>
-      <form action={forgotPasswordFormAction} className="grid gap-sm">
+      <form action={forgotPasswordFormAction} className="grid gap-close-friend">
         <Field label="Email" htmlFor="email">
           <Input name="email" placeholder="you@example.com" required />
         </Field>
         <SubmitButton>Reset Password</SubmitButton>
         <FormMessage message={searchParams} />
       </form>
-      <SmtpMessage />
     </>
   )
 }
