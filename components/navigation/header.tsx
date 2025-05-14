@@ -1,12 +1,8 @@
+import { CreditCardIcon, MoreVerticalIcon, UserCircleIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
-
-import { Button } from '../ui/button'
-
-import { CreditCardIcon, MoreVerticalIcon, UserCircleIcon } from 'lucide-react'
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -19,6 +15,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { MenuSignOutForm } from './signout-form'
+import { Button } from '../ui/button'
+
 
 export default async function Header() {
   const user = await getCurrentUser()

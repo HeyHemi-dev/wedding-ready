@@ -16,6 +16,7 @@ import { valueToPretty } from '@/utils/enum-helpers'
 
 import { SupplierTiles } from './supplier-tiles'
 
+
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
   const supplier = await SupplierModel.getByHandle(handle)

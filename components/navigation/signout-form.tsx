@@ -1,15 +1,17 @@
 'use client'
 
 import { LogOutIcon } from 'lucide-react'
-
-import { SignOutFormAction } from './signout-form-action'
+import { usePathname, useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
-import { useForm } from 'react-hook-form'
 import { Form } from '@/components/ui/form'
 import { tryCatch } from '@/utils/try-catch'
-import { usePathname, useRouter } from 'next/navigation'
+
+import { SignOutFormAction } from './signout-form-action'
+
+
 
 export function MenuSignOutForm() {
   const pathname = usePathname()
