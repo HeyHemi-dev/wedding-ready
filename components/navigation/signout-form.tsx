@@ -5,7 +5,6 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { Form } from '@/components/ui/form'
 import { tryCatch } from '@/utils/try-catch'
 

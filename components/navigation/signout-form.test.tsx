@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { usePathname, useRouter } from 'next/navigation'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { toast } from 'sonner'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 import { SignOutForm } from './signout-form'
 import { SignOutFormAction } from './signout-form-action'

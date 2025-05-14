@@ -1,8 +1,9 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest'
 
 import { authActions } from '@/app/_actions/auth-actions'
-import { SignOutFormAction } from './signout-form-action'
 import { isProtectedPath } from '@/utils/auth'
+
+import { SignOutFormAction } from './signout-form-action'
 
 // Mock dependencies
 vi.mock('@/app/_actions/auth-actions', () => ({

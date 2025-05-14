@@ -4,6 +4,7 @@ import Link from 'next/link'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +16,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { SignOutForm } from './signout-form'
-import { Button } from '@/components/ui/button'
 
 export default async function Header() {
   const user = await getCurrentUser()
