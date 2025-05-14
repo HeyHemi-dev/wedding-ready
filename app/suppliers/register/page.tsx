@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation'
 
+import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { getAuthUserId } from '@/utils/auth'
 
 import RegistrationForm from './registration-form'
-import { Area } from '@/components/ui/area'
 
 export default async function SupplierRegisterPage() {
   const authUserId = await getAuthUserId()

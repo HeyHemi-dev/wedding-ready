@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation'
 import { FormMessage, Message } from '@/components/form/form-message'
 import { getAuthUserId } from '@/utils/auth'
 
-import { SmtpMessage } from '../smtp-message'
 import SignUpForm from './signup-form'
 
 export default async function Signup(props: { searchParams: Promise<Message> }) {

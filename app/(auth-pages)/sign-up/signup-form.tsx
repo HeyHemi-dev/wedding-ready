@@ -15,10 +15,10 @@ import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { encodedRedirect } from '@/utils/encoded-redirect'
 import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 
 import { signUpFormAction } from './signup-form-action'
-import { encodedRedirect } from '@/utils/encoded-redirect'
 
 export default function SignUpForm() {
   const router = useRouter()
@@ -74,8 +74,10 @@ export default function SignUpForm() {
       return encodedRedirect('error', '/sign-up', error.message)
     }
 
-    toast.success('Thanks for signing up! Please check your email for a verification link.')
-    router.push(`/sign-up/confirmation`)
+    if (user) {
+      toast.success('Thanks for signing up! Please check your email for a verification link.')
+      router.push(`/sign-up/confirmation`)
+    }
   }
 
   return (
