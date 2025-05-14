@@ -7,7 +7,6 @@ import { Tile } from '@/models/types'
 
 import { SaveTileButton } from './save-button'
 
-
 export function TileList({ tiles, authUserId }: { tiles: Tile[]; authUserId?: string }) {
   return (
     <>
@@ -22,17 +21,17 @@ export function TileList({ tiles, authUserId }: { tiles: Tile[]; authUserId?: st
 
 export function TileListItem({ tile, authUserId }: { tile: Tile; authUserId?: string }) {
   return (
-    <div className="grid grid-rows-[auto_1fr] gap-xs">
+    <div className="grid grid-rows-[auto_1fr] gap-partner">
       <div className="relative">
-        <Link href={`/t/${tile.id}`} className="relative block aspect-[2/3] overflow-hidden rounded-lg bg-muted">
+        <Link href={`/t/${tile.id}`} className="relative block aspect-[2/3] overflow-hidden rounded-area bg-muted">
           <Image src={tile.imagePath} alt={tile.title ?? ''} fill sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw" className="object-contain" />
         </Link>
-        {authUserId && <SaveTileButton tileId={tile.id} authUserId={authUserId} className="absolute right-0 top-0 p-2" />}
+        {authUserId && (
+          <SaveTileButton tileId={tile.id} authUserId={authUserId} className="pointer-events-none absolute inset-0 flex items-start justify-end p-contour" />
+        )}
       </div>
-      <div className="flex flex-col gap-1">
-        <p className="text-sm font-semibold">{tile.title}</p>
-        {tile.description && <p className="text-xs text-muted-foreground">{tile.description}</p>}
-      </div>
+
+      <p className="ui-small-s1 px-4">{tile.title}</p>
     </div>
   )
 }

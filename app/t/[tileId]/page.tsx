@@ -12,7 +12,6 @@ import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
 import { formatRelativeDate } from '@/utils/format-date'
 
-
 export default async function TilePage({ params }: { params: Promise<{ tileId: string }> }) {
   const { tileId } = await params
   const authUserId = await getAuthUserId()
@@ -28,11 +27,11 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
   }
 
   return (
-    <Section className="min-h-svh-minus-header">
+    <Section className="min-h-svh-minus-header pt-0">
       <div className="grid grid-cols-1 gap-area md:grid-cols-2">
-        <Area className="relative overflow-clip rounded-area p-contour">
+        <Area className="relative overflow-clip rounded-area">
           <Image src={tile.imagePath} alt={tile.title ?? ''} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain" />
-          {authUserId && <SaveTileButton tileId={tile.id} authUserId={authUserId} className="absolute right-0 top-0 p-2" />}
+          {authUserId && <SaveTileButton tileId={tile.id} authUserId={authUserId} className="absolute inset-0 flex items-start justify-end p-contour" />}
         </Area>
         <Area className="grid grid-rows-[auto_1fr_auto] gap-acquaintance bg-transparent">
           <div className="flex flex-col gap-sibling">
