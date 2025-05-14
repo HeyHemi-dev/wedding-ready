@@ -89,6 +89,7 @@
   body {
     @apply bg-background text-foreground;
     scrollbar-gutter: stable;
+    overflow-y: scroll;
   }
 }
 
@@ -123,20 +124,29 @@
 }
 
 @layer utilities {
+  .heading-2xl {
+    font-family: serif;
+    font-size: 4rem;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
   .heading-xl {
     font-family: serif;
     font-size: 3rem;
     line-height: 1.1;
+    text-wrap: balance;
   }
   .heading-lg {
     font-family: serif;
     font-size: 2.5rem;
     line-height: 1.1;
+    text-wrap: balance;
   }
   .heading-md {
     font-family: serif;
     font-size: 2rem;
     line-height: 1.1;
+    text-wrap: balance;
   }
   .ui {
     font-size: 1rem;

@@ -1,19 +1,25 @@
-import { revalidateTag } from 'next/cache'
-import { headers } from 'next/headers'
+import { CreditCardIcon, MoreVerticalIcon, UserCircleIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { toast } from 'sonner'
 
-import { authActions } from '@/app/_actions/auth-actions'
 import { getCurrentUser } from '@/app/_actions/get-current-user'
-import { isProtectedPath } from '@/utils/auth'
-import { tryCatch } from '@/utils/try-catch'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
-import { Button } from '../ui/button'
+import { SignOutForm } from './signout-form'
 
+export default async function Header() {
+  const user = await getCurrentUser()
 
-export default function Header() {
   return (
     <header className="grid grid-cols-siteLayout">
       <div className="col-start-2 col-end-3 grid h-header grid-cols-[auto_1fr_auto] items-center gap-friend">
@@ -24,7 +30,22 @@ export default function Header() {
           <NavLink link={{ href: '/find-suppliers', label: 'Find Suppliers' }} />
           {/* <NavLink link={{ href: '/articles', label: 'Advice' }} /> */}
         </nav>
-        <HeaderAuth />
+        {user ? (
+          <UserMenu user={{ name: user.displayName, handle: user.handle, avatar: user.avatarUrl ?? '' }} />
+        ) : (
+          <div className="flex gap-sibling">
+            <Button size="sm" variant={'ghost'} asChild>
+              <Link href="/sign-in" data-testid="sign-in">
+                Log in
+              </Link>
+            </Button>
+            <Button size="sm" variant={'default'} asChild>
+              <Link href="/sign-up" data-testid="sign-up">
+                Sign up
+              </Link>
+            </Button>
+          </div>
+        )}
       </div>
     </header>
   )
@@ -43,55 +64,57 @@ function NavLink({ link }: { link: LinkType }) {
   )
 }
 
-async function HeaderAuth() {
-  const user = await getCurrentUser()
+function UserMenu({
+  user,
+}: {
+  user: {
+    name: string
+    handle: string
+    avatar: string
+  }
+}) {
+  const avatarFallback = user.handle.slice(0, 2).toUpperCase()
 
-  return user ? (
-    <div className="flex items-center gap-sm">
-      <Link href={`/u/${user.handle}`} passHref>
-        <Button variant={'ghost'} asChild>
-          <div className="flex flex-col items-end gap-0">
-            <div className="text-sm font-normal">Hello, {user.handle}</div>
-            <div className="text-xs font-normal text-muted-foreground">view your profile</div>
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex items-center gap-partner rounded-full bg-area p-contour pr-2 hover:bg-primary/80" data-testid="user-menu-trigger">
+        <Avatar className="h-8 w-8 rounded-full">
+          <AvatarImage src={user.avatar} alt={user.name} />
+          <AvatarFallback className="ui-small rounded-full bg-muted">{avatarFallback}</AvatarFallback>
+        </Avatar>
+        <MoreVerticalIcon className="ml-auto size-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded" align="end" sideOffset={4}>
+        <DropdownMenuLabel className="p-0 font-normal">
+          <div className="flex items-center gap-partner px-1 py-1.5">
+            <Avatar className="h-8 w-8 rounded-full">
+              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarFallback className="ui-small rounded-full bg-muted">{avatarFallback}</AvatarFallback>
+            </Avatar>
+            <div className="grid leading-tight">
+              <span className="ui-small-s1 truncate">{user.name}</span>
+              <span className="ui-small truncate text-muted-foreground">{`@${user.handle}`}</span>
+            </div>
           </div>
-        </Button>
-      </Link>
-      <form action={SignOutFormAction}>
-        <Button type="submit" variant={'outline'}>
-          Sign out
-        </Button>
-      </form>
-    </div>
-  ) : (
-    <div className="flex gap-sm">
-      <Button asChild size="sm" variant={'outline'}>
-        <Link href="/sign-in">Sign in</Link>
-      </Button>
-      <Button asChild size="sm" variant={'default'}>
-        <Link href="/sign-up">Sign up</Link>
-      </Button>
-    </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem className="ui" asChild>
+            <Link href={`/u/${user.handle}`}>
+              <UserCircleIcon />
+              Profile
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="ui" asChild>
+            <Link href={`/account`}>
+              <CreditCardIcon />
+              Account
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <SignOutForm />
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
-}
-
-async function SignOutFormAction() {
-  'use server'
-  const headersList = await headers()
-  const userId = headersList.get('x-auth-user-id')
-  const referer = headersList.get('referer') || '/'
-  const url = new URL(referer)
-
-  const { error } = await tryCatch(authActions.signOut())
-
-  if (error) {
-    toast.error('Failed to sign out')
-    return
-  }
-
-  if (userId) {
-    revalidateTag(`user-${userId}`)
-  }
-
-  const redirectTo = isProtectedPath(url.pathname) ? '/sign-in' : referer
-  return redirect(redirectTo)
 }

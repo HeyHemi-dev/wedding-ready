@@ -28,7 +28,7 @@
       }
     ],
     // Ensure newline after all imports
-    "import/newline-after-import": ["error", { "count": 2 }],
+    "import/newline-after-import": ["error", { "count": 1 }],
     // Prevent duplicate imports
     "import/no-duplicates": "error",
     // Ensure consistent use of file extension

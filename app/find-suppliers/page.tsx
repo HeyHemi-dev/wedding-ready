@@ -9,48 +9,49 @@ import { enumKeyToParam, enumToPretty } from '@/utils/enum-helpers'
 export default function FindSuppliers() {
   return (
     <>
-      <Section className="min-h-svh-minus-header">
-        <h1 className="font-serif text-4xl">Find Suppliers</h1>
-        <Area>
-          <div className="flex flex-col gap-md">
-            <div className="flex flex-col gap-xs">
-              <h2 className="font-semibold">Explore suppliers by location</h2>
-            </div>
-            <ul className="columns-3 gap-md">
-              {enumToPretty(Location).map((location) => {
-                const locationParam = enumKeyToParam(location.key)
+      <Section className="min-h-svh-minus-header pt-0">
+        <div className="grid gap-area">
+          <Area className="bg-transparent">
+            <h1 className="heading-xl">Find Suppliers</h1>
+          </Area>
+          <Area>
+            <div className="grid gap-friend">
+              <h2 className="ui-s1">Explore suppliers by location</h2>
+              <ul className="columns-3 gap-acquaintance">
+                {enumToPretty(Location).map((location) => {
+                  const locationParam = enumKeyToParam(location.key)
 
-                return (
-                  <li key={location.key} className="py-xs">
-                    <h2 className="text-lg">
-                      <Link href={`/locations/${locationParam}`}>{location.label}</Link>
-                    </h2>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        </Area>
-        <Area>
-          <div className="flex flex-col gap-md">
-            <div className="flex flex-col gap-xs">
-              <h2 className="font-semibold">Explore suppliers by service category</h2>
+                  return (
+                    <li key={location.key} className="py-xs">
+                      <Link href={`/locations/${locationParam}`} className="inline-flex items-baseline gap-spouse">
+                        <h3 className="text-lg">{location.label}</h3>
+                        <span className="ui-small text-muted-foreground">{`(?)`}</span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
             </div>
-            <ul className="columns-3 gap-md">
-              {enumToPretty(Service).map((service) => {
-                const serviceParam = enumKeyToParam(service.key)
+          </Area>
+          <Area>
+            <div className="grid gap-friend">
+              <h2 className="ui-s1">Explore suppliers by service category</h2>
+              <ul className="columns-3 gap-acquaintance">
+                {enumToPretty(Service).map((service) => {
+                  const serviceParam = enumKeyToParam(service.key)
 
-                return (
-                  <li key={service.key} className="py-xs">
-                    <h2 className="text-lg">
-                      <Link href={`/services/${serviceParam}`}>{service.label}</Link>
-                    </h2>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        </Area>
+                  return (
+                    <li key={service.key} className="py-xs">
+                      <Link href={`/services/${serviceParam}`} className="inline-flex items-baseline gap-spouse">
+                        <h3 className="text-lg">{service.label}</h3> <span className="ui-small text-muted-foreground">{`(?)`}</span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          </Area>
+        </div>
       </Section>
     </>
   )

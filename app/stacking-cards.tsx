@@ -46,6 +46,7 @@ function StackingCard({ title, description, cta, index, arrayLength, scrollProgr
   // adjust for each card as we go down the list.
   const scaleFinal = 1 - 0.05 * (arrayLength - index - 1)
   const opacityFinal = 0.3 * (arrayLength - index - 1)
+  const cardOffset = 24 * index
 
   // start transformations only once the next card is in view.
   const range = [0, index * (1 / arrayLength), 1]
@@ -54,24 +55,25 @@ function StackingCard({ title, description, cta, index, arrayLength, scrollProgr
   const opacity = useTransform(scrollProgress, range, [0, 0, opacityFinal])
 
   return (
-    <div className="sticky top-0 h-svh" style={{ paddingTop: index * 24 }}>
+    <div className="sticky top-0 h-svh" style={{ paddingTop: cardOffset }}>
       <Section className="h-full">
         <motion.div className="grid" style={{ scale, transformOrigin: 'top' }}>
-          <Area className="grid place-items-center">
-            <div className="flex flex-col items-center gap-md">
-              <div className="flex max-w-[60ch] flex-col items-center gap-md text-center">
-                <h2 className="text-balance font-serif text-6xl">{title}</h2>
+          <Area className="grid place-content-center">
+            <div className="flex max-w-[60ch] flex-col gap-acquaintance text-center">
+              <div className="flex flex-col gap-sibling">
+                <h2 className="heading-2xl">{title}</h2>
                 <p className="text-pretty text-xl">{description}</p>
               </div>
-              <div className="flex gap-xs pt-md">
-                <Link href={cta.href} className="flex items-center gap-xs" passHref>
-                  <Button size="lg">
+              <div>
+                <Button size="lg" asChild>
+                  <Link href={cta.href} className="flex items-center gap-spouse">
                     <span>{cta.text}</span>
                     <ArrowRight />
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </div>
             </div>
+
             <motion.div className="pointer-events-none absolute inset-0 bg-background" style={{ opacity }} />
           </Area>
         </motion.div>

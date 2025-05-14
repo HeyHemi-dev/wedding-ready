@@ -27,5 +27,5 @@ export function UserTiles({ user, authUserId }: { user: t.User; authUserId?: str
     })
   }
 
-  return <TileList tiles={tiles} authUserId={user?.id} />
+  return <TileList tiles={tiles} authUserId={authUserId} />
 }
