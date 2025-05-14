@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CheckCircle, XCircle , LoaderCircle } from 'lucide-react'
+import { CheckCircle, XCircle, LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -15,10 +15,10 @@ import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { tryCatch , tryCatchFetch } from '@/utils/try-catch'
+import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 
 import { signUpFormAction } from './signup-form-action'
-
+import { encodedRedirect } from '@/utils/encoded-redirect'
 
 export default function SignUpForm() {
   const router = useRouter()
@@ -65,87 +65,87 @@ export default function SignUpForm() {
   async function onSubmit(data: UserSignupForm) {
     if (handleStatus !== status.Available) {
       toast.error('Handle is already taken')
-      return
+      return encodedRedirect('error', '/sign-up', 'Handle is already taken')
     }
+
     const { data: user, error } = await tryCatch(signUpFormAction({ data }))
     if (error) {
       toast.error(error.message)
+      return encodedRedirect('error', '/sign-up', error.message)
     }
-    if (user) {
-      toast.success('Thanks for signing up! Please check your email for a verification link.')
-      router.push(`/sign-up/confirmation`)
-    }
+
+    toast.success('Thanks for signing up! Please check your email for a verification link.')
+    router.push(`/sign-up/confirmation`)
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-sm">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormFieldItem label="Email">
-              <FormControl>
-                <Input {...field} placeholder="you@example.com" type="email" required />
-              </FormControl>
-            </FormFieldItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-close-friend">
+        <div className="grid gap-sibling">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormFieldItem label="Email">
+                <FormControl>
+                  <Input {...field} placeholder="you@example.com" type="email" required />
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormFieldItem label="Password">
+                <FormControl>
+                  <Input {...field} placeholder="Your password" type="password" required />
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="displayName"
+            render={({ field }) => (
+              <FormFieldItem label="Display name" hint="Your name as it appears on your profile. You can change this later.">
+                <FormControl>
+                  <Input {...field} placeholder="Your name" />
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="handle"
+            render={({ field }) => (
+              <FormFieldItem label="Handle">
+                <FormControl>
+                  <div className="flex flex-row items-center gap-xs">
+                    <Input
+                      {...field}
+                      placeholder="your-handle"
+                      onBlur={async (e) => {
+                        field.onBlur()
+                        const isValid = await form.trigger('handle')
+                        if (!isValid) {
+                          setHandleStatus(status.Undefined)
+                          return
+                        }
+                        await fetchHandleAvailability(e.target.value)
+                      }}
+                    />
+                    {handleStatus === status.Pending && <LoaderCircle className="h-6 w-6 animate-spin" />}
+                    {handleStatus === status.Available && <CheckCircle className="h-6 w-6 text-green-500" />}
+                    {handleStatus === status.Taken && <XCircle className="h-6 w-6 text-red-500" />}
+                  </div>
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+        </div>
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormFieldItem label="Password">
-              <FormControl>
-                <Input {...field} placeholder="Your password" type="password" required />
-              </FormControl>
-            </FormFieldItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="displayName"
-          render={({ field }) => (
-            <FormFieldItem label="Display name" hint="Your name as it appears on your profile. You can change this later.">
-              <FormControl>
-                <Input {...field} placeholder="Your name" />
-              </FormControl>
-            </FormFieldItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="handle"
-          render={({ field }) => (
-            <FormFieldItem label="Handle">
-              <FormControl>
-                <div className="flex flex-row items-center gap-xs">
-                  <Input
-                    {...field}
-                    placeholder="your-handle"
-                    onBlur={async (e) => {
-                      field.onBlur()
-                      const isValid = await form.trigger('handle')
-                      if (!isValid) {
-                        setHandleStatus(status.Undefined)
-                        return
-                      }
-                      await fetchHandleAvailability(e.target.value)
-                    }}
-                  />
-                  {handleStatus === status.Pending && <LoaderCircle className="h-6 w-6 animate-spin" />}
-                  {handleStatus === status.Available && <CheckCircle className="h-6 w-6 text-green-500" />}
-                  {handleStatus === status.Taken && <XCircle className="h-6 w-6 text-red-500" />}
-                </div>
-              </FormControl>
-            </FormFieldItem>
-          )}
-        />
-
-        <SubmitButton pendingChildren={'Signing up...'}>Sign up</SubmitButton>
+        <SubmitButton pendingChildren={'Signing Up...'}>Sign Up</SubmitButton>
       </form>
     </Form>
   )
