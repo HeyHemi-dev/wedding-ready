@@ -5,7 +5,7 @@ import { Info } from 'lucide-react'
 import { FormDescription, FormLabel, FormMessage, FormItem } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-
+import { cn } from '@/utils/shadcn-utils'
 
 type FieldProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
   VariantProps<typeof Label> & {
@@ -37,9 +37,9 @@ export default function Field({ label, children, hint, ...labelProps }: FieldPro
   )
 }
 
-export function FormFieldItem({ children, label, hint, ...labelProps }: FieldProps) {
+export function FormFieldItem({ children, label, hint, className, ...labelProps }: FieldProps) {
   return (
-    <FormItem className="flex flex-col gap-xs">
+    <FormItem className={cn('flex flex-col gap-partner', className)}>
       <FormLabel {...labelProps}>{label}</FormLabel>
       {children}
       {hint && <FormDescription>{hint}</FormDescription>}
