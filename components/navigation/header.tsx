@@ -14,9 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { MenuSignOutForm } from './signout-form'
-import { Button } from '../ui/button'
-
+import { SignOutForm } from './signout-form'
+import { Button } from '@/components/ui/button'
 
 export default async function Header() {
   const user = await getCurrentUser()
@@ -36,10 +35,14 @@ export default async function Header() {
         ) : (
           <div className="flex gap-sibling">
             <Button size="sm" variant={'ghost'} asChild>
-              <Link href="/sign-in">Log in</Link>
+              <Link href="/sign-in" data-testid="sign-in">
+                Log in
+              </Link>
             </Button>
             <Button size="sm" variant={'default'} asChild>
-              <Link href="/sign-up">Sign up</Link>
+              <Link href="/sign-up" data-testid="sign-up">
+                Sign up
+              </Link>
             </Button>
           </div>
         )}
@@ -74,7 +77,7 @@ function UserMenu({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-partner rounded-full bg-area p-contour pr-2 hover:bg-primary/80">
+      <DropdownMenuTrigger className="flex items-center gap-partner rounded-full bg-area p-contour pr-2 hover:bg-primary/80" data-testid="user-menu-trigger">
         <Avatar className="h-8 w-8 rounded-full">
           <AvatarImage src={user.avatar} alt={user.name} />
           <AvatarFallback className="ui-small rounded-full bg-muted">{avatarFallback}</AvatarFallback>
@@ -110,7 +113,7 @@ function UserMenu({
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <MenuSignOutForm />
+        <SignOutForm />
       </DropdownMenuContent>
     </DropdownMenu>
   )
