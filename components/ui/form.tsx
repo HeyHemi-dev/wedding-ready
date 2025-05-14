@@ -9,7 +9,6 @@ import { Controller, FormProvider, useFormContext, type ControllerProps, type Fi
 import { Label } from '@/components/ui/label'
 import { cn } from '@/utils/shadcn-utils'
 
-
 const Form = FormProvider
 
 type FormFieldContextValue<TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> = {
@@ -95,7 +94,7 @@ FormControl.displayName = 'FormControl'
 const FormDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(({ className, ...props }, ref) => {
   const { formDescriptionId } = useFormField()
 
-  return <p ref={ref} id={formDescriptionId} className={cn('text-sm text-muted-foreground', className)} {...props} />
+  return <p ref={ref} id={formDescriptionId} className={cn('ui-small text-muted-foreground', className)} {...props} />
 })
 FormDescription.displayName = 'FormDescription'
 
@@ -108,7 +107,7 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
   }
 
   return (
-    <p ref={ref} id={formMessageId} className={cn('text-sm font-medium text-destructive', className)} {...props}>
+    <p ref={ref} id={formMessageId} className={cn('ui-small-s1 text-destructive', className)} {...props}>
       {body}
     </p>
   )
