@@ -11,9 +11,7 @@ import { tryCatch } from '@/utils/try-catch'
 
 import { SignOutFormAction } from './signout-form-action'
 
-
-
-export function MenuSignOutForm() {
+export function SignOutForm() {
   const pathname = usePathname()
   const router = useRouter()
   const form = useForm({})
@@ -33,13 +31,14 @@ export function MenuSignOutForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <DropdownMenuItem className="ui" asChild>
-          <button type="submit" className="w-full">
-            <LogOutIcon />
-            Sign out
-          </button>
-        </DropdownMenuItem>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="">
+        <button
+          type="submit"
+          data-testid="sign-out"
+          className="ui relative flex w-full cursor-default select-none items-center gap-2 rounded-inside px-2 py-1.5 outline-none transition-colors hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
+          <LogOutIcon />
+          Sign out
+        </button>
       </form>
     </Form>
   )
