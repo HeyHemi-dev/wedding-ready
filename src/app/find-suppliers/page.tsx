@@ -2,9 +2,8 @@ import Link from 'next/link'
 
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { Location, Service } from '@/db/constants'
+import { Location, Service } from '@/src/db/constants'
 import { enumKeyToParam, enumToPretty } from '@/utils/enum-helpers'
-
 
 export default function FindSuppliers() {
   return (

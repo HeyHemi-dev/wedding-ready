@@ -1,4 +1,4 @@
-import { Service } from '@/db/constants'
+import { Service } from '@/src/db/constants'
 
 export const serviceDescriptions = {
   [Service.ACCOMODATION]: {

@@ -17,7 +17,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Location, Service } from '@/db/constants'
+import { Location, Service } from '@/src/db/constants'
 import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
 import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 

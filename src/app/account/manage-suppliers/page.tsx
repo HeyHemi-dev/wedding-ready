@@ -4,11 +4,10 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-import { db } from '@/db/db'
-import * as schema from '@/db/schema'
+import { db } from '@/src/db/db'
+import * as schema from '@/src/db/schema'
 import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
-
 
 export default async function ManageSuppliers() {
   const authUserId = await getAuthUserId()
@@ -24,7 +23,7 @@ export default async function ManageSuppliers() {
 
   return (
     <div className="grid gap-acquaintance">
-      <div className="gap-partner grid">
+      <div className="grid gap-partner">
         <h1 className="heading-lg">My Suppliers</h1>
         <p className="ui-small text-muted-foreground">View and manage your supplier accounts.</p>
       </div>

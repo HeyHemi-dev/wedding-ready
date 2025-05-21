@@ -3,11 +3,10 @@ import { notFound } from 'next/navigation'
 import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { Service } from '@/db/constants'
+import { Service } from '@/src/db/constants'
 import { SupplierModel } from '@/models/supplier'
 import { serviceDescriptions } from '@/public/service-descriptions'
 import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
-
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
   const serviceKey = paramToEnumKey((await params).service, Service)
