@@ -2,7 +2,7 @@ import { UserUpdateForm } from '@/app/_types/validation-schema'
 import { SetUserDetailRaw, User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 
-export const userActions = {
+export const userOperations = {
   updateProfile,
 }
 

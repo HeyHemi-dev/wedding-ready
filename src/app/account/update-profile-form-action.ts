@@ -7,7 +7,7 @@ import { getAuthUserIdFromSupabase } from '@/utils/auth'
 import { nullishToEmptyString } from '@/utils/empty-strings'
 import { tryCatch } from '@/utils/try-catch'
 
-import { userActions } from '@/operations/user-actions'
+import { userOperations } from '@/operations/user-operations'
 
 export async function updateProfileFormAction({ data }: { data: UserUpdateForm }): Promise<UserUpdateForm> {
   const { success, error: parseError, data: validatedData } = userUpdateFormSchema.safeParse(data)
@@ -20,7 +20,7 @@ export async function updateProfileFormAction({ data }: { data: UserUpdateForm }
     throw new Error('Unauthorized')
   }
 
-  const { data: user, error: updateError } = await tryCatch(userActions.updateProfile(validatedData))
+  const { data: user, error: updateError } = await tryCatch(userOperations.updateProfile(validatedData))
 
   if (updateError) {
     throw new Error(updateError?.message || 'Failed to update profile')
