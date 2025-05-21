@@ -54,6 +54,7 @@ export type StackTileRaw = InferSelectModel<typeof schema.stackTiles>
 export type InsertStackTileRaw = InferInsertModel<typeof schema.stackTiles>
 export type SetStackTileRaw = Partial<Omit<InsertStackTileRaw, 'stackId' | 'tileId'>>
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface User extends UserDetailRaw {}
 
 export function makeUser(userDetail: UserDetailRaw): User {

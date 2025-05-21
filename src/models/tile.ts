@@ -304,6 +304,7 @@ async function getSavedTilesRaw(tiles: t.TileRaw[] | t.Tile[], userId: string): 
  * @returns A safe update object with the updatedAt field set to the current date
  */
 function tileUpdateSafe(tile: t.TileRaw | t.Tile): t.SetTileRaw {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id, createdAt, createdByUserId, updatedAt, isPrivate, ...rest } = tile
   return {
     ...rest,
