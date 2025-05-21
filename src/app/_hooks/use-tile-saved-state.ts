@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { SaveTilePostRequestBody, SaveTilePostResponseBody } from '@/src/app/api/users/[id]/tiles/[tileId]/route'
+import { SaveTilePostRequestBody, SaveTilePostResponseBody } from '@/app/api/users/[id]/tiles/[tileId]/route'
 import * as t from '@/models/types'
 import { tryCatchFetch } from '@/utils/try-catch'
 

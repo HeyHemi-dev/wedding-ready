@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
-import { getCurrentUser } from '@/src/app/_actions/get-current-user'
+import { getCurrentUser } from '@/app/_actions/get-current-user'
 import * as t from '@/models/types'
 
 import Header from './header'

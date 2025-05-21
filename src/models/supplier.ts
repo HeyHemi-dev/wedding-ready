@@ -1,8 +1,8 @@
 import { and, eq } from 'drizzle-orm'
 
-import { Service, SupplierRole, Location } from '@/src/db/constants'
-import { db } from '@/src/db/db'
-import * as schema from '@/src/db/schema'
+import { Service, SupplierRole, Location } from '@/db/constants'
+import { db } from '@/db/db'
+import * as schema from '@/db/schema'
 import {
   InsertSupplierRaw,
   InsertSupplierUserRaw,

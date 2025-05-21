@@ -2,7 +2,7 @@
 
 import { revalidateTag } from 'next/cache'
 
-import { UserUpdateForm, userUpdateFormSchema } from '@/src/app/_types/validation-schema'
+import { UserUpdateForm, userUpdateFormSchema } from '@/app/_types/validation-schema'
 import { getAuthUserIdFromSupabase } from '@/utils/auth'
 import { nullishToEmptyString } from '@/utils/empty-strings'
 import { tryCatch } from '@/utils/try-catch'

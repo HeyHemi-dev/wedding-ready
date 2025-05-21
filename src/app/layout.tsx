@@ -6,8 +6,7 @@ import { Toaster } from '@/components/ui/sonner'
 
 import { Providers } from './providers'
 
-import '@/public/styles/globals.css'
-
+import '@/styles/globals.css'
 
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
 

@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 
-import { useCreateTile } from '@/src/app/_hooks/use-create-tile'
+import { useCreateTile } from '@/app/_hooks/use-create-tile'
 import Field from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Location } from '@/src/db/constants'
+import { Location } from '@/db/constants'
 import { InsertTileRaw, SupplierRaw, User } from '@/models/types'
 import { enumToPretty } from '@/utils/enum-helpers'
 

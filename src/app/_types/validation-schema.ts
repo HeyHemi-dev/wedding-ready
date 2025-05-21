@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { Location, Service } from '@/src/db/constants'
+import { Location, Service } from '@/db/constants'
 import { SetUserDetailRaw } from '@/models/types'
 
 export const tileUploaderInputSchema = z.object({

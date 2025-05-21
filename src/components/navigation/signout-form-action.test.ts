@@ -1,6 +1,6 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest'
 
-import { authActions } from '@/src/app/_actions/auth-actions'
+import { authActions } from '@/app/_actions/auth-actions'
 import { isProtectedPath } from '@/utils/auth'
 
 import { SignOutFormAction } from './signout-form-action'

@@ -2,7 +2,7 @@ import { SquarePenIcon } from 'lucide-react'
 import Link from 'next/link'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { getCurrentUser } from '@/src/app/_actions/get-current-user'
+import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'

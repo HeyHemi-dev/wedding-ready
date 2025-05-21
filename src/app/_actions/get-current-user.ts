@@ -7,7 +7,6 @@ import { UserDetailModel } from '@/models/user'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
-
 const USER_CACHE_DURATION = 60 * 15 // time in seconds
 
 enum UserFetchErrorCode {

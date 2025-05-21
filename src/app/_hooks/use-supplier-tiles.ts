@@ -2,8 +2,8 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { tileKeys } from '@/src/app/_hooks/queryKeys'
-import { SupplierTilesGetRequestParams, SupplierTilesGetResponseBody } from '@/src/app/api/suppliers/[id]/tiles/route'
+import { tileKeys } from '@/app/_hooks/queryKeys'
+import { SupplierTilesGetRequestParams, SupplierTilesGetResponseBody } from '@/app/api/suppliers/[id]/tiles/route'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'

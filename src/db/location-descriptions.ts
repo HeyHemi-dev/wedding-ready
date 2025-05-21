@@ -1,4 +1,4 @@
-import { Location } from '@/src/db/constants'
+import { Location } from '@/db/constants'
 
 export const locationDescriptions = {
   [Location.NORTHLAND]: {

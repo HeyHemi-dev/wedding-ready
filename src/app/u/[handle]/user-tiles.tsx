@@ -1,6 +1,6 @@
 'use client'
 
-import { useUserTiles } from '@/src/app/_hooks/use-user-tiles'
+import { useUserTiles } from '@/app/_hooks/use-user-tiles'
 import { noTiles, TileList, TileListSkeleton } from '@/components/tiles/tile-list'
 import * as t from '@/models/types'
 

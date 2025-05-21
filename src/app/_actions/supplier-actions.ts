@@ -1,4 +1,4 @@
-import { SupplierRegistrationForm } from '@/src/app/_types/validation-schema'
+import { SupplierRegistrationForm } from '@/app/_types/validation-schema'
 import { SupplierModel } from '@/models/supplier'
 import { InsertSupplierRaw, SupplierWithUsers } from '@/models/types'
 import { UserDetailModel } from '@/models/user'

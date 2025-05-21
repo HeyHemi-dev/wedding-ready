@@ -1,6 +1,6 @@
 import { revalidateTag } from 'next/cache'
 
-import { authActions } from '@/src/app/_actions/auth-actions'
+import { authActions } from '@/app/_actions/auth-actions'
 import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
 import { SubmitButton } from '@/components/submit-button'

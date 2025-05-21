@@ -2,7 +2,7 @@ import { ArrowLeftIcon } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { getCurrentUser } from '@/src/app/_actions/get-current-user'
+import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { Section } from '@/components/ui/section'
 import { SupplierModel } from '@/models/supplier'
 

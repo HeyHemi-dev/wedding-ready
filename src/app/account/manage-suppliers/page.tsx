@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-import { db } from '@/src/db/db'
-import * as schema from '@/src/db/schema'
+import { db } from '@/db/db'
+import * as schema from '@/db/schema'
 import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
 

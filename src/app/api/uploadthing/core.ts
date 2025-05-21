@@ -1,7 +1,7 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
 
-import { tileUploaderInputSchema } from '@/src/app/_types/validation-schema'
+import { tileUploaderInputSchema } from '@/app/_types/validation-schema'
 import { TileModel } from '@/models/tile'
 import { getAuthUserId } from '@/utils/auth'
 

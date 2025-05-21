@@ -1,4 +1,4 @@
-import { UserUpdateForm } from '@/src/app/_types/validation-schema'
+import { UserUpdateForm } from '@/app/_types/validation-schema'
 import { SetUserDetailRaw, User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 

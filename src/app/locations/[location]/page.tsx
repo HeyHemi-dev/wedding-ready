@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation'
 import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { Location } from '@/src/db/constants'
+import { Location } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
-import { locationDescriptions } from '@/public/location-descriptions'
+import { locationDescriptions } from '@/db/location-descriptions'
 import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {

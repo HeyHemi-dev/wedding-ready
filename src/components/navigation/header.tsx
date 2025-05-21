@@ -2,7 +2,7 @@ import { CreditCardIcon, MoreVerticalIcon, UserCircleIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { getCurrentUser } from '@/src/app/_actions/get-current-user'
+import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {

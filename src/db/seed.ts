@@ -1,4 +1,4 @@
-import { tileActions } from '@/src/app/_actions/tile-actions'
+import { tileActions } from '@/app/_actions/tile-actions'
 
 import { Location, Service } from './constants'
 import { client as dbClient } from './db'

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-import { getCurrentUser } from '@/src/app/_actions/get-current-user'
+import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { nullishToEmptyString } from '@/utils/empty-strings'
 
 import UpdateProfileForm from './update-profile-form'
