@@ -1,13 +1,14 @@
-import { tileOperations } from '@/operations/tile-operations'
 
-import { Location, Service } from './constants'
-import { client as dbClient } from './connection'
-import seedImages from './seedimages.json' assert { type: 'json' }
 import { authActions } from '@/app/_actions/auth-actions'
-import { supplierOperations } from '@/operations/supplier-operations'
 import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
 import * as t from '@/models/types'
+import { supplierOperations } from '@/operations/supplier-operations'
+import { tileOperations } from '@/operations/tile-operations'
 import { createAdminClient } from '@/utils/supabase/server'
+
+import { client as dbClient } from './connection'
+import { Location, Service } from './constants'
+import seedImages from './seedimages.json' assert { type: 'json' }
 
 async function seedDatabase() {
   console.log('seeding database...')

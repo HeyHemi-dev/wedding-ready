@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm'
 
-import { Service, SupplierRole, Location } from '@/db/constants'
 import { db } from '@/db/connection'
+import { Service, SupplierRole, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
 import {
   InsertSupplierRaw,
