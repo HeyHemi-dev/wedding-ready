@@ -5,11 +5,11 @@ type StringEnum = { [key: string]: string }
 
 /**
  * Converts an enum to a PostgreSQL enum array
- * @param myEnum - The enum to convert
- * @returns A tuple of enum values as strings
+ * @param enumObject - The enum to convert
+ * @returns A tuple of enum values preserving the enum type
  */
-export function enumToPgEnum<T extends StringEnum>(myEnum: T): [string, ...string[]] {
-  return Object.values(myEnum) as [string, ...string[]]
+export function enumToPgEnum<T extends StringEnum>(enumObject: T): [T[keyof T], ...T[keyof T][]] {
+  return Object.values(enumObject) as [T[keyof T], ...T[keyof T][]]
 }
 
 interface PrettyEnum {
