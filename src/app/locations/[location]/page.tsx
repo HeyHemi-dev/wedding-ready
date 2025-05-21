@@ -6,11 +6,10 @@ import { Section } from '@/components/ui/section'
 import { Location } from '@/db/constants'
 import { locationDescriptions } from '@/db/location-descriptions'
 import { SupplierModel } from '@/models/supplier'
-import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
+import { paramToEnum, valueToPretty } from '@/utils/enum-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
-  const locationKey = paramToEnumKey((await params).location, Location)
-  const location = Location[locationKey]
+  const location = paramToEnum(Location, (await params).location)
 
   if (!location) {
     notFound()

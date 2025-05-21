@@ -6,11 +6,10 @@ import { Section } from '@/components/ui/section'
 import { Service } from '@/db/constants'
 import { serviceDescriptions } from '@/db/service-descriptions'
 import { SupplierModel } from '@/models/supplier'
-import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
+import { paramToEnum, valueToPretty } from '@/utils/enum-helpers'
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
-  const serviceKey = paramToEnumKey((await params).service, Service)
-  const service = Service[serviceKey]
+  const service = paramToEnum(Service, (await params).service)
 
   if (!service) {
     notFound()

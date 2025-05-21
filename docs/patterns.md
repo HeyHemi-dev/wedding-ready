@@ -27,7 +27,7 @@
 ### Enum Handling
 
 - Use `enum-helpers.ts` utilities for consistent enum handling
-- Convert between URL parameters and enum values using `paramToEnumKey`
+- Convert between URL parameters and enum values using `paramToEnum`
 - Format enum values for display using `valueToPretty`
 
 ### Forms

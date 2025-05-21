@@ -1,5 +1,15 @@
-export function enumToPgEnum<T extends Record<string, any>>(myEnum: T): [T[keyof T], ...T[keyof T][]] {
-  return Object.values(myEnum).map((value: any) => `${value}`) as any
+/**
+ * Type for our string-based enums
+ */
+type StringEnum = { [key: string]: string }
+
+/**
+ * Converts an enum to a PostgreSQL enum array
+ * @param myEnum - The enum to convert
+ * @returns A tuple of enum values as strings
+ */
+export function enumToPgEnum<T extends StringEnum>(myEnum: T): [string, ...string[]] {
+  return Object.values(myEnum) as [string, ...string[]]
 }
 
 interface PrettyEnum {
@@ -23,15 +33,18 @@ export function valueToPretty(value: string): string {
  * value (enum value),
  * label (prettified value)
  */
-export function enumToPretty<T extends { [key: string]: string }>(enumObject: T): PrettyEnum[] {
-  return Object.values(enumObject).map((value, index) => ({
-    key: Object.keys(enumObject)[index],
+export function enumToPretty<T extends StringEnum>(enumObject: T): PrettyEnum[] {
+  return Object.entries(enumObject).map(([key, value]) => ({
+    key,
     value,
     label: valueToPretty(value),
   }))
 }
 
-export function keyToEnum<T extends Record<string, string>>(enumObject: T, key: string): T[keyof T] {
+/**
+ * Gets the enum value for a given key
+ */
+export function keyToEnum<T extends StringEnum>(enumObject: T, key: string): T[keyof T] {
   return enumObject[key as keyof T]
 }
 
@@ -44,18 +57,18 @@ export function enumKeyToParam(key: string): string {
 }
 
 /**
- * Converts a URL parameter back to an enum key
+ * Converts a URL parameter back to enum key formatting
  * @example bay-of-plenty -> BAY_OF_PLENTY
  */
-export function paramToEnumKey<T extends { [K in string]: string }>(param: string, enumObject: T): keyof T {
-  return param.replace(/-/g, '_').toUpperCase() as keyof T
+function paramToEnumKeyFormat(param: string) {
+  return param.replace(/-/g, '_').toUpperCase()
 }
 
 /**
- * Converts a URL parameter back to an enum
+ * Converts a URL parameter back to an enum value
  * @example bay-of-plenty -> Location.BAY_OF_PLENTY
  */
-export function paramToEnum<T extends { [K in string]: string }>(enumObject: T, param: string): T[keyof T] {
-  const key = param.replace(/-/g, '_').toUpperCase()
+export function paramToEnum<T extends StringEnum>(enumObject: T, param: string): T[keyof T] {
+  const key = paramToEnumKeyFormat(param)
   return enumObject[key as keyof T]
 }
