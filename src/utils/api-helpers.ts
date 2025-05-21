@@ -26,7 +26,7 @@ export const buildQueryParams = <T extends Record<string, string | undefined>>(p
  * @param schema - The Zod schema to validate the query parameters against.
  * @returns The parsed query parameters.
  */
-export const parseQueryParams = <T extends ZodObject<any>>(url: URL, schema: T): z.infer<T> => {
+export const parseQueryParams = <T extends ZodObject<Record<string, z.ZodType>>>(url: URL, schema: T): z.infer<T> => {
   const raw: Record<string, string | undefined> = {}
 
   for (const key of Object.keys(schema.shape)) {
