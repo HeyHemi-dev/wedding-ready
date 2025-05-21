@@ -4,8 +4,8 @@ import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-li
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { Service } from '@/db/constants'
-import { SupplierModel } from '@/models/supplier'
 import { serviceDescriptions } from '@/db/service-descriptions'
+import { SupplierModel } from '@/models/supplier'
 import { paramToEnumKey, valueToPretty } from '@/utils/enum-helpers'
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {

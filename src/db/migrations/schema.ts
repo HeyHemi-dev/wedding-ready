@@ -1,6 +1,6 @@
-import { sql } from 'drizzle-orm'
 import { pgTable, foreignKey, unique, uuid, text, timestamp, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
 import { authUsers as users } from 'drizzle-orm/supabase'
+
 export const usersInAuth = users
 
 export const locations = pgEnum('locations', [
