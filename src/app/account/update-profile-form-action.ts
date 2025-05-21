@@ -7,7 +7,7 @@ import { getAuthUserIdFromSupabase } from '@/utils/auth'
 import { nullishToEmptyString } from '@/utils/empty-strings'
 import { tryCatch } from '@/utils/try-catch'
 
-import { userActions } from '../_actions/user-actions'
+import { userActions } from '@/operations/user-actions'
 
 export async function updateProfileFormAction({ data }: { data: UserUpdateForm }): Promise<UserUpdateForm> {
   const { success, error: parseError, data: validatedData } = userUpdateFormSchema.safeParse(data)
