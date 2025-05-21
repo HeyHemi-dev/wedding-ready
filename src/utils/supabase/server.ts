@@ -28,6 +28,7 @@ export const createClient = async () => {
           // The `set` method was called from a Server Component.
           // This can be ignored if you have middleware refreshing
           // user sessions.
+          console.error(error)
         }
       },
     },
@@ -47,7 +48,6 @@ export const createClient = async () => {
  * and only for admin operations like user management
  */
 export const createAdminClient = () => {
-  
   return createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
     auth: {
       autoRefreshToken: false,
