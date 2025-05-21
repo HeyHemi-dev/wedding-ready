@@ -1,6 +1,6 @@
 'use server'
 
-import { supplierActions } from '@/operations/supplier-actions'
+import { supplierOperations } from '@/operations/supplier-operations'
 import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/_types/validation-schema'
 import { getAuthUserIdFromSupabase } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
@@ -16,7 +16,7 @@ export async function registrationFormAction({ data }: { data: SupplierRegistrat
     throw new Error('Unauthorized')
   }
 
-  const { data: supplier, error: supplierError } = await tryCatch(supplierActions.register(validatedData))
+  const { data: supplier, error: supplierError } = await tryCatch(supplierOperations.register(validatedData))
 
   if (supplierError || !supplier) {
     throw new Error(supplierError?.message || 'Failed to register supplier')

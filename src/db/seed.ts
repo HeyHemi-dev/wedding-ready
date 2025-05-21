@@ -4,7 +4,7 @@ import { Location, Service } from './constants'
 import { client as dbClient } from './connection'
 import seedImages from './seedimages.json' assert { type: 'json' }
 import { authActions } from '@/app/_actions/auth-actions'
-import { supplierActions } from '@/operations/supplier-actions'
+import { supplierOperations } from '@/operations/supplier-operations'
 import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
 import * as t from '@/models/types'
 import { createAdminClient } from '@/utils/supabase/server'
@@ -35,7 +35,7 @@ async function seedDatabase() {
     createdByUserId: user.id,
   }
   // also sets the user as an admin for the supplier
-  const supplier = await supplierActions.register(SUPPLIER)
+  const supplier = await supplierOperations.register(SUPPLIER)
   console.log('supplier created')
 
   // Create some tiles
