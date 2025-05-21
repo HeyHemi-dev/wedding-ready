@@ -1,5 +1,5 @@
 import { Section } from '@/components/ui/section'
-import { db } from '@/db/db'
+import { db } from '@/db/connection'
 import * as schema from '@/db/schema'
 
 export default async function Page() {

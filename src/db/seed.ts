@@ -1,7 +1,7 @@
 import { tileActions } from '@/app/_actions/tile-actions'
 
 import { Location, Service } from './constants'
-import { client as dbClient } from './db'
+import { client as dbClient } from './connection'
 import seedImages from './seedimages.json' assert { type: 'json' }
 import { authActions } from '../app/_actions/auth-actions'
 import { supplierActions } from '../app/_actions/supplier-actions'

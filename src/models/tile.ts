@@ -1,6 +1,6 @@
 import { eq, and, inArray, isNotNull, desc } from 'drizzle-orm'
 
-import { db } from '@/db/db'
+import { db } from '@/db/connection'
 import * as s from '@/db/schema'
 import { tryCatch } from '@/utils/try-catch'
 
