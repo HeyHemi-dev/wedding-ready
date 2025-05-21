@@ -1,4 +1,4 @@
-import { tileActions } from '@/operations/tile-actions'
+import { tileOperations } from '@/operations/tile-operations'
 
 import { Location, Service } from './constants'
 import { client as dbClient } from './connection'
@@ -57,7 +57,7 @@ async function seedDatabase() {
         imagePath: image.url,
         location: Location.WELLINGTON,
       }
-      return await tileActions.createForSupplier({ InsertTileRawData: tileRawData, supplierIds: [supplier.id] })
+      return await tileOperations.createForSupplier({ InsertTileRawData: tileRawData, supplierIds: [supplier.id] })
     })
   )
   console.log('tiles created')

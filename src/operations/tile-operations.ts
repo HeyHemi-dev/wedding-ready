@@ -2,8 +2,7 @@ import { SupplierModel } from '@/models/supplier'
 import { TileModel } from '@/models/tile'
 import * as t from '@/models/types'
 
-
-export const tileActions = {
+export const tileOperations = {
   createForSupplier,
 }
 
