@@ -1,10 +1,10 @@
-import { tileActions } from '@/app/_actions/tile-actions'
+import { tileActions } from '@/src/app/_actions/tile-actions'
 
 import { Location, Service } from './constants'
 import { client as dbClient } from './db'
-import { authActions } from '../app/_actions/auth-actions'
-import { supplierActions } from '../app/_actions/supplier-actions'
-import { SupplierRegistrationForm, UserSignupForm } from '../app/_types/validation-schema'
+import { authActions } from '../src/app/_actions/auth-actions'
+import { supplierActions } from '../src/app/_actions/supplier-actions'
+import { SupplierRegistrationForm, UserSignupForm } from '../src/app/_types/validation-schema'
 import * as t from '../models/types'
 import { createAdminClient } from '../utils/supabase/server'
 import seedImages from './seedimages.json' assert { type: 'json' }
