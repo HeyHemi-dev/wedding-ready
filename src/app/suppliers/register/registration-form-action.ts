@@ -1,6 +1,6 @@
 'use server'
 
-import { supplierActions } from '@/app/_actions/supplier-actions'
+import { supplierActions } from '@/operations/supplier-actions'
 import { SupplierRegistrationForm, supplierRegistrationFormSchema } from '@/app/_types/validation-schema'
 import { getAuthUserIdFromSupabase } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
