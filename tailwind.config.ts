@@ -6,13 +6,13 @@ const config = {
   content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
   prefix: '',
   theme: {
-    container: {
-      center: true,
-      padding: '2rem',
-      screens: {
-        '2xl': '1400px',
-      },
+    screens: {
+      sm: '450px',
+      md: '850px',
+      lg: '1550px',
+      xl: '2050px',
     },
+
     extend: {
       gap: {
         stranger: 'var(--gap-stranger)',
@@ -40,14 +40,14 @@ const config = {
         textLength: '80ch',
       },
       height: {
-        header: '6rem',
+        header: 'var(--height-header)',
         'action-bar': 'calc(var(--radius-area) * 2)',
       },
       minHeight: {
         'svh-minus-header': 'calc(100svh - theme(height.header))',
       },
       gridTemplateColumns: {
-        siteLayout: 'minmax(theme(spacing.sitePadding), auto) minmax(0, theme(spacing.siteWidth)) minmax(theme(spacing.sitePadding), auto)',
+        siteLayout: 'var(--site-layout)',
       },
       colors: {
         background: 'hsl(var(--background))',

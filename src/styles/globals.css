@@ -52,25 +52,30 @@
 
 @layer base {
   :root {
-    --hairline: 1px;
+    /* ratios */
+    --text-size-base: 1rem;
+    --gap-base: 1rem;
+    --text-ratio: 0.8;
+    --gap-ratio: 0.8;
 
     /* gap */
-    --gap-stranger: 8rem; /* stranger */
-    --gap-acquaintance: 4rem; /* acquaintance */
-    --gap-friend: 2rem; /* friend */
-    --gap-close-friend: 1.5rem; /* close-friend */
-    --gap-sibling: 1rem; /* sibling */
-    --gap-partner: 0.5rem; /* partner */
-    --gap-spouse: 0.25rem; /* spouse */
+    --gap-stranger: calc(8rem * var(--gap-ratio)); /* stranger */
+    --gap-acquaintance: calc(4rem * var(--gap-ratio)); /* acquaintance */
+    --gap-friend: calc(2rem * var(--gap-ratio)); /* friend */
+    --gap-close-friend: calc(1.5rem * var(--gap-ratio)); /* close-friend */
+    --gap-sibling: calc(1rem * var(--gap-ratio)); /* sibling */
+    --gap-partner: calc(0.5rem * var(--gap-ratio)); /* partner */
+    --gap-spouse: calc(0.25rem * var(--gap-ratio)); /* spouse */
+    --hairline: 1px;
     --gap-area: var(--gap-friend);
 
     /* padding */
-    --padding-site-gutter: calc(var(--gap-friend) / 2);
+    --padding-site-gutter: 0px;
     --padding-section: calc(var(--gap-stranger) / 2);
     --padding-contour: 2px;
 
     /* height */
-    --height-header: 4rem;
+    --height-header: calc(var(--gap-area) * 3);
     --height-page: 100svh;
     --height-first-section: calc(var(--height-page) - var(--height-header));
 
@@ -81,6 +86,24 @@
     /* border radius */
     --radius: 0.5rem;
     --radius-area: calc(var(--radius) * 3);
+
+    /* grid */
+    --site-layout: minmax(var(--padding-site-gutter), auto) minmax(0, var(--width-site)) minmax(var(--padding-site-gutter), auto);
+  }
+
+  @media (min-width: 450px) {
+    :root {
+      --text-ratio: 0.9;
+      --gap-ratio: 0.9;
+      --padding-site-gutter: calc(var(--gap-friend) / 2);
+    }
+  }
+
+  @media (min-width: 850px) {
+    :root {
+      --text-ratio: 1;
+      --gap-ratio: 1;
+    }
   }
 
   * {
@@ -90,6 +113,7 @@
     @apply bg-background text-foreground;
     scrollbar-gutter: stable;
     overflow-y: scroll;
+    text-box: trim-both cap alphabetic;
   }
 }
 
@@ -126,54 +150,58 @@
 @layer utilities {
   .heading-2xl {
     font-family: serif;
-    font-size: 4rem;
+    font-size: calc(4rem * var(--text-ratio));
     line-height: 1.1;
     text-wrap: balance;
   }
   .heading-xl {
     font-family: serif;
-    font-size: 3rem;
+    font-size: calc(3rem * var(--text-ratio));
     line-height: 1.1;
     text-wrap: balance;
   }
   .heading-lg {
     font-family: serif;
-    font-size: 2.5rem;
+    font-size: calc(2.5rem * var(--text-ratio));
     line-height: 1.1;
     text-wrap: balance;
   }
   .heading-md {
     font-family: serif;
-    font-size: 2rem;
+    font-size: calc(2rem * var(--text-ratio));
     line-height: 1.1;
     text-wrap: balance;
   }
+  .ui-large {
+    font-size: calc(1.25rem * var(--text-ratio));
+    font-weight: 400;
+  }
   .ui {
-    font-size: 1rem;
+    font-size: calc(1rem * var(--text-ratio));
     font-weight: 400;
   }
   .ui-s1 {
-    font-size: 1rem;
+    font-size: calc(1rem * var(--text-ratio));
     font-weight: 500;
   }
   .ui-s2 {
-    font-size: 1rem;
+    font-size: calc(1rem * var(--text-ratio));
     font-weight: 600;
   }
   .ui-small {
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * var(--text-ratio));
     font-weight: 400;
   }
   .ui-small-s1 {
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * var(--text-ratio));
     font-weight: 500;
   }
   .ui-small-s2 {
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * var(--text-ratio));
     font-weight: 600;
   }
   .ui-label {
-    font-size: 0.75rem;
+    font-size: calc(0.75rem * var(--text-ratio));
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;

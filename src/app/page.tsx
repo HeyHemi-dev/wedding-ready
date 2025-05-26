@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/section'
 
 import { StackingCardsContainer, StackingCardContent } from './stacking-cards'
 
-
 const cards: StackingCardContent[] = [
   {
     title: 'Explore inspiration that fits your wedding.',
@@ -48,13 +47,13 @@ export default function Home() {
   return (
     <>
       <Section className="min-h-svh-minus-header pt-0">
-        <div className="grid grid-cols-3 grid-rows-4 gap-area">
-          <Area className="col-span-2 row-span-full grid place-content-center gap-acquaintance">
-            <div className="flex flex-col gap-sibling pr-xxl">
+        <div className="grid grid-cols-1 gap-area md:grid-cols-3 md:grid-rows-4">
+          <Area className="grid place-content-center gap-acquaintance md:col-span-2 md:row-span-full">
+            <div className="flex flex-col gap-sibling md:pr-xxl">
               <h1 className="heading-2xl">Wedding inspiration you can actually book.</h1>
-              <p className="text-pretty text-xl">Explore local ideas, save what you love, and connect with real NZ suppliers—all for free.</p>
+              <p className="ui-large text-pretty">Explore local ideas, save what you love, and connect with real NZ suppliers—all for free.</p>
             </div>
-            <div className="flex gap-sibling">
+            <div className="sm:flex-row flex flex-col gap-sibling">
               <Button size={'lg'} asChild>
                 <Link href="/sign-up" className="flex items-center gap-spouse">
                   <span>Sign up now</span>
