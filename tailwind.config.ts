@@ -27,7 +27,6 @@ const config = {
       spacing: {
         siteWidth: 'var(--width-site)',
         sitePadding: 'var(--padding-site-gutter)',
-        sectionPadding: 'var(--padding-section)',
         contour: 'var(--padding-contour)',
         hairline: 'var(--hairline)',
         xxl: '4rem',

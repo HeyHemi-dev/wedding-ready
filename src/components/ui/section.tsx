@@ -9,7 +9,7 @@ interface SectionProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Section = React.forwardRef<HTMLDivElement, SectionProps>(({ children, className, ...props }, ref) => {
   return (
-    <section ref={ref} className={cn('grid grid-cols-siteLayout py-sectionPadding', className)} {...props}>
+    <section ref={ref} className={cn('grid grid-cols-siteLayout py-section', className)} {...props}>
       <div className="col-start-2 col-end-3 grid grid-cols-1 gap-friend overflow-clip">{children}</div>
     </section>
   )
