@@ -25,9 +25,6 @@ const config = {
         area: 'var(--gap-area)',
       },
       spacing: {
-        siteWidth: 'var(--width-site)',
-        sitePadding: 'var(--padding-site-gutter)',
-        contour: 'var(--padding-contour)',
         hairline: 'var(--hairline)',
         xxl: '4rem',
         xl: '3rem',
