@@ -46,7 +46,7 @@ const config = {
         prose: 'var(--width-prose)',
       },
       height: {
-        'header-content': 'var(--header-height-content)',
+        'header-content': 'var(--height-header-content)',
         header: 'var(--height-header)',
         'action-bar': 'calc(var(--radius-area) * 2)',
       },
