@@ -53,7 +53,7 @@ export default function Home() {
               <h1 className="heading-2xl">Wedding inspiration you can actually book.</h1>
               <p className="ui-large text-pretty">Explore local ideas, save what you love, and connect with real NZ suppliers—all for free.</p>
             </div>
-            <div className="sm:flex-row flex flex-col gap-sibling">
+            <div className="flex flex-col gap-sibling sm:flex-row">
               <Button size={'lg'} asChild>
                 <Link href="/sign-up" className="flex items-center gap-spouse">
                   <span>Sign up now</span>
@@ -77,18 +77,18 @@ export default function Home() {
       <StackingCardsContainer cards={cards} />
 
       <Section>
-        <div className="grid min-h-[33svh] grid-cols-3 grid-rows-1 gap-area">
-          <Area className="relative col-span-1 row-span-full overflow-hidden">
+        <div className="grid min-h-[33svh] gap-area md:grid-cols-3 md:grid-rows-1">
+          <Area className="relative overflow-hidden md:col-span-1 md:row-span-full">
             <Image className="object-cover" src="/assets/home-supplier2.jpg" alt="Indian wedding couple exchanging garlands" fill sizes="33vw" />
           </Area>
-          <Area className="col-span-2 row-span-full grid place-content-center gap-friend">
+          <Area className="grid place-content-center gap-friend md:col-span-2 md:row-span-full">
             <div className="flex flex-col gap-sibling pr-xxl">
               <h2 className="heading-lg">Are you a wedding supplier?</h2>
               <p className="text-pretty">
                 Reach more couples, showcase your work, and get discovered on WeddingReady. It&apos;s free to join, and only takes a few minutes to set up.
               </p>
             </div>
-            <div className="flex gap-sibling">
+            <div className="flex flex-col gap-sibling sm:flex-row">
               <Button asChild size="lg">
                 <Link href="/suppliers/join" className="flex items-center gap-spouse">
                   <span>Join as a supplier</span>
