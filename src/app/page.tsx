@@ -62,15 +62,17 @@ export default function Home() {
               </Button>
               <Button variant={'ghost'} size={'lg'} asChild>
                 <Link href="/feed">
-                  <span className="font-semibold">Start exploring</span>
+                  <span>Start exploring</span>
                 </Link>
               </Button>
             </div>
           </Area>
           <Area className="relative col-span-1 overflow-hidden md:row-span-3">
-            <Image className="object-cover" src="/assets/home-hero.jpg" alt="Couple just married celebrating with confetti" fill sizes="100vw" />
+            <Image className="object-cover" src="/assets/home-hero.jpg" alt="Couple, just married, celebrating with confetti" fill sizes="100vw" />
           </Area>
-          <Area className="col-span-2 row-span-1 md:col-span-1"></Area>
+          <Area className="relative col-span-2 row-span-1 overflow-hidden md:col-span-1">
+            <Image className="object-cover" src="/assets/home-hero2.jpg" alt="Modern rustic place setting" fill sizes="100vw" />
+          </Area>
         </div>
       </Section>
 
@@ -89,13 +91,13 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-col gap-sibling sm:flex-row">
-              <Button asChild size="lg">
+              <Button size="lg" asChild>
                 <Link href="/suppliers/join" className="flex items-center gap-spouse">
                   <span>Join as a supplier</span>
                   <ArrowRight />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant={'ghost'}>
+              <Button size="lg" variant={'ghost'} asChild>
                 <Link href="/suppliers/join">Learn more</Link>
               </Button>
             </div>
