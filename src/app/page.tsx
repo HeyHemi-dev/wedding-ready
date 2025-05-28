@@ -47,8 +47,8 @@ export default function Home() {
   return (
     <>
       <Section className="min-h-svh-minus-header pt-0">
-        <div className="grid grid-cols-1 gap-area md:grid-cols-3 md:grid-rows-4">
-          <Area className="grid place-content-center gap-acquaintance md:col-span-2 md:row-span-full">
+        <div className="grid grid-cols-3 gap-area md:grid-rows-4">
+          <Area className="col-span-full grid place-content-center gap-acquaintance md:col-span-2 md:row-span-full">
             <div className="flex flex-col gap-sibling md:pr-xxl">
               <h1 className="heading-2xl">Wedding inspiration you can actually book.</h1>
               <p className="ui-large text-pretty">Explore local ideas, save what you love, and connect with real NZ suppliers—all for free.</p>
@@ -67,18 +67,18 @@ export default function Home() {
               </Button>
             </div>
           </Area>
-          <Area className="relative col-span-1 row-span-3 overflow-hidden">
+          <Area className="relative col-span-1 overflow-hidden md:row-span-3">
             <Image className="object-cover" src="/assets/home-hero.jpg" alt="Couple just married celebrating with confetti" fill sizes="100vw" />
           </Area>
-          <Area className="col-span-1 row-span-1"></Area>
+          <Area className="col-span-2 row-span-1 md:col-span-1"></Area>
         </div>
       </Section>
 
       <StackingCardsContainer cards={cards} />
 
       <Section>
-        <div className="grid min-h-[33svh] gap-area md:grid-cols-3 md:grid-rows-1">
-          <Area className="relative overflow-hidden md:col-span-1 md:row-span-full">
+        <div className="grid gap-area md:grid-cols-3 md:grid-rows-1">
+          <Area className="relative min-h-[33svh] overflow-hidden md:col-span-1 md:row-span-full">
             <Image className="object-cover" src="/assets/home-supplier2.jpg" alt="Indian wedding couple exchanging garlands" fill sizes="33vw" />
           </Area>
           <Area className="grid place-content-center gap-friend md:col-span-2 md:row-span-full">
