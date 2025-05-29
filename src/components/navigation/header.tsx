@@ -21,11 +21,13 @@ export default async function Header() {
   const user = await getCurrentUser()
 
   return (
-    <header className="grid grid-cols-siteLayout">
-      <div className="col-start-2 col-end-3 grid h-header grid-cols-[auto_1fr_auto] items-center gap-friend">
-        <Link href={user ? '/feed' : '/'} className="relative aspect-[3/2] h-full max-h-12 rounded-full p-contour hover:bg-primary/80" passHref>
-          <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill sizes="300px" className="object-contain" priority />
-        </Link>
+    <header className="grid h-header grid-cols-siteLayout content-center">
+      <div className="col-start-2 col-end-3 grid h-header-content grid-cols-[auto_1fr_auto] content-center gap-friend">
+        <div className="-my-1 aspect-[12/7]">
+          <Link href={user ? '/feed' : '/'} className="relative block h-full rounded-full p-contour hover:bg-primary/80" passHref>
+            <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill sizes="300px" className="object-contain" priority />
+          </Link>
+        </div>
         <nav className="flex items-center gap-sibling">
           <NavLink link={{ href: '/find-suppliers', label: 'Find Suppliers' }} />
           {/* <NavLink link={{ href: '/articles', label: 'Advice' }} /> */}

@@ -52,25 +52,38 @@
 
 @layer base {
   :root {
-    --hairline: 1px;
+    /* ratios */
+
+    --gap-base: 0.25rem;
+    --gap-scale: 1.5;
+
+    --text-ratio: 0.8;
+
+    /* border radius */
+    --radius: 0.5rem;
+    --radius-area: calc(var(--radius) * 3);
 
     /* gap */
-    --gap-stranger: 8rem; /* stranger */
-    --gap-acquaintance: 4rem; /* acquaintance */
-    --gap-friend: 2rem; /* friend */
-    --gap-close-friend: 1.5rem; /* close-friend */
-    --gap-sibling: 1rem; /* sibling */
-    --gap-partner: 0.5rem; /* partner */
-    --gap-spouse: 0.25rem; /* spouse */
+    --hairline: 1px;
+    --gap-spouse: calc(var(--gap-base));
+    --gap-partner: calc(var(--gap-spouse) * var(--gap-scale));
+    --gap-sibling: calc(var(--gap-partner) * var(--gap-scale));
+    --gap-friend: calc(var(--gap-sibling) * var(--gap-scale));
+    --gap-acquaintance: calc(var(--gap-friend) * var(--gap-scale));
+    --gap-stranger: calc(var(--gap-acquaintance) * var(--gap-scale));
+
+    --gap-close-friend: calc(var(--gap-sibling) * (var(--gap-scale) / 2));
     --gap-area: var(--gap-friend);
 
     /* padding */
-    --padding-site-gutter: calc(var(--gap-friend) / 2);
+    --padding-site-gutter: 0px;
     --padding-section: calc(var(--gap-stranger) / 2);
     --padding-contour: 2px;
+    --padding-area: calc(var(--radius-area) * 3);
 
     /* height */
-    --height-header: 4rem;
+    --height-header-content: 2rem;
+    --height-header: calc(var(--height-header-content) + (var(--gap-area) * 2));
     --height-page: 100svh;
     --height-first-section: calc(var(--height-page) - var(--height-header));
 
@@ -78,9 +91,23 @@
     --width-site: 80rem;
     --width-prose: 80ch;
 
-    /* border radius */
-    --radius: 0.5rem;
-    --radius-area: calc(var(--radius) * 3);
+    /* grid */
+    --site-layout: minmax(var(--padding-site-gutter), auto) minmax(0, var(--width-site)) minmax(var(--padding-site-gutter), auto);
+  }
+
+  @media (min-width: 450px) {
+    :root {
+      --gap-base: 0.25rem;
+      --gap-scale: 1.8;
+      --padding-site-gutter: calc(var(--gap-friend) / 2);
+    }
+  }
+
+  @media (min-width: 850px) {
+    :root {
+      --gap-base: 0.25rem;
+      --gap-scale: 2;
+    }
   }
 
   * {
@@ -90,13 +117,12 @@
     @apply bg-background text-foreground;
     scrollbar-gutter: stable;
     overflow-y: scroll;
+    text-box: trim-both cap alphabetic;
   }
 }
 
 @layer components {
   .area {
-    --padding-area: calc(var(--radius-area) * 3);
-
     background-color: hsl(var(--area));
     border-radius: var(--radius-area);
     padding: var(--padding-area);
@@ -123,59 +149,108 @@
   }
 }
 
-@layer utilities {
+@layer components {
+  :root {
+    --text-size-base: 1rem;
+    --text-scale: 1.2;
+
+    /* larger sizes */
+    --text-size-lg: calc(var(--text-size-base) * var(--text-scale));
+    --text-size-xl: calc(var(--text-size-lg) * var(--text-scale));
+    --text-size-2xl: calc(var(--text-size-xl) * var(--text-scale));
+    --text-size-3xl: calc(var(--text-size-2xl) * var(--text-scale));
+    --text-size-4xl: calc(var(--text-size-3xl) * var(--text-scale));
+    --text-size-5xl: calc(var(--text-size-4xl) * var(--text-scale));
+    --text-size-6xl: calc(var(--text-size-5xl) * var(--text-scale));
+    /* smaller sizes */
+    --text-size-sm: calc(var(--text-size-base) / var(--text-scale));
+    --text-size-xs: calc(var(--text-size-sm) / var(--text-scale));
+    --text-size-2xs: calc(var(--text-size-xs) / var(--text-scale));
+  }
+
+  @media (min-width: 450px) {
+    :root {
+      --text-size-base: 1rem;
+      --text-scale: 1.225;
+    }
+  }
+
+  @media (min-width: 850px) {
+    :root {
+      --text-size-base: 1rem;
+      --text-scale: 1.25;
+    }
+  }
+
   .heading-2xl {
     font-family: serif;
-    font-size: 4rem;
+    font-size: var(--text-size-5xl);
     line-height: 1.1;
     text-wrap: balance;
   }
   .heading-xl {
     font-family: serif;
-    font-size: 3rem;
+    font-size: var(--text-size-4xl);
     line-height: 1.1;
     text-wrap: balance;
   }
   .heading-lg {
     font-family: serif;
-    font-size: 2.5rem;
+    font-size: var(--text-size-3xl);
     line-height: 1.1;
     text-wrap: balance;
   }
   .heading-md {
     font-family: serif;
-    font-size: 2rem;
+    font-size: var(--text-size-2xl);
     line-height: 1.1;
     text-wrap: balance;
   }
+  .heading-sm {
+    font-family: serif;
+    font-size: var(--text-size-xl);
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  /* large text */
+  .ui-large {
+    font-size: var(--text-size-lg);
+    font-weight: 400;
+  }
+  /* default text */
   .ui {
-    font-size: 1rem;
+    font-size: var(--text-size-base);
     font-weight: 400;
   }
   .ui-s1 {
-    font-size: 1rem;
+    font-size: var(--text-size-base);
     font-weight: 500;
   }
   .ui-s2 {
-    font-size: 1rem;
+    font-size: var(--text-size-base);
     font-weight: 600;
   }
+  /* small text */
   .ui-small {
-    font-size: 0.875rem;
+    font-size: var(--text-size-sm);
     font-weight: 400;
   }
   .ui-small-s1 {
-    font-size: 0.875rem;
+    font-size: var(--text-size-sm);
     font-weight: 500;
   }
   .ui-small-s2 {
-    font-size: 0.875rem;
+    font-size: var(--text-size-sm);
     font-weight: 600;
   }
+  /* form text */
   .ui-label {
-    font-size: 0.75rem;
+    font-size: var(--text-size-xs);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+  }
+  .ui-input {
+    font-size: 16px;
   }
 }

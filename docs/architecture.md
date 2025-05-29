@@ -7,10 +7,10 @@
 | Layer | Responsibility | Implementation |
 |-------|---------------|----------------|
 | Presentation/UI | UI rendering and layout | - 'Dumb' components |
-| Presentation/Client-side Logic | - Data formatting<br>- Loading states | - Motion<br>- React (state, effects etc.)<br>- Pages |
+| Presentation/Client-side Logic | - Animations<br>- State<br>- Data formatting<br> | - Motion<br>- React (state, effects etc.)<br>- Pages |
 | Presentation/Client-side Boundary | - UX<br>- Toasts<br>- Zod parsing | - Fetch (inside custom hooks)<br>- Forms |
 | Presentation/Server-side Boundary | - Authentication<br>- Headers/cookies<br>- Zod declaration/parsing<br>- UI-type definitions<br>- User-facing errors | - SSR (pages)<br>- API endpoints (routes)<br>- Form actions |
-| Business/Server-side Logic | - Authorization<br>- Type conversion | - Operations (e.g. authOperation, tileOperation) |
+| Operations | - Authorization<br>- Type conversion | - Operation Objects (e.g. authOperation, tileOperation) |
 | Data/Access | - Data-type definitions | - Models (e.g. supplierModel, tileModel) |
 | Data/Definition | Schema definition | - Schema |
 

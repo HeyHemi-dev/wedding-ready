@@ -10,7 +10,7 @@ import { SaveTileButton } from './save-button'
 export function TileList({ tiles, authUserId }: { tiles: Tile[]; authUserId?: string }) {
   return (
     <>
-      <div className="grid grid-cols-2 gap-md md:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-area md:grid-cols-3 lg:grid-cols-5">
         {tiles.map((tile) => (
           <TileListItem key={tile.id} tile={tile} authUserId={authUserId} />
         ))}
@@ -38,13 +38,11 @@ export function TileListItem({ tile, authUserId }: { tile: Tile; authUserId?: st
 
 export function TileListSkeleton() {
   return (
-    <div className="grid grid-cols-2 gap-md md:grid-cols-3 lg:grid-cols-5">
+    <div className="grid grid-cols-2 gap-area md:grid-cols-3 lg:grid-cols-5">
       {Array.from({ length: 5 }).map((_, index) => (
-        <div key={index} className="grid grid-rows-[auto_1fr] gap-xs">
+        <div key={index} className="grid grid-rows-[auto_1fr] gap-partner">
           <Skeleton className="aspect-[2/3] rounded-lg" />
-          <div className="flex flex-col gap-1">
-            <Skeleton className="h-2 w-2/3" />
-          </div>
+          <Skeleton className="h-2 w-2/3" />
         </div>
       ))}
     </div>
@@ -62,7 +60,7 @@ interface noTilesProps {
 
 export function noTiles({ message, cta }: noTilesProps) {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4">
+    <div className="flex h-full flex-col items-center justify-center gap-sibling">
       <p className="text-muted-foreground">{message}</p>
       {cta && cta.show && (
         <Button variant={'default'} asChild>

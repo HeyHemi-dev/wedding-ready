@@ -130,28 +130,33 @@ test('should handle sign out error', async () => {
 
 ## Best Practices
 
-1. **Mocking**
+1. **Arrange-Act-Assert Pattern**
+   - Structure tests using the Arrange-Act-Assert pattern
+   - Use clear comments to separate each section
+   - Keep each section focused on its purpose
+
+2. **Mocking**
    - Mock external dependencies at the top of the file
    - Use `vi.mock()` for module mocking
    - Clear mocks in `beforeEach`
    - Clean up DOM in `afterEach`
 
-2. **Test Data**
+3. **Test Data**
    - Define test constants outside test cases
    - Use `as const` for type safety
    - Keep test data minimal but realistic
 
-3. **Assertions**
+4. **Assertions**
    - Use specific assertions (e.g., `toBeInTheDocument()`)
    - Test both positive and negative cases
    - Verify side effects (toasts, navigation, etc.)
 
-4. **Async Testing**
+5. **Async Testing**
    - Use `async/await` for asynchronous tests
    - Use `waitFor` for async assertions
    - Clean up async operations in `afterEach`
 
-5. **Component Testing**
+6. **Component Testing**
    - Test user interactions
    - Verify component states
    - Test accessibility where relevant
