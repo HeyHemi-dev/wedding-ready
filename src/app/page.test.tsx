@@ -5,6 +5,7 @@ import Home from './page'
 
 // Mock the next/image component since we don't need to test images
 vi.mock('next/image', () => ({
+  // eslint-disable-next-line @next/next/no-img-element
   default: ({ alt }: { alt: string }) => <img alt={alt} />,
 }))
 
