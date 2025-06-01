@@ -9,15 +9,19 @@ import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 export async function signInFormAction(formData: FormData) {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
+  const email = formData.get('email')?.toString()
+  const password = formData.get('password')?.toString()
   const redirectTo = formData.get('redirectTo')?.toString() || '/feed'
+
+  if (!email || !password) {
+    return encodedRedirect('error', '/sign-in', 'Email and password are required')
+  }
 
   const supabase = await createClient()
   const { data, error } = await tryCatch(authActions.signIn({ userSigninFormData: { email, password }, supabaseClient: supabase }))
 
   if (error) {
-    return encodedRedirect('error', '/sign-in', error.message)
+    return encodedRedirect('error', '/sign-in', 'Invalid email or password')
   }
 
   // Revalidate the user cache on successful sign in
