@@ -6,6 +6,7 @@ import { headers } from 'next/headers'
 import { authActions } from '@/app/_actions/auth-actions'
 import { isProtectedPath } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
+import { tags } from '@/app/_types/tags'
 
 export async function SignOutFormAction({ pathname }: { pathname: string }): Promise<{ redirectTo: string }> {
   const headersList = await headers()
@@ -18,7 +19,7 @@ export async function SignOutFormAction({ pathname }: { pathname: string }): Pro
   }
 
   if (userId) {
-    revalidateTag(`user-${userId}`)
+    revalidateTag(tags.currentUser(userId))
   }
 
   // Safe even if pathname is manipulated client-side.

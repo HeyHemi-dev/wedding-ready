@@ -8,6 +8,7 @@ import { getAuthUserIdFromSupabase } from '@/utils/auth'
 import { nullishToEmptyString } from '@/utils/empty-strings'
 import { tryCatch } from '@/utils/try-catch'
 
+import { tags } from '@/app/_types/tags'
 
 export async function updateProfileFormAction({ data }: { data: UserUpdateForm }): Promise<UserUpdateForm> {
   const { success, error: parseError, data: validatedData } = userUpdateFormSchema.safeParse(data)
@@ -26,7 +27,7 @@ export async function updateProfileFormAction({ data }: { data: UserUpdateForm }
     throw new Error(updateError?.message || 'Failed to update profile')
   }
 
-  revalidateTag(`user-${user.id}`)
+  revalidateTag(tags.currentUser(user.id))
 
   return nullishToEmptyString({
     id: user.id,

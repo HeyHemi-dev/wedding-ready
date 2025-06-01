@@ -7,6 +7,7 @@ import { authActions } from '@/app/_actions/auth-actions'
 import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
+import { tags } from '@/app/_types/tags'
 
 export async function signUpFormAction({ data }: { data: UserSignupForm }): Promise<{ handle: string }> {
   const { success, error: parseError, data: validatedData } = userSignupFormSchema.safeParse(data)
@@ -26,7 +27,7 @@ export async function signUpFormAction({ data }: { data: UserSignupForm }): Prom
   }
 
   // Revalidate the user cache for the new user
-  revalidateTag(`user-${user.id}`)
+  revalidateTag(tags.currentUser(user.id))
 
   return { handle: user.handle }
 }

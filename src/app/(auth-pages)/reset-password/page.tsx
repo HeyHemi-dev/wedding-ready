@@ -7,6 +7,7 @@ import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { tryCatch } from '@/utils/try-catch'
+import { tags } from '@/app/_types/tags'
 
 export default async function ResetPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
@@ -53,7 +54,7 @@ async function resetPasswordFormAction(formData: FormData) {
 
   // Revalidate the user cache after password update
   if (authUser) {
-    revalidateTag(`user-${authUser.id}`)
+    revalidateTag(tags.currentUser(authUser.id))
   }
 
   encodedRedirect('success', '/account/reset-password', 'Password updated')

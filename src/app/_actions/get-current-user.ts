@@ -6,6 +6,7 @@ import { User, makeUser } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
+import { tags } from '@/app/_types/tags'
 
 const USER_CACHE_DURATION = 60 * 15 // time in seconds
 
@@ -77,10 +78,10 @@ export async function getCurrentUser(): Promise<User | null> {
 
       return makeUser(userDetail)
     },
-    [`user-${userId}`],
+    [tags.currentUser(userId)],
     {
       revalidate: USER_CACHE_DURATION,
-      tags: [`user-${userId}`, 'auth'], // auth tag for global cache invalidation
+      tags: [tags.currentUser(userId), tags.auth], // auth tag for global cache invalidation
     }
   )()
 
