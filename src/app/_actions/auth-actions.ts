@@ -6,7 +6,7 @@ import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
-import { UserSignupForm } from '../_types/validation-schema'
+import { UserSignupForm, UserSigninForm } from '@/app/_types/validation-schema'
 
 export const authActions = {
   signUp,
@@ -68,12 +68,16 @@ async function signUp({
   return userDetails
 }
 
-async function signIn({ email, password }: { email: string; password: string }): Promise<AuthUser> {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+async function signIn({
+  userSigninFormData,
+  supabaseClient,
+}: {
+  userSigninFormData: UserSigninForm
+  supabaseClient: SupabaseClient
+}): Promise<{ authUserId: string }> {
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: userSigninFormData.email,
+    password: userSigninFormData.password,
   })
 
   if (error) {
@@ -81,7 +85,7 @@ async function signIn({ email, password }: { email: string; password: string }):
     throw new Error()
   }
 
-  return data.user
+  return { authUserId: data.user.id }
 }
 
 async function signOut() {
