@@ -6,7 +6,7 @@ import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
-import { UserSignupForm, UserSigninForm } from '@/app/_types/validation-schema'
+import { UserSignupForm, UserSigninForm, ForgotPasswordForm } from '@/app/_types/validation-schema'
 
 export const authActions = {
   signUp,
@@ -32,6 +32,7 @@ async function signUp({
     throw new Error('Handle is already taken')
   }
 
+  // Create supabase user for auth
   const { data: authResponse, error: signUpError } = await tryCatch(
     supabaseClient.auth.signUp({
       email,
@@ -49,7 +50,7 @@ async function signUp({
   }
   const user = handleSupabaseSignUpAuthResponse(authResponse)
 
-  // Create userDetail record
+  // Create userDetail record for app data
   const { data: userDetails, error: dbError } = await tryCatch(
     UserDetailModel.create({
       id: user.id,
@@ -98,10 +99,16 @@ async function signOut() {
   }
 }
 
-async function forgotPassword({ email, origin }: { email: string; origin: string | null }) {
-  const supabase = await createClient()
-
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+async function forgotPassword({
+  forgotPasswordFormData,
+  supabaseClient,
+  origin,
+}: {
+  forgotPasswordFormData: ForgotPasswordForm
+  supabaseClient: SupabaseClient
+  origin: string
+}) {
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(forgotPasswordFormData.email, {
     redirectTo: `${origin}/auth/callback?redirect_to=/account/reset-password`,
   })
 

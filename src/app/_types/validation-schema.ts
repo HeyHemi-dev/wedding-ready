@@ -80,3 +80,6 @@ export const userSigninFormSchema = z.object({
   password: z.string(),
 })
 export type UserSigninForm = z.infer<typeof userSigninFormSchema>
+
+export const forgotPasswordFormSchema = userSigninFormSchema.omit({ password: true })
+export type ForgotPasswordForm = z.infer<typeof forgotPasswordFormSchema>
