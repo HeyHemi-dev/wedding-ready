@@ -5,7 +5,7 @@ import { SaveTilePostRequestBody, SaveTilePostResponseBody } from '@/app/api/use
 import * as t from '@/models/types'
 import { tryCatchFetch } from '@/utils/try-catch'
 
-import { tileKeys } from './queryKeys'
+import { tileKeys } from '@/app/_types/queryKeys'
 
 export function useTileSaveState(tileId: string, authUserId: string) {
   const queryClient = useQueryClient()
