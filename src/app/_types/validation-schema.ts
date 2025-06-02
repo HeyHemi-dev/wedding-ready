@@ -81,5 +81,8 @@ export const userSigninFormSchema = z.object({
 })
 export type UserSigninForm = z.infer<typeof userSigninFormSchema>
 
-export const forgotPasswordFormSchema = userSigninFormSchema.omit({ password: true })
-export type ForgotPasswordForm = z.infer<typeof forgotPasswordFormSchema>
+export const userForgotPasswordFormSchema = userSigninFormSchema.omit({ password: true })
+export type UserForgotPasswordForm = z.infer<typeof userForgotPasswordFormSchema>
+
+export const userResetPasswordFormSchema = userSigninFormSchema.pick({ password: true }).extend({ confirmPassword: z.string() })
+export type UserResetPasswordForm = z.infer<typeof userResetPasswordFormSchema>
