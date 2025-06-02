@@ -2,6 +2,7 @@ import { AuthError, SupabaseClient } from '@supabase/supabase-js'
 import { describe, expect, test, vi, beforeEach } from 'vitest'
 
 import { mockSupabase } from '@/utils/test-helpers'
+
 import { authOperations } from './auth-operations'
 
 // Test constants

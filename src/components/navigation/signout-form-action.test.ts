@@ -1,3 +1,4 @@
+import { SupabaseClient } from '@supabase/supabase-js'
 import { revalidateTag } from 'next/cache'
 import { describe, expect, test, vi, beforeEach } from 'vitest'
 
@@ -5,7 +6,6 @@ import { tags } from '@/app/_types/tags'
 import { authOperations } from '@/operations/auth-operations'
 import { getAuthUserId, isProtectedPath } from '@/utils/auth'
 import { createClient } from '@/utils/supabase/server'
-import { SupabaseClient } from '@supabase/supabase-js'
 import { mockSupabase } from '@/utils/test-helpers'
 
 import { SignOutFormAction } from './signout-form-action'

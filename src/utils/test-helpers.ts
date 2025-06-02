@@ -1,6 +1,6 @@
+import { AuthError } from '@supabase/supabase-js'
 import { vi } from 'vitest'
 
-import { AuthError } from '@supabase/supabase-js'
 
 // Mock supabase auth client
 type MockSupabaseClient = {
