@@ -7,12 +7,14 @@ import { authActions } from '@/app/_actions/auth-actions'
 import { isProtectedPath } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 import { tags } from '@/app/_types/tags'
+import { createClient } from '@/utils/supabase/server'
 
 export async function SignOutFormAction({ pathname }: { pathname: string }): Promise<{ redirectTo: string }> {
   const headersList = await headers()
   const userId = headersList.get('x-auth-user-id')
 
-  const { error } = await tryCatch(authActions.signOut())
+  const supabase = await createClient()
+  const { error } = await tryCatch(authActions.signOut({ supabaseClient: supabase }))
 
   if (error) {
     throw new Error('Failed to sign out')

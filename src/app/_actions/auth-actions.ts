@@ -1,12 +1,12 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
-import { AuthUser, User } from '@/models/types'
+import { User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
-import { createClient, createAdminClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
-import { UserSignupForm, UserSigninForm, ForgotPasswordForm } from '@/app/_types/validation-schema'
+import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswordForm } from '@/app/_types/validation-schema'
 
 export const authActions = {
   signUp,
@@ -89,10 +89,8 @@ async function signIn({
   return { authUserId: data.user.id }
 }
 
-async function signOut() {
-  const supabase = await createClient()
-
-  const { error } = await supabase.auth.signOut()
+async function signOut({ supabaseClient }: { supabaseClient: SupabaseClient }) {
+  const { error } = await supabaseClient.auth.signOut()
   if (error) {
     console.error(error.message)
     throw new Error()
@@ -104,13 +102,11 @@ async function forgotPassword({
   supabaseClient,
   origin,
 }: {
-  forgotPasswordFormData: ForgotPasswordForm
+  forgotPasswordFormData: UserForgotPasswordForm
   supabaseClient: SupabaseClient
   origin: string
 }) {
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(forgotPasswordFormData.email, {
-    redirectTo: `${origin}/auth/callback?redirect_to=/account/reset-password`,
-  })
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(forgotPasswordFormData.email)
 
   if (error) {
     console.error(error.message)
@@ -118,16 +114,21 @@ async function forgotPassword({
   }
 }
 
-async function resetPassword({ password }: { password: string }): Promise<AuthUser> {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.updateUser({
-    password,
+async function resetPassword({
+  resetPasswordFormData,
+  supabaseClient,
+}: {
+  resetPasswordFormData: UserResetPasswordForm
+  supabaseClient: SupabaseClient
+}): Promise<{ authUserId: string }> {
+  const { data, error } = await supabaseClient.auth.updateUser({
+    password: resetPasswordFormData.password,
   })
 
   if (error) {
     console.error(error.message)
     throw new Error()
   }
-  return data.user
+
+  return { authUserId: data.user.id }
 }
