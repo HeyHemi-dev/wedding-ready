@@ -1,12 +1,14 @@
 'use server'
 
-import { authOperations } from '@/operations/auth-operations'
+import { revalidateTag } from 'next/cache'
+import { redirect } from 'next/navigation'
+
 import { tags } from '@/app/_types/tags'
+import { authOperations } from '@/operations/auth-operations'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-import { revalidateTag } from 'next/cache'
-import { redirect } from 'next/navigation'
+
 
 export async function signInFormAction(formData: FormData) {
   const email = formData.get('email')?.toString()

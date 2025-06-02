@@ -3,11 +3,11 @@
 import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 
-import { authOperations } from '@/operations/auth-operations'
+import { tags } from '@/app/_types/tags'
 import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
+import { authOperations } from '@/operations/auth-operations'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-import { tags } from '@/app/_types/tags'
 
 export async function signUpFormAction({ data }: { data: UserSignupForm }): Promise<{ handle: string }> {
   const { success, error: parseError, data: validatedData } = userSignupFormSchema.safeParse(data)

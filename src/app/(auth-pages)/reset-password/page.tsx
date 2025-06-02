@@ -1,6 +1,8 @@
+import { redirect } from 'next/navigation'
+
 import { FormMessage, Message } from '@/components/form/form-message'
 import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+
 import ResetPasswordForm from './reset-password-form'
 
 export default async function ResetPassword(props: { searchParams: Promise<Message> }) {

@@ -1,12 +1,11 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
+import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswordForm } from '@/app/_types/validation-schema'
 import { User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 import { createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-
-import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswordForm } from '@/app/_types/validation-schema'
 
 export const authOperations = {
   signUp,
@@ -100,7 +99,6 @@ async function signOut({ supabaseClient }: { supabaseClient: SupabaseClient }) {
 async function forgotPassword({
   forgotPasswordFormData,
   supabaseClient,
-  origin,
 }: {
   forgotPasswordFormData: UserForgotPasswordForm
   supabaseClient: SupabaseClient

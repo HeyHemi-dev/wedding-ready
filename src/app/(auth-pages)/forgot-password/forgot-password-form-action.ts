@@ -1,13 +1,13 @@
 'use server'
 
-import { authOperations } from '@/operations/auth-operations'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 
+import { authOperations } from '@/operations/auth-operations'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
 
 export async function forgotPasswordFormAction(formData: FormData) {
   const email = formData.get('email')?.toString()

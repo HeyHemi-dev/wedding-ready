@@ -6,7 +6,7 @@ import { isProtectedPath } from '@/utils/auth'
 import { SignOutFormAction } from './signout-form-action'
 
 // Mock dependencies
-vi.mock('@/app/_actions/auth-actions', () => ({
+vi.mock('@/operations/auth-operations', () => ({
   authOperations: {
     signOut: vi.fn(),
   },

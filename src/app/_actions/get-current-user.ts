@@ -2,11 +2,11 @@
 
 import { unstable_cache } from 'next/cache'
 
+import { tags } from '@/app/_types/tags'
 import { User, makeUser } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
-import { tags } from '@/app/_types/tags'
 
 const USER_CACHE_DURATION = 60 * 15 // time in seconds
 

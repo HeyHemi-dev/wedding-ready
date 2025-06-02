@@ -1,18 +1,17 @@
 'use client'
 
-import { userResetPasswordFormSchema, UserResetPasswordForm } from '@/app/_types/validation-schema'
-import { encodedRedirect } from '@/utils/encoded-redirect'
-import { tryCatch } from '@/utils/try-catch'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-import { useForm } from 'react-hook-form'
-
+import { userResetPasswordFormSchema, UserResetPasswordForm } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { encodedRedirect } from '@/utils/encoded-redirect'
+import { tryCatch } from '@/utils/try-catch'
 
 import { resetPasswordFormAction } from './reset-password-form-action'
 
