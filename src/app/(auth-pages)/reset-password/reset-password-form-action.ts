@@ -1,6 +1,6 @@
 'use server'
 
-import { authOperations } from '@/app/_actions/auth-operations'
+import { authOperations } from '@/operations/auth-operations'
 import { tags } from '@/app/_types/tags'
 import { UserResetPasswordForm, userResetPasswordFormSchema } from '@/app/_types/validation-schema'
 import { encodedRedirect } from '@/utils/encoded-redirect'

@@ -1,4 +1,4 @@
-import { authOperations } from '@/app/_actions/auth-operations'
+import { authOperations } from '@/operations/auth-operations'
 import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
 import * as t from '@/models/types'
 import { supplierOperations } from '@/operations/supplier-operations'

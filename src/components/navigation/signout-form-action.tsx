@@ -3,7 +3,7 @@
 import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 
-import { authOperations } from '@/app/_actions/auth-operations'
+import { authOperations } from '@/operations/auth-operations'
 import { isProtectedPath } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 import { tags } from '@/app/_types/tags'

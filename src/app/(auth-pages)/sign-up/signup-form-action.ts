@@ -3,7 +3,7 @@
 import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 
-import { authOperations } from '@/app/_actions/auth-operations'
+import { authOperations } from '@/operations/auth-operations'
 import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
