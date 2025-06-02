@@ -1,61 +1,36 @@
-import { revalidateTag } from 'next/cache'
-
-import { authActions } from '@/app/_actions/auth-actions'
-import Field from '@/components/form/field'
 import { FormMessage, Message } from '@/components/form/form-message'
-import { SubmitButton } from '@/components/submit-button'
-import { Input } from '@/components/ui/input'
-import { encodedRedirect } from '@/utils/encoded-redirect'
-import { tryCatch } from '@/utils/try-catch'
-import { tags } from '@/app/_types/tags'
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
+import ResetPasswordForm from './reset-password-form'
 
 export default async function ResetPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
+
+  // Check for valid recovery session
+  const supabase = await createClient()
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession()
+
+  if (sessionError || !session) {
+    redirect('/sign-in?message=Please request a password reset first')
+  }
+
+  // Verify this is specifically a recovery session from password reset
+  // The session's user metadata will indicate if this is a recovery session
+  if (session.user.app_metadata?.provider !== 'email') {
+    redirect('/sign-in?message=Please request a password reset first')
+  }
+
   return (
     <>
       <div className="grid gap-spouse">
         <h1 className="heading-md">Reset password</h1>
         <p className="ui-small">Please enter your new password below.</p>
       </div>
-      <form action={resetPasswordFormAction} className="grid gap-close-friend">
-        <div className="grid gap-sibling">
-          <Field label="New password" htmlFor="password">
-            <Input type="password" name="password" placeholder="New password" required />
-          </Field>
-          <Field label="Confirm password" htmlFor="confirmPassword">
-            <Input type="password" name="confirmPassword" placeholder="Confirm password" required />
-          </Field>
-        </div>
-        <SubmitButton>Reset Password</SubmitButton>
-        <FormMessage message={searchParams} />
-      </form>
+      <ResetPasswordForm />
+      <FormMessage message={searchParams} />
     </>
   )
-}
-
-async function resetPasswordFormAction(formData: FormData) {
-  'use server'
-  const password = formData.get('password') as string
-  const confirmPassword = formData.get('confirmPassword') as string
-
-  if (!password || !confirmPassword) {
-    encodedRedirect('error', '/account/reset-password', 'Password and confirm password are required')
-  }
-
-  if (password !== confirmPassword) {
-    encodedRedirect('error', '/account/reset-password', 'Passwords do not match')
-  }
-
-  const { data: authUser, error } = await tryCatch(authActions.resetPassword({ password }))
-
-  if (error) {
-    encodedRedirect('error', '/account/reset-password', 'Password update failed')
-  }
-
-  // Revalidate the user cache after password update
-  if (authUser) {
-    revalidateTag(tags.currentUser(authUser.id))
-  }
-
-  encodedRedirect('success', '/account/reset-password', 'Password updated')
 }
