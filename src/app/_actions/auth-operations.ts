@@ -8,7 +8,7 @@ import { tryCatch } from '@/utils/try-catch'
 
 import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswordForm } from '@/app/_types/validation-schema'
 
-export const authActions = {
+export const authOperations = {
   signUp,
   signIn,
   signOut,
