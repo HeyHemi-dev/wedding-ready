@@ -5,7 +5,8 @@ import { tags } from '@/app/_types/tags'
 import { authOperations } from '@/operations/auth-operations'
 import { getAuthUserId, isProtectedPath } from '@/utils/auth'
 import { createClient } from '@/utils/supabase/server'
-import { SupabaseClient, AuthError } from '@supabase/supabase-js'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { mockSupabase } from '@/utils/test-helpers'
 
 import { SignOutFormAction } from './signout-form-action'
 
@@ -19,22 +20,6 @@ const TEST_PATHS = {
   protected: '/account',
   signIn: '/sign-in',
 } as const
-
-// Mock types
-type MockAuthClient = {
-  signOut: () => Promise<{ error: AuthError | null }>
-}
-
-type MockSupabaseClient = {
-  auth: MockAuthClient
-}
-
-// Mock dependencies
-const mockSupabase: MockSupabaseClient = {
-  auth: {
-    signOut: vi.fn().mockResolvedValue({ error: null }),
-  },
-}
 
 vi.mock('@/operations/auth-operations', () => ({
   authOperations: {
