@@ -23,7 +23,7 @@ export async function signUpFormAction({ data }: { data: UserSignupForm }): Prom
   const { data: user, error: signUpError } = await tryCatch(authActions.signUp({ userSignFormData: validatedData, origin, supabaseClient: supabase }))
 
   if (signUpError) {
-    throw new Error(signUpError?.message || 'Failed to sign up')
+    throw new Error('Failed to sign up')
   }
 
   // Revalidate the user cache for the new user
