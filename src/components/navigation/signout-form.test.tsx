@@ -6,6 +6,17 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { SignOutForm } from './signout-form'
 import { SignOutFormAction } from './signout-form-action'
 
+// Test constants
+const TEST_PATHS = {
+  current: '/account',
+  signIn: '/sign-in',
+} as const
+
+const TEST_ACTIONS = {
+  success: { redirectTo: TEST_PATHS.signIn },
+  error: new Error('Sign out failed'),
+} as const
+
 // Mock dependencies
 vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
@@ -32,18 +43,9 @@ const mockRouter = {
   prefetch: vi.fn(),
 }
 
-const TEST_PATHS = {
-  current: '/account',
-  signIn: '/sign-in',
-} as const
-
-const TEST_ACTIONS = {
-  success: { redirectTo: TEST_PATHS.signIn },
-  error: new Error('Sign out failed'),
-} as const
-
 describe('SignOutForm', () => {
   beforeEach(() => {
+    document.body.innerHTML = ''
     vi.clearAllMocks()
     vi.mocked(useRouter).mockReturnValue(mockRouter)
     vi.mocked(usePathname).mockReturnValue(TEST_PATHS.current)
