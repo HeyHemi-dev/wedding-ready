@@ -1,6 +1,6 @@
 'use server'
 
-import { authActions } from '@/app/_actions/auth-actions'
+import { authOperations } from '@/app/_actions/auth-operations'
 import { tags } from '@/app/_types/tags'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient } from '@/utils/supabase/server'
@@ -18,7 +18,7 @@ export async function signInFormAction(formData: FormData) {
   }
 
   const supabase = await createClient()
-  const { data, error } = await tryCatch(authActions.signIn({ userSigninFormData: { email, password }, supabaseClient: supabase }))
+  const { data, error } = await tryCatch(authOperations.signIn({ userSigninFormData: { email, password }, supabaseClient: supabase }))
 
   if (error) {
     return encodedRedirect('error', '/sign-in', 'Invalid email or password')

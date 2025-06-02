@@ -1,6 +1,6 @@
 'use server'
 
-import { authActions } from '@/app/_actions/auth-actions'
+import { authOperations } from '@/app/_actions/auth-operations'
 
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient } from '@/utils/supabase/server'
@@ -22,7 +22,7 @@ export async function forgotPasswordFormAction(formData: FormData) {
   if (!origin || !supabase) {
     return encodedRedirect('error', '/forgot-password', 'Could not reset password')
   }
-  const { error } = await tryCatch(authActions.forgotPassword({ forgotPasswordFormData: { email }, supabaseClient: supabase, origin }))
+  const { error } = await tryCatch(authOperations.forgotPassword({ forgotPasswordFormData: { email }, supabaseClient: supabase, origin }))
 
   if (error) {
     return encodedRedirect('error', '/forgot-password', 'Could not reset password')

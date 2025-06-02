@@ -1,6 +1,6 @@
 'use server'
 
-import { authActions } from '@/app/_actions/auth-actions'
+import { authOperations } from '@/app/_actions/auth-operations'
 import { tags } from '@/app/_types/tags'
 import { UserResetPasswordForm, userResetPasswordFormSchema } from '@/app/_types/validation-schema'
 import { encodedRedirect } from '@/utils/encoded-redirect'
@@ -22,14 +22,16 @@ export async function resetPasswordFormAction({ data }: { data: UserResetPasswor
   if (!supabase) {
     throw new Error('Failed to reset password')
   }
-  const { data: resetResult, error: resetError } = await tryCatch(authActions.resetPassword({ resetPasswordFormData: validatedData, supabaseClient: supabase }))
+  const { data: resetResult, error: resetError } = await tryCatch(
+    authOperations.resetPassword({ resetPasswordFormData: validatedData, supabaseClient: supabase })
+  )
 
   if (resetError) {
     throw new Error('Failed to reset password')
   }
 
   // Since we can't have authentication on this operation, signout the user so they are forced to sign in again with the new password
-  const { error: signOutError } = await tryCatch(authActions.signOut({ supabaseClient: supabase }))
+  const { error: signOutError } = await tryCatch(authOperations.signOut({ supabaseClient: supabase }))
   if (signOutError) {
     throw new Error('Failed to sign out after password reset')
   }

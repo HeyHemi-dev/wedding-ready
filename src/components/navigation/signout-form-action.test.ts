@@ -1,13 +1,13 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest'
 
-import { authActions } from '@/app/_actions/auth-actions'
+import { authOperations } from '@/app/_actions/auth-operations'
 import { isProtectedPath } from '@/utils/auth'
 
 import { SignOutFormAction } from './signout-form-action'
 
 // Mock dependencies
 vi.mock('@/app/_actions/auth-actions', () => ({
-  authActions: {
+  authOperations: {
     signOut: vi.fn(),
   },
 }))
@@ -36,35 +36,35 @@ describe('SignOutFormAction', () => {
 
   test('should handle successful sign out', async () => {
     // Arrange
-    vi.mocked(authActions.signOut).mockResolvedValueOnce(undefined)
+    vi.mocked(authOperations.signOut).mockResolvedValueOnce(undefined)
     vi.mocked(isProtectedPath).mockReturnValueOnce(false)
 
     // Act
     const result = await SignOutFormAction({ pathname: TEST_PATHS.unprotected })
 
     // Assert
-    expect(authActions.signOut).toHaveBeenCalled()
+    expect(authOperations.signOut).toHaveBeenCalled()
     expect(isProtectedPath).toHaveBeenCalledWith(TEST_PATHS.unprotected)
     expect(result).toEqual({ redirectTo: TEST_PATHS.unprotected })
   })
 
   test('should redirect to sign-in for protected paths', async () => {
     // Arrange
-    vi.mocked(authActions.signOut).mockResolvedValueOnce(undefined)
+    vi.mocked(authOperations.signOut).mockResolvedValueOnce(undefined)
     vi.mocked(isProtectedPath).mockReturnValueOnce(true)
 
     // Act
     const result = await SignOutFormAction({ pathname: TEST_PATHS.protected })
 
     // Assert
-    expect(authActions.signOut).toHaveBeenCalled()
+    expect(authOperations.signOut).toHaveBeenCalled()
     expect(isProtectedPath).toHaveBeenCalledWith(TEST_PATHS.protected)
     expect(result).toEqual({ redirectTo: '/sign-in' })
   })
 
   test('should throw error on sign out failure', async () => {
     // Arrange
-    vi.mocked(authActions.signOut).mockRejectedValueOnce(new Error())
+    vi.mocked(authOperations.signOut).mockRejectedValueOnce(new Error())
 
     // Act & Assert
     await expect(SignOutFormAction({ pathname: TEST_PATHS.unprotected })).rejects.toThrow()

@@ -3,7 +3,7 @@
 import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 
-import { authActions } from '@/app/_actions/auth-actions'
+import { authOperations } from '@/app/_actions/auth-operations'
 import { isProtectedPath } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 import { tags } from '@/app/_types/tags'
@@ -14,7 +14,7 @@ export async function SignOutFormAction({ pathname }: { pathname: string }): Pro
   const userId = headersList.get('x-auth-user-id')
 
   const supabase = await createClient()
-  const { error } = await tryCatch(authActions.signOut({ supabaseClient: supabase }))
+  const { error } = await tryCatch(authOperations.signOut({ supabaseClient: supabase }))
 
   if (error) {
     throw new Error('Failed to sign out')

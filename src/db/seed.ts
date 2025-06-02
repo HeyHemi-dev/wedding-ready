@@ -1,5 +1,4 @@
-
-import { authActions } from '@/app/_actions/auth-actions'
+import { authOperations } from '@/app/_actions/auth-operations'
 import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
 import * as t from '@/models/types'
 import { supplierOperations } from '@/operations/supplier-operations'
@@ -22,7 +21,7 @@ async function seedDatabase() {
     displayName: 'Hemi Phillips',
     handle: 'heyhemi',
   }
-  const user = await authActions.signUp({ userSignFormData: AUTH_USER, supabaseClient: supabaseAdmin, origin: ORIGIN })
+  const user = await authOperations.signUp({ userSignFormData: AUTH_USER, supabaseClient: supabaseAdmin, origin: ORIGIN })
   console.log('user created')
 
   // Create a supplier
