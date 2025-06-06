@@ -1,14 +1,13 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
-import { AuthUser, User } from '@/models/types'
+import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswordForm } from '@/app/_types/validation-schema'
+import { User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
-import { createClient, createAdminClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
-import { UserSignupForm } from '../_types/validation-schema'
-
-export const authActions = {
+export const authOperations = {
   signUp,
   signIn,
   signOut,
@@ -32,6 +31,7 @@ async function signUp({
     throw new Error('Handle is already taken')
   }
 
+  // Create supabase user for auth
   const { data: authResponse, error: signUpError } = await tryCatch(
     supabaseClient.auth.signUp({
       email,
@@ -49,7 +49,7 @@ async function signUp({
   }
   const user = handleSupabaseSignUpAuthResponse(authResponse)
 
-  // Create userDetail record
+  // Create userDetail record for app data
   const { data: userDetails, error: dbError } = await tryCatch(
     UserDetailModel.create({
       id: user.id,
@@ -68,12 +68,16 @@ async function signUp({
   return userDetails
 }
 
-async function signIn({ email, password }: { email: string; password: string }): Promise<AuthUser> {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+async function signIn({
+  userSigninFormData,
+  supabaseClient,
+}: {
+  userSigninFormData: UserSigninForm
+  supabaseClient: SupabaseClient
+}): Promise<{ authUserId: string }> {
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: userSigninFormData.email,
+    password: userSigninFormData.password,
   })
 
   if (error) {
@@ -81,42 +85,48 @@ async function signIn({ email, password }: { email: string; password: string }):
     throw new Error()
   }
 
-  return data.user
+  return { authUserId: data.user.id }
 }
 
-async function signOut() {
-  const supabase = await createClient()
-
-  const { error } = await supabase.auth.signOut()
+async function signOut({ supabaseClient }: { supabaseClient: SupabaseClient }) {
+  const { error } = await supabaseClient.auth.signOut()
   if (error) {
     console.error(error.message)
     throw new Error()
   }
 }
 
-async function forgotPassword({ email, origin }: { email: string; origin: string | null }) {
-  const supabase = await createClient()
+async function forgotPassword({
+  forgotPasswordFormData,
+  supabaseClient,
+}: {
+  forgotPasswordFormData: UserForgotPasswordForm
+  supabaseClient: SupabaseClient
+  origin: string
+}) {
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(forgotPasswordFormData.email)
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?redirect_to=/account/reset-password`,
+  if (error) {
+    console.error(error.message)
+    throw new Error()
+  }
+}
+
+async function resetPassword({
+  resetPasswordFormData,
+  supabaseClient,
+}: {
+  resetPasswordFormData: UserResetPasswordForm
+  supabaseClient: SupabaseClient
+}): Promise<{ authUserId: string }> {
+  const { data, error } = await supabaseClient.auth.updateUser({
+    password: resetPasswordFormData.password,
   })
 
   if (error) {
     console.error(error.message)
     throw new Error()
   }
-}
 
-async function resetPassword({ password }: { password: string }): Promise<AuthUser> {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.updateUser({
-    password,
-  })
-
-  if (error) {
-    console.error(error.message)
-    throw new Error()
-  }
-  return data.user
+  return { authUserId: data.user.id }
 }

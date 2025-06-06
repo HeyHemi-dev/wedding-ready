@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 // 2. Internal dependencies
-import { authActions } from '@/app/_actions/auth-actions'
+import { authOperations } from '@/app/_actions/auth-actions'
 import { isProtectedPath } from '@/utils/auth'
 
 // 3. Component/function being tested
@@ -90,14 +90,14 @@ Example:
 ```typescript
 test('should handle successful sign out', async () => {
   // Arrange
-  vi.mocked(authActions.signOut).mockResolvedValueOnce(undefined)
+  vi.mocked(authOperations.signOut).mockResolvedValueOnce(undefined)
   vi.mocked(isProtectedPath).mockReturnValueOnce(false)
 
   // Act
   const result = await SignOutFormAction({ pathname: '/unprotected' })
 
   // Assert
-  expect(authActions.signOut).toHaveBeenCalled()
+  expect(authOperations.signOut).toHaveBeenCalled()
   expect(result).toEqual({ redirectTo: '/unprotected' })
 })
 ```

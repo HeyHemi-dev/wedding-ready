@@ -9,19 +9,11 @@ import SignUpForm from './signup-form'
 export default async function Signup(props: { searchParams: Promise<Message> }) {
   // If user is already logged in, they don't need to be here.
   const authUserId = await getAuthUserId()
-
   if (authUserId) {
     redirect('/feed')
   }
 
   const searchParams = await props.searchParams
-  if ('message' in searchParams) {
-    return (
-      <div className="grid gap-sm">
-        <FormMessage message={searchParams} />
-      </div>
-    )
-  }
 
   return (
     <>

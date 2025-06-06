@@ -2,6 +2,7 @@
 
 import { unstable_cache } from 'next/cache'
 
+import { tags } from '@/app/_types/tags'
 import { User, makeUser } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { getAuthUserId } from '@/utils/auth'
@@ -77,10 +78,10 @@ export async function getCurrentUser(): Promise<User | null> {
 
       return makeUser(userDetail)
     },
-    [`user-${userId}`],
+    [tags.currentUser(userId)],
     {
       revalidate: USER_CACHE_DURATION,
-      tags: [`user-${userId}`, 'auth'], // auth tag for global cache invalidation
+      tags: [tags.currentUser(userId), tags.auth], // auth tag for global cache invalidation
     }
   )()
 

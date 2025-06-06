@@ -4,8 +4,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Heart } from 'lucide-react'
 import Form from 'next/form'
 
-import { tileKeys } from '@/app/_hooks/queryKeys'
 import { useTileSaveState } from '@/app/_hooks/use-tile-saved-state'
+import { tileKeys } from '@/app/_types/queryKeys'
 import type { SavedTileRaw } from '@/models/types'
 import { cn } from '@/utils/shadcn-utils'
 

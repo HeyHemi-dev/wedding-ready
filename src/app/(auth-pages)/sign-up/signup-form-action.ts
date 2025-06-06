@@ -3,8 +3,9 @@
 import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 
-import { authActions } from '@/app/_actions/auth-actions'
+import { tags } from '@/app/_types/tags'
 import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
+import { authOperations } from '@/operations/auth-operations'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
@@ -19,14 +20,14 @@ export async function signUpFormAction({ data }: { data: UserSignupForm }): Prom
   if (!origin || !supabase) {
     throw new Error('Failed to sign up')
   }
-  const { data: user, error: signUpError } = await tryCatch(authActions.signUp({ userSignFormData: validatedData, origin, supabaseClient: supabase }))
+  const { data: user, error: signUpError } = await tryCatch(authOperations.signUp({ userSignFormData: validatedData, origin, supabaseClient: supabase }))
 
   if (signUpError) {
-    throw new Error(signUpError?.message || 'Failed to sign up')
+    throw new Error('Failed to sign up')
   }
 
   // Revalidate the user cache for the new user
-  revalidateTag(`user-${user.id}`)
+  revalidateTag(tags.currentUser(user.id))
 
   return { handle: user.handle }
 }

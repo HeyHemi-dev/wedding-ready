@@ -74,3 +74,15 @@ export const userUpdateFormSchema = userOmitAuth.extend({
   websiteUrl: z.string().trim().url('Must be a valid website URL').or(z.literal('')),
 }) satisfies z.ZodType<SetUserDetailRaw>
 export type UserUpdateForm = z.infer<typeof userUpdateFormSchema>
+
+export const userSigninFormSchema = z.object({
+  email: z.string(),
+  password: z.string(),
+})
+export type UserSigninForm = z.infer<typeof userSigninFormSchema>
+
+export const userForgotPasswordFormSchema = userSigninFormSchema.omit({ password: true })
+export type UserForgotPasswordForm = z.infer<typeof userForgotPasswordFormSchema>
+
+export const userResetPasswordFormSchema = userSigninFormSchema.pick({ password: true }).extend({ confirmPassword: z.string() })
+export type UserResetPasswordForm = z.infer<typeof userResetPasswordFormSchema>

@@ -2,6 +2,7 @@
 
 import { revalidateTag } from 'next/cache'
 
+import { tags } from '@/app/_types/tags'
 import { UserUpdateForm, userUpdateFormSchema } from '@/app/_types/validation-schema'
 import { userOperations } from '@/operations/user-operations'
 import { getAuthUserIdFromSupabase } from '@/utils/auth'
@@ -26,7 +27,7 @@ export async function updateProfileFormAction({ data }: { data: UserUpdateForm }
     throw new Error(updateError?.message || 'Failed to update profile')
   }
 
-  revalidateTag(`user-${user.id}`)
+  revalidateTag(tags.currentUser(user.id))
 
   return nullishToEmptyString({
     id: user.id,
