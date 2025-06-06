@@ -4,8 +4,23 @@ import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { Location, Service } from '@/db/constants'
 import { enumKeyToParam, enumToPretty } from '@/utils/enum-helpers'
+import { locationOperations } from '@/operations/location-operations'
+import { unstable_cache } from 'next/cache'
+import { tags } from '../_types/tags'
+import { serviceOperations } from '@/operations/service-operations'
 
-export default function FindSuppliers() {
+const locationTags = enumToPretty(Location).map((location) => tags.locationSuppliers(location.key))
+const getCachedLocations = unstable_cache(locationOperations.getAllWithSupplierCount, locationTags)
+
+// const serviceTags = enumToPretty(Service).map((service) => tags.serviceSuppliers(service.key))
+// const getCachedServices = unstable_cache(serviceOperations.getAllWithSupplierCount, serviceTags)
+
+export default async function FindSuppliers() {
+  // TODO: cache this value
+
+  const locations = await getCachedLocations()
+  console.log(locations)
+
   return (
     <>
       <Section className="min-h-svh-minus-header pt-0">
@@ -17,18 +32,9 @@ export default function FindSuppliers() {
             <div className="grid gap-friend">
               <h2 className="ui-s1">Explore suppliers by location</h2>
               <ul className="columns-3 gap-acquaintance">
-                {enumToPretty(Location).map((location) => {
-                  const locationParam = enumKeyToParam(location.key)
-
-                  return (
-                    <li key={location.key} className="py-xs">
-                      <Link href={`/locations/${locationParam}`} className="inline-flex items-baseline gap-spouse">
-                        <h3 className="text-lg">{location.label}</h3>
-                        <span className="ui-small text-muted-foreground">{`(?)`}</span>
-                      </Link>
-                    </li>
-                  )
-                })}
+                {locations.map((location) => (
+                  <FindSuppliersItem key={location.enumKey} {...location} />
+                ))}
               </ul>
             </div>
           </Area>
@@ -53,5 +59,18 @@ export default function FindSuppliers() {
         </div>
       </Section>
     </>
+  )
+}
+
+function FindSuppliersItem({ type, enumKey, enumValue, supplierCount }: FindSuppliersItem) {
+  const href = type === 'location' ? `/locations/${enumKeyToParam(enumKey)}` : `/services/${enumKeyToParam(enumKey)}`
+
+  return (
+    <li className="py-xs">
+      <Link href={href} className="inline-flex items-baseline gap-spouse">
+        <h3 className="text-lg">{enumValue}</h3>
+        <span className="ui-small text-muted-foreground">{supplierCount}</span>
+      </Link>
+    </li>
   )
 }

@@ -62,6 +62,16 @@ export class SupplierModel {
     return suppliers
   }
 
+  static async getAllByLocation(location: Location): Promise<SupplierRaw[]> {
+    const suppliers = await db
+      .select({ ...schema.supplierColumns })
+      .from(schema.suppliers)
+      .innerJoin(schema.supplierLocations, eq(schema.suppliers.id, schema.supplierLocations.supplierId))
+      .where(eq(schema.supplierLocations.location, location))
+
+    return suppliers
+  }
+
   static async getByHandle(handle: string): Promise<SupplierWithUsers | null> {
     const result = await supplierBaseQuery.where(eq(schema.suppliers.handle, handle))
 
