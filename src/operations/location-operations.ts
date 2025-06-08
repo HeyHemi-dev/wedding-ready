@@ -1,3 +1,4 @@
+import { FindSuppliersResponse } from '@/app/_types/locations'
 import { Location } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
 import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
