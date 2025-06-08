@@ -10,6 +10,7 @@ async function getAllWithSupplierCount(): Promise<FindSuppliersResponse[]> {
   const services = enumToPretty(Service)
   const supplierCounts = await SupplierModel.getCountGroupByService()
 
+  // Map for quick lookup
   const countMap = new Map(supplierCounts.map(({ service, count }) => [service, count]))
 
   return services.map((service) => ({
