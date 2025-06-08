@@ -71,8 +71,8 @@ function FindSuppliersItem({ label, href, supplierCount }: FindSuppliersItemProp
   const formattedSupplierCount = formatSupplierCount(supplierCount)
 
   return (
-    <Link href={href} className="grid items-start gap-x-partner md:grid-cols-[auto_1fr]">
-      <h3 className="row-start-2 text-lg md:row-start-1">{label}</h3>
+    <Link href={href} className="grid items-start gap-x-partner sm:grid-cols-[auto_1fr]">
+      <h3 className="row-start-2 text-lg sm:row-start-1">{label}</h3>
       <span className="ui-small row-start-1 text-muted-foreground">{formattedSupplierCount}</span>
     </Link>
   )
