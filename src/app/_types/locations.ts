@@ -1,6 +1,6 @@
-type FindSuppliersItem = {
+type FindSuppliersResponse = {
   type: 'location' | 'service'
-  enumKey: string
-  enumValue: string
+  key: string
+  value: string
   supplierCount: number
 }
