@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+
 import { Location } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
-import { locationOperations } from './location-operations'
 import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
+
+import { locationOperations } from './location-operations'
 
 // Mock the SupplierModel
 vi.mock('@/models/supplier', () => ({
