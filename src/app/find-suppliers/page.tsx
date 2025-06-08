@@ -16,8 +16,7 @@ const serviceTags = enumToPretty(Service).map((service) => tags.serviceSuppliers
 const getCachedServices = unstable_cache(serviceOperations.getAllWithSupplierCount, serviceTags)
 
 export default async function FindSuppliers() {
-  const locations = await getCachedLocations()
-  const services = await getCachedServices()
+  const [locations, services] = await Promise.all([getCachedLocations(), getCachedServices()])
 
   return (
     <>
