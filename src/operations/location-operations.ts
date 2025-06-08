@@ -6,17 +6,17 @@ export const locationOperations = {
   getAllWithSupplierCount,
 }
 
-async function getAllWithSupplierCount(): Promise<FindSuppliersItem[]> {
+async function getAllWithSupplierCount(): Promise<FindSuppliersResponse[]> {
   const locations = enumToPretty(Location)
-  return await Promise.all(
-    locations.map(async (location) => {
-      const suppliers = await SupplierModel.getAllByLocation(keyToEnum(Location, location.key))
-      return {
-        type: 'location',
-        enumKey: location.key,
-        enumValue: location.label,
-        supplierCount: suppliers.length,
-      }
-    })
-  )
+  const supplierCounts = await SupplierModel.getCountGroupByLocation()
+
+  // Create a map for quick lookup of supplier counts
+  const countMap = new Map(supplierCounts.map(({ location, count }) => [location, count]))
+
+  return locations.map((location) => ({
+    type: 'location',
+    key: location.key,
+    value: location.label,
+    supplierCount: countMap.get(keyToEnum(Location, location.key)) ?? 0,
+  }))
 }
