@@ -13,6 +13,10 @@ if (!process.env.VERCEL_ENV || process.env.VERCEL_ENV === 'development') {
 const connectionString = process.env.DATABASE_URL!
 console.log('Attempting to connect with:', connectionString)
 
-// Disable prefetch as it is not supported for "Transaction" pool mode
-export const client = postgres(connectionString, { prepare: false })
+export const client = postgres(connectionString, {
+  prepare: false, // Required for transaction pool mode
+  // Remove client-side connection management since it's handled by the pooler
+  // max_lifetime and other pool settings are managed by the pooler
+})
+
 export const db = drizzle(client, { schema })
