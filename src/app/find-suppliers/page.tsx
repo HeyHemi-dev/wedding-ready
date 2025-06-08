@@ -30,12 +30,9 @@ export default async function FindSuppliers() {
               <h2 className="ui-s1">Explore suppliers by location</h2>
               <ul className="columns-2 gap-acquaintance md:columns-3">
                 {locations.map((location) => (
-                  <FindSuppliersItem
-                    key={location.key}
-                    label={location.value}
-                    href={`/locations/${enumKeyToParam(location.key)}`}
-                    supplierCount={location.supplierCount}
-                  />
+                  <li key={location.key} className="py-xs">
+                    <FindSuppliersItem label={location.value} href={`/locations/${enumKeyToParam(location.key)}`} supplierCount={location.supplierCount} />
+                  </li>
                 ))}
               </ul>
             </div>
@@ -45,12 +42,9 @@ export default async function FindSuppliers() {
               <h2 className="ui-s1">Explore suppliers by service category</h2>
               <ul className="columns-2 gap-acquaintance md:columns-3">
                 {services.map((service) => (
-                  <FindSuppliersItem
-                    key={service.key}
-                    label={service.value}
-                    href={`/services/${enumKeyToParam(service.key)}`}
-                    supplierCount={service.supplierCount}
-                  />
+                  <li key={service.key} className="py-xs">
+                    <FindSuppliersItem label={service.value} href={`/services/${enumKeyToParam(service.key)}`} supplierCount={service.supplierCount} />
+                  </li>
                 ))}
               </ul>
             </div>
@@ -77,11 +71,9 @@ function FindSuppliersItem({ label, href, supplierCount }: FindSuppliersItemProp
   const formattedSupplierCount = formatSupplierCount(supplierCount)
 
   return (
-    <li className="py-xs">
-      <Link href={href} className="grid items-start gap-x-partner md:grid-cols-[auto_1fr]">
-        <h3 className="row-start-2 text-lg md:row-start-1">{label}</h3>
-        <span className="ui-small row-start-1 text-muted-foreground">{formattedSupplierCount}</span>
-      </Link>
-    </li>
+    <Link href={href} className="grid items-start gap-x-partner md:grid-cols-[auto_1fr]">
+      <h3 className="row-start-2 text-lg md:row-start-1">{label}</h3>
+      <span className="ui-small row-start-1 text-muted-foreground">{formattedSupplierCount}</span>
+    </Link>
   )
 }
