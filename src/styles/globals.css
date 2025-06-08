@@ -53,11 +53,8 @@
 @layer base {
   :root {
     /* ratios */
-
     --gap-base: 0.25rem;
     --gap-scale: 1.5;
-
-    --text-ratio: 0.8;
 
     /* border radius */
     --radius: 0.5rem;

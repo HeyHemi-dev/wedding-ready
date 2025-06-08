@@ -33,7 +33,6 @@ const config = {
         sm: '1rem',
         xs: '0.5rem',
         xxs: '0.25rem',
-        textLength: 'var(--width-prose)',
       },
       padding: {
         site: 'var(--padding-site-gutter)',
@@ -97,18 +96,18 @@ const config = {
       },
       borderRadius: {
         DEFAULT: 'var(--radius)',
-        outside: 'calc(var(--radius) + theme(spacing.contour))',
-        inside: 'calc(var(--radius) - theme(spacing.contour))',
+        outside: 'calc(var(--radius) + theme(padding.contour))',
+        inside: 'calc(var(--radius) - theme(padding.contour))',
         area: 'var(--radius-area)',
-        'area-outside': 'calc(var(--radius-area) + theme(spacing.contour))',
-        'area-inside': 'calc(var(--radius-area) - theme(spacing.contour))',
+        'area-outside': 'calc(var(--radius-area) + theme(padding.contour))',
+        'area-inside': 'calc(var(--radius-area) - theme(padding.contour))',
         lg: 'calc(var(--radius) * 2)',
         md: 'calc(var(--radius) * 1.5)',
         sm: 'calc(var(--radius) * 0.5)',
         full: 'calc(var(--radius) * 999)',
       },
       boxShadow: {
-        contour: '0 0 0 theme(spacing.contour) hsl(var(--primary))',
+        contour: '0 0 0 theme(padding.contour) hsl(var(--primary))',
       },
       keyframes: {
         'accordion-down': {

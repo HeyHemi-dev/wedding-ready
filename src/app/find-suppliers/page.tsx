@@ -1,11 +1,25 @@
+import { unstable_cache } from 'next/cache'
 import Link from 'next/link'
 
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { Location, Service } from '@/db/constants'
+import { locationOperations } from '@/operations/location-operations'
+import { serviceOperations } from '@/operations/service-operations'
 import { enumKeyToParam, enumToPretty } from '@/utils/enum-helpers'
 
-export default function FindSuppliers() {
+import { tags } from '../_types/tags'
+
+
+const locationTags = enumToPretty(Location).map((location) => tags.locationSuppliers(location.key))
+const getCachedLocations = unstable_cache(locationOperations.getAllWithSupplierCount, locationTags)
+
+const serviceTags = enumToPretty(Service).map((service) => tags.serviceSuppliers(service.key))
+const getCachedServices = unstable_cache(serviceOperations.getAllWithSupplierCount, serviceTags)
+
+export default async function FindSuppliers() {
+  const [locations, services] = await Promise.all([getCachedLocations(), getCachedServices()])
+
   return (
     <>
       <Section className="min-h-svh-minus-header pt-0">
@@ -16,42 +30,52 @@ export default function FindSuppliers() {
           <Area>
             <div className="grid gap-friend">
               <h2 className="ui-s1">Explore suppliers by location</h2>
-              <ul className="columns-3 gap-acquaintance">
-                {enumToPretty(Location).map((location) => {
-                  const locationParam = enumKeyToParam(location.key)
-
-                  return (
-                    <li key={location.key} className="py-xs">
-                      <Link href={`/locations/${locationParam}`} className="inline-flex items-baseline gap-spouse">
-                        <h3 className="text-lg">{location.label}</h3>
-                        <span className="ui-small text-muted-foreground">{`(?)`}</span>
-                      </Link>
-                    </li>
-                  )
-                })}
+              <ul className="columns-2 gap-acquaintance md:columns-3">
+                {locations.map((location) => (
+                  <li key={location.key} className="py-xs">
+                    <FindSuppliersItem label={location.value} href={`/locations/${enumKeyToParam(location.key)}`} supplierCount={location.supplierCount} />
+                  </li>
+                ))}
               </ul>
             </div>
           </Area>
           <Area>
             <div className="grid gap-friend">
               <h2 className="ui-s1">Explore suppliers by service category</h2>
-              <ul className="columns-3 gap-acquaintance">
-                {enumToPretty(Service).map((service) => {
-                  const serviceParam = enumKeyToParam(service.key)
-
-                  return (
-                    <li key={service.key} className="py-xs">
-                      <Link href={`/services/${serviceParam}`} className="inline-flex items-baseline gap-spouse">
-                        <h3 className="text-lg">{service.label}</h3> <span className="ui-small text-muted-foreground">{`(?)`}</span>
-                      </Link>
-                    </li>
-                  )
-                })}
+              <ul className="columns-2 gap-acquaintance md:columns-3">
+                {services.map((service) => (
+                  <li key={service.key} className="py-xs">
+                    <FindSuppliersItem label={service.value} href={`/services/${enumKeyToParam(service.key)}`} supplierCount={service.supplierCount} />
+                  </li>
+                ))}
               </ul>
             </div>
           </Area>
         </div>
       </Section>
     </>
+  )
+}
+
+const formatSupplierCount = (count: number): string => {
+  if (count === 0) return ''
+  if (count > 10) return count.toString()
+  return `0${count}`
+}
+
+type FindSuppliersItemProps = {
+  label: string
+  href: string
+  supplierCount: number
+}
+
+function FindSuppliersItem({ label, href, supplierCount }: FindSuppliersItemProps) {
+  const formattedSupplierCount = formatSupplierCount(supplierCount)
+
+  return (
+    <Link href={href} className="grid items-start gap-x-partner sm:grid-cols-[auto_1fr]">
+      <h3 className="row-start-2 text-lg sm:row-start-1">{label}</h3>
+      <span className="ui-small row-start-1 text-muted-foreground">{formattedSupplierCount}</span>
+    </Link>
   )
 }

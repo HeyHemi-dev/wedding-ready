@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, eq, count } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import { Service, SupplierRole, Location } from '@/db/constants'
@@ -118,6 +118,32 @@ export class SupplierModel {
   static async isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {
     const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
     return suppliers.length === 0
+  }
+
+  static async getCountGroupByLocation(): Promise<{ location: Location; count: number }[]> {
+    const result = await db
+      .select({
+        location: schema.supplierLocations.location,
+        count: count(schema.suppliers.id),
+      })
+      .from(schema.suppliers)
+      .innerJoin(schema.supplierLocations, eq(schema.suppliers.id, schema.supplierLocations.supplierId))
+      .groupBy(schema.supplierLocations.location)
+
+    return result
+  }
+
+  static async getCountGroupByService(): Promise<{ service: Service; count: number }[]> {
+    const result = await db
+      .select({
+        service: schema.supplierServices.service,
+        count: count(schema.suppliers.id),
+      })
+      .from(schema.suppliers)
+      .innerJoin(schema.supplierServices, eq(schema.suppliers.id, schema.supplierServices.supplierId))
+      .groupBy(schema.supplierServices.service)
+
+    return result
   }
 }
 
