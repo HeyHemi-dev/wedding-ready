@@ -7,10 +7,10 @@ const config = {
   prefix: '',
   theme: {
     screens: {
-      sm: '450px',
-      md: '850px',
-      lg: '1550px',
-      xl: '2050px',
+      // mobile first. Breakpoint names apply to screen sizes larger than the pixel breakpoint value.
+      tablet: '450px',
+      laptop: '850px',
+      wide: '1550px',
     },
 
     extend: {

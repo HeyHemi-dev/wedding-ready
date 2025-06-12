@@ -8,14 +8,13 @@ import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { cn } from '@/utils/shadcn-utils'
 
-
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
-      <div className="grid grid-cols-1 gap-area md:grid-cols-[minmax(200px,1fr)_3fr]">
-        <nav className="grid auto-rows-fr gap-sibling self-start md:pt-10">
+      <div className="laptop:grid-cols-[minmax(200px,1fr)_3fr] grid grid-cols-1 gap-area">
+        <nav className="laptop:pt-10 grid auto-rows-fr gap-sibling self-start">
           <AccountNavLink
             href="/account"
             currentPathname={pathname}

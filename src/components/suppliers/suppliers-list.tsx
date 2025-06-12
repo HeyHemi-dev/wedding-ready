@@ -2,9 +2,8 @@ import { Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-
 export function SuppliersGrid({ children }: { children: React.ReactNode }) {
-  return <div className="grid grid-cols-1 gap-lg md:grid-cols-2 lg:grid-cols-3">{children}</div>
+  return <div className="wide:grid-cols-3 laptop:grid-cols-2 grid grid-cols-1 gap-lg">{children}</div>
 }
 
 type SupplierCardProps = {
@@ -19,7 +18,7 @@ type SupplierCardProps = {
 
 export function SupplierCard({ name, subtitle, mainImage, thumbnailImages, stat, href, avatar }: SupplierCardProps) {
   return (
-    <Link href={href} className="hover:shadow-contour grid gap-xs rounded transition-all hover:bg-primary/80 focus:bg-primary/80">
+    <Link href={href} className="grid gap-xs rounded transition-all hover:bg-primary/80 hover:shadow-contour focus:bg-primary/80">
       <div className="grid max-w-full grid-cols-3 grid-rows-2 gap-[1px] overflow-hidden rounded">
         <div className="relative col-span-2 row-span-2 aspect-square bg-white">
           <Image src={mainImage} alt={name} fill sizes="100vw" className="object-cover" />

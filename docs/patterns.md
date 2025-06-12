@@ -40,6 +40,6 @@
 
 ### Responsive Design
 
-- Use mobile-first approach with Tailwind's responsive prefixes (sm:, md:, lg:). Default styles apply to mobile first, and override as needed for larger break points
+- Use mobile-first approach with Tailwind's responsive prefixes (tablet:, laptop:, wide:). Default styles apply to mobile first, and override as needed for larger break points
 - Follow consistent spacing using our design tokens (gap-area, gap-sibling, etc.)
 - Use CSS Grid for complex layouts with responsive breakpoints
