@@ -47,13 +47,13 @@ export default function Home() {
   return (
     <>
       <Section className="min-h-svh-minus-header pt-0">
-        <div className="grid grid-cols-3 gap-area md:grid-rows-4">
-          <Area className="col-span-full grid place-content-center gap-acquaintance md:col-span-2 md:row-span-full">
-            <div className="flex flex-col gap-sibling md:pr-xxl">
+        <div className="laptop:grid-rows-4 grid grid-cols-3 gap-area">
+          <Area className="laptop:col-span-2 laptop:row-span-full col-span-full grid place-content-center gap-acquaintance">
+            <div className="laptop:pr-xxl flex flex-col gap-sibling">
               <h1 className="heading-2xl">Wedding inspiration you can actually book.</h1>
               <p className="ui-large text-pretty">Explore local ideas, save what you love, and connect with real NZ suppliers—all for free.</p>
             </div>
-            <div className="flex flex-col gap-sibling sm:flex-row">
+            <div className="tablet:flex-row flex flex-col gap-sibling">
               <Button size={'lg'} asChild>
                 <Link href="/sign-up" className="flex items-center gap-spouse">
                   <span>Sign up now</span>
@@ -67,10 +67,10 @@ export default function Home() {
               </Button>
             </div>
           </Area>
-          <Area className="relative col-span-1 overflow-hidden md:row-span-3">
+          <Area className="laptop:row-span-3 relative col-span-1 overflow-hidden">
             <Image className="object-cover" src="/assets/home-hero.jpg" alt="Couple, just married, celebrating with confetti" fill sizes="100vw" />
           </Area>
-          <Area className="relative col-span-2 row-span-1 overflow-hidden md:col-span-1">
+          <Area className="laptop:col-span-1 relative col-span-2 row-span-1 overflow-hidden">
             <Image className="object-cover" src="/assets/home-hero2.jpg" alt="Modern rustic place setting" fill sizes="100vw" />
           </Area>
         </div>
@@ -79,18 +79,18 @@ export default function Home() {
       <StackingCardsContainer cards={cards} />
 
       <Section>
-        <div className="grid gap-area md:grid-cols-3 md:grid-rows-1">
-          <Area className="relative min-h-[33svh] overflow-hidden md:col-span-1 md:row-span-full">
+        <div className="laptop:grid-cols-3 laptop:grid-rows-1 grid gap-area">
+          <Area className="laptop:col-span-1 laptop:row-span-full relative min-h-[33svh] overflow-hidden">
             <Image className="object-cover" src="/assets/home-supplier2.jpg" alt="Indian wedding couple exchanging garlands" fill sizes="33vw" />
           </Area>
-          <Area className="grid place-content-center gap-friend md:col-span-2 md:row-span-full">
+          <Area className="laptop:col-span-2 laptop:row-span-full grid place-content-center gap-friend">
             <div className="flex flex-col gap-sibling pr-xxl">
               <h2 className="heading-lg">Are you a wedding supplier?</h2>
               <p className="text-pretty">
                 Reach more couples, showcase your work, and get discovered on WeddingReady. It&apos;s free to join, and only takes a few minutes to set up.
               </p>
             </div>
-            <div className="flex flex-col gap-sibling sm:flex-row">
+            <div className="tablet:flex-row flex flex-col gap-sibling">
               <Button size="lg" asChild>
                 <Link href="/suppliers/join" className="flex items-center gap-spouse">
                   <span>Join as a supplier</span>

@@ -28,7 +28,7 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
-      <div className="grid grid-cols-1 gap-area md:grid-cols-2">
+      <div className="laptop:grid-cols-2 grid grid-cols-1 gap-area">
         <Area className="relative overflow-clip rounded-area">
           <Image src={tile.imagePath} alt={tile.title ?? ''} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain" />
           {authUserId && <SaveTileButton tileId={tile.id} authUserId={authUserId} className="absolute inset-0 flex items-start justify-end p-contour" />}

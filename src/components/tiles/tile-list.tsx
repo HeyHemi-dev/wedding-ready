@@ -10,7 +10,7 @@ import { SaveTileButton } from './save-button'
 export function TileList({ tiles, authUserId }: { tiles: Tile[]; authUserId?: string }) {
   return (
     <>
-      <div className="grid grid-cols-2 gap-area md:grid-cols-3 lg:grid-cols-5">
+      <div className="wide:grid-cols-5 laptop:grid-cols-3 grid grid-cols-2 gap-area">
         {tiles.map((tile) => (
           <TileListItem key={tile.id} tile={tile} authUserId={authUserId} />
         ))}
@@ -38,7 +38,7 @@ export function TileListItem({ tile, authUserId }: { tile: Tile; authUserId?: st
 
 export function TileListSkeleton() {
   return (
-    <div className="grid grid-cols-2 gap-area md:grid-cols-3 lg:grid-cols-5">
+    <div className="wide:grid-cols-5 laptop:grid-cols-3 grid grid-cols-2 gap-area">
       {Array.from({ length: 5 }).map((_, index) => (
         <div key={index} className="grid grid-rows-[auto_1fr] gap-partner">
           <Skeleton className="aspect-[2/3] rounded-lg" />

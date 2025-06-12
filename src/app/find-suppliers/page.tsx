@@ -10,7 +10,6 @@ import { enumKeyToParam, enumToPretty } from '@/utils/enum-helpers'
 
 import { tags } from '../_types/tags'
 
-
 const locationTags = enumToPretty(Location).map((location) => tags.locationSuppliers(location.key))
 const getCachedLocations = unstable_cache(locationOperations.getAllWithSupplierCount, locationTags)
 
@@ -30,7 +29,7 @@ export default async function FindSuppliers() {
           <Area>
             <div className="grid gap-friend">
               <h2 className="ui-s1">Explore suppliers by location</h2>
-              <ul className="columns-2 gap-acquaintance md:columns-3">
+              <ul className="laptop:columns-3 columns-2 gap-acquaintance">
                 {locations.map((location) => (
                   <li key={location.key} className="py-xs">
                     <FindSuppliersItem label={location.value} href={`/locations/${enumKeyToParam(location.key)}`} supplierCount={location.supplierCount} />
@@ -42,7 +41,7 @@ export default async function FindSuppliers() {
           <Area>
             <div className="grid gap-friend">
               <h2 className="ui-s1">Explore suppliers by service category</h2>
-              <ul className="columns-2 gap-acquaintance md:columns-3">
+              <ul className="laptop:columns-3 columns-2 gap-acquaintance">
                 {services.map((service) => (
                   <li key={service.key} className="py-xs">
                     <FindSuppliersItem label={service.value} href={`/services/${enumKeyToParam(service.key)}`} supplierCount={service.supplierCount} />
@@ -73,8 +72,8 @@ function FindSuppliersItem({ label, href, supplierCount }: FindSuppliersItemProp
   const formattedSupplierCount = formatSupplierCount(supplierCount)
 
   return (
-    <Link href={href} className="grid items-start gap-x-partner sm:grid-cols-[auto_1fr]">
-      <h3 className="row-start-2 text-lg sm:row-start-1">{label}</h3>
+    <Link href={href} className="tablet:grid-cols-[auto_1fr] grid items-start gap-x-partner">
+      <h3 className="tablet:row-start-1 row-start-2 text-lg">{label}</h3>
       <span className="ui-small row-start-1 text-muted-foreground">{formattedSupplierCount}</span>
     </Link>
   )
