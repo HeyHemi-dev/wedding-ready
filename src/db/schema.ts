@@ -2,14 +2,15 @@ import { getTableColumns } from 'drizzle-orm'
 import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
 import { authUsers as users } from 'drizzle-orm/supabase'
 
-import { Service, SupplierRole, Location } from '@/db/constants'
+import { Service, SupplierRole, Location, SERVICES, SUPPLIER_ROLES, LOCATIONS } from '@/db/constants'
 import { enumToPgEnum } from '@/utils/enum-helpers'
+import { constToPgEnum } from '@/utils/const-helpers'
 
-export const supplierRoles = pgEnum('supplier_roles', enumToPgEnum(SupplierRole))
+export const supplierRoles = pgEnum('supplier_roles', constToPgEnum(SUPPLIER_ROLES))
 
-export const services = pgEnum('services', enumToPgEnum(Service))
+export const services = pgEnum('services', constToPgEnum(SERVICES))
 
-export const locations = pgEnum('locations', enumToPgEnum(Location))
+export const locations = pgEnum('locations', constToPgEnum(LOCATIONS))
 
 // Maintain 1-1 relationship between user_details and auth.users
 export const user_details = pgTable('user_details', {
