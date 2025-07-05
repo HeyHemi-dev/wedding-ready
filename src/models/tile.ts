@@ -5,6 +5,7 @@ import * as s from '@/db/schema'
 import { tryCatch } from '@/utils/try-catch'
 
 import type * as t from './types'
+import { Service } from '@/db/constants'
 
 const tileBaseQuery = db
   .select({
@@ -228,6 +229,43 @@ export class TileModel {
       }))
     )
     return tileSuppliers
+  }
+
+  static async addSupplierCredit(
+    tileId: string,
+    credit: {
+      supplierId: string
+      service?: Service
+      serviceDescription?: string
+    }
+  ): Promise<t.TileSupplierRaw> {
+    const result = await db
+      .insert(s.tileSuppliers)
+      .values({
+        tileId,
+        supplierId: credit.supplierId,
+        service: credit.service,
+        serviceDescription: credit.serviceDescription,
+      })
+      .returning()
+
+    return result[0]
+  }
+
+  static async getCredits(tileId: string): Promise<t.TileCredit[]> {
+    const rows = await db
+      .select({
+        ...s.tileSupplierColumns,
+        supplier: s.suppliers,
+      })
+      .from(s.tileSuppliers)
+      .innerJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
+      .where(eq(s.tileSuppliers.tileId, tileId))
+
+    return rows.map((row) => ({
+      ...row,
+      supplier: row.supplier,
+    }))
   }
 
   static async getSavedStateRaw(tileId: string, userId: string): Promise<t.SavedTileRaw | null> {

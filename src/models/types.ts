@@ -95,3 +95,7 @@ export interface Tile extends TileRawWithSuppliers {
   imagePath: string
   isSaved?: boolean
 }
+
+export interface TileCredit extends TileSupplierRaw {
+  supplier: SupplierRaw
+}
