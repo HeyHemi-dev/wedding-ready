@@ -7,9 +7,10 @@ import { Location } from '@/db/constants'
 import { locationDescriptions } from '@/db/location-descriptions'
 import { SupplierModel } from '@/models/supplier'
 import { paramToEnum, valueToPretty } from '@/utils/enum-helpers'
+import { locationHelpers } from '@/utils/const-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
-  const location = paramToEnum(Location, (await params).location)
+  const location = locationHelpers.paramToValue((await params).location)
 
   if (!location) {
     notFound()

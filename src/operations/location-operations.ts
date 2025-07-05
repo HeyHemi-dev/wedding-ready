@@ -1,6 +1,7 @@
 import { FindSuppliersResponse } from '@/app/_types/locations'
-import { Location } from '@/db/constants'
+import { Location, LOCATIONS } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
+import { locationHelpers } from '@/utils/const-helpers'
 import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
 
 export const locationOperations = {
@@ -8,16 +9,15 @@ export const locationOperations = {
 }
 
 async function getAllWithSupplierCount(): Promise<FindSuppliersResponse[]> {
-  const locations = enumToPretty(Location)
   const supplierCounts = await SupplierModel.getCountGroupByLocation()
 
   // Map for quick lookup
   const countMap = new Map(supplierCounts.map(({ location, count }) => [location, count]))
 
-  return locations.map((location) => ({
+  return Object.entries(LOCATIONS).map(([key, value]) => ({
     type: 'location',
-    key: location.key,
-    value: location.label,
-    supplierCount: countMap.get(keyToEnum(Location, location.key)) ?? 0,
+    key,
+    value,
+    supplierCount: countMap.get(value) ?? 0,
   }))
 }
