@@ -9,12 +9,12 @@ import { serviceOperations } from '@/operations/service-operations'
 import { enumKeyToParam, enumToPretty } from '@/utils/enum-helpers'
 
 import { tags } from '@/app/_types/tags'
-import { locationHelpers } from '@/utils/const-helpers'
+import { locationHelpers, serviceHelpers } from '@/utils/const-helpers'
 
 const locationTags = locationHelpers.toPretty().map((location) => tags.locationSuppliers(location.key))
 const getCachedLocations = unstable_cache(locationOperations.getAllWithSupplierCount, locationTags)
 
-const serviceTags = enumToPretty(Service).map((service) => tags.serviceSuppliers(service.key))
+const serviceTags = serviceHelpers.toPretty().map((service) => tags.serviceSuppliers(service.key))
 const getCachedServices = unstable_cache(serviceOperations.getAllWithSupplierCount, serviceTags)
 
 export default async function FindSuppliers() {
