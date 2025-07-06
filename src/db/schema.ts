@@ -2,8 +2,7 @@ import { getTableColumns } from 'drizzle-orm'
 import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
 import { authUsers as users } from 'drizzle-orm/supabase'
 
-import { Service, SupplierRole, Location, SERVICES, SUPPLIER_ROLES, LOCATIONS } from '@/db/constants'
-import { enumToPgEnum } from '@/utils/enum-helpers'
+import { SERVICES, SUPPLIER_ROLES, LOCATIONS } from '@/db/constants'
 import { constToPgEnum } from '@/utils/const-helpers'
 
 export const supplierRoles = pgEnum('supplier_roles', constToPgEnum(SUPPLIER_ROLES))
@@ -82,7 +81,7 @@ export const supplierUsers = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    role: supplierRoles('role').notNull().default(SupplierRole.STANDARD),
+    role: supplierRoles('role').notNull().default(SUPPLIER_ROLES.STANDARD),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
   },

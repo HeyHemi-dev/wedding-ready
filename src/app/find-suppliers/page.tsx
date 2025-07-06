@@ -1,15 +1,13 @@
 import { unstable_cache } from 'next/cache'
 import Link from 'next/link'
 
+import { tags } from '@/app/_types/tags'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { Location, Service } from '@/db/constants'
 import { locationOperations } from '@/operations/location-operations'
 import { serviceOperations } from '@/operations/service-operations'
-import { enumKeyToParam, enumToPretty } from '@/utils/enum-helpers'
-
-import { tags } from '@/app/_types/tags'
 import { locationHelpers, serviceHelpers } from '@/utils/const-helpers'
+import { enumKeyToParam } from '@/utils/enum-helpers'
 
 const locationTags = locationHelpers.toPretty().map((location) => tags.locationSuppliers(location.key))
 const getCachedLocations = unstable_cache(locationOperations.getAllWithSupplierCount, locationTags)
