@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-import { Service } from '@/db/constants'
+import { SERVICES } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
 import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
 
@@ -22,8 +22,8 @@ describe('serviceOperations', () => {
     it('should return all services with their supplier counts', async () => {
       // Mock data
       const mockSupplierCounts = [
-        { service: Service.PHOTOGRAPHER, count: 5 },
-        { service: Service.VIDEOGRAPHER, count: 3 },
+        { service: SERVICES.PHOTOGRAPHER, count: 5 },
+        { service: SERVICES.VIDEOGRAPHER, count: 3 },
       ]
 
       // Setup mocks
@@ -33,12 +33,12 @@ describe('serviceOperations', () => {
       const result = await serviceOperations.getAllWithSupplierCount()
 
       // Verify the result
-      const services = enumToPretty(Service)
+      const services = enumToPretty(SERVICES)
       expect(result).toHaveLength(services.length)
 
       // Check that each service has the correct count
       result.forEach((item) => {
-        const service = keyToEnum(Service, item.key)
+        const service = keyToEnum(SERVICES, item.key)
         const expectedCount = mockSupplierCounts.find((sc) => sc.service === service)?.count ?? 0
         expect(item).toEqual({
           type: 'service',

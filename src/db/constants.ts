@@ -89,6 +89,6 @@ export function getEntries<T extends Record<string, string>>(obj: T): [keyof T, 
 }
 
 // Backward compatibility - you can gradually migrate these
-export const Service = SERVICES
-export const Location = LOCATIONS
-export const SupplierRole = SUPPLIER_ROLES
+export const ServiceEnum = SERVICES
+export const LocationEnum = LOCATIONS
+export const SupplierRoleEnum = SUPPLIER_ROLES
