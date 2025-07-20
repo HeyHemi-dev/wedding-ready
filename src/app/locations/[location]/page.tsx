@@ -5,8 +5,7 @@ import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { locationDescriptions } from '@/db/location-descriptions'
 import { SupplierModel } from '@/models/supplier'
-import { locationHelpers } from '@/utils/const-helpers'
-import { valueToPretty } from '@/utils/enum-helpers'
+import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
   const location = locationHelpers.paramToValue((await params).location)

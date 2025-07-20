@@ -3,13 +3,12 @@ import { notFound } from 'next/navigation'
 import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { ServiceEnum } from '@/db/constants'
 import { serviceDescriptions } from '@/db/service-descriptions'
 import { SupplierModel } from '@/models/supplier'
-import { paramToEnum, valueToPretty } from '@/utils/enum-helpers'
+import { serviceHelpers, valueToPretty } from '@/utils/const-helpers'
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
-  const service = paramToEnum(ServiceEnum, (await params).service)
+  const service = serviceHelpers.paramToValue((await params).service)
 
   if (!service) {
     notFound()
