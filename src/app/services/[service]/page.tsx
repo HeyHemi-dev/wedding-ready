@@ -8,7 +8,7 @@ import { SupplierModel } from '@/models/supplier'
 import { serviceHelpers, valueToPretty } from '@/utils/const-helpers'
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
-  const service = serviceHelpers.paramToValue((await params).service)
+  const service = serviceHelpers.paramToKey((await params).service)
 
   if (!service) {
     notFound()
