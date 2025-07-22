@@ -6,7 +6,7 @@ import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { locationOperations } from '@/operations/location-operations'
 import { serviceOperations } from '@/operations/service-operations'
-import { locationHelpers, serviceHelpers, constKeyToParam } from '@/utils/const-helpers'
+import { locationHelpers, serviceHelpers, constToParamFormat } from '@/utils/const-helpers'
 
 const locationTags = locationHelpers.toPretty().map((location) => tags.locationSuppliers(location.key))
 const getCachedLocations = unstable_cache(locationOperations.getAllWithSupplierCount, locationTags)
@@ -30,7 +30,11 @@ export default async function FindSuppliers() {
               <ul className="columns-2 gap-acquaintance laptop:columns-3">
                 {locations.map((location) => (
                   <li key={location.key} className="py-xs">
-                    <FindSuppliersItem label={location.value} href={`/locations/${constKeyToParam(location.key)}`} supplierCount={location.supplierCount} />
+                    <FindSuppliersItem
+                      label={location.value}
+                      href={`/locations/${constToParamFormat(location.value)}`}
+                      supplierCount={location.supplierCount}
+                    />
                   </li>
                 ))}
               </ul>
@@ -42,7 +46,7 @@ export default async function FindSuppliers() {
               <ul className="columns-2 gap-acquaintance laptop:columns-3">
                 {services.map((service) => (
                   <li key={service.key} className="py-xs">
-                    <FindSuppliersItem label={service.value} href={`/services/${constKeyToParam(service.key)}`} supplierCount={service.supplierCount} />
+                    <FindSuppliersItem label={service.value} href={`/services/${constToParamFormat(service.value)}`} supplierCount={service.supplierCount} />
                   </li>
                 ))}
               </ul>

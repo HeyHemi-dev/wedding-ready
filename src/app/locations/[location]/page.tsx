@@ -8,7 +8,7 @@ import { SupplierModel } from '@/models/supplier'
 import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
-  const location = locationHelpers.paramToKey((await params).location)
+  const location = locationHelpers.paramToConst((await params).location)
 
   if (!location) {
     notFound()
