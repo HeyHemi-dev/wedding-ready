@@ -1,4 +1,4 @@
-import { SERVICES, LOCATIONS, SUPPLIER_ROLES } from '@/db/constants'
+import { SERVICES, LOCATIONS, SUPPLIER_ROLES, Service, Location, SupplierRole } from '@/db/constants'
 
 /**
  * Type for our const objects
@@ -52,28 +52,19 @@ export function valueToKey<T extends ConstObject>(constObject: T, value: T[keyof
 }
 
 /**
- * Converts a const key to a URL-friendly parameter
- * @example BAY_OF_PLENTY -> bay-of-plenty
+ * Converts a const value to a URL-friendly parameter
+ * @example bay_of_plenty -> bay-of-plenty
  */
-export function constKeyToParam(key: string): string {
-  return key.toLowerCase().replace(/_/g, '-')
+export function constToParamFormat(constValue: string): string {
+  return constValue.toLowerCase().replace(/_/g, '-')
 }
 
 /**
- * Converts a URL parameter back to const key formatting
- * @example bay-of-plenty -> BAY_OF_PLENTY
+ * Converts a URL parameter back to const value formatting
+ * @example bay-of-plenty -> bay_of_plenty
  */
-function paramToConstKeyFormat(param: string) {
-  return param.replace(/-/g, '_').toUpperCase()
-}
-
-/**
- * Converts a URL parameter back to a const value
- * @example bay-of-plenty -> LOCATIONS.BAY_OF_PLENTY
- */
-export function paramToConst<T extends ConstObject>(constObject: T, param: string): T[keyof T] {
-  const key = paramToConstKeyFormat(param)
-  return constObject[key as keyof T]
+function paramToConstFormat(param: string) {
+  return param.replace(/-/g, '_').toLowerCase()
 }
 
 // Specific helpers for your const objects
@@ -84,8 +75,8 @@ export const serviceHelpers = {
     const entry = Object.entries(SERVICES).find(([, v]) => v === value)
     return entry ? entry[0] : undefined
   },
-  keyToParam: (key: string) => constKeyToParam(key),
-  paramToValue: (param: string) => paramToConst(SERVICES, param),
+  constToParam: (constValue: Service) => constToParamFormat(constValue),
+  paramToConst: (param: string) => paramToConstFormat(param) as Service,
 }
 
 export const locationHelpers = {
@@ -95,8 +86,8 @@ export const locationHelpers = {
     const entry = Object.entries(LOCATIONS).find(([, v]) => v === value)
     return entry ? entry[0] : undefined
   },
-  keyToParam: (key: string) => constKeyToParam(key),
-  paramToValue: (param: string) => paramToConst(LOCATIONS, param),
+  constToParam: (constValue: Location) => constToParamFormat(constValue),
+  paramToConst: (param: string) => paramToConstFormat(param) as Location,
 }
 
 export const supplierRoleHelpers = {
@@ -106,6 +97,6 @@ export const supplierRoleHelpers = {
     const entry = Object.entries(SUPPLIER_ROLES).find(([, v]) => v === value)
     return entry ? entry[0] : undefined
   },
-  keyToParam: (key: string) => constKeyToParam(key),
-  paramToValue: (param: string) => paramToConst(SUPPLIER_ROLES, param),
+  constToParam: (constValue: SupplierRole) => constToParamFormat(constValue),
+  paramToConst: (param: string) => paramToConstFormat(param) as SupplierRole,
 }
