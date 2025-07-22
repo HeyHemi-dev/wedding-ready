@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { LocationEnum, ServiceEnum, LOCATIONS, SERVICES } from '@/db/constants'
+import { LocationEnum, ServiceEnum } from '@/db/constants'
 import { SetUserDetailRaw } from '@/models/types'
 
 export const supplierRegistrationFormSchema = z.object({
