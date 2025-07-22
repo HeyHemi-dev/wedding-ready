@@ -2,11 +2,10 @@ import React from 'react'
 
 import { Area } from '@/components/ui/area'
 import { Separator } from '@/components/ui/separator'
-import { SupplierRaw, User } from '@/models/types'
+import { SupplierWithUsers, User } from '@/models/types'
 
 import { FileWithMetadata } from './upload-dropzone'
 import { UploadPreviewForm } from './upload-preview-form'
-
 
 export function UploadPreviewList({
   files,
@@ -15,7 +14,7 @@ export function UploadPreviewList({
   onCompleteAction,
 }: {
   files: FileWithMetadata[]
-  supplier: SupplierRaw
+  supplier: SupplierWithUsers
   user: User
   onCompleteAction: (fileIndex: number) => void
 }) {

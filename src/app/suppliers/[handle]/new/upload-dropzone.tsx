@@ -7,18 +7,17 @@ import { generateClientDropzoneAccept, generatePermittedFileTypes, isValidFileSi
 import { ExpandedRouteConfig } from 'uploadthing/types'
 
 import { Button } from '@/components/ui/button'
-import { SupplierRaw, User } from '@/models/types'
+import { SupplierWithUsers, User } from '@/models/types'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { UploadPreviewList } from './upload-preview'
-
 
 export type FileWithMetadata = {
   file: File
   fileObjectUrl: string
 }
 
-export function UploadDropzone({ supplier, user }: { supplier: SupplierRaw; user: User }) {
+export function UploadDropzone({ supplier, user }: { supplier: SupplierWithUsers; user: User }) {
   const [files, setFiles] = React.useState<FileWithMetadata[]>([])
   const { routeConfig } = useUploadThing('tileUploader')
 
