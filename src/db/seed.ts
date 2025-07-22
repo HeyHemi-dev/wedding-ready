@@ -6,7 +6,7 @@ import { tileOperations } from '@/operations/tile-operations'
 import { createAdminClient } from '@/utils/supabase/server'
 
 import { client as dbClient } from './connection'
-import { Location, Service } from './constants'
+import { LOCATIONS, SERVICES } from './constants'
 import seedImages from './seedimages.json' assert { type: 'json' }
 
 async function seedDatabase() {
@@ -30,8 +30,8 @@ async function seedDatabase() {
     handle: 'patina_photo',
     websiteUrl: 'https://patina.photo',
     description: 'We are wedding photographers + videographers who travel NZ, capturing all the feels from the party of a lifetime.',
-    locations: [Location.WELLINGTON, Location.AUCKLAND, Location.CANTERBURY],
-    services: [Service.PHOTOGRAPHER, Service.VIDEOGRAPHER],
+    locations: [LOCATIONS.WELLINGTON, LOCATIONS.AUCKLAND, LOCATIONS.CANTERBURY],
+    services: [SERVICES.PHOTOGRAPHER, SERVICES.VIDEOGRAPHER],
     createdByUserId: user.id,
   }
   // also sets the user as an admin for the supplier
@@ -55,7 +55,7 @@ async function seedDatabase() {
       const tileRawData: t.InsertTileRaw = {
         createdByUserId: user.id,
         imagePath: image.url,
-        location: Location.WELLINGTON,
+        location: LOCATIONS.WELLINGTON,
       }
       return await tileOperations.createForSupplier({ InsertTileRawData: tileRawData, supplierIds: [supplier.id] })
     })
