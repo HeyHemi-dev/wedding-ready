@@ -1,7 +1,7 @@
 import { and, eq, count } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
-import { Service, SupplierRole, Location } from '@/db/constants'
+import { Service, SupplierRoleEnum, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
 import {
   InsertSupplierRaw,
@@ -89,7 +89,7 @@ export class SupplierModel {
     const insertSupplierUserData: InsertSupplierUserRaw = {
       supplierId: supplier.id,
       userId: user.id,
-      role: SupplierRole.ADMIN,
+      role: SupplierRoleEnum.ADMIN,
     }
     const supplierUsers = await db.insert(schema.supplierUsers).values(insertSupplierUserData).returning()
 

@@ -17,7 +17,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Location, Service } from '@/db/constants'
+import { LocationEnum, ServiceEnum } from '@/db/constants'
 import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
 import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 
@@ -133,7 +133,7 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
               <FormFieldItem label="Locations" className="pb-2">
                 <FormDescription>Select regions served by your business. You can select multiple regions.</FormDescription>
                 <div className="grid grid-cols-2 gap-sibling">
-                  {enumToPretty(Location).map((location) => (
+                  {enumToPretty(LocationEnum).map((location) => (
                     <FormField
                       key={location.value}
                       control={form.control}
@@ -143,11 +143,11 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
                           <FormItem key={location.value} className="flex flex-row items-center gap-partner">
                             <FormControl>
                               <Checkbox
-                                checked={field.value?.includes(keyToEnum(Location, location.key))}
+                                checked={field.value?.includes(keyToEnum(LocationEnum, location.key))}
                                 onCheckedChange={(checked) => {
                                   return checked
-                                    ? field.onChange([...field.value, keyToEnum(Location, location.key)])
-                                    : field.onChange(field.value?.filter((value) => value !== keyToEnum(Location, location.key)))
+                                    ? field.onChange([...field.value, keyToEnum(LocationEnum, location.key)])
+                                    : field.onChange(field.value?.filter((value) => value !== keyToEnum(LocationEnum, location.key)))
                                 }}
                               />
                             </FormControl>
@@ -168,7 +168,7 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
               <FormFieldItem label="Services" className="pb-2">
                 <FormDescription>Select services offered by your business. You can select multiple services.</FormDescription>
                 <div className="grid grid-cols-2 gap-sibling">
-                  {enumToPretty(Service).map((service) => (
+                  {enumToPretty(ServiceEnum).map((service) => (
                     <FormField
                       key={service.value}
                       control={form.control}
@@ -178,11 +178,11 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
                           <FormItem key={service.value} className="flex flex-row items-center gap-partner">
                             <FormControl>
                               <Checkbox
-                                checked={field.value?.includes(keyToEnum(Service, service.key))}
+                                checked={field.value?.includes(keyToEnum(ServiceEnum, service.key))}
                                 onCheckedChange={(checked) => {
                                   return checked
-                                    ? field.onChange([...field.value, keyToEnum(Service, service.key)])
-                                    : field.onChange(field.value?.filter((value) => value !== keyToEnum(Service, service.key)))
+                                    ? field.onChange([...field.value, keyToEnum(ServiceEnum, service.key)])
+                                    : field.onChange(field.value?.filter((value) => value !== keyToEnum(ServiceEnum, service.key)))
                                 }}
                               />
                             </FormControl>

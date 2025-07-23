@@ -2,17 +2,21 @@
 
 import * as React from 'react'
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Form, useForm } from 'react-hook-form'
+
 import { useCreateTile } from '@/app/_hooks/use-create-tile'
-import Field from '@/components/form/field'
+import { TileUploadPreviewForm, tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
+import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
+import { FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Location } from '@/db/constants'
 import { InsertTileRaw, SupplierRaw, User } from '@/models/types'
-import { enumToPretty } from '@/utils/enum-helpers'
+import { locationHelpers } from '@/utils/const-helpers'
 
 import { FileWithMetadata } from './upload-dropzone'
 
@@ -30,12 +34,29 @@ export function UploadPreviewForm({
   const { startCreateTile, status, uploadProgress } = useCreateTile({
     onUploadComplete: onCompleteAction,
   })
+  const form = useForm<TileUploadPreviewForm>({
+    resolver: zodResolver(tileUploadPreviewFormSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      location: null,
+      createdByUserId: user.id,
+      isPrivate: false,
+      suppliers: [
+        {
+          id: supplier.id,
+          service: 'photographer', // Default service - you might want to get this from the supplier
+          serviceDescription: '',
+        },
+      ],
+    },
+  })
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit(data: TileUploadPreviewForm) {
     const tileData: InsertTileRaw = {
-      title: formData.get('title') as string,
-      description: (formData.get('description') as string) || null,
-      location: (formData.get('location') as Location) || null,
+      title: data.title,
+      description: data.description || null,
+      location: data.location || null,
       createdByUserId: user.id,
       isPrivate: false,
     }
@@ -56,40 +77,68 @@ export function UploadPreviewForm({
             {/* eslint-disable-next-line @next/next/no-img-element -- This is a client-side preview of a local file, so Next.js Image optimization isn't needed */}
             <img src={file.fileObjectUrl} alt={file.file.name} className="h-full w-full object-contain" />
           </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-friend">
+              <div className="grid gap-sibling">
+                <h3 className="ui-s1">Tile Details</h3>
 
-          <form action={onSubmit} className="grid grid-cols-2 gap-friend">
-            <div className="grid gap-sibling">
-              <h3 className="ui-s1">Tile Details</h3>
-              <Field label="Title" htmlFor="title">
-                <Input id="title" name="title" defaultValue={''} />
-              </Field>
-              <Field label="Description" htmlFor="description">
-                <Textarea id="description" name="description" rows={3} />
-              </Field>
-              <Field label="Location" htmlFor="location">
-                <Select name="location">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {enumToPretty(Location).map((location) => (
-                      <SelectItem key={location.value} value={location.value}>
-                        {location.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
-            </div>
-            <div className="grid auto-rows-max gap-sibling">
-              <h3 className="ui-s1">Suppliers</h3>
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormFieldItem label="Title">
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormFieldItem>
+                  )}
+                />
 
-              <Label>Credit suppliers</Label>
-            </div>
-            <div className="col-span-full">
-              <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
-            </div>
-          </form>
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormFieldItem label="Description">
+                      <FormControl>
+                        <Textarea {...field} rows={3} />
+                      </FormControl>
+                    </FormFieldItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormFieldItem label="Location">
+                      <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value || ''}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a location" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {locationHelpers.toPretty().map((location) => (
+                              <SelectItem key={location.value} value={location.value}>
+                                {location.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </FormFieldItem>
+                  )}
+                />
+              </div>
+              <div className="grid auto-rows-max gap-sibling">
+                <h3 className="ui-s1">Suppliers</h3>
+
+                <Label>Credit suppliers</Label>
+              </div>
+              <div className="col-span-full">
+                <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
+              </div>
+            </form>
+          </Form>
         </div>
       ) : (
         <div className="flex flex-col gap-spouse">

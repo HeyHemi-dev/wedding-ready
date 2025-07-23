@@ -3,13 +3,12 @@ import { notFound } from 'next/navigation'
 import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { Location } from '@/db/constants'
 import { locationDescriptions } from '@/db/location-descriptions'
 import { SupplierModel } from '@/models/supplier'
-import { paramToEnum, valueToPretty } from '@/utils/enum-helpers'
+import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
-  const location = paramToEnum(Location, (await params).location)
+  const location = locationHelpers.paramToConst((await params).location)
 
   if (!location) {
     notFound()

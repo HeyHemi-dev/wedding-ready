@@ -24,11 +24,12 @@
 - Separate configurations for development and production
 - Supabase environment variables are automatically injected into the project
 
-### Enum Handling
+### Const Object Handling
 
-- Use `enum-helpers.ts` utilities for consistent enum handling
-- Convert between URL parameters and enum values using `paramToEnum`
-- Format enum values for display using `valueToPretty`
+- Use `const-helpers.ts` utilities for consistent const object handling
+- Convert between URL parameters and const values using `paramToConst`
+- Format const values for display using `valueToPretty`
+- Use specialized helpers: `locationHelpers`, `serviceHelpers`, `supplierRoleHelpers`
 
 ### Forms
 

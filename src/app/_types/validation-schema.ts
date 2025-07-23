@@ -1,12 +1,7 @@
 import { z } from 'zod'
 
-import { Location, Service } from '@/db/constants'
+import { LocationEnum, ServiceEnum } from '@/db/constants'
 import { SetUserDetailRaw } from '@/models/types'
-
-export const tileUploaderInputSchema = z.object({
-  createdByUserId: z.string(),
-  tileId: z.string(),
-})
 
 export const supplierRegistrationFormSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(50, "Name can't exceed 50 characters"),
@@ -18,32 +13,32 @@ export const supplierRegistrationFormSchema = z.object({
     .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores'),
   websiteUrl: z.string().trim().optional(),
   description: z.string().optional(),
-  locations: z.array(z.nativeEnum(Location)).min(1, 'At least one location required'),
-  services: z.array(z.nativeEnum(Service)).min(1, 'At least one service required'),
+  locations: z.array(z.nativeEnum(LocationEnum)).min(1, 'At least one location required'),
+  services: z.array(z.nativeEnum(ServiceEnum)).min(1, 'At least one service required'),
   createdByUserId: z.string().uuid(),
 })
 export type SupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>
 
-const supplierSchema = z.object({
-  id: z.string(),
-  description: z.string().nullable(),
-  name: z.string(),
+export const tileUploaderInputSchema = z.object({
   createdByUserId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  handle: z.string(),
-  handleUpdatedAt: z.date(),
-  websiteUrl: z.string().nullable(),
+  tileId: z.string(),
 })
 
-export const tileUpdateFormSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string().optional(),
-  location: z.nativeEnum(Location).nullable(),
+export const tileUploadPreviewFormSchema = z.object({
+  title: z.string().trim().min(1, 'Title is required').max(100, "Title can't exceed 100 characters"),
+  description: z.string().trim().optional(),
+  location: z.nativeEnum(LocationEnum).nullable(),
+  createdByUserId: z.string(),
   isPrivate: z.boolean(),
-  suppliers: z.array(supplierSchema),
+  suppliers: z.array(
+    z.object({
+      id: z.string(),
+      service: z.nativeEnum(ServiceEnum),
+      serviceDescription: z.string().optional(),
+    })
+  ),
 })
+export type TileUploadPreviewForm = z.infer<typeof tileUploadPreviewFormSchema>
 
 export const userSignupFormSchema = z.object({
   email: z.string().trim().email('Invalid email'),
