@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { tileKeys } from '@/app/_types/queryKeys'
+import { AddCreditButton } from '@/components/tiles/add-credit-button'
 import { SaveTileButton } from '@/components/tiles/save-button'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
@@ -46,10 +47,7 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
           <div className="flex flex-col gap-sibling">
             <div className="flex items-center justify-between gap-friend">
               <h2 className="ui-s1">Supplier credits</h2>
-              {/* <Button variant={'ghost'} size="sm" className="flex items-center gap-spouse">
-                <Plus className="h-4 w-4" />
-                <span>Add supplier</span>
-              </Button> */}
+              {authUserId === tile.createdByUserId && <AddCreditButton tileId={tile.id} />}
             </div>
             {tile.suppliers.map((supplier) => (
               <SupplierCredit key={supplier.id} name={supplier.name} contribution={'Contribution description'} href={`/suppliers/${supplier.handle}`} />
