@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-import { Location } from '@/db/constants'
+import { LOCATIONS } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
 import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
 
@@ -22,8 +22,8 @@ describe('locationOperations', () => {
     it('should return all locations with their supplier counts', async () => {
       // Mock data
       const mockSupplierCounts = [
-        { location: Location.AUCKLAND, count: 10 },
-        { location: Location.WELLINGTON, count: 5 },
+        { location: LOCATIONS.AUCKLAND, count: 10 },
+        { location: LOCATIONS.WELLINGTON, count: 5 },
       ]
 
       // Setup mocks
@@ -33,12 +33,12 @@ describe('locationOperations', () => {
       const result = await locationOperations.getAllWithSupplierCount()
 
       // Verify the result
-      const locations = enumToPretty(Location)
+      const locations = enumToPretty(LOCATIONS)
       expect(result).toHaveLength(locations.length)
 
       // Check that each location has the correct count
       result.forEach((item) => {
-        const location = keyToEnum(Location, item.key)
+        const location = keyToEnum(LOCATIONS, item.key)
         const expectedCount = mockSupplierCounts.find((sc) => sc.location === location)?.count ?? 0
         expect(item).toEqual({
           type: 'location',
