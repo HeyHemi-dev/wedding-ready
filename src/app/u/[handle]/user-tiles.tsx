@@ -4,7 +4,7 @@ import { useUserTiles } from '@/app/_hooks/use-user-tiles'
 import { noTiles, TileList, TileListSkeleton } from '@/components/tiles/tile-list'
 import * as t from '@/models/types'
 
-export function UserTiles({ user, authUserId }: { user: t.User; authUserId?: string }) {
+export function UserTiles({ user, authUserId }: { user: t.User; authUserId: string | null }) {
   const { data: tiles, isLoading, isError, error } = useUserTiles(user.id, authUserId)
 
   if (isLoading) {
