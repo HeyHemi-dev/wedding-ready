@@ -11,7 +11,7 @@
 | Presentation/Client-side Boundary | - UX<br>- Toasts<br>- Zod parsing | - Fetch (inside custom hooks)<br>- Forms |
 | Presentation/Server-side Boundary | - Authentication<br>- Headers/cookies<br>- Zod declaration/parsing<br>- UI-type definitions<br>- User-facing errors | - SSR (pages)<br>- API endpoints (routes)<br>- Form actions |
 | Operations | - Authorization<br>- Type conversion | - Operation Objects (e.g. authOperation, tileOperation) |
-| Data/Access | - Data-type definitions | - Models (e.g. supplierModel, tileModel) |
+| Data/Access | - Data-type definitions<br>- Data integrity | - Models (e.g. supplierModel, tileModel) |
 | Data/Definition | Schema definition | - Schema |
 
 ## Implementation Details
