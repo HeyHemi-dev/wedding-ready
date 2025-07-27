@@ -41,6 +41,14 @@ export class SupplierModel {
     }
   }
 
+  static async getRawById(id: string): Promise<SupplierRaw | null> {
+    const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.id, id))
+
+    if (suppliers === null || suppliers.length === 0) return null
+
+    return suppliers[0]
+  }
+
   static async getAll({ service, location }: { service?: Service; location?: Location } = {}): Promise<Supplier[]> {
     const conditions = []
 
