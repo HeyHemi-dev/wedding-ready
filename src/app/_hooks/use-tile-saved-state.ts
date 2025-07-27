@@ -6,6 +6,7 @@ import { SaveTilePostRequestBody, SaveTilePostResponseBody } from '@/app/api/use
 import * as t from '@/models/types'
 import { tryCatchFetch } from '@/utils/try-catch'
 
+import { TileListItem } from '@/app/_types/tiles'
 
 export function useTileSaveState(tileId: string, authUserId: string) {
   const queryClient = useQueryClient()
@@ -92,7 +93,7 @@ async function postSaveTile(authUserId: string, tileId: string, isSaved: boolean
  * @param tiles - The array of tiles
  * @param authUserId - The id of the current authenticated user.
  */
-export function setTilesSaveStateCache(queryClient: QueryClient, tiles: t.Tile[], authUserId: string) {
+export function setTilesSaveStateCache(queryClient: QueryClient, tiles: TileListItem[], authUserId: string) {
   tiles.forEach((tile) => {
     queryClient.setQueryData(tileKeys.saveState(tile.id, authUserId), {
       authUserId,

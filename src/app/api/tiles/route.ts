@@ -4,12 +4,11 @@ import { TileModel } from '@/models/tile'
 import * as t from '@/models/types'
 import { getAuthUserId } from '@/utils/auth'
 
-
 export interface tileNewRequestBody extends t.InsertTileRaw {
   suppliers: t.SupplierRaw[]
 }
 
-export type tileNewResponseBody = t.TileRawWithSuppliers
+export type tileNewResponseBody = { id: string }
 
 // Create a new tile
 export async function POST(req: Request): Promise<NextResponse> {
@@ -22,7 +21,11 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   const { suppliers, ...rest } = body
 
-  const tile: tileNewResponseBody = await TileModel.createRawWithSuppliers(rest, suppliers)
+  const tile = await TileModel.createRaw(rest)
+  await TileModel.addSuppliers(
+    tile.id,
+    suppliers.map((s) => s.id)
+  )
 
-  return NextResponse.json(tile)
+  return NextResponse.json({ id: tile.id })
 }

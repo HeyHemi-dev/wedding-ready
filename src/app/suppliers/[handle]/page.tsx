@@ -25,8 +25,8 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
   }
 
   // Check if the user is the owner of the supplier to enable edit features
-  const user = await getCurrentUser()
-  const isSupplierUser = supplier?.users.some((u) => u.userId === user?.id)
+  const authUser = await getCurrentUser()
+  const isSupplierUser = supplier?.users.some((u) => u.userId === authUser?.id)
 
   return (
     <>
@@ -34,7 +34,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
         <Area>
           <div className="supplier-header">
             <div className="top-row flex items-center gap-friend">
-              <Button disabled={!user} className="gap-spouse">
+              <Button disabled={!authUser} className="gap-spouse">
                 <StarIcon className="h-4 w-4" />
                 {`Follow @${supplier.handle}`}
               </Button>
@@ -69,7 +69,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
             message: 'Error loading tiles',
             cta: { text: 'Retry', redirect: `/suppliers/${handle}` },
           })}>
-          <SupplierTiles supplier={supplier} user={user ?? undefined} />
+          <SupplierTiles supplier={supplier} authUserId={authUser ? authUser.id : null} />
         </ErrorBoundary>
       </Section>
     </>

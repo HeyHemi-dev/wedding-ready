@@ -3,14 +3,14 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Tile } from '@/models/types'
+import type { TileListItem } from '@/app/_types/tiles'
 
 import { SaveTileButton } from './save-button'
 
-export function TileList({ tiles, authUserId }: { tiles: Tile[]; authUserId?: string }) {
+export function TileList({ tiles, authUserId }: { tiles: TileListItem[]; authUserId: string | null }) {
   return (
     <>
-      <div className="wide:grid-cols-5 laptop:grid-cols-3 grid grid-cols-2 gap-area">
+      <div className="grid grid-cols-2 gap-area laptop:grid-cols-3 wide:grid-cols-5">
         {tiles.map((tile) => (
           <TileListItem key={tile.id} tile={tile} authUserId={authUserId} />
         ))}
@@ -19,7 +19,7 @@ export function TileList({ tiles, authUserId }: { tiles: Tile[]; authUserId?: st
   )
 }
 
-export function TileListItem({ tile, authUserId }: { tile: Tile; authUserId?: string }) {
+export function TileListItem({ tile, authUserId }: { tile: TileListItem; authUserId: string | null }) {
   return (
     <div className="grid grid-rows-[auto_1fr] gap-partner">
       <div className="relative">
@@ -38,7 +38,7 @@ export function TileListItem({ tile, authUserId }: { tile: Tile; authUserId?: st
 
 export function TileListSkeleton() {
   return (
-    <div className="wide:grid-cols-5 laptop:grid-cols-3 grid grid-cols-2 gap-area">
+    <div className="grid grid-cols-2 gap-area laptop:grid-cols-3 wide:grid-cols-5">
       {Array.from({ length: 5 }).map((_, index) => (
         <div key={index} className="grid grid-rows-[auto_1fr] gap-partner">
           <Skeleton className="aspect-[2/3] rounded-lg" />
