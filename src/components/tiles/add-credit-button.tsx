@@ -11,7 +11,7 @@ export function AddCreditButton({ tileId }: { tileId: string }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog>
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" className="flex items-center gap-spouse">
           <Plus className="h-4 w-4" />
@@ -22,7 +22,7 @@ export function AddCreditButton({ tileId }: { tileId: string }) {
         <DialogHeader>
           <DialogTitle>Add credit</DialogTitle>
         </DialogHeader>
-        <TileCreditForm tileId={tileId} onSuccess={() => setOpen(false)} />
+        <TileCreditForm tileId={tileId} />
       </DialogContent>
     </Dialog>
   )

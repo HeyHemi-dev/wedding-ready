@@ -13,10 +13,10 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Service } from '@/db/constants'
-import { enumToPretty } from '@/utils/enum-helpers'
+import { SERVICES } from '@/db/constants'
+import { constToPretty } from '@/utils/const-helpers'
 
-export function TileCreditForm({ tileId, onSuccess }: { tileId: string; onSuccess: () => void }) {
+export function TileCreditForm({ tileId }: { tileId: string }) {
   const { addCredit } = useTileCredit(tileId)
   const form = useForm<FormValues>({
     resolver: zodResolver(tileCreditFormSchema),
@@ -32,7 +32,6 @@ export function TileCreditForm({ tileId, onSuccess }: { tileId: string; onSucces
     try {
       await addCredit(data)
       toast.success('Credit added')
-      onSuccess()
       form.reset()
     } catch (e) {
       toast.error((e as Error).message)
@@ -64,7 +63,7 @@ export function TileCreditForm({ tileId, onSuccess }: { tileId: string; onSucces
                     <SelectValue placeholder="Select service" />
                   </SelectTrigger>
                   <SelectContent>
-                    {enumToPretty(Service).map((service) => (
+                    {constToPretty(SERVICES).map((service) => (
                       <SelectItem key={service.value} value={service.value}>
                         {service.label}
                       </SelectItem>
@@ -87,9 +86,6 @@ export function TileCreditForm({ tileId, onSuccess }: { tileId: string; onSucces
           )}
         />
         <div className="flex justify-end gap-close-friend">
-          <Button type="button" variant="ghost" onClick={() => onSuccess()}>
-            Cancel
-          </Button>
           <SubmitButton pendingChildren="Adding...">Add Credit</SubmitButton>
         </div>
       </form>
