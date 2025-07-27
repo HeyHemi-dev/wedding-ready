@@ -1,7 +1,8 @@
+import { SavedTilesModel } from '@/models/savedTiles'
 import { TileModel } from '@/models/tile'
 import * as t from '@/models/types'
+import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
-
 
 export type SaveTileGetResponseBody = t.SavedTileRaw
 
@@ -13,7 +14,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     return Response.json({ message: 'Unauthorized' }, { status: 401 })
   }
 
-  const savedTile = await TileModel.getSavedStateRaw(tileId, id)
+  const savedTile = await SavedTilesModel.getSavedTileRaw(tileId, id)
 
   return Response.json(savedTile)
 }
@@ -31,7 +32,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return Response.json({ message: 'Unauthorized' }, { status: 401 })
   }
 
-  const savedTile = await TileModel.updateSaveStateRaw({ tileId, userId: authUserId, isSaved: body.isSaved ?? true })
+  const savedTile = await SavedTilesModel.upsertSavedTileRaw({ tileId, userId: authUserId, isSaved: body.isSaved ?? true })
 
   return Response.json(savedTile)
 }
