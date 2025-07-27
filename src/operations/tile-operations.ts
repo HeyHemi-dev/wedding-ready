@@ -8,6 +8,7 @@ import { TileSupplierModel } from '@/models/tileSupplier'
 export const tileOperations = {
   getById,
   getListForSupplier,
+  getListForUser,
   createForSupplier,
   addCredit,
 }
@@ -41,6 +42,17 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
 
 async function getListForSupplier(supplierId: string, authUserId?: string): Promise<TileListItem[]> {
   const tiles = await TileModel.getBySupplierId(supplierId, authUserId)
+  return tiles.map((tile) => ({
+    id: tile.id,
+    imagePath: tile.imagePath,
+    title: tile.title,
+    description: tile.description,
+    isSaved: tile.isSaved,
+  }))
+}
+
+async function getListForUser(userId: string, authUserId?: string): Promise<TileListItem[]> {
+  const tiles = await TileModel.getByUserId(userId, authUserId)
   return tiles.map((tile) => ({
     id: tile.id,
     imagePath: tile.imagePath,

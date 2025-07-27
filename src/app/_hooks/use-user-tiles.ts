@@ -8,7 +8,7 @@ import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
 
-import { setTilesSaveStateCache } from './use-tile-saved-state'
+import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 
 export function useUserTiles(userId: string, authUserId?: string) {
   const queryClient = useQueryClient()
