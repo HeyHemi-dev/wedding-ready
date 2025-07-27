@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { LocationEnum, ServiceEnum } from '@/db/constants'
+import { LOCATIONS, SERVICES } from '@/db/constants'
 import { SetUserDetailRaw } from '@/models/types'
 
 export const supplierRegistrationFormSchema = z.object({
@@ -13,8 +13,8 @@ export const supplierRegistrationFormSchema = z.object({
     .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores'),
   websiteUrl: z.string().trim().optional(),
   description: z.string().optional(),
-  locations: z.array(z.nativeEnum(LocationEnum)).min(1, 'At least one location required'),
-  services: z.array(z.nativeEnum(ServiceEnum)).min(1, 'At least one service required'),
+  locations: z.array(z.nativeEnum(LOCATIONS)).min(1, 'At least one location required'),
+  services: z.array(z.nativeEnum(SERVICES)).min(1, 'At least one service required'),
   createdByUserId: z.string().uuid(),
 })
 export type SupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>
@@ -27,13 +27,13 @@ export const tileUploaderInputSchema = z.object({
 export const tileUploadPreviewFormSchema = z.object({
   title: z.string().trim().min(1, 'Title is required').max(100, "Title can't exceed 100 characters"),
   description: z.string().trim().optional(),
-  location: z.nativeEnum(LocationEnum).nullable(),
+  location: z.nativeEnum(LOCATIONS).nullable(),
   createdByUserId: z.string(),
   isPrivate: z.boolean(),
   suppliers: z.array(
     z.object({
       id: z.string(),
-      service: z.nativeEnum(ServiceEnum),
+      service: z.nativeEnum(SERVICES),
       serviceDescription: z.string().optional(),
     })
   ),
@@ -84,7 +84,7 @@ export type UserResetPasswordForm = z.infer<typeof userResetPasswordFormSchema>
 
 export const tileCreditFormSchema = z.object({
   supplierId: z.string().uuid(),
-  service: z.nativeEnum(Service).optional(),
+  service: z.nativeEnum(SERVICES).optional(),
   serviceDescription: z.string().optional(),
 })
 export type TileCreditForm = z.infer<typeof tileCreditFormSchema>
