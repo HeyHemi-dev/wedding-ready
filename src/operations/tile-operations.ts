@@ -2,15 +2,17 @@ import { SupplierModel } from '@/models/supplier'
 import { TileModel } from '@/models/tile'
 import { Service } from '@/db/constants'
 import * as t from '@/models/types'
-import { Tile, TileListItem } from '@/app/_types/tiles'
+import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
 import { TileSupplierModel } from '@/models/tileSupplier'
+import { TileCreditForm } from '@/app/_types/validation-schema'
 
 export const tileOperations = {
   getById,
   getListForSupplier,
   getListForUser,
   createForSupplier,
-  addCredit,
+  getCreditsForTile,
+  createCreditForTile,
 }
 
 async function getById(id: string, authUserId?: string): Promise<Tile> {
@@ -74,15 +76,17 @@ async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTil
   }
 }
 
-async function addCredit({
-  tileId,
-  credit,
-  userId,
-}: {
-  tileId: string
-  credit: { supplierId: string; service?: Service; serviceDescription?: string }
-  userId: string
-}): Promise<t.TileCredit[]> {
+async function getCreditsForTile(tileId: string): Promise<TileCredit[]> {
+  const tileCredits = await TileSupplierModel.getCreditsByTileId(tileId)
+  return tileCredits.map((credit) => ({
+    supplierHandle: credit.supplier.handle,
+    supplierName: credit.supplier.name,
+    service: credit.service,
+    serviceDescription: credit.serviceDescription,
+  }))
+}
+
+async function createCreditForTile({ tileId, credit, userId }: { tileId: string; credit: TileCreditForm; userId: string }): Promise<TileCredit[]> {
   const tile = await TileModel.getRawById(tileId)
   if (!tile) {
     throw new Error('Tile not found')
@@ -92,5 +96,12 @@ async function addCredit({
   }
 
   await TileSupplierModel.createRaw({ tileId, supplierId: credit.supplierId, service: credit.service, serviceDescription: credit.serviceDescription })
-  return TileSupplierModel.getCreditsByTileId(tileId)
+  const tileCredits = await TileSupplierModel.getCreditsByTileId(tileId)
+
+  return tileCredits.map((credit) => ({
+    supplierHandle: credit.supplier.handle,
+    supplierName: credit.supplier.name,
+    service: credit.service,
+    serviceDescription: credit.serviceDescription,
+  }))
 }

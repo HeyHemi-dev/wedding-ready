@@ -8,6 +8,7 @@ import { SupplierModel } from './supplier'
 export const TileSupplierModel = {
   getCreditsByTileId,
   createRaw,
+  createManyRaw,
 }
 
 async function getCreditsByTileId(tileId: string): Promise<t.TileCredit[]> {
@@ -34,4 +35,9 @@ async function createRaw(tileSupplierRawData: t.InsertTileSupplierRaw): Promise<
   const tileSuppliers = await db.insert(s.tileSuppliers).values(tileSupplierRawData).returning()
 
   return tileSuppliers[0]
+}
+
+async function createManyRaw(tileSupplierRawData: t.InsertTileSupplierRaw[]): Promise<t.TileSupplierRaw[]> {
+  const tileSuppliers = await db.insert(s.tileSuppliers).values(tileSupplierRawData).returning()
+  return tileSuppliers
 }
