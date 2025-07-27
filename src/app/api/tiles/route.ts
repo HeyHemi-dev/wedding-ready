@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { TileModel } from '@/models/tile'
 import * as t from '@/models/types'
 import { getAuthUserId } from '@/utils/auth'
+import { TileSupplierModel } from '@/models/tileSupplier'
 
 export interface tileNewRequestBody extends t.InsertTileRaw {
   suppliers: t.SupplierRaw[]
@@ -22,9 +23,11 @@ export async function POST(req: Request): Promise<NextResponse> {
   const { suppliers, ...rest } = body
 
   const tile = await TileModel.createRaw(rest)
-  await TileModel.addSuppliers(
-    tile.id,
-    suppliers.map((s) => s.id)
+  await TileSupplierModel.createManyRaw(
+    suppliers.map((s) => ({
+      tileId: tile.id,
+      supplierId: s.id,
+    }))
   )
 
   return NextResponse.json({ id: tile.id })
