@@ -1,11 +1,9 @@
-import { eq, and, inArray, isNotNull, desc } from 'drizzle-orm'
+import { eq, and, isNotNull, desc } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
-
-import type * as t from '@/models/types'
-import { Service } from '@/db/constants'
 import { SavedTilesModel } from '@/models/savedTiles'
+import type * as t from '@/models/types'
 
 export const TileModel = {
   getRawById,
@@ -14,11 +12,6 @@ export const TileModel = {
   getByUserId,
   createRaw,
   updateRaw,
-  // addSuppliers,
-  // addSupplierCredit,
-  // getCredits,
-  // getSavedStateRaw,
-  // updateSaveStateRaw,
 }
 
 async function getRawById(id: string): Promise<t.TileRaw | null> {
@@ -113,98 +106,6 @@ async function updateRaw(tileRawData: t.TileRaw): Promise<t.TileRawWithImage> {
     imagePath: tileRaw.imagePath!, // We can assert that imagePath exists because we already threw an error if it was missing.
   }
 }
-
-// async function addSuppliers(tileId: string, supplierIds: string[]): Promise<t.TileSupplierRaw[]> {
-//   const tileSuppliers = await db.insert(s.tileSuppliers).values(
-//     supplierIds.map((supplierId) => ({
-//       tileId,
-//       supplierId,
-//     }))
-//   )
-//   return tileSuppliers
-// }
-
-// async function addSupplierCredit(
-//   tileId: string,
-//   credit: {
-//     supplierId: string
-//     service?: Service
-//     serviceDescription?: string
-//   }
-// ): Promise<t.TileSupplierRaw> {
-//   const result = await db
-//     .insert(s.tileSuppliers)
-//     .values({
-//       tileId,
-//       supplierId: credit.supplierId,
-//       service: credit.service,
-//       serviceDescription: credit.serviceDescription,
-//     })
-//     .returning()
-
-//   return result[0]
-// }
-
-// async function getCredits(tileId: string): Promise<t.TileCredit[]> {
-//   const rows = await db
-//     .select({
-//       ...s.tileSupplierColumns,
-//       supplier: s.suppliers,
-//     })
-//     .from(s.tileSuppliers)
-//     .innerJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
-//     .where(eq(s.tileSuppliers.tileId, tileId))
-
-//   return rows.map((row) => ({
-//     ...row,
-//     supplier: row.supplier,
-//   }))
-// }
-
-// async function getSavedStateRaw(tileId: string, userId: string): Promise<t.SavedTileRaw | null> {
-//   const savedTiles = await db
-//     .select()
-//     .from(s.savedTiles)
-//     .where(and(eq(s.savedTiles.tileId, tileId), eq(s.savedTiles.userId, userId)))
-//     .limit(1)
-
-//   return savedTiles.length ? savedTiles[0] : null
-// }
-
-// /**
-//  * lets a user save/unsave a tile by upserting the saved tile relationship.
-//  * @returns The updated saved status of the tile
-//  */
-// async function updateSaveStateRaw(savedTileData: t.InsertSavedTileRaw): Promise<t.SavedTileRaw> {
-//   const savedTiles = await db
-//     .insert(s.savedTiles)
-//     .values(savedTileData)
-//     .onConflictDoUpdate({
-//       target: [s.savedTiles.tileId, s.savedTiles.userId],
-//       set: {
-//         isSaved: savedTileData.isSaved,
-//       },
-//     })
-//     .returning()
-
-//   return savedTiles[0]
-// }
-
-// async function getSavedTilesRaw(tiles: t.TileRaw[] | t.Tile[], userId: string): Promise<t.SavedTileRaw[]> {
-//   const savedTiles = await db
-//     .select()
-//     .from(s.savedTiles)
-//     .where(
-//       and(
-//         eq(s.savedTiles.userId, userId),
-//         inArray(
-//           s.savedTiles.tileId,
-//           tiles.map((t) => t.id)
-//         )
-//       )
-//     )
-//   return savedTiles
-// }
 
 /**
  * Removes fields that should not be updated from a TileRaw

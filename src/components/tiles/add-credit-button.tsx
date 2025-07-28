@@ -1,15 +1,13 @@
 'use client'
 
-import { useState } from 'react'
 import { Plus } from 'lucide-react'
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+
 import { TileCreditForm } from './tile-credit-form'
 
 export function AddCreditButton({ tileId }: { tileId: string }) {
-  const [open, setOpen] = useState(false)
-
   return (
     <Dialog>
       <DialogTrigger asChild>

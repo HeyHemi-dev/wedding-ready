@@ -2,13 +2,13 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 import { tileKeys } from '@/app/_types/queryKeys'
 import { SupplierTilesGetRequestParams, SupplierTilesGetResponseBody } from '@/app/api/suppliers/[id]/tiles/route'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
 
-import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 
 export function useSupplierTiles({ supplierId, authUserId }: { supplierId: string; authUserId: string | null }) {
   const queryClient = useQueryClient()

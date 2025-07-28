@@ -1,7 +1,5 @@
 import { SavedTilesModel } from '@/models/savedTiles'
-import { TileModel } from '@/models/tile'
 import * as t from '@/models/types'
-import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 export type SaveTileGetResponseBody = t.SavedTileRaw

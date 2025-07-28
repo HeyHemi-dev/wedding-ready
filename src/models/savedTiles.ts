@@ -1,7 +1,8 @@
 import { eq, and, inArray } from 'drizzle-orm'
+
+import { db } from '@/db/connection'
 import * as s from '@/db/schema'
 import * as t from '@/models/types'
-import { db } from '@/db/connection'
 
 export const SavedTilesModel = {
   getSavedTileRaw,

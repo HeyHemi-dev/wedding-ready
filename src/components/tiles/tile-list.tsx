@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import type { TileListItem } from '@/app/_types/tiles'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import type { TileListItem } from '@/app/_types/tiles'
 
 import { SaveTileButton } from './save-button'
 

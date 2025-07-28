@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 
 import { TileModel } from '@/models/tile'
+import { TileSupplierModel } from '@/models/tileSupplier'
 import * as t from '@/models/types'
 import { getAuthUserId } from '@/utils/auth'
-import { TileSupplierModel } from '@/models/tileSupplier'
 
 export interface tileNewRequestBody extends t.InsertTileRaw {
   suppliers: t.SupplierRaw[]

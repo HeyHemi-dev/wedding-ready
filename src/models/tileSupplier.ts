@@ -1,9 +1,12 @@
+import { eq } from 'drizzle-orm'
+
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
-import type * as t from './types'
-import { eq } from 'drizzle-orm'
-import { TileModel } from './tile'
+
 import { SupplierModel } from './supplier'
+import { TileModel } from './tile'
+
+import type * as t from './types'
 
 export const TileSupplierModel = {
   getCreditsByTileId,

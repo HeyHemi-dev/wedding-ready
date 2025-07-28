@@ -1,13 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { z } from 'zod'
 
-import { TileModel } from '@/models/tile'
-import * as t from '@/models/types'
+import { TileListItem } from '@/app/_types/tiles'
+import { tileOperations } from '@/operations/tile-operations'
 import { parseQueryParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
-import { TileListItem } from '@/app/_types/tiles'
-import { tileOperations } from '@/operations/tile-operations'
 
 const userTilesGetRequestParams = z.object({
   authUserId: z.string().optional(),

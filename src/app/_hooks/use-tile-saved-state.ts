@@ -2,11 +2,9 @@ import { useMutation, useQueryClient, useQuery, QueryClient } from '@tanstack/re
 import { toast } from 'sonner'
 
 import { tileKeys } from '@/app/_types/queryKeys'
-import { SaveTilePostRequestBody, SaveTilePostResponseBody } from '@/app/api/users/[id]/tiles/[tileId]/route'
-import * as t from '@/models/types'
-import { tryCatchFetch } from '@/utils/try-catch'
-
 import { TileListItem } from '@/app/_types/tiles'
+import { SaveTilePostRequestBody, SaveTilePostResponseBody } from '@/app/api/users/[id]/tiles/[tileId]/route'
+import { tryCatchFetch } from '@/utils/try-catch'
 
 export function useTileSaveState(tileId: string, authUserId: string) {
   const queryClient = useQueryClient()

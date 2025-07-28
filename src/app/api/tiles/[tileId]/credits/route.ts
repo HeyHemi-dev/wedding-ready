@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server'
 
+import { TileCredit } from '@/app/_types/tiles'
 import { tileCreditFormSchema, TileCreditForm } from '@/app/_types/validation-schema'
-import { TileModel } from '@/models/tile'
 import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
-import { TileCredit } from '@/app/_types/tiles'
 
 export type TileCreditGetResponseBody = TileCredit[]
 export type TileCreditPostRequestBody = TileCreditForm

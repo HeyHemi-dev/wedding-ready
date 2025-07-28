@@ -2,7 +2,7 @@
 
 import { useSupplierTiles } from '@/app/_hooks/use-supplier-tiles'
 import { noTiles, TileList, TileListSkeleton } from '@/components/tiles/tile-list'
-import { SupplierWithUsers, User } from '@/models/types'
+import { SupplierWithUsers } from '@/models/types'
 
 export function SupplierTiles({ supplier, authUserId }: { supplier: SupplierWithUsers; authUserId: string | null }) {
   const isSupplierUser = supplier?.users.some((u) => u.userId === authUserId)
