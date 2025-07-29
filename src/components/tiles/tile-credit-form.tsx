@@ -20,7 +20,8 @@ export function TileCreditForm({ tileId }: { tileId: string }) {
   const form = useForm<FormValues>({
     resolver: zodResolver(tileCreditFormSchema),
     defaultValues: {
-      supplierId: '',
+      supplierName: '',
+      supplierHandle: '',
       service: undefined,
       serviceDescription: '',
     },
@@ -39,51 +40,66 @@ export function TileCreditForm({ tileId }: { tileId: string }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-friend">
-        <FormField
-          control={form.control}
-          name="supplierId"
-          render={({ field }) => (
-            <FormFieldItem label="Supplier Id">
-              <FormControl>
-                <Input {...field} required />
-              </FormControl>
-            </FormFieldItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="service"
-          render={({ field }) => (
-            <FormFieldItem label="Service">
-              <FormControl>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select service" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {constToPretty(SERVICES).map((service) => (
-                      <SelectItem key={service.value} value={service.value}>
-                        {service.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-            </FormFieldItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="serviceDescription"
-          render={({ field }) => (
-            <FormFieldItem label="Description">
-              <FormControl>
-                <Textarea {...field} rows={2} />
-              </FormControl>
-            </FormFieldItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-close-friend">
+        <div className="grid gap-sibling">
+          <FormField
+            control={form.control}
+            name="supplierName"
+            render={({ field }) => (
+              <FormFieldItem label="Supplier Name">
+                <FormControl>
+                  <Input {...field} required />
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="supplierHandle"
+            render={({ field }) => (
+              <FormFieldItem label="Supplier Handle">
+                <FormControl>
+                  <Input {...field} required />
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+        </div>
+        <div className="grid gap-sibling">
+          <FormField
+            control={form.control}
+            name="service"
+            render={({ field }) => (
+              <FormFieldItem label="Service">
+                <FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select service contribution" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {constToPretty(SERVICES).map((service) => (
+                        <SelectItem key={service.value} value={service.value}>
+                          {service.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="serviceDescription"
+            render={({ field }) => (
+              <FormFieldItem label="Contribution description">
+                <FormControl>
+                  <Textarea {...field} rows={2} />
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+        </div>
         <div className="flex justify-end gap-close-friend">
           <SubmitButton pendingChildren="Adding...">Add Credit</SubmitButton>
         </div>
