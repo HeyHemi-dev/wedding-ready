@@ -9,7 +9,7 @@ import { tryCatchFetch } from '@/utils/try-catch'
 export function useTileSaveState(tileId: string, authUserId: string) {
   const queryClient = useQueryClient()
 
-  const Query = useQuery({
+  const saveStateQuery = useQuery({
     queryKey: tileKeys.saveState(tileId, authUserId),
     queryFn: () => fetchSaveTile(authUserId, tileId),
     initialData: () => queryClient.getQueryData(tileKeys.saveState(tileId, authUserId)),
@@ -19,7 +19,7 @@ export function useTileSaveState(tileId: string, authUserId: string) {
     refetchOnReconnect: false,
   })
 
-  const Mutate = useMutation({
+  const toggle = useMutation({
     mutationFn: ({ authUserId, isSaved }: { authUserId: string; isSaved: boolean }) => postSaveTile(authUserId, tileId, isSaved),
     // handle race conditions while optimistically updating the tile's saved state, and return the previous value in case we need to roll back
     onMutate: async ({ authUserId, isSaved }) => {
@@ -53,7 +53,7 @@ export function useTileSaveState(tileId: string, authUserId: string) {
     },
   })
 
-  return { ...Query, ...Mutate }
+  return { ...saveStateQuery, ...toggle }
 }
 
 async function fetchSaveTile(authUserId: string, tileId: string): Promise<SaveTilePostResponseBody> {
