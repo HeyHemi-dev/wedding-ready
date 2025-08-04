@@ -83,8 +83,11 @@ export const userResetPasswordFormSchema = userSigninFormSchema.pick({ password:
 export type UserResetPasswordForm = z.infer<typeof userResetPasswordFormSchema>
 
 export const tileCreditFormSchema = z.object({
-  supplierName: z.string(),
-  supplierHandle: z.string(),
+  supplier: z.object({
+    id: z.string(),
+    name: z.string(),
+    handle: z.string(),
+  }),
   service: z.nativeEnum(SERVICES).optional(),
   serviceDescription: z.string().optional(),
 })

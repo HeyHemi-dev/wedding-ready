@@ -93,7 +93,7 @@ async function createCreditForTile({ tileId, credit, userId }: { tileId: string;
     throw new Error('Unauthorized')
   }
 
-  await TileSupplierModel.createRaw({ tileId, supplierId: credit.supplierId, service: credit.service, serviceDescription: credit.serviceDescription })
+  await TileSupplierModel.createRaw({ tileId, supplierId: credit.supplier.id, service: credit.service, serviceDescription: credit.serviceDescription })
   const tileCredits = await TileSupplierModel.getCreditsByTileId(tileId)
 
   return tileCredits.map((credit) => ({
