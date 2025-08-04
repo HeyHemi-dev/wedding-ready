@@ -8,8 +8,10 @@ import { useTileCredit } from '@/app/_hooks/use-tile-credit'
 import { TileCreditForm as FormValues, tileCreditFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
+import dynamic from 'next/dynamic'
+
+import { SupplierSearchCombobox } from '@/components/tiles/supplier-search-combobox'
 import { Form, FormControl, FormField } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { SERVICES } from '@/db/constants'
@@ -20,8 +22,7 @@ export function TileCreditForm({ tileId }: { tileId: string }) {
   const form = useForm<FormValues>({
     resolver: zodResolver(tileCreditFormSchema),
     defaultValues: {
-      supplierName: '',
-      supplierHandle: '',
+      supplier: undefined,
       service: undefined,
       serviceDescription: '',
     },
@@ -44,22 +45,11 @@ export function TileCreditForm({ tileId }: { tileId: string }) {
         <div className="grid gap-sibling">
           <FormField
             control={form.control}
-            name="supplierName"
+            name="supplier"
             render={({ field }) => (
-              <FormFieldItem label="Supplier Name">
+              <FormFieldItem label="Supplier">
                 <FormControl>
-                  <Input {...field} required />
-                </FormControl>
-              </FormFieldItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="supplierHandle"
-            render={({ field }) => (
-              <FormFieldItem label="Supplier Handle">
-                <FormControl>
-                  <Input {...field} required />
+                  <SupplierSearchCombobox value={field.value} onValueSelect={field.onChange} placeholder="Search for a supplier..." />
                 </FormControl>
               </FormFieldItem>
             )}

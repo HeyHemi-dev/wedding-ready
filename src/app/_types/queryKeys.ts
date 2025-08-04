@@ -4,3 +4,7 @@ export const tileKeys = {
   userTiles: (userId: string) => ['tiles', 'user', userId] as const,
   credits: (tileId: string) => ['tile', 'credits', tileId] as const,
 }
+
+export const supplierKeys = {
+  search: (query: string) => ['suppliers', 'search', query] as const,
+}
