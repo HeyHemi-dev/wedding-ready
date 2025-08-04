@@ -1,10 +1,12 @@
+import { SupplierSearchResult } from '@/app/_types/suppliers'
 import { SupplierRegistrationForm } from '@/app/_types/validation-schema'
 import { SupplierModel } from '@/models/supplier'
-import { InsertSupplierRaw, SupplierWithUsers } from '@/models/types'
+import { InsertSupplierRaw, Supplier, SupplierWithUsers } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 
 export const supplierOperations = {
   register,
+  search,
 }
 
 async function register({ name, handle, websiteUrl, description, services, locations, createdByUserId }: SupplierRegistrationForm): Promise<SupplierWithUsers> {
@@ -27,4 +29,14 @@ async function register({ name, handle, websiteUrl, description, services, locat
   }
 
   return SupplierModel.create(user, insertSupplierData, services, locations)
+}
+
+async function search(query: string): Promise<SupplierSearchResult[]> {
+  console.log('search', query)
+  const suppliers = await SupplierModel.search(query)
+  return suppliers.map((supplier) => ({
+    id: supplier.id,
+    name: supplier.name,
+    handle: supplier.handle,
+  }))
 }
