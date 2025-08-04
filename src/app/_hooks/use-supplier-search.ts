@@ -1,12 +1,14 @@
-import { tryCatchFetch } from '@/utils/try-catch'
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 
+import { useQuery } from '@tanstack/react-query'
+
 import { SupplierSearchGetRequestParams, SupplierSearchGetResponseBody } from '@/app/api/suppliers/search/route'
-import { supplierKeys } from '../_types/queryKeys'
-import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { buildQueryParams } from '@/utils/api-helpers'
+import { DEFAULT_STALE_TIME } from '@/utils/constants'
+import { tryCatchFetch } from '@/utils/try-catch'
+
 import { useDebounce } from './use-debounce'
+import { supplierKeys } from '../_types/queryKeys'
 
 export function useSupplierSearch() {
   const [searchQuery, setSearchQuery] = useState('')

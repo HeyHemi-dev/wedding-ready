@@ -1,7 +1,7 @@
 import { SupplierSearchResult } from '@/app/_types/suppliers'
 import { SupplierRegistrationForm } from '@/app/_types/validation-schema'
 import { SupplierModel } from '@/models/supplier'
-import { InsertSupplierRaw, Supplier, SupplierWithUsers } from '@/models/types'
+import { InsertSupplierRaw, SupplierWithUsers } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 
 export const supplierOperations = {

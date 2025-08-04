@@ -2,13 +2,13 @@
 
 import { Check, ChevronsUpDown } from 'lucide-react'
 
+import { useSupplierSearch } from '@/app/_hooks/use-supplier-search'
+import { SupplierSearchResult } from '@/app/_types/suppliers'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/utils/shadcn-utils'
 
-import { useSupplierSearch } from '@/app/_hooks/use-supplier-search'
-import { SupplierSearchResult } from '@/app/_types/suppliers'
 
 type SupplierSearchComboboxProps = {
   value: SupplierSearchResult
