@@ -2,14 +2,12 @@
 
 import { useRef } from 'react'
 
+import { AddCreditButton } from '@/components/tiles/add-credit-button'
 import { TileCreditForm } from '@/components/tiles/tile-credit-form'
 import { Area } from '@/components/ui/area'
-import { AddCreditButton } from '@/components/tiles/add-credit-button'
 import { Section } from '@/components/ui/section'
 
 export default function KitchensinkPage() {
-  const dialogRef = useRef<HTMLDialogElement>(null)
-
   return (
     <>
       <Section>
