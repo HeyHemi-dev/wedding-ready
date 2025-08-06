@@ -29,7 +29,7 @@ const DialogOverlay = React.forwardRef<React.ElementRef<typeof DialogPrimitive.O
 )
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
-// Nest Content in DialogOverlay to fix Select scrollable issue
+// Nest Content in DialogOverlay to fix Select scrollable issue (https://github.com/shadcn-ui/ui/issues/1175#issuecomment-2228543893)
 const DialogContent = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>>(
   ({ className, children, ...props }, ref) => (
     <DialogPortal>
