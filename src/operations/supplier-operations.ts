@@ -32,7 +32,6 @@ async function register({ name, handle, websiteUrl, description, services, locat
 }
 
 async function search(query: string): Promise<SupplierSearchResult[]> {
-  console.log('search', query)
   const suppliers = await SupplierModel.search(query)
   return suppliers.map((supplier) => ({
     id: supplier.id,
