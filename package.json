@@ -98,5 +98,9 @@
       "supabase"
     ]
   },
+  "overrides": {
+    "@radix-ui/react-dismissable-layer": "1.0.5",
+    "@radix-ui/react-focus-scope": "1.0.4"
+  },
   "type": "module"
 }
