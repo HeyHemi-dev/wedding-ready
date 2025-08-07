@@ -1,7 +1,5 @@
 'use client'
 
-import { useRef } from 'react'
-
 import { AddCreditButton } from '@/components/tiles/add-credit-button'
 import { TileCreditForm } from '@/components/tiles/tile-credit-form'
 import { Area } from '@/components/ui/area'
