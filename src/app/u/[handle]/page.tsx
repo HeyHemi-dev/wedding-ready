@@ -57,7 +57,7 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
                 <div className="flex place-self-end"></div>
               </ActionBar>
             )}
-            <UserTiles user={userDetail} authUserId={authUser?.id} />
+            <UserTiles user={userDetail} authUserId={authUser ? authUser.id : null} />
           </ErrorBoundary>
         </div>
       </div>

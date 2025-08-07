@@ -1,4 +1,4 @@
-import { and, eq, count } from 'drizzle-orm'
+import { and, eq, count, or, ilike } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import { Service, SupplierRoleEnum, Location } from '@/db/constants'
@@ -39,6 +39,14 @@ export class SupplierModel {
       services,
       locations,
     }
+  }
+
+  static async getRawById(id: string): Promise<SupplierRaw | null> {
+    const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.id, id))
+
+    if (suppliers === null || suppliers.length === 0) return null
+
+    return suppliers[0]
   }
 
   static async getAll({ service, location }: { service?: Service; location?: Location } = {}): Promise<Supplier[]> {
@@ -118,6 +126,16 @@ export class SupplierModel {
   static async isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {
     const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
     return suppliers.length === 0
+  }
+
+  static async search(query: string): Promise<SupplierRaw[]> {
+    const suppliers = await db
+      .select()
+      .from(schema.suppliers)
+      .where(or(ilike(schema.suppliers.name, `%${query}%`), ilike(schema.suppliers.handle, `%${query}%`)))
+      .limit(10)
+
+    return suppliers
   }
 
   static async getCountGroupByLocation(): Promise<{ location: Location; count: number }[]> {

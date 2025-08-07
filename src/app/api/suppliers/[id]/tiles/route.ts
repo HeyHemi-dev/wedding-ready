@@ -1,12 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { z } from 'zod'
 
-import { TileModel } from '@/models/tile'
-import * as t from '@/models/types'
+import { TileListItem } from '@/app/_types/tiles'
+import { tileOperations } from '@/operations/tile-operations'
 import { parseQueryParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
-
 
 const supplierTilesGetRequestParams = z.object({
   authUserId: z.string().optional(),
@@ -14,7 +13,7 @@ const supplierTilesGetRequestParams = z.object({
 
 export type SupplierTilesGetRequestParams = z.infer<typeof supplierTilesGetRequestParams>
 
-export type SupplierTilesGetResponseBody = t.Tile[]
+export type SupplierTilesGetResponseBody = TileListItem[]
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const supplierId = (await params).id
@@ -28,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
   }
 
-  const { data, error } = await tryCatch(TileModel.getBySupplierId(supplierId, parsedQueryParams.authUserId))
+  const { data, error } = await tryCatch(tileOperations.getListForSupplier(supplierId, parsedQueryParams.authUserId))
 
   if (error) {
     return NextResponse.json({ message: 'Error fetching tiles', error: error.message }, { status: 500 })

@@ -43,7 +43,7 @@ export const uploadthingRouter = {
     // Whatever is returned is sent to the clientside `onClientUploadComplete` callback
     .onUploadComplete(async ({ metadata, file }) => {
       try {
-        await TileModel.update({
+        await TileModel.updateRaw({
           ...metadata.tileRaw,
           imagePath: file.ufsUrl,
         })

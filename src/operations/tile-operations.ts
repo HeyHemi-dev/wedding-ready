@@ -1,22 +1,105 @@
-import { SupplierModel } from '@/models/supplier'
+import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
+import { TileCreditForm } from '@/app/_types/validation-schema'
 import { TileModel } from '@/models/tile'
+import { TileSupplierModel } from '@/models/tileSupplier'
 import * as t from '@/models/types'
 
 export const tileOperations = {
+  getById,
+  getListForSupplier,
+  getListForUser,
   createForSupplier,
+  getCreditsForTile,
+  createCreditForTile,
 }
 
-async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTileRawData: t.InsertTileRaw; supplierIds: string[] }): Promise<t.Tile> {
+async function getById(id: string, authUserId?: string): Promise<Tile> {
+  const [tile, tileCredits] = await Promise.all([TileModel.getById(id, authUserId), TileSupplierModel.getCreditsByTileId(id)])
+
+  if (!tile) {
+    throw new Error('Tile not found')
+  }
+
+  const tileWithCredits = {
+    id: tile.id,
+    imagePath: tile.imagePath,
+    title: tile.title,
+    description: tile.description,
+    createdAt: tile.createdAt,
+    createdByUserId: tile.createdByUserId,
+    location: tile.location,
+    isSaved: tile.isSaved,
+    credits: tileCredits.map((credit) => ({
+      supplierHandle: credit.supplier.handle,
+      supplierName: credit.supplier.name,
+      service: credit.service,
+      serviceDescription: credit.serviceDescription,
+    })),
+  }
+
+  return tileWithCredits
+}
+
+async function getListForSupplier(supplierId: string, authUserId?: string): Promise<TileListItem[]> {
+  const tiles = await TileModel.getBySupplierId(supplierId, authUserId)
+  return tiles.map((tile) => ({
+    id: tile.id,
+    imagePath: tile.imagePath,
+    title: tile.title,
+    description: tile.description,
+    isSaved: tile.isSaved,
+  }))
+}
+
+async function getListForUser(userId: string, authUserId?: string): Promise<TileListItem[]> {
+  const tiles = await TileModel.getByUserId(userId, authUserId)
+  return tiles.map((tile) => ({
+    id: tile.id,
+    imagePath: tile.imagePath,
+    title: tile.title,
+    description: tile.description,
+    isSaved: tile.isSaved,
+  }))
+}
+
+async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTileRawData: t.InsertTileRaw; supplierIds: string[] }): Promise<{ id: string }> {
   if (!InsertTileRawData.imagePath) {
     throw new Error('imagePath must be set')
   }
   const tileRaw = await TileModel.createRaw(InsertTileRawData)
-  await TileModel.addSuppliers(tileRaw.id, supplierIds)
-  const suppliers = await SupplierModel.getAllByTileId(tileRaw.id)
+  await TileSupplierModel.createRaw({ tileId: tileRaw.id, supplierId: supplierIds[0] })
 
   return {
-    ...tileRaw,
-    imagePath: tileRaw.imagePath!, //we can safely assert that imagePath set because we check for it before passing to createRaw function
-    suppliers: suppliers,
+    id: tileRaw.id,
   }
+}
+
+async function getCreditsForTile(tileId: string): Promise<TileCredit[]> {
+  const tileCredits = await TileSupplierModel.getCreditsByTileId(tileId)
+  return tileCredits.map((credit) => ({
+    supplierHandle: credit.supplier.handle,
+    supplierName: credit.supplier.name,
+    service: credit.service,
+    serviceDescription: credit.serviceDescription,
+  }))
+}
+
+async function createCreditForTile({ tileId, credit, userId }: { tileId: string; credit: TileCreditForm; userId: string }): Promise<TileCredit[]> {
+  const tile = await TileModel.getRawById(tileId)
+  if (!tile) {
+    throw new Error('Tile not found')
+  }
+  if (tile.createdByUserId !== userId) {
+    throw new Error('Unauthorized')
+  }
+
+  await TileSupplierModel.createRaw({ tileId, supplierId: credit.supplier.id, service: credit.service, serviceDescription: credit.serviceDescription })
+  const tileCredits = await TileSupplierModel.getCreditsByTileId(tileId)
+
+  return tileCredits.map((credit) => ({
+    supplierHandle: credit.supplier.handle,
+    supplierName: credit.supplier.name,
+    service: credit.service,
+    serviceDescription: credit.serviceDescription,
+  }))
 }

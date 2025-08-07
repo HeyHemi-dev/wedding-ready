@@ -2,15 +2,14 @@ import { useMutation, useQueryClient, useQuery, QueryClient } from '@tanstack/re
 import { toast } from 'sonner'
 
 import { tileKeys } from '@/app/_types/queryKeys'
+import { TileListItem } from '@/app/_types/tiles'
 import { SaveTilePostRequestBody, SaveTilePostResponseBody } from '@/app/api/users/[id]/tiles/[tileId]/route'
-import * as t from '@/models/types'
 import { tryCatchFetch } from '@/utils/try-catch'
-
 
 export function useTileSaveState(tileId: string, authUserId: string) {
   const queryClient = useQueryClient()
 
-  const Query = useQuery({
+  const saveStateQuery = useQuery({
     queryKey: tileKeys.saveState(tileId, authUserId),
     queryFn: () => fetchSaveTile(authUserId, tileId),
     initialData: () => queryClient.getQueryData(tileKeys.saveState(tileId, authUserId)),
@@ -20,7 +19,7 @@ export function useTileSaveState(tileId: string, authUserId: string) {
     refetchOnReconnect: false,
   })
 
-  const Mutate = useMutation({
+  const toggle = useMutation({
     mutationFn: ({ authUserId, isSaved }: { authUserId: string; isSaved: boolean }) => postSaveTile(authUserId, tileId, isSaved),
     // handle race conditions while optimistically updating the tile's saved state, and return the previous value in case we need to roll back
     onMutate: async ({ authUserId, isSaved }) => {
@@ -54,7 +53,7 @@ export function useTileSaveState(tileId: string, authUserId: string) {
     },
   })
 
-  return { ...Query, ...Mutate }
+  return { ...saveStateQuery, ...toggle }
 }
 
 async function fetchSaveTile(authUserId: string, tileId: string): Promise<SaveTilePostResponseBody> {
@@ -92,7 +91,7 @@ async function postSaveTile(authUserId: string, tileId: string, isSaved: boolean
  * @param tiles - The array of tiles
  * @param authUserId - The id of the current authenticated user.
  */
-export function setTilesSaveStateCache(queryClient: QueryClient, tiles: t.Tile[], authUserId: string) {
+export function setTilesSaveStateCache(queryClient: QueryClient, tiles: TileListItem[], authUserId: string) {
   tiles.forEach((tile) => {
     queryClient.setQueryData(tileKeys.saveState(tile.id, authUserId), {
       authUserId,

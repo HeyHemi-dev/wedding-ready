@@ -27,7 +27,6 @@ export function SaveTileButton({ tileId, authUserId, className }: SaveTileButton
   const isSaved = cachedData?.isSaved ?? false
 
   const handleClick = async () => {
-    console.log('handleClick', isSaved)
     await saveState.mutate({ authUserId, isSaved: !isSaved })
   }
 
