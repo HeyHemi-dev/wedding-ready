@@ -10,7 +10,6 @@ import { useTileCredit } from '@/app/_hooks/use-tile-credit'
 import { SupplierSearchResult } from '@/app/_types/suppliers'
 import { TileCreditForm as FormValues, tileCreditFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
-import { SubmitButton } from '@/components/submit-button'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Form, FormControl, FormField } from '@/components/ui/form'
@@ -20,8 +19,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { SERVICES } from '@/db/constants'
 import { constToPretty } from '@/utils/const-helpers'
 import { cn } from '@/utils/shadcn-utils'
+import { tryCatch } from '@/utils/try-catch'
 
-export function AddCreditForm({ tileId }: { tileId: string }) {
+export function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpen: (open: boolean) => void }) {
   const { addCredit } = useTileCredit(tileId)
   const form = useForm<FormValues>({
     resolver: zodResolver(tileCreditFormSchema),
@@ -34,13 +34,16 @@ export function AddCreditForm({ tileId }: { tileId: string }) {
   })
 
   async function onSubmit(data: FormValues) {
-    try {
-      await addCredit(data)
-      toast.success('Credit added')
-      form.reset()
-    } catch (e) {
-      toast.error((e as Error).message)
+    console.log('onSubmit', data)
+    const { error } = await tryCatch(addCredit(data))
+
+    if (error) {
+      toast.error(error.message)
     }
+
+    toast.success('Credit added')
+    form.reset()
+    setDialogOpen(false)
   }
 
   return (
@@ -92,8 +95,10 @@ export function AddCreditForm({ tileId }: { tileId: string }) {
             )}
           />
         </div>
-        <div className="flex justify-end gap-close-friend">
-          <SubmitButton pendingChildren="Adding...">Add Credit</SubmitButton>
+        <div className="flex justify-end">
+          <Button type="submit" className="self-end">
+            {form.formState.isSubmitting ? 'Adding...' : 'Add credit'}
+          </Button>
         </div>
       </form>
     </Form>
@@ -116,7 +121,7 @@ export function SupplierSearchCombobox({ value, onValueSelect }: SupplierSearchC
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 p-0" align="start">
+      <PopoverContent className="p-0" align="start">
         <Command>
           <CommandInput placeholder="Search suppliers..." onValueChange={setSearchQuery} />
           <CommandList>
