@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
-import { TileCreditForm } from './tile-credit-form'
+import { AddCreditForm } from './add-credit-form'
 
 export function AddCreditButton({ tileId }: { tileId: string }) {
   return (
@@ -20,7 +20,7 @@ export function AddCreditButton({ tileId }: { tileId: string }) {
         <DialogHeader>
           <DialogTitle>Add credit</DialogTitle>
         </DialogHeader>
-        <TileCreditForm tileId={tileId} />
+        <AddCreditForm tileId={tileId} />
       </DialogContent>
     </Dialog>
   )
