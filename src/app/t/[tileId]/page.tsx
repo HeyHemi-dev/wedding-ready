@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -12,6 +12,8 @@ import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
 import { formatRelativeDate } from '@/utils/format-date'
+import { CreditsList } from '@/components/tiles/credits-list'
+import { Suspense } from 'react'
 
 export default async function TilePage({ params }: { params: Promise<{ tileId: string }> }) {
   const { tileId } = await params
@@ -22,10 +24,8 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
     notFound()
   }
 
-  if (authUserId && tile.isSaved) {
-    const queryClient = new QueryClient()
-    queryClient.setQueryData(tileKeys.saveState(tileId, authUserId), { authUserId, tileId: tile.id, isSaved: tile.isSaved })
-  }
+  const queryClient = new QueryClient()
+  await queryClient.prefetchQuery({ queryKey: tileKeys.credits(tileId), queryFn: () => tile.credits })
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
@@ -49,14 +49,9 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
               <h2 className="ui-s1">Supplier credits</h2>
               {authUserId === tile.createdByUserId && <AddCreditButton tileId={tile.id} />}
             </div>
-            {tile.credits.map((credit) => (
-              <SupplierCredit
-                key={credit.supplierHandle}
-                name={credit.supplierName}
-                contribution={'Contribution description'}
-                href={`/suppliers/${credit.supplierHandle}`}
-              />
-            ))}
+            <HydrationBoundary state={dehydrate(queryClient)}>
+              <CreditsList tileId={tile.id} />
+            </HydrationBoundary>
           </div>
           {/* <div className="flex flex-row-reverse">
             <Button variant={'link'} size="sm">
