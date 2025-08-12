@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 
 import { useQuery } from '@tanstack/react-query'
@@ -9,6 +11,7 @@ import { tryCatchFetch } from '@/utils/try-catch'
 
 import { useDebounce } from './use-debounce'
 import { supplierKeys } from '../_types/queryKeys'
+import { SupplierSearchResult } from '../_types/suppliers'
 
 export function useSupplierSearch() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -31,7 +34,7 @@ export function useSupplierSearch() {
   }
 }
 
-async function fetchSuppliersForSearch(query: string) {
+async function fetchSuppliersForSearch(query: string): Promise<SupplierSearchResult[]> {
   const getSuppliersParams: SupplierSearchGetRequestParams = { q: query }
   const queryParams = buildQueryParams(getSuppliersParams)
 

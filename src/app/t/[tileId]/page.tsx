@@ -1,10 +1,10 @@
-import { QueryClient } from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { tileKeys } from '@/app/_types/queryKeys'
 import { AddCreditButton } from '@/components/tiles/add-credit-button'
+import { CreditsList } from '@/components/tiles/credits-list'
 import { SaveTileButton } from '@/components/tiles/save-button'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
@@ -22,10 +22,8 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
     notFound()
   }
 
-  if (authUserId && tile.isSaved) {
-    const queryClient = new QueryClient()
-    queryClient.setQueryData(tileKeys.saveState(tileId, authUserId), { authUserId, tileId: tile.id, isSaved: tile.isSaved })
-  }
+  const queryClient = new QueryClient()
+  await queryClient.prefetchQuery({ queryKey: tileKeys.credits(tileId), queryFn: () => tile.credits })
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
@@ -49,14 +47,9 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
               <h2 className="ui-s1">Supplier credits</h2>
               {authUserId === tile.createdByUserId && <AddCreditButton tileId={tile.id} />}
             </div>
-            {tile.credits.map((credit) => (
-              <SupplierCredit
-                key={credit.supplierHandle}
-                name={credit.supplierName}
-                contribution={'Contribution description'}
-                href={`/suppliers/${credit.supplierHandle}`}
-              />
-            ))}
+            <HydrationBoundary state={dehydrate(queryClient)}>
+              <CreditsList tileId={tile.id} />
+            </HydrationBoundary>
           </div>
           {/* <div className="flex flex-row-reverse">
             <Button variant={'link'} size="sm">
@@ -66,18 +59,5 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
         </Area>
       </div>
     </Section>
-  )
-}
-
-function SupplierCredit({ name, contribution, href }: { name: string; contribution: string; href: string }) {
-  return (
-    <div className="flex flex-row items-center justify-between gap-sibling">
-      <div className="flex gap-partner">
-        <Link href={href} passHref>
-          <h3 className="ui-small-s1">{name}</h3>
-        </Link>
-        <span className="ui-small text-muted-foreground">{contribution}</span>
-      </div>
-    </div>
   )
 }
