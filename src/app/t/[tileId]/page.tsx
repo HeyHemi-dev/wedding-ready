@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 
 import { tileKeys } from '@/app/_types/queryKeys'
 import { AddCreditButton } from '@/components/tiles/add-credit-button'
+import { CreditsList } from '@/components/tiles/credits-list'
 import { SaveTileButton } from '@/components/tiles/save-button'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
@@ -11,7 +12,6 @@ import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
 import { formatRelativeDate } from '@/utils/format-date'
-import { CreditsList } from '@/components/tiles/credits-list'
 
 export default async function TilePage({ params }: { params: Promise<{ tileId: string }> }) {
   const { tileId } = await params
