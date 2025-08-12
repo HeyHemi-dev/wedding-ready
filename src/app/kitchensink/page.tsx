@@ -1,5 +1,3 @@
-'use client'
-
 import { AddCreditButton } from '@/components/tiles/add-credit-button'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
