@@ -7,6 +7,7 @@ import { tileKeys } from '@/app/_types/queryKeys'
 import { TileCreditForm } from '@/app/_types/validation-schema'
 import { TileCreditGetResponseBody, TileCreditPostRequestBody, TileCreditPostResponseBody } from '@/app/api/tiles/[tileId]/credits/route'
 import { tryCatchFetch } from '@/utils/try-catch'
+import { TileCredit } from '../_types/tiles'
 
 export function useTileCredit(tileId: string) {
   const queryClient = useQueryClient()
@@ -26,15 +27,12 @@ export function useTileCredit(tileId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tileKeys.credits(tileId) })
     },
-    onError: (error: Error) => {
-      toast.error(error.message)
-    },
   })
 
   return { ...creditsQuery, addCredit: add.mutateAsync }
 }
 
-async function fetchCredits(tileId: string): Promise<TileCreditGetResponseBody> {
+async function fetchCredits(tileId: string): Promise<TileCredit[]> {
   const { data, error } = await tryCatchFetch<TileCreditGetResponseBody>(`/api/tiles/${tileId}/credits`)
   if (error) {
     throw error

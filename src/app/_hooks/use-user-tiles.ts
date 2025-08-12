@@ -8,7 +8,7 @@ import { UserTilesGetRequestParams, UserTilesGetResponseBody } from '@/app/api/u
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
-
+import { TileListItem } from '../_types/tiles'
 
 export function useUserTiles(userId: string, authUserId: string | null) {
   const queryClient = useQueryClient()
@@ -30,7 +30,7 @@ export function useUserTiles(userId: string, authUserId: string | null) {
   return userTilesQuery
 }
 
-async function fetchTilesForUser(userId: string, authUserId?: string): Promise<UserTilesGetResponseBody> {
+async function fetchTilesForUser(userId: string, authUserId?: string): Promise<TileListItem[]> {
   const getTilesParams: UserTilesGetRequestParams = { authUserId }
   const queryParams = buildQueryParams(getTilesParams)
 
