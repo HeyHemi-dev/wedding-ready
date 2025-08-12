@@ -1,6 +1,5 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { tileKeys } from '@/app/_types/queryKeys'
@@ -13,7 +12,6 @@ import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
 import { formatRelativeDate } from '@/utils/format-date'
 import { CreditsList } from '@/components/tiles/credits-list'
-import { Suspense } from 'react'
 
 export default async function TilePage({ params }: { params: Promise<{ tileId: string }> }) {
   const { tileId } = await params
@@ -61,18 +59,5 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
         </Area>
       </div>
     </Section>
-  )
-}
-
-function SupplierCredit({ name, contribution, href }: { name: string; contribution: string; href: string }) {
-  return (
-    <div className="flex flex-row items-center justify-between gap-sibling">
-      <div className="flex gap-partner">
-        <Link href={href} passHref>
-          <h3 className="ui-small-s1">{name}</h3>
-        </Link>
-        <span className="ui-small text-muted-foreground">{contribution}</span>
-      </div>
-    </div>
   )
 }
