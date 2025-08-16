@@ -82,6 +82,9 @@ export type UserForgotPasswordForm = z.infer<typeof userForgotPasswordFormSchema
 export const userResetPasswordFormSchema = userSigninFormSchema.pick({ password: true }).extend({ confirmPassword: z.string() })
 export type UserResetPasswordForm = z.infer<typeof userResetPasswordFormSchema>
 
+export const userUpdateEmailFormSchema = userSigninFormSchema.pick({ email: true })
+export type UserUpdateEmailForm = z.infer<typeof userUpdateEmailFormSchema>
+
 export const tileCreditFormSchema = z.object({
   supplier: z.object({
     id: z.string(),

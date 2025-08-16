@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
-import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswordForm } from '@/app/_types/validation-schema'
+import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswordForm, UserUpdateEmailForm } from '@/app/_types/validation-schema'
 import { User } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
@@ -13,6 +13,7 @@ export const authOperations = {
   signOut,
   forgotPassword,
   resetPassword,
+  updateEmail,
 }
 
 async function signUp({
@@ -121,6 +122,25 @@ async function resetPassword({
 }): Promise<{ authUserId: string }> {
   const { data, error } = await supabaseClient.auth.updateUser({
     password: resetPasswordFormData.password,
+  })
+
+  if (error) {
+    console.error(error.message)
+    throw new Error()
+  }
+
+  return { authUserId: data.user.id }
+}
+
+async function updateEmail({
+  updateEmailFormData,
+  supabaseClient,
+}: {
+  updateEmailFormData: UserUpdateEmailForm
+  supabaseClient: SupabaseClient
+}): Promise<{ authUserId: string }> {
+  const { data, error } = await supabaseClient.auth.updateUser({
+    email: updateEmailFormData.email,
   })
 
   if (error) {
