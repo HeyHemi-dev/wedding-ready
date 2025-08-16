@@ -1,8 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
-import { SupplierModel } from '@/models/supplier'
-import { enumToPretty, keyToEnum } from '@/utils/enum-helpers'
 
 import { locationOperations } from './location-operations'
 import { scene, TEST_SUPPLIER } from '@/testing/scene'
