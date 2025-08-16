@@ -1,20 +1,9 @@
 import { and, eq, count, or, ilike } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
-import { Service, Location, SupplierRole } from '@/db/constants'
+import { Service, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
-import {
-  InsertSupplierRaw,
-  InsertSupplierUserRaw,
-  SupplierRaw,
-  Supplier,
-  SupplierWithUsers,
-  InsertSupplierServiceRaw,
-  InsertSupplierLocationRaw,
-  SupplierLocationRaw,
-  SupplierServiceRaw,
-  SupplierUserRaw,
-} from '@/models/types'
+import { InsertSupplierRaw, SupplierRaw, Supplier, SupplierWithUsers } from '@/models/types'
 
 const supplierBaseQuery = db
   .select({
@@ -95,31 +84,6 @@ export class SupplierModel {
     return suppliers[0]
   }
 
-  static async createLocationsForSupplier({ supplierId, locations }: { supplierId: string; locations: Location[] }): Promise<SupplierLocationRaw[]> {
-    const insertSupplierLocationData: InsertSupplierLocationRaw[] = locations.map((location) => ({
-      supplierId,
-      location,
-    }))
-    return await db.insert(schema.supplierLocations).values(insertSupplierLocationData).returning()
-  }
-
-  static async createServicesForSupplier({ supplierId, services }: { supplierId: string; services: Service[] }): Promise<SupplierServiceRaw[]> {
-    const insertSupplierServiceData: InsertSupplierServiceRaw[] = services.map((service) => ({
-      supplierId,
-      service,
-    }))
-    return await db.insert(schema.supplierServices).values(insertSupplierServiceData).returning()
-  }
-
-  static async createUsersForSupplier({ supplierId, users }: { supplierId: string; users: { id: string; role: SupplierRole }[] }): Promise<SupplierUserRaw[]> {
-    const insertSupplierUserData: InsertSupplierUserRaw[] = users.map((user) => ({
-      supplierId,
-      userId: user.id,
-      role: user.role,
-    }))
-    return await db.insert(schema.supplierUsers).values(insertSupplierUserData).returning()
-  }
-
   static async isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {
     const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
     return suppliers.length === 0
@@ -133,32 +97,6 @@ export class SupplierModel {
       .limit(10)
 
     return suppliers
-  }
-
-  static async getCountGroupByLocation(): Promise<{ location: Location; count: number }[]> {
-    const result = await db
-      .select({
-        location: schema.supplierLocations.location,
-        count: count(schema.suppliers.id),
-      })
-      .from(schema.suppliers)
-      .innerJoin(schema.supplierLocations, eq(schema.suppliers.id, schema.supplierLocations.supplierId))
-      .groupBy(schema.supplierLocations.location)
-
-    return result
-  }
-
-  static async getCountGroupByService(): Promise<{ service: Service; count: number }[]> {
-    const result = await db
-      .select({
-        service: schema.supplierServices.service,
-        count: count(schema.suppliers.id),
-      })
-      .from(schema.suppliers)
-      .innerJoin(schema.supplierServices, eq(schema.suppliers.id, schema.supplierServices.supplierId))
-      .groupBy(schema.supplierServices.service)
-
-    return result
   }
 }
 
