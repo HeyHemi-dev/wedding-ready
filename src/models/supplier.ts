@@ -1,7 +1,7 @@
 import { and, eq, count, or, ilike } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
-import { Service, SupplierRoleEnum, Location } from '@/db/constants'
+import { Service, SupplierRoleEnum, Location, SupplierRole } from '@/db/constants'
 import * as schema from '@/db/schema'
 import {
   InsertSupplierRaw,
@@ -13,6 +13,9 @@ import {
   User,
   InsertSupplierServiceRaw,
   InsertSupplierLocationRaw,
+  SupplierLocationRaw,
+  SupplierServiceRaw,
+  SupplierUserRaw,
 } from '@/models/types'
 
 const supplierBaseQuery = db
@@ -89,38 +92,34 @@ export class SupplierModel {
     }
   }
 
-  static async create(user: AuthUser | User, insertSupplierData: InsertSupplierRaw, services: Service[], locations: Location[]): Promise<SupplierWithUsers> {
+  static async create(insertSupplierData: InsertSupplierRaw): Promise<SupplierRaw> {
     const suppliers = await db.insert(schema.suppliers).values(insertSupplierData).returning()
-    const supplier = suppliers[0]
+    return suppliers[0]
+  }
 
-    // The user who creates the supplier is automatically an admin
-    const insertSupplierUserData: InsertSupplierUserRaw = {
-      supplierId: supplier.id,
-      userId: user.id,
-      role: SupplierRoleEnum.ADMIN,
-    }
-    const supplierUsers = await db.insert(schema.supplierUsers).values(insertSupplierUserData).returning()
-
-    const insertSupplierServiceData: InsertSupplierServiceRaw[] = services.map((service) => ({
-      supplierId: supplier.id,
-      service,
-    }))
-    const supplierServices = await db.insert(schema.supplierServices).values(insertSupplierServiceData).returning()
-
+  static async createLocationsForSupplier({ supplierId, locations }: { supplierId: string; locations: Location[] }): Promise<SupplierLocationRaw[]> {
     const insertSupplierLocationData: InsertSupplierLocationRaw[] = locations.map((location) => ({
-      supplierId: supplier.id,
+      supplierId,
       location,
     }))
-    const supplierLocations = await db.insert(schema.supplierLocations).values(insertSupplierLocationData).returning()
+    return await db.insert(schema.supplierLocations).values(insertSupplierLocationData).returning()
+  }
 
-    // We can assert that the services and locations exist because we just inserted them.
-    // TODO: remove this assert when services and locations are non-nullable in the db schema.
-    return {
-      ...supplier,
-      users: supplierUsers,
-      services: supplierServices.map((service) => service.service!),
-      locations: supplierLocations.map((location) => location.location!),
-    }
+  static async createServicesForSupplier({ supplierId, services }: { supplierId: string; services: Service[] }): Promise<SupplierServiceRaw[]> {
+    const insertSupplierServiceData: InsertSupplierServiceRaw[] = services.map((service) => ({
+      supplierId,
+      service,
+    }))
+    return await db.insert(schema.supplierServices).values(insertSupplierServiceData).returning()
+  }
+
+  static async createUsersForSupplier({ supplierId, users }: { supplierId: string; users: { id: string; role: SupplierRole }[] }): Promise<SupplierUserRaw[]> {
+    const insertSupplierUserData: InsertSupplierUserRaw[] = users.map((user) => ({
+      supplierId,
+      userId: user.id,
+      role: user.role,
+    }))
+    return await db.insert(schema.supplierUsers).values(insertSupplierUserData).returning()
   }
 
   static async isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {

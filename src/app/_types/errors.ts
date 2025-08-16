@@ -37,3 +37,9 @@ export const ROUTE_ERRORS = {
     { status: 400 }
   ),
 }
+
+export const OPERATION_ERROR = {
+  UNAUTHORIZED: new Error('Unauthorized'),
+  FORBIDDEN: new Error('Forbidden'),
+  HANDLE_TAKEN: new Error('Handle is already taken'),
+}

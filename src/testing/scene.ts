@@ -14,7 +14,7 @@ import { tileOperations } from '@/operations/tile-operations'
 import { createAdminClient } from '@/utils/supabase/server'
 
 import type { SupabaseClient } from '@supabase/supabase-js'
-
+import { Supplier } from '@/app/_types/suppliers'
 
 export const TEST_USER = {
   email: 'test.user@example.com',
@@ -71,8 +71,8 @@ async function hasSupplier({
   locations = TEST_SUPPLIER.locations,
   services = TEST_SUPPLIER.services,
   createdByUserId,
-}: Partial<SupplierRegistrationForm> & Pick<SupplierRegistrationForm, 'createdByUserId'>): Promise<t.SupplierRaw> {
-  const supplier = await SupplierModel.getByHandle(handle)
+}: Partial<SupplierRegistrationForm> & Pick<SupplierRegistrationForm, 'createdByUserId'>): Promise<Supplier> {
+  const supplier = await supplierOperations.getByHandle(handle)
   if (supplier) return supplier
 
   return await supplierOperations.register({ name, handle, websiteUrl, description, locations, services, createdByUserId })
