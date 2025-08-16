@@ -1,4 +1,4 @@
-import { and, eq, count, or, ilike } from 'drizzle-orm'
+import { and, eq, or, ilike } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import { Service, Location } from '@/db/constants'

@@ -1,7 +1,7 @@
+import { db } from '@/db/connection'
 import { SupplierRole } from '@/db/constants'
 import * as s from '@/db/schema'
 import * as t from '@/models/types'
-import { db } from '@/db/connection'
 
 export const supplierUsersModel = {
   createForSupplierId,

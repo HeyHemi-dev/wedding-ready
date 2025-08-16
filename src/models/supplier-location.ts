@@ -1,8 +1,9 @@
+import { count, eq } from 'drizzle-orm'
+
 import { db } from '@/db/connection'
+import { Location } from '@/db/constants'
 import * as s from '@/db/schema'
 import * as t from '@/models/types'
-import { Location } from '@/db/constants'
-import { count, eq } from 'drizzle-orm'
 
 export const supplierLocationsModel = {
   getAllWithSupplierCount,
