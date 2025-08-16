@@ -5,9 +5,6 @@ import { scene, TEST_ORIGIN } from '@/testing/scene'
 import { authOperations } from './auth-operations'
 import { UserDetailModel } from '@/models/user'
 import { UserSignupForm } from '@/app/_types/validation-schema'
-import { db } from '@/db/connection'
-import * as s from '@/db/schema'
-import { eq } from 'drizzle-orm'
 
 // Define different test users only for auth testing so we can create a delete as needed without affecting other tests
 const AUTH_TEST_USER_1 = {
@@ -28,19 +25,10 @@ describe('authOperations', () => {
   const supabaseAdmin = createAdminClient()
 
   beforeEach(async () => {
-    const [testUser1, testUser2] = await Promise.all([
-      UserDetailModel.getByHandle(AUTH_TEST_USER_1.handle),
-      UserDetailModel.getByHandle(AUTH_TEST_USER_2.handle),
+    await Promise.all([
+      scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: supabaseAdmin }),
+      scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: supabaseAdmin }),
     ])
-
-    if (testUser1) {
-      await supabaseAdmin.auth.admin.deleteUser(testUser1.id)
-      await db.delete(s.user_details).where(eq(s.user_details.id, testUser1.id))
-    }
-    if (testUser2) {
-      await supabaseAdmin.auth.admin.deleteUser(testUser2.id)
-      await db.delete(s.user_details).where(eq(s.user_details.id, testUser2.id))
-    }
   })
 
   afterEach(async () => {})
