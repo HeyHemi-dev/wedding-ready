@@ -4,17 +4,18 @@ import { redirect } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
+import { Supplier } from '@/app/_types/suppliers'
 import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
-import { Supplier } from '@/app/_types/suppliers'
+import { supplierOperations } from '@/operations/supplier-operations'
 import { valueToPretty } from '@/utils/enum-helpers'
 
 import { SupplierTiles } from './supplier-tiles'
-import { supplierOperations } from '@/operations/supplier-operations'
+
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

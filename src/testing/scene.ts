@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm'
 
+import { Supplier } from '@/app/_types/suppliers'
 import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
 import { db } from '@/db/connection'
 import { LOCATIONS, SERVICES } from '@/db/constants'
@@ -14,7 +15,6 @@ import { tileOperations } from '@/operations/tile-operations'
 import { createAdminClient } from '@/utils/supabase/server'
 
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { Supplier } from '@/app/_types/suppliers'
 
 export const TEST_USER = {
   email: 'test.user@example.com',

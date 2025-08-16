@@ -1,7 +1,7 @@
 import { and, eq, count, or, ilike } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
-import { Service, SupplierRoleEnum, Location, SupplierRole } from '@/db/constants'
+import { Service, Location, SupplierRole } from '@/db/constants'
 import * as schema from '@/db/schema'
 import {
   InsertSupplierRaw,
@@ -9,8 +9,6 @@ import {
   SupplierRaw,
   Supplier,
   SupplierWithUsers,
-  AuthUser,
-  User,
   InsertSupplierServiceRaw,
   InsertSupplierLocationRaw,
   SupplierLocationRaw,
