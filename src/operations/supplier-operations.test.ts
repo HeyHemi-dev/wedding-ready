@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach, expectTypeOf } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 
 import { scene, TEST_SUPPLIER } from '@/testing/scene'
+
 import { supplierOperations } from './supplier-operations'
 
 describe('supplierOperations', () => {

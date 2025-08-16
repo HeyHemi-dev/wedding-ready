@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
+import { scene, TEST_SUPPLIER } from '@/testing/scene'
 
 import { locationOperations } from './location-operations'
-import { scene, TEST_SUPPLIER } from '@/testing/scene'
 
 describe('locationOperations', () => {
   describe('getAllWithSupplierCount', () => {

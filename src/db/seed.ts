@@ -1,7 +1,8 @@
+import { scene } from '@/testing/scene'
+
 import { client as dbClient } from './connection'
 import { LOCATIONS, SERVICES } from './constants'
 import seedImages from './seedimages.json' assert { type: 'json' }
-import { scene } from '@/testing/scene'
 
 const AUTH_USER = {
   email: 'hello.hemi.phillips@gmail.com',

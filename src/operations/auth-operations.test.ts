@@ -1,10 +1,12 @@
 import { describe, expect, test, beforeEach, afterEach } from 'vitest'
 
-import { createAdminClient } from '@/utils/supabase/server'
-import { scene, TEST_ORIGIN } from '@/testing/scene'
-import { authOperations } from './auth-operations'
-import { UserDetailModel } from '@/models/user'
 import { UserSignupForm } from '@/app/_types/validation-schema'
+import { UserDetailModel } from '@/models/user'
+import { scene, TEST_ORIGIN } from '@/testing/scene'
+import { createAdminClient } from '@/utils/supabase/server'
+
+import { authOperations } from './auth-operations'
+
 
 // Define different test users only for auth testing so we can create a delete as needed without affecting other tests
 const AUTH_TEST_USER_1 = {
