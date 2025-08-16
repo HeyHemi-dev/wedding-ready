@@ -41,6 +41,8 @@ export const scene = {
   hasUser,
   hasSupplier,
   hasTile,
+  withoutUser,
+  withoutSupplier,
 }
 
 async function hasUser({
@@ -90,4 +92,16 @@ async function hasTile({
   const tile = await TileModel.getById(newTile.id)
   if (!tile) throw new Error('Failed to create tile')
   return tile
+}
+
+async function withoutUser({ handle, supabaseClient }: { handle: string; supabaseClient: SupabaseClient }): Promise<void> {
+  const user = await UserDetailModel.getByHandle(handle)
+  if (!user) return
+  await Promise.all([supabaseClient.auth.admin.deleteUser(user.id), db.delete(s.user_details).where(eq(s.user_details.id, user.id))])
+}
+
+async function withoutSupplier({ handle }: { handle: string }): Promise<void> {
+  const supplier = await SupplierModel.getByHandle(handle)
+  if (!supplier) return
+  await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
 }
