@@ -3,6 +3,9 @@ import { Supplier, SupplierSearchResult } from '@/app/_types/suppliers'
 import { Handle, SupplierRegistrationForm } from '@/app/_types/validation-schema'
 import { SUPPLIER_ROLES } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
+import { supplierLocationsModel } from '@/models/supplier-location'
+import { supplierServicesModel } from '@/models/supplier-service'
+import { supplierUsersModel } from '@/models/supplier-user'
 import { InsertSupplierRaw } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 
@@ -50,10 +53,10 @@ async function register({ name, handle, websiteUrl, description, services, locat
   const supplier = await SupplierModel.create(insertSupplierData)
 
   const [supplierLocations, supplierServices, supplierUsers] = await Promise.all([
-    SupplierModel.createLocationsForSupplier({ supplierId: supplier.id, locations }),
-    SupplierModel.createServicesForSupplier({ supplierId: supplier.id, services }),
-    // The user who creates the supplier is automatically an admin
-    SupplierModel.createUsersForSupplier({ supplierId: supplier.id, users: [{ id: user.id, role: SUPPLIER_ROLES.ADMIN }] }),
+    supplierLocationsModel.createForSupplierId({ supplierId: supplier.id, locations }),
+    supplierServicesModel.createForSupplierId({ supplierId: supplier.id, services }),
+    // The user who creates the supplier is an admin by default
+    supplierUsersModel.createForSupplierId({ supplierId: supplier.id, users: [{ id: user.id, role: SUPPLIER_ROLES.ADMIN }] }),
   ])
 
   return {
