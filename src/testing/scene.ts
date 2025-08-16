@@ -1,5 +1,5 @@
-import { SupplierRegistrationForm, TileUploadPreviewForm, UserSignupForm } from '@/app/_types/validation-schema'
-import { LOCATIONS, SERVICES, type Location, type Service } from '@/db/constants'
+import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
+import { LOCATIONS, SERVICES } from '@/db/constants'
 import { SupplierModel } from '@/models/supplier'
 import { TileModel } from '@/models/tile'
 import { UserDetailModel } from '@/models/user'
@@ -9,30 +9,33 @@ import { createAdminClient } from '@/utils/supabase/server'
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 import { tileOperations } from '@/operations/tile-operations'
 import type * as t from '@/models/types'
 
-export const DEFAULT_USER = {
-  email: 'hello.hemi.phillips@gmail.com',
-  password: 'password',
-  displayName: 'Hemi Phillips',
-  handle: 'heyhemi',
+export const TEST_USER = {
+  email: 'test.user@example.com',
+  password: 'testpassword123',
+  displayName: 'Test User',
+  handle: 'testuser',
 }
 
-export const DEFAULT_SUPPLIER = {
-  name: 'Patina Photo',
-  handle: 'patina_photo',
-  websiteUrl: 'https://patina.photo',
-  description: 'We are wedding photographers + videographers who travel NZ, capturing all the feels from the party of a lifetime.',
+export const TEST_SUPPLIER = {
+  name: 'Test Supplier',
+  handle: 'testsupplier',
+  websiteUrl: 'https://example.com',
+  description: 'Test Supplier Description',
   locations: [LOCATIONS.WELLINGTON, LOCATIONS.AUCKLAND, LOCATIONS.CANTERBURY],
   services: [SERVICES.PHOTOGRAPHER, SERVICES.VIDEOGRAPHER],
 }
 
-export const DEFAULT_TILE = {
+export const TEST_TILE = {
   imagePath: 'https://jjoptcpwkl.ufs.sh/f/iYLB1yJLiRuVbKRyfIsPcnZN5Oa46i31HzEI09eBlrAQyX28',
   location: LOCATIONS.WELLINGTON,
 }
+
+export const TEST_ORIGIN = 'http://localhost:3000'
 
 export const scene = {
   hasUser,
@@ -41,27 +44,28 @@ export const scene = {
 }
 
 async function hasUser({
-  email = DEFAULT_USER.email,
-  password = DEFAULT_USER.password,
-  displayName = DEFAULT_USER.displayName,
-  handle = DEFAULT_USER.handle,
-}: Partial<UserSignupForm> = {}): Promise<t.UserDetailRaw> {
+  email = TEST_USER.email,
+  password = TEST_USER.password,
+  displayName = TEST_USER.displayName,
+  handle = TEST_USER.handle,
+  supabaseClient,
+}: Partial<UserSignupForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserDetailRaw> {
   const user = await UserDetailModel.getByHandle(handle)
   if (user) return user
 
-  const supabaseAdmin = createAdminClient()
-  const ORIGIN = 'http://localhost:3000'
+  // Create a client if none provided
+  const client = supabaseClient || createAdminClient()
 
-  return await authOperations.signUp({ userSignFormData: { email, password, displayName, handle }, supabaseClient: supabaseAdmin, origin: ORIGIN })
+  return await authOperations.signUp({ userSignFormData: { email, password, displayName, handle }, supabaseClient: client, origin: TEST_ORIGIN })
 }
 
 async function hasSupplier({
-  name = DEFAULT_SUPPLIER.name,
-  handle = DEFAULT_SUPPLIER.handle,
-  websiteUrl = DEFAULT_SUPPLIER.websiteUrl,
-  description = DEFAULT_SUPPLIER.description,
-  locations = DEFAULT_SUPPLIER.locations,
-  services = DEFAULT_SUPPLIER.services,
+  name = TEST_SUPPLIER.name,
+  handle = TEST_SUPPLIER.handle,
+  websiteUrl = TEST_SUPPLIER.websiteUrl,
+  description = TEST_SUPPLIER.description,
+  locations = TEST_SUPPLIER.locations,
+  services = TEST_SUPPLIER.services,
   createdByUserId,
 }: Partial<SupplierRegistrationForm> & Pick<SupplierRegistrationForm, 'createdByUserId'>): Promise<t.SupplierRaw> {
   const supplier = await SupplierModel.getByHandle(handle)
@@ -71,8 +75,8 @@ async function hasSupplier({
 }
 
 async function hasTile({
-  imagePath = DEFAULT_TILE.imagePath,
-  location = DEFAULT_TILE.location,
+  imagePath = TEST_TILE.imagePath,
+  location = TEST_TILE.location,
   createdByUserId,
   supplierIds,
 }: t.InsertTileRaw & { supplierIds: string[] }): Promise<t.TileRaw> {
