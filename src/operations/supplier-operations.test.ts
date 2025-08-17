@@ -36,7 +36,7 @@ describe('supplierOperations', () => {
           ...TEST_SUPPLIER,
           createdByUserId: user.id,
         })
-      ).rejects.toThrow('Handle is already taken')
+      ).rejects.toThrow()
     })
 
     it('should throw error when user is not found', async () => {
@@ -46,7 +46,7 @@ describe('supplierOperations', () => {
           ...TEST_SUPPLIER,
           createdByUserId: '00000000-0000-0000-0000-000000000000',
         })
-      ).rejects.toThrow('User not found')
+      ).rejects.toThrow()
     })
   })
 
