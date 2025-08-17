@@ -1,7 +1,7 @@
 import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
 import { TileCreditForm } from '@/app/_types/validation-schema'
 import { TileModel } from '@/models/tile'
-import { TileSupplierModel } from '@/models/tileSupplier'
+import { TileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
 
 export const tileOperations = {

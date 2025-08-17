@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { TileModel } from '@/models/tile'
-import { TileSupplierModel } from '@/models/tileSupplier'
+import { TileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
 import { getAuthUserId } from '@/utils/auth'
 
