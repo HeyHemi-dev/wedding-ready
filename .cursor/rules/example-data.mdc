@@ -67,7 +67,7 @@ export class TileModel {
 // Server component
 export async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const supplier = await SupplierModel.getByHandle(handle)
+  const supplier = await supplierModel.getByHandle(handle)
 
   if (!supplier) {
     redirect(`/404`)

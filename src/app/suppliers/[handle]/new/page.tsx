@@ -4,13 +4,13 @@ import { redirect } from 'next/navigation'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { Section } from '@/components/ui/section'
-import { SupplierModel } from '@/models/supplier'
+import { supplierModel } from '@/models/supplier'
 
 import { UploadDropzone } from './upload-dropzone'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const supplier = await SupplierModel.getByHandle(handle)
+  const supplier = await supplierModel.getByHandle(handle)
 
   if (!supplier) {
     redirect(`/404`)

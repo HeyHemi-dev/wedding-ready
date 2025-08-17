@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
 
-import { SupplierModel } from './supplier'
+import { supplierModel } from './supplier'
 import { TileModel } from './tile'
 
 import type * as t from './types'
@@ -29,7 +29,7 @@ async function getCreditsByTileId(tileId: string): Promise<t.TileCredit[]> {
 
 async function createRaw(tileSupplierRawData: t.InsertTileSupplierRaw): Promise<t.TileSupplierRaw> {
   const tile = await TileModel.getRawById(tileSupplierRawData.tileId)
-  const supplier = await SupplierModel.getRawById(tileSupplierRawData.supplierId)
+  const supplier = await supplierModel.getRawById(tileSupplierRawData.supplierId)
 
   if (!tile || !supplier) {
     throw new Error('Tile or supplier not found')

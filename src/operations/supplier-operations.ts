@@ -2,7 +2,7 @@ import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Supplier, SupplierSearchResult } from '@/app/_types/suppliers'
 import { Handle, SupplierRegistrationForm } from '@/app/_types/validation-schema'
 import { SUPPLIER_ROLES } from '@/db/constants'
-import { SupplierModel } from '@/models/supplier'
+import { supplierModel } from '@/models/supplier'
 import { supplierLocationsModel } from '@/models/supplier-location'
 import { supplierServicesModel } from '@/models/supplier-service'
 import { supplierUsersModel } from '@/models/supplier-user'
@@ -16,7 +16,7 @@ export const supplierOperations = {
 }
 
 async function getByHandle(handle: Handle): Promise<Supplier | null> {
-  const supplier = await SupplierModel.getByHandle(handle)
+  const supplier = await supplierModel.getByHandle(handle)
   if (!supplier) return null
 
   return {
@@ -37,7 +37,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
     throw OPERATION_ERROR.FORBIDDEN
   }
 
-  const isAvailable = await SupplierModel.isHandleAvailable({ handle })
+  const isAvailable = await supplierModel.isHandleAvailable({ handle })
   if (!isAvailable) {
     throw OPERATION_ERROR.HANDLE_TAKEN
   }
@@ -50,7 +50,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
     websiteUrl,
   }
 
-  const supplier = await SupplierModel.create(insertSupplierData)
+  const supplier = await supplierModel.create(insertSupplierData)
 
   const [supplierLocations, supplierServices, supplierUsers] = await Promise.all([
     supplierLocationsModel.createForSupplierId({ supplierId: supplier.id, locations }),
@@ -72,7 +72,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
 }
 
 async function search(query: string): Promise<SupplierSearchResult[]> {
-  const suppliers = await SupplierModel.search(query)
+  const suppliers = await supplierModel.search(query)
   return suppliers.map((supplier) => ({
     id: supplier.id,
     name: supplier.name,

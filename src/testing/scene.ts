@@ -5,7 +5,7 @@ import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validatio
 import { db } from '@/db/connection'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 import * as s from '@/db/schema'
-import { SupplierModel } from '@/models/supplier'
+import { supplierModel } from '@/models/supplier'
 import { TileModel } from '@/models/tile'
 import type * as t from '@/models/types'
 import { UserDetailModel } from '@/models/user'
@@ -103,7 +103,7 @@ async function withoutUser({ handle, supabaseClient }: { handle: string; supabas
 }
 
 async function withoutSupplier({ handle }: { handle: string }): Promise<void> {
-  const supplier = await SupplierModel.getByHandle(handle)
+  const supplier = await supplierModel.getByHandle(handle)
   if (!supplier) return
   await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
 }

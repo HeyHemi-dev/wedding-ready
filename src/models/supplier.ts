@@ -5,6 +5,73 @@ import { Service, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
 import { InsertSupplierRaw, SupplierRaw, Supplier, SupplierWithUsers } from '@/models/types'
 
+export const supplierModel = {
+  getRawById,
+  getAll,
+  getByHandle,
+  create,
+  isHandleAvailable,
+  search,
+}
+
+async function getRawById(id: string): Promise<SupplierRaw | null> {
+  const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.id, id))
+
+  if (suppliers === null || suppliers.length === 0) return null
+
+  return suppliers[0]
+}
+
+async function getAll({ service, location }: { service?: Service; location?: Location } = {}): Promise<Supplier[]> {
+  const conditions = []
+
+  if (service) conditions.push(eq(schema.supplierServices.service, service))
+
+  if (location) conditions.push(eq(schema.supplierLocations.location, location))
+
+  const result = await supplierBaseQuery.where(conditions.length > 0 ? and(...conditions) : undefined)
+  return aggregateSupplierQueryResults(result)
+}
+
+async function getByHandle(handle: string): Promise<SupplierWithUsers | null> {
+  const result = await supplierBaseQuery.where(eq(schema.suppliers.handle, handle))
+
+  if (result.length === 0) {
+    return null
+  }
+
+  const suppliers = aggregateSupplierQueryResults(result)
+
+  // There should only be one supplier with this handle because of db constraints.
+  const supplier = suppliers[0]
+  const supplierUsers = await db.select().from(schema.supplierUsers).where(eq(schema.supplierUsers.supplierId, supplier.id))
+
+  return {
+    ...supplier,
+    users: supplierUsers,
+  }
+}
+
+async function create(insertSupplierData: InsertSupplierRaw): Promise<SupplierRaw> {
+  const suppliers = await db.insert(schema.suppliers).values(insertSupplierData).returning()
+  return suppliers[0]
+}
+
+async function isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {
+  const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
+  return suppliers.length === 0
+}
+
+async function search(query: string): Promise<SupplierRaw[]> {
+  const suppliers = await db
+    .select()
+    .from(schema.suppliers)
+    .where(or(ilike(schema.suppliers.name, `%${query}%`), ilike(schema.suppliers.handle, `%${query}%`)))
+    .limit(10)
+
+  return suppliers
+}
+
 const supplierBaseQuery = db
   .select({
     ...schema.supplierColumns,
@@ -18,86 +85,6 @@ const supplierBaseQuery = db
 interface SupplierBaseQueryResult extends SupplierRaw {
   service: Service | null
   location: Location | null
-}
-
-export class SupplierModel {
-  private supplier: Supplier
-
-  constructor(supplierRaw: SupplierRaw, services: Service[], locations: Location[]) {
-    this.supplier = {
-      ...supplierRaw,
-      services,
-      locations,
-    }
-  }
-
-  static async getRawById(id: string): Promise<SupplierRaw | null> {
-    const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.id, id))
-
-    if (suppliers === null || suppliers.length === 0) return null
-
-    return suppliers[0]
-  }
-
-  static async getAll({ service, location }: { service?: Service; location?: Location } = {}): Promise<Supplier[]> {
-    const conditions = []
-
-    if (service) conditions.push(eq(schema.supplierServices.service, service))
-
-    if (location) conditions.push(eq(schema.supplierLocations.location, location))
-
-    const result = await supplierBaseQuery.where(conditions.length > 0 ? and(...conditions) : undefined)
-    return aggregateSupplierQueryResults(result)
-  }
-
-  static async getAllByTileId(tileId: string): Promise<SupplierRaw[]> {
-    const suppliers = await db
-      .select({ ...schema.supplierColumns })
-      .from(schema.suppliers)
-      .innerJoin(schema.tileSuppliers, eq(schema.suppliers.id, schema.tileSuppliers.supplierId))
-      .where(eq(schema.tileSuppliers.tileId, tileId))
-
-    return suppliers
-  }
-
-  static async getByHandle(handle: string): Promise<SupplierWithUsers | null> {
-    const result = await supplierBaseQuery.where(eq(schema.suppliers.handle, handle))
-
-    if (result.length === 0) {
-      return null
-    }
-
-    const suppliers = aggregateSupplierQueryResults(result)
-
-    // There should only be one supplier with this handle because of db constraints.
-    const supplier = suppliers[0]
-    const supplierUsers = await db.select().from(schema.supplierUsers).where(eq(schema.supplierUsers.supplierId, supplier.id))
-
-    return {
-      ...supplier,
-      users: supplierUsers,
-    }
-  }
-
-  static async create(insertSupplierData: InsertSupplierRaw): Promise<SupplierRaw> {
-    const suppliers = await db.insert(schema.suppliers).values(insertSupplierData).returning()
-    return suppliers[0]
-  }
-
-  static async isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {
-    const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
-    return suppliers.length === 0
-  }
-
-  static async search(query: string): Promise<SupplierRaw[]> {
-    const suppliers = await db
-      .select()
-      .from(schema.suppliers)
-      .where(or(ilike(schema.suppliers.name, `%${query}%`), ilike(schema.suppliers.handle, `%${query}%`)))
-      .limit(10)
-
-    return suppliers
-  }
 }
 
 function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): Supplier[] {
