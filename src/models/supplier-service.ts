@@ -1,0 +1,32 @@
+import { count, eq } from 'drizzle-orm'
+
+import { db } from '@/db/connection'
+import { Service } from '@/db/constants'
+import * as s from '@/db/schema'
+import * as t from '@/models/types'
+
+export const supplierServicesModel = {
+  getAllWithSupplierCount,
+  createForSupplierId,
+}
+
+async function getAllWithSupplierCount(): Promise<{ service: Service; supplierCount: number }[]> {
+  const result = await db
+    .select({
+      service: s.supplierServices.service,
+      supplierCount: count(s.suppliers.id),
+    })
+    .from(s.suppliers)
+    .innerJoin(s.supplierServices, eq(s.suppliers.id, s.supplierServices.supplierId))
+    .groupBy(s.supplierServices.service)
+
+  return result
+}
+
+async function createForSupplierId({ supplierId, services }: { supplierId: string; services: Service[] }): Promise<t.SupplierServiceRaw[]> {
+  const insertSupplierServiceData: t.InsertSupplierServiceRaw[] = services.map((service) => ({
+    supplierId,
+    service,
+  }))
+  return await db.insert(s.supplierServices).values(insertSupplierServiceData).returning()
+}

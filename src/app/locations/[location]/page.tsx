@@ -4,7 +4,7 @@ import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-li
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { locationDescriptions } from '@/db/location-descriptions'
-import { SupplierModel } from '@/models/supplier'
+import { supplierModel } from '@/models/supplier'
 import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
@@ -14,7 +14,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
     notFound()
   }
 
-  const suppliers = await SupplierModel.getAll({ location })
+  const suppliers = await supplierModel.getAll({ location })
 
   return (
     <Section className="min-h-svh-minus-header pt-0">

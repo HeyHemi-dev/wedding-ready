@@ -4,21 +4,22 @@ import { redirect } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
+import { Supplier } from '@/app/_types/suppliers'
 import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
-import { SupplierModel } from '@/models/supplier'
-import { Supplier } from '@/models/types'
+import { supplierOperations } from '@/operations/supplier-operations'
 import { valueToPretty } from '@/utils/enum-helpers'
 
 import { SupplierTiles } from './supplier-tiles'
 
+
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const supplier = await SupplierModel.getByHandle(handle)
+  const supplier = await supplierOperations.getByHandle(handle)
 
   if (!supplier) {
     redirect(`/404`)
@@ -26,7 +27,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
 
   // Check if the user is the owner of the supplier to enable edit features
   const authUser = await getCurrentUser()
-  const isSupplierUser = supplier?.users.some((u) => u.userId === authUser?.id)
+  const isSupplierUser = supplier?.users.some((u) => u.id === authUser?.id)
 
   return (
     <>

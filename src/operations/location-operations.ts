@@ -1,16 +1,16 @@
 import { FindSuppliersResponse } from '@/app/_types/locations'
 import { LOCATIONS } from '@/db/constants'
-import { SupplierModel } from '@/models/supplier'
+import { supplierLocationsModel } from '@/models/supplier-location'
 
 export const locationOperations = {
   getAllWithSupplierCount,
 }
 
 async function getAllWithSupplierCount(): Promise<FindSuppliersResponse[]> {
-  const supplierCounts = await SupplierModel.getCountGroupByLocation()
+  const supplierCounts = await supplierLocationsModel.getAllWithSupplierCount()
 
   // Map for quick lookup
-  const countMap = new Map(supplierCounts.map(({ location, count }) => [location, count]))
+  const countMap = new Map(supplierCounts.map(({ location, supplierCount }) => [location, supplierCount]))
 
   return Object.entries(LOCATIONS).map(([key, value]) => ({
     type: 'location',

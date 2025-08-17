@@ -1,42 +1,32 @@
-import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
-import * as t from '@/models/types'
-import { authOperations } from '@/operations/auth-operations'
-import { supplierOperations } from '@/operations/supplier-operations'
-import { tileOperations } from '@/operations/tile-operations'
-import { createAdminClient } from '@/utils/supabase/server'
+import { scene } from '@/testing/scene'
 
 import { client as dbClient } from './connection'
 import { LOCATIONS, SERVICES } from './constants'
 import seedImages from './seedimages.json' assert { type: 'json' }
 
+const AUTH_USER = {
+  email: 'hello.hemi.phillips@gmail.com',
+  password: 'password',
+  displayName: 'Hemi Phillips',
+  handle: 'heyhemi',
+}
+
+const SUPPLIER = {
+  name: 'Patina Photo',
+  handle: 'patina_photo',
+  websiteUrl: 'https://patina.photo',
+  description: 'We are wedding photographers + videographers who travel NZ, capturing all the feels from the party of a lifetime.',
+  locations: [LOCATIONS.WELLINGTON, LOCATIONS.AUCKLAND, LOCATIONS.CANTERBURY],
+  services: [SERVICES.PHOTOGRAPHER, SERVICES.VIDEOGRAPHER],
+}
+
 async function seedDatabase() {
-  console.log('seeding database...')
-  const supabaseAdmin = createAdminClient()
-  const ORIGIN = 'http://localhost:3000'
+  console.log('Seeding database...')
 
-  // Create an auth user
-  const AUTH_USER: UserSignupForm = {
-    email: 'hello.hemi.phillips@gmail.com',
-    password: 'password',
-    displayName: 'Hemi Phillips',
-    handle: 'heyhemi',
-  }
-  const user = await authOperations.signUp({ userSignFormData: AUTH_USER, supabaseClient: supabaseAdmin, origin: ORIGIN })
-  console.log('user created')
-
-  // Create a supplier
-  const SUPPLIER: SupplierRegistrationForm = {
-    name: 'Patina Photo',
-    handle: 'patina_photo',
-    websiteUrl: 'https://patina.photo',
-    description: 'We are wedding photographers + videographers who travel NZ, capturing all the feels from the party of a lifetime.',
-    locations: [LOCATIONS.WELLINGTON, LOCATIONS.AUCKLAND, LOCATIONS.CANTERBURY],
-    services: [SERVICES.PHOTOGRAPHER, SERVICES.VIDEOGRAPHER],
-    createdByUserId: user.id,
-  }
-  // also sets the user as an admin for the supplier
-  const supplier = await supplierOperations.register(SUPPLIER)
-  console.log('supplier created')
+  const user = await scene.hasUser(AUTH_USER)
+  console.log('User created')
+  const supplier = await scene.hasSupplier({ createdByUserId: user.id, ...SUPPLIER })
+  console.log('Supplier created')
 
   // Create some tiles
   type UploadThingImage = {
@@ -52,15 +42,10 @@ async function seedDatabase() {
 
   await Promise.all(
     UPLOADTHING_IMAGES.map(async (image: UploadThingImage) => {
-      const tileRawData: t.InsertTileRaw = {
-        createdByUserId: user.id,
-        imagePath: image.url,
-        location: LOCATIONS.WELLINGTON,
-      }
-      return await tileOperations.createForSupplier({ InsertTileRawData: tileRawData, supplierIds: [supplier.id] })
+      await scene.hasTile({ createdByUserId: user.id, supplierIds: [supplier.id], imagePath: image.url, location: LOCATIONS.WELLINGTON })
     })
   )
-  console.log('tiles created')
+  console.log('Tiles created')
 }
 
 // --- Run the seeding logic and ensure exit ---

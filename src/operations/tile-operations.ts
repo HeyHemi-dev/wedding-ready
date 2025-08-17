@@ -1,7 +1,9 @@
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
 import { TileCreditForm } from '@/app/_types/validation-schema'
+import { supplierModel } from '@/models/supplier'
 import { TileModel } from '@/models/tile'
-import { TileSupplierModel } from '@/models/tileSupplier'
+import { tileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
 
 export const tileOperations = {
@@ -14,10 +16,10 @@ export const tileOperations = {
 }
 
 async function getById(id: string, authUserId?: string): Promise<Tile> {
-  const [tile, tileCredits] = await Promise.all([TileModel.getById(id, authUserId), TileSupplierModel.getCreditsByTileId(id)])
+  const [tile, tileCredits] = await Promise.all([TileModel.getById(id, authUserId), tileSupplierModel.getCreditsByTileId(id)])
 
   if (!tile) {
-    throw new Error('Tile not found')
+    throw OPERATION_ERROR.NOT_FOUND
   }
 
   const tileWithCredits = {
@@ -64,10 +66,16 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
 
 async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTileRawData: t.InsertTileRaw; supplierIds: string[] }): Promise<{ id: string }> {
   if (!InsertTileRawData.imagePath) {
-    throw new Error('imagePath must be set')
+    throw OPERATION_ERROR.DATA_INTEGRITY
   }
+
+  const supplier = await supplierModel.getRawById(supplierIds[0])
+  if (!supplier) {
+    throw OPERATION_ERROR.DATA_INTEGRITY
+  }
+
   const tileRaw = await TileModel.createRaw(InsertTileRawData)
-  await TileSupplierModel.createRaw({ tileId: tileRaw.id, supplierId: supplierIds[0] })
+  await tileSupplierModel.createRaw({ tileId: tileRaw.id, supplierId: supplierIds[0] })
 
   return {
     id: tileRaw.id,
@@ -75,7 +83,7 @@ async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTil
 }
 
 async function getCreditsForTile(tileId: string): Promise<TileCredit[]> {
-  const tileCredits = await TileSupplierModel.getCreditsByTileId(tileId)
+  const tileCredits = await tileSupplierModel.getCreditsByTileId(tileId)
   return tileCredits.map((credit) => ({
     supplierHandle: credit.supplier.handle,
     supplierName: credit.supplier.name,
@@ -85,16 +93,18 @@ async function getCreditsForTile(tileId: string): Promise<TileCredit[]> {
 }
 
 async function createCreditForTile({ tileId, credit, userId }: { tileId: string; credit: TileCreditForm; userId: string }): Promise<TileCredit[]> {
-  const tile = await TileModel.getRawById(tileId)
-  if (!tile) {
-    throw new Error('Tile not found')
-  }
-  if (tile.createdByUserId !== userId) {
-    throw new Error('Unauthorized')
+  const [tile, supplier] = await Promise.all([TileModel.getRawById(tileId), supplierModel.getRawById(credit.supplier.id)])
+
+  if (!tile || !supplier) {
+    throw OPERATION_ERROR.DATA_INTEGRITY
   }
 
-  await TileSupplierModel.createRaw({ tileId, supplierId: credit.supplier.id, service: credit.service, serviceDescription: credit.serviceDescription })
-  const tileCredits = await TileSupplierModel.getCreditsByTileId(tileId)
+  if (tile.createdByUserId !== userId) {
+    throw OPERATION_ERROR.FORBIDDEN
+  }
+
+  await tileSupplierModel.createRaw({ tileId, supplierId: credit.supplier.id, service: credit.service, serviceDescription: credit.serviceDescription })
+  const tileCredits = await tileSupplierModel.getCreditsByTileId(tileId)
 
   return tileCredits.map((credit) => ({
     supplierHandle: credit.supplier.handle,

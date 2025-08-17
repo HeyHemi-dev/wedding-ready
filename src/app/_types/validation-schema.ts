@@ -3,14 +3,17 @@ import { z } from 'zod'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 import { SetUserDetailRaw } from '@/models/types'
 
+const handleSchema = z
+  .string()
+  .trim()
+  .min(3, 'Handle must be at least 3 characters')
+  .max(30, "Handle can't exceed 30 characters")
+  .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores')
+export type Handle = z.infer<typeof handleSchema>
+
 export const supplierRegistrationFormSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(50, "Name can't exceed 50 characters"),
-  handle: z
-    .string()
-    .trim()
-    .min(3, 'Handle must be at least 3 characters')
-    .max(30, "Handle can't exceed 30 characters")
-    .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores'),
+  handle: handleSchema,
   websiteUrl: z.string().trim().optional(),
   description: z.string().optional(),
   locations: z.array(z.nativeEnum(LOCATIONS)).min(1, 'At least one location required'),
@@ -44,12 +47,7 @@ export const userSignupFormSchema = z.object({
   email: z.string().trim().email('Invalid email'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   displayName: z.string().trim().min(1, 'Display name is required').max(30, "Display name can't exceed 30 characters"),
-  handle: z
-    .string()
-    .trim()
-    .min(3, 'Handle must be at least 3 characters')
-    .max(30, "Handle can't exceed 30 characters")
-    .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores'),
+  handle: handleSchema,
 })
 export type UserSignupForm = z.infer<typeof userSignupFormSchema>
 
@@ -81,6 +79,9 @@ export type UserForgotPasswordForm = z.infer<typeof userForgotPasswordFormSchema
 
 export const userResetPasswordFormSchema = userSigninFormSchema.pick({ password: true }).extend({ confirmPassword: z.string() })
 export type UserResetPasswordForm = z.infer<typeof userResetPasswordFormSchema>
+
+export const userUpdateEmailFormSchema = userSigninFormSchema.pick({ email: true })
+export type UserUpdateEmailForm = z.infer<typeof userUpdateEmailFormSchema>
 
 export const tileCreditFormSchema = z.object({
   supplier: z.object({

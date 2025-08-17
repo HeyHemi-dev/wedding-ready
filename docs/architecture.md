@@ -10,9 +10,9 @@
 | Presentation/Client-side Logic | - Animations<br>- State<br>- Data formatting<br> | - Motion<br>- React (state, effects etc.)<br>- Pages |
 | Presentation/Client-side Boundary | - UX<br>- Toasts<br>- Zod parsing | - Fetch (inside custom hooks)<br>- Forms |
 | Presentation/Server-side Boundary | - Authentication<br>- Headers/cookies<br>- Zod declaration/parsing<br>- UI-type definitions<br>- User-facing errors | - SSR (pages)<br>- API endpoints (routes)<br>- Form actions |
-| Operations | - Authorization<br>- Type conversion | - Operation Objects (e.g. authOperation, tileOperation) |
-| Data/Access | - Data-type definitions<br>- Data integrity | - Models (e.g. supplierModel, tileModel) |
-| Data/Definition | Schema definition | - Schema |
+| Operations | - Authorization<br>- Data integrity<br>- Type conversion<br>- Business logic | - Operation Objects (e.g. authOperations, supplierOperations) |
+| Data/Access | - CRUD operations | - Models (e.g. supplierModel) |
+| Data/Definition | - Data shape definition | - Schema<br>- Constants (e.g. SUPPLIER_ROLES)<br>- Types (e.g. SupplierRaw)<br>- Migrations |
 
 ## Implementation Details
 
@@ -67,9 +67,31 @@
 - Save in `/app/_hooks` for client side functions
 - Save in `/app/_types` for form validation and front-end types
 
+### Operations Layer
+- **Purpose**: Orchestrate complex business operations that span multiple models
+- **Location**: `/operations/` directory
+- **Examples**: `supplierOperations.register()`, `authOperations.signUp()`
+- **Responsibilities**:
+  - Coordinate multiple model operations
+  - Handle business logic and validation
+  - Manage transactions and rollbacks
+  - Provide high-level API for complex operations
+
 ### Data Layer
 - Use Drizzle ORM with type-safe schema definitions
 - user_details table is used to extend the auth.users table
-- Implement Model classes with OOP principals for database operations
-- Optimise database queries to make as few calls as possible, since each query is also a network request to Supabase
+- **Model Classes**: Implement single-table operations with OOP principles
+- **Model Organization**: 
+  - Core models: `supplierModel`, `tileModel`, `userModel`
+  - Relationship models: `supplierLocationModel`, `supplierServiceModel`, `supplierUserModel`
+  - Each model focuses on a single table and its direct operations
+- **Optimization**: Make as few database calls as possible, since each query is also a network request to Supabase
+
+### Database Seeding
+- **Location**: `src/db/seed.ts`
+- **Pattern**: Uses scene-based testing utilities for consistent data setup
+- **Benefits**: 
+  - Reuses testing infrastructure
+  - Ensures seed data follows same patterns as test data
+  - Makes seeding more maintainable and testable
 

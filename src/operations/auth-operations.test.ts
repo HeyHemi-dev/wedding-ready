@@ -1,52 +1,176 @@
-import { AuthError, SupabaseClient } from '@supabase/supabase-js'
-import { describe, expect, test, vi, beforeEach } from 'vitest'
+import { describe, expect, test, beforeEach, afterEach } from 'vitest'
 
-import { mockSupabase } from '@/utils/test-helpers'
+import { UserSignupForm } from '@/app/_types/validation-schema'
+import { UserDetailModel } from '@/models/user'
+import { scene, TEST_ORIGIN } from '@/testing/scene'
+import { createAdminClient } from '@/utils/supabase/server'
 
 import { authOperations } from './auth-operations'
 
-// Test constants
-const TEST_ERROR = {
-  message: 'Sign out failed',
-  status: 400,
-} as const
 
-describe('signOut', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
+// Define different test users only for auth testing so we can create a delete as needed without affecting other tests
+const AUTH_TEST_USER_1 = {
+  email: 'auth.test.user@example.com',
+  password: 'testpassword123',
+  displayName: 'Test User',
+  handle: 'authuser',
+}
+
+const AUTH_TEST_USER_2 = {
+  email: 'auth.test.user2@example.com',
+  password: 'testpassword123',
+  displayName: 'Test User 2',
+  handle: 'authuser2',
+}
+
+describe('authOperations', () => {
+  const supabaseAdmin = createAdminClient()
+
+  beforeEach(async () => {
+    await Promise.all([
+      scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: supabaseAdmin }),
+      scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: supabaseAdmin }),
+    ])
   })
 
-  test('should successfully sign out user', async () => {
-    // Arrange
-    vi.mocked(mockSupabase.auth.signOut).mockResolvedValueOnce({ error: null })
+  afterEach(async () => {})
 
-    // Act
-    await authOperations.signOut({
-      supabaseClient: mockSupabase as unknown as SupabaseClient,
+  describe('signUp', () => {
+    test('should successfully create a new user account', async () => {
+      // Act
+      const testUser = await authOperations.signUp({
+        userSignFormData: AUTH_TEST_USER_1,
+        supabaseClient: supabaseAdmin,
+        origin: TEST_ORIGIN,
+      })
+
+      // Assert
+      expect(testUser).toBeDefined()
+      expect(testUser.id).toBeDefined()
+      expect(testUser.handle).toBe(AUTH_TEST_USER_1.handle)
+      expect(testUser.displayName).toBe(AUTH_TEST_USER_1.displayName)
+
+      // Verify user exists in auth
+      const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(testUser.id)
+      expect(authUser.user).toBeDefined()
+      expect(authUser.user?.email).toBe(AUTH_TEST_USER_1.email)
+
+      // Verify user exists in db
+      const user = await UserDetailModel.getByHandle(AUTH_TEST_USER_1.handle)
+      expect(user).toBeDefined()
+      expect(user?.id).toBe(testUser.id)
+      expect(user?.id).toBe(authUser.user?.id)
+      expect(user?.displayName).toBe(AUTH_TEST_USER_1.displayName)
     })
 
-    // Assert
-    expect(mockSupabase.auth.signOut).toHaveBeenCalledTimes(1)
+    test('should throw error when email is already taken', async () => {
+      // Arrange
+      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: supabaseAdmin })
+
+      // Use same email as first user
+      const userSignupData: UserSignupForm = {
+        email: AUTH_TEST_USER_1.email,
+        password: AUTH_TEST_USER_2.password,
+        displayName: AUTH_TEST_USER_2.displayName,
+        handle: AUTH_TEST_USER_2.handle,
+      }
+
+      // Act & Assert
+
+      await expect(
+        authOperations.signUp({
+          userSignFormData: userSignupData,
+          supabaseClient: supabaseAdmin,
+          origin: TEST_ORIGIN,
+        })
+      ).rejects.toThrow()
+    })
+
+    test('should throw error when handle is already taken', async () => {
+      // Arrange
+      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: supabaseAdmin })
+
+      // Use same handle as first user
+      const userSignupData: UserSignupForm = {
+        email: AUTH_TEST_USER_2.email,
+        password: AUTH_TEST_USER_2.password,
+        displayName: AUTH_TEST_USER_2.displayName,
+        handle: AUTH_TEST_USER_1.handle,
+      }
+
+      // Act & Assert
+      await expect(
+        authOperations.signUp({
+          userSignFormData: userSignupData,
+          supabaseClient: supabaseAdmin,
+          origin: TEST_ORIGIN,
+        })
+      ).rejects.toThrow()
+    })
   })
 
-  test('should throw error when sign out fails', async () => {
-    // Arrange
-    const error = new AuthError(TEST_ERROR.message, TEST_ERROR.status)
-    vi.mocked(mockSupabase.auth.signOut).mockResolvedValueOnce({ error })
+  describe('signIn', () => {
+    test('should successfully sign in existing user', async () => {
+      // Arrange
+      const testUser = await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: supabaseAdmin })
 
-    // Act & Assert
-    await expect(
-      authOperations.signOut({
-        supabaseClient: mockSupabase as unknown as SupabaseClient,
+      // Act
+      const result = await authOperations.signIn({
+        userSigninFormData: {
+          email: AUTH_TEST_USER_1.email,
+          password: AUTH_TEST_USER_1.password,
+        },
+        supabaseClient: supabaseAdmin,
       })
-    ).rejects.toThrow()
+
+      // Assert
+      expect(result).toBeDefined()
+      expect(result.authUserId).toBe(testUser.id)
+    })
+
+    test('should throw error when credentials are invalid', async () => {
+      // Act & Assert
+      await expect(
+        authOperations.signIn({
+          userSigninFormData: {
+            email: 'nonexistent@example.com',
+            password: 'wrongpassword',
+          },
+          supabaseClient: supabaseAdmin,
+        })
+      ).rejects.toThrow()
+    })
   })
 
-  test('should throw error when auth client is not available', async () => {
-    // Arrange
-    const invalidClient = {} as SupabaseClient
+  describe('signOut', () => {
+    test('should successfully sign out user', async () => {
+      // Arrange
 
-    // Act & Assert
-    await expect(authOperations.signOut({ supabaseClient: invalidClient })).rejects.toThrow()
+      // Create and sign in user
+      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: supabaseAdmin })
+
+      await authOperations.signIn({
+        userSigninFormData: {
+          email: AUTH_TEST_USER_1.email,
+          password: AUTH_TEST_USER_1.password,
+        },
+        supabaseClient: supabaseAdmin,
+      })
+
+      // Act & Assert
+      await expect(authOperations.signOut({ supabaseClient: supabaseAdmin })).resolves.not.toThrow()
+    })
   })
+
+  /* Skip testing email update flow
+   * authOperations.updateEmail calls updateUser which requires client side session to be present.
+   */
+
+  /* Skip testing password reset flow
+   * The password reset flow involves:
+   * - Client side session to be present
+   * - Email delivery of reset tokens
+   * - Time-sensitive tokens generated by Supabase
+   * - Complex session management during reset process
+   */
 })

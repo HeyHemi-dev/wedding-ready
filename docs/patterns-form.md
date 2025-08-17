@@ -18,6 +18,8 @@ This document outlines the pattern for creating client-side forms with validatio
    - Use toast notifications for user feedback
    - Implement proper error boundaries
    - Handle both client and server-side validation errors
+   - Use consistent error constants from `@/app/_types/errors.ts`
+   - Use `tryCatch` utility for consistent error handling patterns
 
 4. **Performance**
    - Use debouncing for high-frequency changes

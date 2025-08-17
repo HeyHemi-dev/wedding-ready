@@ -4,7 +4,7 @@ import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-li
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { serviceDescriptions } from '@/db/service-descriptions'
-import { SupplierModel } from '@/models/supplier'
+import { supplierModel } from '@/models/supplier'
 import { serviceHelpers, valueToPretty } from '@/utils/const-helpers'
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
@@ -14,7 +14,7 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
     notFound()
   }
 
-  const suppliers = await SupplierModel.getAll({ service })
+  const suppliers = await supplierModel.getAll({ service })
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
