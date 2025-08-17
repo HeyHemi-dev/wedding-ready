@@ -8,7 +8,7 @@ import { TileModel } from './tile'
 
 import type * as t from './types'
 
-export const TileSupplierModel = {
+export const tileSupplierModel = {
   getCreditsByTileId,
   createRaw,
   createManyRaw,

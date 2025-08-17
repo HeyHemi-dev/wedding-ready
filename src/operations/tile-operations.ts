@@ -1,7 +1,7 @@
 import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
 import { TileCreditForm } from '@/app/_types/validation-schema'
 import { TileModel } from '@/models/tile'
-import { TileSupplierModel } from '@/models/tile-supplier'
+import { tileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
 
 export const tileOperations = {
@@ -14,7 +14,7 @@ export const tileOperations = {
 }
 
 async function getById(id: string, authUserId?: string): Promise<Tile> {
-  const [tile, tileCredits] = await Promise.all([TileModel.getById(id, authUserId), TileSupplierModel.getCreditsByTileId(id)])
+  const [tile, tileCredits] = await Promise.all([TileModel.getById(id, authUserId), tileSupplierModel.getCreditsByTileId(id)])
 
   if (!tile) {
     throw new Error('Tile not found')
@@ -67,7 +67,7 @@ async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTil
     throw new Error('imagePath must be set')
   }
   const tileRaw = await TileModel.createRaw(InsertTileRawData)
-  await TileSupplierModel.createRaw({ tileId: tileRaw.id, supplierId: supplierIds[0] })
+  await tileSupplierModel.createRaw({ tileId: tileRaw.id, supplierId: supplierIds[0] })
 
   return {
     id: tileRaw.id,
@@ -75,7 +75,7 @@ async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTil
 }
 
 async function getCreditsForTile(tileId: string): Promise<TileCredit[]> {
-  const tileCredits = await TileSupplierModel.getCreditsByTileId(tileId)
+  const tileCredits = await tileSupplierModel.getCreditsByTileId(tileId)
   return tileCredits.map((credit) => ({
     supplierHandle: credit.supplier.handle,
     supplierName: credit.supplier.name,
@@ -93,8 +93,8 @@ async function createCreditForTile({ tileId, credit, userId }: { tileId: string;
     throw new Error('Unauthorized')
   }
 
-  await TileSupplierModel.createRaw({ tileId, supplierId: credit.supplier.id, service: credit.service, serviceDescription: credit.serviceDescription })
-  const tileCredits = await TileSupplierModel.getCreditsByTileId(tileId)
+  await tileSupplierModel.createRaw({ tileId, supplierId: credit.supplier.id, service: credit.service, serviceDescription: credit.serviceDescription })
+  const tileCredits = await tileSupplierModel.getCreditsByTileId(tileId)
 
   return tileCredits.map((credit) => ({
     supplierHandle: credit.supplier.handle,
