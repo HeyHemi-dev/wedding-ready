@@ -41,5 +41,7 @@ export const ROUTE_ERRORS = {
 export const OPERATION_ERROR = {
   UNAUTHORIZED: new Error('Unauthorized'),
   FORBIDDEN: new Error('Forbidden'),
+  DATA_INTEGRITY: new Error('Data Integrity'),
+  NOT_FOUND: new Error('Not Found'),
   HANDLE_TAKEN: new Error('Handle is already taken'),
 }
