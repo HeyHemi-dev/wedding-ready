@@ -2,10 +2,12 @@
 
 # Development Patterns
 
-### Actions/Models
+### Actions/Models/Operations
 
-- Inferred models for each database table.
-- Model classes for operations on each database table.
+- **Models**: Inferred models for each database table with single-table operations
+- **Operations**: Business logic orchestration that coordinates multiple models
+- **Model Classes**: Focus on single-table operations (e.g., `supplierModel`, `supplierLocationModel`)
+- **Operations Layer**: Handle complex business logic spanning multiple models (e.g., `supplierOperations.register()`)
 
 ### Data Fetching
 
@@ -16,7 +18,6 @@
 - Use optimistic updates for better UX when appropriate
 - When fetching an array of tiles, set saveState cache using React Query's queryClient
 - Use optimistic updates with React Query for immediate UI feedback
-
 
 ### Environment Configuration
 
@@ -44,3 +45,10 @@
 - Use mobile-first approach with Tailwind's responsive prefixes (tablet:, laptop:, wide:). Default styles apply to mobile first, and override as needed for larger break points
 - Follow consistent spacing using our design tokens (gap-area, gap-sibling, etc.)
 - Use CSS Grid for complex layouts with responsive breakpoints
+
+### Error Handling
+
+- Use consistent error constants from `@/app/_types/errors.ts`
+- Implement proper error boundaries for components
+- Use `tryCatch` utility for consistent error handling patterns
+- Handle both user-facing and system errors appropriately

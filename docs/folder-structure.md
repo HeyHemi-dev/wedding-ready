@@ -11,9 +11,10 @@
 │   └── api/ # Next.js api endpoints to handle client-side requests on the server
 ├── components/ # Shared react components
 ├── components/ui # Shadcn components
-├── db/ # Database schema, enums and migrations
+├── db/ # Database schema, constants and migrations
 ├── docs/ # Documentation
-├── models/ # Major model actions and types (persistance layer)
+├── models/ # Single-table model operations (data access layer)
+├── operations/ # Business logic orchestration spanning multiple models
 ├── public/ # Static assets
 └── utils/ # Utility, helper and library functions
 ```
