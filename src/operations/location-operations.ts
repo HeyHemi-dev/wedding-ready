@@ -1,7 +1,7 @@
 import { FindSuppliersResponse, LocationList, LocationPage } from '@/app/_types/locations'
 import { LOCATIONS, Location } from '@/db/constants'
-import { supplierLocationsModel } from '@/models/supplier-location'
 import { locationDescriptions, locationPretty } from '@/db/location-descriptions'
+import { supplierLocationsModel } from '@/models/supplier-location'
 
 export const locationOperations = {
   getFormattedList,

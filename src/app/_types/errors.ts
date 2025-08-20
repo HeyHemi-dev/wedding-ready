@@ -44,4 +44,5 @@ export const OPERATION_ERROR = {
   DATA_INTEGRITY: new Error('Data Integrity'),
   NOT_FOUND: new Error('Not Found'),
   HANDLE_TAKEN: new Error('Handle is already taken'),
+  BAD_REQUEST: new Error('Bad Request'),
 }
