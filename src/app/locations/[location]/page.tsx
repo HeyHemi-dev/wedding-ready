@@ -8,6 +8,7 @@ import { supplierModel } from '@/models/supplier'
 import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
 import { locationOperations } from '@/operations/location-operations'
 import { supplierOperations } from '@/operations/supplier-operations'
+import { unstable_cache } from 'next/cache'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
   const location = locationHelpers.paramToConst((await params).location)
@@ -18,7 +19,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
 
   const loactionData = locationOperations.getForPage(location)
 
-  const suppliers = await supplierOperations.getListForLocation(location)
+  const suppliers = await unstable_cache(() => supplierOperations.getListForLocation(location), ['supplier-list', location], { revalidate: 60 * 60 * 24 })()
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
@@ -36,11 +37,8 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
                 <SupplierCard
                   key={supplier.id}
                   href={`/suppliers/${supplier.handle}`}
-                  mainImage={'https://images.unsplash.com/photo-1606216794074-735e91aa2c92'}
-                  thumbnailImages={[
-                    'https://images.unsplash.com/photo-1649615644622-6d83f48e69c5',
-                    'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb',
-                  ]}
+                  mainImage={supplier.mainImage}
+                  thumbnailImages={supplier.thumbnailImages}
                   name={supplier.name}
                   subtitle={supplier.services.map((service) => valueToPretty(service)).join(', ')}
                   stat={150}
