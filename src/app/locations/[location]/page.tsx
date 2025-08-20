@@ -27,7 +27,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
         <Area className="bg-transparent">
           <div className="flex max-w-prose flex-col gap-partner">
             <h1 className="heading-xl">{loactionData.title}</h1>
-            <p className="text-muted-foreground">{loactionData.description}</p>
+            <p className="ui-small text-muted-foreground">{loactionData.description}</p>
           </div>
         </Area>
         <Area>
