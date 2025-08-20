@@ -6,7 +6,8 @@ import { supplierModel } from '@/models/supplier'
 import { supplierLocationsModel } from '@/models/supplier-location'
 import { supplierServicesModel } from '@/models/supplier-service'
 import { supplierUsersModel } from '@/models/supplier-user'
-import { InsertSupplierRaw } from '@/models/types'
+import { TileModel } from '@/models/tile'
+import { InsertSupplierRaw, Tile } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 
 export const supplierOperations = {
@@ -40,15 +41,23 @@ async function getListForLocation(location: Location): Promise<SupplierList> {
     supplierServicesModel.getForSupplierIds(supplierIds),
   ])
 
+  const tilePromises = supplierIds.map(async (supplierId) => {
+    const tiles = await TileModel.getBySupplierId(supplierId)
+    return { supplierId, tiles }
+  })
+
+  const tilesForSuppliers = await Promise.all(tilePromises)
+
   const locationsMap = new Map(locationsForSuppliers.map((item) => [item.supplierId, item.locations]))
   const servicesMap = new Map(servicesForSuppliers.map((item) => [item.supplierId, item.services]))
+  const tilesMap = new Map(tilesForSuppliers.map((item) => [item.supplierId, item.tiles]))
 
   return suppliers.map((supplier) => ({
     id: supplier.id,
     name: supplier.name,
     handle: supplier.handle,
-    mainImage: 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92',
-    thumbnailImages: ['https://images.unsplash.com/photo-1649615644622-6d83f48e69c5', 'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb'], // TODO: get from tile images
+    mainImage: tilesMap.get(supplier.id)?.[0]?.imagePath ?? '',
+    thumbnailImages: [tilesMap.get(supplier.id)?.[0]?.imagePath ?? '', tilesMap.get(supplier.id)?.[1]?.imagePath ?? ''],
     services: servicesMap.get(supplier.id) ?? [],
     locations: locationsMap.get(supplier.id) ?? [],
     follows: 154, // TODO: get from supplierFollows table
