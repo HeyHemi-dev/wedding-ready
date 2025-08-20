@@ -17,13 +17,13 @@ export const tileOperations = {
 }
 
 async function getById(id: string, authUserId?: string): Promise<Tile> {
-  const [tile, tileCredits] = await Promise.all([TileModel.getById(id, authUserId), tileSupplierModel.getCreditsByTileId(id)])
+  const [tile, tileCredits] = await Promise.all([TileModel.getById(id), tileSupplierModel.getCreditsByTileId(id)])
 
-  if (!tile) {
-    throw OPERATION_ERROR.NOT_FOUND
-  }
+  if (!tile) throw OPERATION_ERROR.NOT_FOUND
 
-  const tileWithCredits = {
+  const isSaved = authUserId ? await getSavedState(id, authUserId) : undefined
+
+  return {
     id: tile.id,
     imagePath: tile.imagePath,
     title: tile.title,
@@ -31,7 +31,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
     createdAt: tile.createdAt,
     createdByUserId: tile.createdByUserId,
     location: tile.location,
-    isSaved: tile.isSaved,
+    isSaved,
     credits: tileCredits.map((credit) => ({
       supplierHandle: credit.supplier.handle,
       supplierName: credit.supplier.name,
@@ -39,29 +39,45 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
       serviceDescription: credit.serviceDescription,
     })),
   }
-
-  return tileWithCredits
 }
 
 async function getListForSupplier(supplierId: string, authUserId?: string): Promise<TileListItem[]> {
-  const tiles = await TileModel.getBySupplierId(supplierId, authUserId)
+  const tiles = await TileModel.getBySupplierId(supplierId)
+
+  let savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
+  if (authUserId) {
+    const tileIds = tiles.map((t) => t.id)
+    const savedStates = await getSavedStates(tileIds, authUserId)
+    savedStates.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
+  }
+
   return tiles.map((tile) => ({
     id: tile.id,
     imagePath: tile.imagePath,
     title: tile.title,
     description: tile.description,
-    isSaved: tile.isSaved,
+    isSaved: savedStatesMap.get(tile.id),
   }))
 }
 
 async function getListForUser(userId: string, authUserId?: string): Promise<TileListItem[]> {
-  const tiles = await TileModel.getByUserId(userId, authUserId)
+  const tiles = await TileModel.getByUserId(userId)
+
+  let savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
+  if (authUserId) {
+    // Get the current auth user's saved status for each tile
+    // Note: the authUser can be different from the user we're getting tiles for.
+    const tileIds = tiles.map((t) => t.id)
+    const savedStates = await getSavedStates(tileIds, authUserId)
+    savedStates.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
+  }
+
   return tiles.map((tile) => ({
     id: tile.id,
     imagePath: tile.imagePath,
     title: tile.title,
     description: tile.description,
-    isSaved: tile.isSaved,
+    isSaved: savedStatesMap.get(tile.id),
   }))
 }
 
@@ -115,14 +131,15 @@ async function createCreditForTile({ tileId, credit, userId }: { tileId: string;
   }))
 }
 
-async function getSavedState(tiles: t.TileRaw[], authUserId: string) {
-  const savedTiles = await SavedTilesModel.getSavedTilesRaw(
-    tiles.map((t) => t.id),
-    authUserId
-  )
+async function getSavedState(tileId: string, authUserId: string): Promise<boolean> {
+  const savedTile = await SavedTilesModel.getSavedTileRaw(tileId, authUserId)
+  return savedTile?.isSaved ?? false
+}
 
-  return tiles.map((tile) => ({
-    ...tile,
-    isSaved: savedTiles.find((st) => st.tileId === tile.id)?.isSaved ?? false,
+async function getSavedStates(tileIds: string[], authUserId: string): Promise<{ tileId: string; isSaved: boolean }[]> {
+  const savedTiles = await SavedTilesModel.getSavedTilesRaw(tileIds, authUserId)
+  return tileIds.map((tileId) => ({
+    tileId,
+    isSaved: savedTiles.find((st) => st.tileId === tileId)?.isSaved ?? false,
   }))
 }
