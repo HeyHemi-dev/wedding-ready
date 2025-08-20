@@ -2,7 +2,7 @@ import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
 
 import { tileUploaderInputSchema } from '@/app/_types/validation-schema'
-import { TileModel } from '@/models/tile'
+import { tileModel } from '@/models/tile'
 import { getAuthUserId } from '@/utils/auth'
 
 const f = createUploadthing()
@@ -27,7 +27,7 @@ export const uploadthingRouter = {
         const validInput = tileUploaderInputSchema.safeParse(input)
         if (!validInput.success) throw new Error('Invalid input')
 
-        const tileRaw = await TileModel.getRawById(validInput.data.tileId)
+        const tileRaw = await tileModel.getRawById(validInput.data.tileId)
         if (!tileRaw) throw new Error('Tile not found')
 
         return {
@@ -43,7 +43,7 @@ export const uploadthingRouter = {
     // Whatever is returned is sent to the clientside `onClientUploadComplete` callback
     .onUploadComplete(async ({ metadata, file }) => {
       try {
-        await TileModel.updateRaw({
+        await tileModel.updateRaw({
           ...metadata.tileRaw,
           imagePath: file.ufsUrl,
         })

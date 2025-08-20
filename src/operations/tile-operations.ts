@@ -3,7 +3,7 @@ import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
 import { TileCreditForm } from '@/app/_types/validation-schema'
 import { SavedTilesModel } from '@/models/savedTiles'
 import { supplierModel } from '@/models/supplier'
-import { TileModel } from '@/models/tile'
+import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
 
@@ -17,7 +17,7 @@ export const tileOperations = {
 }
 
 async function getById(id: string, authUserId?: string): Promise<Tile> {
-  const [tile, tileCredits] = await Promise.all([TileModel.getById(id), tileSupplierModel.getCreditsByTileId(id)])
+  const [tile, tileCredits] = await Promise.all([tileModel.getById(id), tileSupplierModel.getCreditsByTileId(id)])
 
   if (!tile) throw OPERATION_ERROR.NOT_FOUND
 
@@ -42,7 +42,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
 }
 
 async function getListForSupplier(supplierId: string, authUserId?: string): Promise<TileListItem[]> {
-  const tiles = await TileModel.getBySupplierId(supplierId)
+  const tiles = await tileModel.getBySupplierId(supplierId)
 
   let savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
   if (authUserId) {
@@ -61,7 +61,7 @@ async function getListForSupplier(supplierId: string, authUserId?: string): Prom
 }
 
 async function getListForUser(userId: string, authUserId?: string): Promise<TileListItem[]> {
-  const tiles = await TileModel.getByUserId(userId)
+  const tiles = await tileModel.getByUserId(userId)
 
   let savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
   if (authUserId) {
@@ -91,7 +91,7 @@ async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTil
     throw OPERATION_ERROR.DATA_INTEGRITY
   }
 
-  const tileRaw = await TileModel.createRaw(InsertTileRawData)
+  const tileRaw = await tileModel.createRaw(InsertTileRawData)
   await tileSupplierModel.createRaw({ tileId: tileRaw.id, supplierId: supplierIds[0] })
 
   return {
@@ -110,7 +110,7 @@ async function getCreditsForTile(tileId: string): Promise<TileCredit[]> {
 }
 
 async function createCreditForTile({ tileId, credit, userId }: { tileId: string; credit: TileCreditForm; userId: string }): Promise<TileCredit[]> {
-  const [tile, supplier] = await Promise.all([TileModel.getRawById(tileId), supplierModel.getRawById(credit.supplier.id)])
+  const [tile, supplier] = await Promise.all([tileModel.getRawById(tileId), supplierModel.getRawById(credit.supplier.id)])
 
   if (!tile || !supplier) {
     throw OPERATION_ERROR.DATA_INTEGRITY

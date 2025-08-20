@@ -6,7 +6,7 @@ import { supplierModel } from '@/models/supplier'
 import { supplierLocationsModel } from '@/models/supplier-location'
 import { supplierServicesModel } from '@/models/supplier-service'
 import { supplierUsersModel } from '@/models/supplier-user'
-import { TileModel } from '@/models/tile'
+import { tileModel } from '@/models/tile'
 import { InsertSupplierRaw, Tile } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 
@@ -42,7 +42,7 @@ async function getListForLocation(location: Location): Promise<SupplierList> {
   ])
 
   const tilePromises = supplierIds.map(async (supplierId) => {
-    const tiles = await TileModel.getBySupplierId(supplierId)
+    const tiles = await tileModel.getBySupplierId(supplierId)
     return { supplierId, tiles }
   })
 

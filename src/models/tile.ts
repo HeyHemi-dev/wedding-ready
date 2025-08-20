@@ -4,7 +4,7 @@ import { db } from '@/db/connection'
 import * as s from '@/db/schema'
 import type * as t from '@/models/types'
 
-export const TileModel = {
+export const tileModel = {
   getRawById,
   getById,
   getBySupplierId,

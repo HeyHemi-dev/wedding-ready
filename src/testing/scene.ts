@@ -6,7 +6,7 @@ import { db } from '@/db/connection'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 import * as s from '@/db/schema'
 import { supplierModel } from '@/models/supplier'
-import { TileModel } from '@/models/tile'
+import { tileModel } from '@/models/tile'
 import type * as t from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { authOperations } from '@/operations/auth-operations'
@@ -91,7 +91,7 @@ async function hasTile({
   if (tiles.length > 0) return tiles[0]
 
   const newTile = await tileOperations.createForSupplier({ InsertTileRawData: { imagePath, location, createdByUserId }, supplierIds })
-  const tile = await TileModel.getById(newTile.id)
+  const tile = await tileModel.getById(newTile.id)
   if (!tile) throw new Error('Failed to create tile')
   return tile
 }
