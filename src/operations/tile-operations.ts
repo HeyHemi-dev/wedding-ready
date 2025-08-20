@@ -42,7 +42,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
 }
 
 async function getListForSupplier(supplierId: string, authUserId?: string): Promise<TileListItem[]> {
-  const tiles = await tileModel.getBySupplierId(supplierId)
+  const tiles = await tileModel.getManyBySupplierId(supplierId)
 
   let savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
   if (authUserId) {
@@ -61,7 +61,7 @@ async function getListForSupplier(supplierId: string, authUserId?: string): Prom
 }
 
 async function getListForUser(userId: string, authUserId?: string): Promise<TileListItem[]> {
-  const tiles = await tileModel.getByUserId(userId)
+  const tiles = await tileModel.getManyByUserId(userId)
 
   let savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
   if (authUserId) {

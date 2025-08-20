@@ -7,13 +7,13 @@ import type * as t from '@/models/types'
 export const tileModel = {
   getRawById,
   getById,
-  getBySupplierId,
-  getBySupplierHandle,
-  getByUserId,
+  getManyBySupplierId,
+  getManyBySupplierHandle,
+  getManyByUserId,
   createRaw,
   updateRaw,
   deleteById,
-  deleteByIds,
+  deleteManyByIds,
 }
 
 async function getRawById(id: string): Promise<t.TileRaw | null> {
@@ -36,7 +36,7 @@ async function getById(id: string): Promise<t.TileRawWithImage | null> {
   return tiles[0]
 }
 
-async function getBySupplierId(supplierId: string): Promise<t.TileRawWithImage[]> {
+async function getManyBySupplierId(supplierId: string): Promise<t.TileRawWithImage[]> {
   // Since we're filtering for non-null imagePath in the query, we can safely cast the type
   const tiles = (await db
     .select(s.tileColumns)
@@ -48,7 +48,7 @@ async function getBySupplierId(supplierId: string): Promise<t.TileRawWithImage[]
   return tiles
 }
 
-async function getBySupplierHandle(supplierHandle: string): Promise<t.TileRawWithImage[]> {
+async function getManyBySupplierHandle(supplierHandle: string): Promise<t.TileRawWithImage[]> {
   // Since we're filtering for non-null imagePath in the query, we can safely cast the type
   const tiles = (await db
     .select(s.tileColumns)
@@ -59,7 +59,7 @@ async function getBySupplierHandle(supplierHandle: string): Promise<t.TileRawWit
   return tiles
 }
 
-async function getByUserId(userId: string): Promise<t.TileRawWithImage[]> {
+async function getManyByUserId(userId: string): Promise<t.TileRawWithImage[]> {
   // Since we filter for non-null imagePath in the DB query, we can safely cast the type
   const tiles = (await db
     .select(s.tileColumns)
@@ -114,6 +114,6 @@ async function deleteById(id: string): Promise<void> {
   await db.delete(s.tiles).where(eq(s.tiles.id, id))
 }
 
-async function deleteByIds(ids: string[]): Promise<void> {
+async function deleteManyByIds(ids: string[]): Promise<void> {
   await db.delete(s.tiles).where(inArray(s.tiles.id, ids))
 }

@@ -42,7 +42,7 @@ async function getListForSupplierGrid({ location, service }: { location: Locatio
 
   // TODO: make this actually an array of getBySupplierId promises
   const tilePromises = supplierIds.map(async (supplierId) => {
-    const tiles = await tileModel.getBySupplierId(supplierId)
+    const tiles = await tileModel.getManyBySupplierId(supplierId)
     return { supplierId, tiles }
   })
 

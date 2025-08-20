@@ -115,9 +115,9 @@ async function withoutSupplier({ handle }: { handle: string }): Promise<void> {
 }
 
 async function withoutTilesForSupplier({ supplierHandle }: { supplierHandle: string }): Promise<void> {
-  const tiles = await tileModel.getBySupplierHandle(supplierHandle)
+  const tiles = await tileModel.getManyBySupplierHandle(supplierHandle)
   if (tiles.length === 0) return
-  await tileModel.deleteByIds(tiles.map((t) => t.id))
+  await tileModel.deleteManyByIds(tiles.map((t) => t.id))
 }
 
 async function resetTestData(): Promise<void> {
