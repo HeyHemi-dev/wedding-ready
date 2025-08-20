@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 
 import { Supplier } from '@/app/_types/suppliers'
 import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
@@ -33,7 +33,7 @@ export const TEST_SUPPLIER = {
 }
 
 export const TEST_TILE = {
-  imagePath: 'https://jjoptcpwkl.ufs.sh/f/iYLB1yJLiRuVbKRyfIsPcnZN5Oa46i31HzEI09eBlrAQyX28',
+  imagePath: 'https://jjoptcpwkl.ufs.sh/f/iYLB1yJLiRuVlXzYL4dQ2LRxjWbS3ZKApeHDwo1vTIMJFhmP',
   location: LOCATIONS.WELLINGTON,
 }
 
@@ -45,6 +45,8 @@ export const scene = {
   hasTile,
   withoutUser,
   withoutSupplier,
+  withoutTilesForSupplier,
+  resetTestData,
 }
 
 async function hasUser({
@@ -96,14 +98,32 @@ async function hasTile({
   return tile
 }
 
-async function withoutUser({ handle, supabaseClient }: { handle: string; supabaseClient: SupabaseClient }): Promise<void> {
+async function withoutUser({ handle, supabaseClient }: { handle: string; supabaseClient?: SupabaseClient }): Promise<void> {
   const user = await UserDetailModel.getByHandle(handle)
   if (!user) return
-  await Promise.all([supabaseClient.auth.admin.deleteUser(user.id), db.delete(s.user_details).where(eq(s.user_details.id, user.id))])
+
+  // Create a client if none provided
+  const client = supabaseClient || createAdminClient()
+
+  await Promise.all([client.auth.admin.deleteUser(user.id), db.delete(s.user_details).where(eq(s.user_details.id, user.id))])
 }
 
 async function withoutSupplier({ handle }: { handle: string }): Promise<void> {
   const supplier = await supplierModel.getByHandle(handle)
   if (!supplier) return
   await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
+}
+
+async function withoutTilesForSupplier({ supplierHandle }: { supplierHandle: string }): Promise<void> {
+  const tiles = await tileModel.getBySupplierHandle(supplierHandle)
+  if (tiles.length === 0) return
+  await tileModel.deleteByIds(tiles.map((t) => t.id))
+}
+
+async function resetTestData(): Promise<void> {
+  await Promise.all([
+    withoutUser({ handle: TEST_USER.handle }),
+    withoutSupplier({ handle: TEST_SUPPLIER.handle }),
+    withoutTilesForSupplier({ supplierHandle: TEST_SUPPLIER.handle }),
+  ])
 }
