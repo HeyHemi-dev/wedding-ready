@@ -34,19 +34,25 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
 }
 
 async function getListForSupplierGrid({ location, service }: { location: Location; service: Service }): Promise<SupplierList> {
-  const suppliers = await supplierModel.getAllForLocation(location)
+  if ((!location && !service) || (location && service)) {
+    throw OPERATION_ERROR.BAD_REQUEST
+  }
+  const suppliers = location ? await supplierModel.getAllForLocation(location) : await supplierModel.getAllForService(service)
   const supplierIds = suppliers.map((supplier) => supplier.id)
-  const [locationsForSuppliers, servicesForSuppliers] = await Promise.all([
-    supplierLocationsModel.getForSupplierIds(supplierIds),
-    supplierServicesModel.getForSupplierIds(supplierIds),
-  ])
 
+  // TODO: make this actually an array of getBySupplierId promises
   const tilePromises = supplierIds.map(async (supplierId) => {
     const tiles = await tileModel.getBySupplierId(supplierId)
     return { supplierId, tiles }
   })
 
-  const tilesForSuppliers = await Promise.all(tilePromises)
+  const [locationsForSuppliers, servicesForSuppliers, ...rest] = await Promise.all([
+    supplierLocationsModel.getForSupplierIds(supplierIds),
+    supplierServicesModel.getForSupplierIds(supplierIds),
+    ...tilePromises,
+  ])
+
+  const tilesForSuppliers = rest
 
   const locationsMap = new Map(locationsForSuppliers.map((item) => [item.supplierId, item.locations]))
   const servicesMap = new Map(servicesForSuppliers.map((item) => [item.supplierId, item.services]))
