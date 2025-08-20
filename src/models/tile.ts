@@ -1,4 +1,4 @@
-import { eq, and, isNotNull, desc } from 'drizzle-orm'
+import { eq, and, isNotNull, desc, inArray } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
@@ -9,6 +9,7 @@ export const TileModel = {
   getRawById,
   getById,
   getBySupplierId,
+  getBySupplierIds,
   getByUserId,
   createRaw,
   updateRaw,

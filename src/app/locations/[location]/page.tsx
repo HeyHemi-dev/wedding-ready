@@ -6,6 +6,8 @@ import { Section } from '@/components/ui/section'
 import { locationDescriptions } from '@/db/location-descriptions'
 import { supplierModel } from '@/models/supplier'
 import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
+import { locationOperations } from '@/operations/location-operations'
+import { supplierOperations } from '@/operations/supplier-operations'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
   const location = locationHelpers.paramToConst((await params).location)
@@ -14,15 +16,17 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
     notFound()
   }
 
-  const suppliers = await supplierModel.getAll({ location })
+  const loactionData = locationOperations.getForPage(location)
+
+  const suppliers = await supplierOperations.getListForLocation(location)
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
       <div className="grid grid-rows-[auto_1fr] gap-area">
         <Area className="bg-transparent">
           <div className="flex max-w-prose flex-col gap-partner">
-            <h1 className="heading-xl">{locationDescriptions[location].title}</h1>
-            <p className="text-muted-foreground">{locationDescriptions[location].description}</p>
+            <h1 className="heading-xl">{loactionData.title}</h1>
+            <p className="text-muted-foreground">{loactionData.description}</p>
           </div>
         </Area>
         <Area>

@@ -1,7 +1,7 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
-import { Supplier, SupplierSearchResult } from '@/app/_types/suppliers'
+import { Supplier, SupplierList, SupplierSearchResult } from '@/app/_types/suppliers'
 import { Handle, SupplierRegistrationForm } from '@/app/_types/validation-schema'
-import { SUPPLIER_ROLES } from '@/db/constants'
+import { Location, SUPPLIER_ROLES } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
 import { supplierLocationsModel } from '@/models/supplier-location'
 import { supplierServicesModel } from '@/models/supplier-service'
@@ -11,6 +11,7 @@ import { UserDetailModel } from '@/models/user'
 
 export const supplierOperations = {
   getByHandle,
+  getListForLocation,
   register,
   search,
 }
@@ -29,6 +30,29 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
     locations: supplier.locations,
     users: supplier.users.map((user) => ({ id: user.userId, role: user.role })),
   }
+}
+
+async function getListForLocation(location: Location): Promise<SupplierList> {
+  const suppliers = await supplierModel.getAllForLocation(location)
+  const supplierIds = suppliers.map((supplier) => supplier.id)
+  const [locationsForSuppliers, servicesForSuppliers] = await Promise.all([
+    supplierLocationsModel.getForSupplierIds(supplierIds),
+    supplierServicesModel.getForSupplierIds(supplierIds),
+  ])
+
+  const locationsMap = new Map(locationsForSuppliers.map((item) => [item.supplierId, item.locations]))
+  const servicesMap = new Map(servicesForSuppliers.map((item) => [item.supplierId, item.services]))
+
+  return suppliers.map((supplier) => ({
+    id: supplier.id,
+    name: supplier.name,
+    handle: supplier.handle,
+    mainImage: 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92',
+    thumbnailImages: ['https://images.unsplash.com/photo-1649615644622-6d83f48e69c5', 'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb'], // TODO: get from tile images
+    services: servicesMap.get(supplier.id) ?? [],
+    locations: locationsMap.get(supplier.id) ?? [],
+    follows: 154, // TODO: get from supplierFollows table
+  }))
 }
 
 async function register({ name, handle, websiteUrl, description, services, locations, createdByUserId }: SupplierRegistrationForm): Promise<Supplier> {
@@ -66,7 +90,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
     websiteUrl: supplier.websiteUrl,
     description: supplier.description,
     services: supplierServices.map((service) => service.service!),
-    locations: supplierLocations.map((location) => location.location!),
+    locations: supplierLocations.map((location) => location.location),
     users: supplierUsers.map((user) => ({ id: user.userId, role: user.role })),
   }
 }

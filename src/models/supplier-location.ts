@@ -1,4 +1,4 @@
-import { count, eq } from 'drizzle-orm'
+import { count, eq, inArray } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import { Location } from '@/db/constants'
@@ -7,6 +7,7 @@ import * as t from '@/models/types'
 
 export const supplierLocationsModel = {
   getAllWithSupplierCount,
+  getForSupplierIds,
   createForSupplierId,
 }
 
@@ -19,8 +20,12 @@ async function getAllWithSupplierCount(): Promise<{ location: Location; supplier
     .from(s.suppliers)
     .innerJoin(s.supplierLocations, eq(s.suppliers.id, s.supplierLocations.supplierId))
     .groupBy(s.supplierLocations.location)
-
   return result
+}
+
+async function getForSupplierIds(supplierIds: string[]): Promise<{ supplierId: string; locations: Location[] }[]> {
+  const result = await db.select().from(s.supplierLocations).where(inArray(s.supplierLocations.supplierId, supplierIds))
+  return aggregateLocationsBySupplierId(result)
 }
 
 async function createForSupplierId({ supplierId, locations }: { supplierId: string; locations: Location[] }): Promise<t.SupplierLocationRaw[]> {
@@ -29,4 +34,17 @@ async function createForSupplierId({ supplierId, locations }: { supplierId: stri
     location,
   }))
   return await db.insert(s.supplierLocations).values(insertSupplierLocationData).returning()
+}
+
+function aggregateLocationsBySupplierId(supplierLocations: t.SupplierLocationRaw[]): { supplierId: string; locations: Location[] }[] {
+  const byId = new Map<string, { supplierId: string; locations: Location[] }>()
+  for (const { supplierId, location } of supplierLocations) {
+    const existing = byId.get(supplierId)
+    if (!existing) {
+      byId.set(supplierId, { supplierId, locations: [location] })
+    } else {
+      existing.locations.push(location)
+    }
+  }
+  return Array.from(byId.values())
 }

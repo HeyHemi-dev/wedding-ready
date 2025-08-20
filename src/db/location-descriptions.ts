@@ -1,6 +1,63 @@
-import { LOCATIONS } from '@/db/constants'
+import { LOCATIONS, Location } from '@/db/constants'
 
-export const locationDescriptions = {
+export type LocationPretty = {
+  value: string
+}
+
+export type LocationDescription = {
+  title: string
+  description: string
+}
+
+export const locationPretty: Record<Location, LocationPretty> = {
+  [LOCATIONS.NORTHLAND]: {
+    value: 'Northland',
+  },
+  [LOCATIONS.AUCKLAND]: {
+    value: 'Auckland',
+  },
+  [LOCATIONS.WAIKATO]: {
+    value: 'Waikato',
+  },
+  [LOCATIONS.BAY_OF_PLENTY]: {
+    value: 'Bay of Plenty',
+  },
+  [LOCATIONS.GISBORNE]: {
+    value: 'Gisborne',
+  },
+  [LOCATIONS.HAWKES_BAY]: {
+    value: "Hawke's Bay",
+  },
+  [LOCATIONS.TARANAKI]: {
+    value: 'Taranaki',
+  },
+  [LOCATIONS.MANAWATU_WHANGANUI]: {
+    value: 'Manawatū–Whanganui',
+  },
+  [LOCATIONS.WELLINGTON]: {
+    value: 'Wellington',
+  },
+  [LOCATIONS.NELSON_TASMAN]: {
+    value: 'Nelson–Tasman',
+  },
+  [LOCATIONS.MARLBOROUGH]: {
+    value: 'Marlborough',
+  },
+  [LOCATIONS.WEST_COAST]: {
+    value: 'West Coast',
+  },
+  [LOCATIONS.CANTERBURY]: {
+    value: 'Canterbury',
+  },
+  [LOCATIONS.OTAGO]: {
+    value: 'Otago',
+  },
+  [LOCATIONS.SOUTHLAND]: {
+    value: 'Southland',
+  },
+} as const
+
+export const locationDescriptions: Record<Location, LocationDescription> = {
   [LOCATIONS.NORTHLAND]: {
     title: 'Northland Wedding Suppliers',
     description:

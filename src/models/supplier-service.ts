@@ -1,4 +1,4 @@
-import { count, eq } from 'drizzle-orm'
+import { count, eq, inArray } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import { Service } from '@/db/constants'
@@ -7,6 +7,7 @@ import * as t from '@/models/types'
 
 export const supplierServicesModel = {
   getAllWithSupplierCount,
+  getForSupplierIds,
   createForSupplierId,
 }
 
@@ -19,8 +20,12 @@ async function getAllWithSupplierCount(): Promise<{ service: Service; supplierCo
     .from(s.suppliers)
     .innerJoin(s.supplierServices, eq(s.suppliers.id, s.supplierServices.supplierId))
     .groupBy(s.supplierServices.service)
-
   return result
+}
+
+async function getForSupplierIds(supplierIds: string[]): Promise<{ supplierId: string; services: Service[] }[]> {
+  const result = await db.select().from(s.supplierServices).where(inArray(s.supplierServices.supplierId, supplierIds))
+  return aggregateServicesBySupplierId(result)
 }
 
 async function createForSupplierId({ supplierId, services }: { supplierId: string; services: Service[] }): Promise<t.SupplierServiceRaw[]> {
@@ -29,4 +34,17 @@ async function createForSupplierId({ supplierId, services }: { supplierId: strin
     service,
   }))
   return await db.insert(s.supplierServices).values(insertSupplierServiceData).returning()
+}
+
+function aggregateServicesBySupplierId(supplierServices: t.SupplierServiceRaw[]): { supplierId: string; services: Service[] }[] {
+  const byId = new Map<string, { supplierId: string; services: Service[] }>()
+  for (const { supplierId, service } of supplierServices) {
+    const existing = byId.get(supplierId)
+    if (!existing) {
+      byId.set(supplierId, { supplierId, services: [service] })
+    } else {
+      existing.services.push(service)
+    }
+  }
+  return Array.from(byId.values())
 }

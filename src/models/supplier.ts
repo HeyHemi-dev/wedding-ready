@@ -1,13 +1,14 @@
-import { and, eq, or, ilike } from 'drizzle-orm'
+import { and, eq, or, ilike, inArray, isNotNull } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import { Service, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
-import { InsertSupplierRaw, SupplierRaw, Supplier, SupplierWithUsers } from '@/models/types'
+import { InsertSupplierRaw, SupplierRaw, Supplier, SupplierWithUsers, SupplierWithThumbnails } from '@/models/types'
 
 export const supplierModel = {
   getRawById,
   getAll,
+  getAllForLocation,
   getByHandle,
   create,
   isHandleAvailable,
@@ -31,6 +32,44 @@ async function getAll({ service, location }: { service?: Service; location?: Loc
 
   const result = await supplierBaseQuery.where(conditions.length > 0 ? and(...conditions) : undefined)
   return aggregateSupplierQueryResults(result)
+}
+
+async function getAllForLocation(location: Location): Promise<SupplierRaw[]> {
+  return await db
+    .select({
+      ...schema.supplierColumns,
+    })
+    .from(schema.suppliers)
+    .innerJoin(schema.supplierLocations, eq(schema.suppliers.id, schema.supplierLocations.supplierId))
+    .where(eq(schema.supplierLocations.location, location))
+
+  // const supplierIds = suppliersForLocation.map((supplier) => supplier.id)
+
+  // const services = await db.select().from(schema.supplierServices).where(inArray(schema.supplierServices.supplierId, supplierIds))
+
+  // const locations = await db.select().from(schema.supplierLocations).where(inArray(schema.supplierLocations.supplierId, supplierIds))
+
+  // const tiles = await db
+  //   .select({
+  //     supplierId: schema.tileSuppliers.supplierId,
+  //     tileId: schema.tiles.id,
+  //     imagePath: schema.tiles.imagePath,
+  //   })
+  //   .from(schema.tileSuppliers)
+  //   .leftJoin(schema.tiles, eq(schema.tileSuppliers.tileId, schema.tiles.id))
+  //   .where(and(inArray(schema.tileSuppliers.supplierId, supplierIds), isNotNull(schema.tiles.imagePath)))
+
+  // return suppliersForLocation.map((supplier) => ({
+  //   ...supplier,
+  //   services: services.filter((service) => service.supplierId === supplier.id).map((service) => service.service),
+  //   locations: locations.filter((location) => location.supplierId === supplier.id).map((location) => location.location),
+  //   thumbnails: tiles
+  //     .filter((tile) => tile.supplierId === supplier.id && tile.imagePath)
+  //     .map((tile) => ({
+  //       id: tile.tileId,
+  //       imagePath: tile.imagePath!, // We can assert that the imagePath is not null because we are filtering for it.
+  //     })),
+  // }))
 }
 
 async function getByHandle(handle: string): Promise<SupplierWithUsers | null> {

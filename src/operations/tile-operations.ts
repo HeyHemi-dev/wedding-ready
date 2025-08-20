@@ -1,6 +1,7 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
 import { TileCreditForm } from '@/app/_types/validation-schema'
+import { SavedTilesModel } from '@/models/savedTiles'
 import { supplierModel } from '@/models/supplier'
 import { TileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
@@ -111,5 +112,17 @@ async function createCreditForTile({ tileId, credit, userId }: { tileId: string;
     supplierName: credit.supplier.name,
     service: credit.service,
     serviceDescription: credit.serviceDescription,
+  }))
+}
+
+async function getSavedState(tiles: t.TileRaw[], authUserId: string) {
+  const savedTiles = await SavedTilesModel.getSavedTilesRaw(
+    tiles.map((t) => t.id),
+    authUserId
+  )
+
+  return tiles.map((tile) => ({
+    ...tile,
+    isSaved: savedTiles.find((st) => st.tileId === tile.id)?.isSaved ?? false,
   }))
 }
