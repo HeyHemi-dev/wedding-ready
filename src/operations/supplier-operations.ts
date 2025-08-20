@@ -1,7 +1,7 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Supplier, SupplierList, SupplierSearchResult } from '@/app/_types/suppliers'
 import { Handle, SupplierRegistrationForm } from '@/app/_types/validation-schema'
-import { Location, SUPPLIER_ROLES } from '@/db/constants'
+import { Location, Service, SUPPLIER_ROLES } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
 import { supplierLocationsModel } from '@/models/supplier-location'
 import { supplierServicesModel } from '@/models/supplier-service'
@@ -12,7 +12,7 @@ import { UserDetailModel } from '@/models/user'
 
 export const supplierOperations = {
   getByHandle,
-  getListForLocation,
+  getListForSupplierGrid,
   register,
   search,
 }
@@ -33,7 +33,7 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
   }
 }
 
-async function getListForLocation(location: Location): Promise<SupplierList> {
+async function getListForSupplierGrid({ location, service }: { location: Location; service: Service }): Promise<SupplierList> {
   const suppliers = await supplierModel.getAllForLocation(location)
   const supplierIds = suppliers.map((supplier) => supplier.id)
   const [locationsForSuppliers, servicesForSuppliers] = await Promise.all([

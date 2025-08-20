@@ -19,7 +19,9 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
 
   const loactionData = locationOperations.getForPage(location)
 
-  const suppliers = await unstable_cache(() => supplierOperations.getListForLocation(location), ['supplier-list', location], { revalidate: 60 * 60 * 24 })()
+  const suppliers = await unstable_cache(() => supplierOperations.getListForSupplierGrid({ location }), ['supplier-list', location], {
+    revalidate: 60 * 60 * 24,
+  })()
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
