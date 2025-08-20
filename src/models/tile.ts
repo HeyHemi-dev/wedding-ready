@@ -9,7 +9,6 @@ export const TileModel = {
   getRawById,
   getById,
   getBySupplierId,
-  getBySupplierIds,
   getByUserId,
   createRaw,
   updateRaw,
