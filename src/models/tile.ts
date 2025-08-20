@@ -12,6 +12,8 @@ export const tileModel = {
   getByUserId,
   createRaw,
   updateRaw,
+  deleteById,
+  deleteByIds,
 }
 
 async function getRawById(id: string): Promise<t.TileRaw | null> {
@@ -106,4 +108,12 @@ function tileUpdateSafe(tile: t.TileRaw | t.Tile): t.SetTileRaw {
     ...rest,
     updatedAt: new Date(),
   }
+}
+
+async function deleteById(id: string): Promise<void> {
+  await db.delete(s.tiles).where(eq(s.tiles.id, id))
+}
+
+async function deleteByIds(ids: string[]): Promise<void> {
+  await db.delete(s.tiles).where(inArray(s.tiles.id, ids))
 }
