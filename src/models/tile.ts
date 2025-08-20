@@ -8,6 +8,7 @@ export const tileModel = {
   getRawById,
   getById,
   getBySupplierId,
+  getBySupplierHandle,
   getByUserId,
   createRaw,
   updateRaw,
@@ -36,9 +37,7 @@ async function getById(id: string): Promise<t.TileRawWithImage | null> {
 async function getBySupplierId(supplierId: string): Promise<t.TileRawWithImage[]> {
   // Since we're filtering for non-null imagePath in the query, we can safely cast the type
   const tiles = (await db
-    .select({
-      ...s.tileColumns,
-    })
+    .select(s.tileColumns)
     .from(s.tiles)
     .innerJoin(s.tileSuppliers, eq(s.tileSuppliers.tileId, s.tiles.id))
     .where(and(eq(s.tileSuppliers.supplierId, supplierId), eq(s.tiles.isPrivate, false), isNotNull(s.tiles.imagePath)))
@@ -47,12 +46,21 @@ async function getBySupplierId(supplierId: string): Promise<t.TileRawWithImage[]
   return tiles
 }
 
+async function getBySupplierHandle(supplierHandle: string): Promise<t.TileRawWithImage[]> {
+  // Since we're filtering for non-null imagePath in the query, we can safely cast the type
+  const tiles = (await db
+    .select(s.tileColumns)
+    .from(s.tiles)
+    .innerJoin(s.tileSuppliers, eq(s.tiles.id, s.tileSuppliers.tileId))
+    .innerJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
+    .where(and(eq(s.suppliers.handle, supplierHandle), isNotNull(s.tiles.imagePath)))) as t.TileRawWithImage[]
+  return tiles
+}
+
 async function getByUserId(userId: string): Promise<t.TileRawWithImage[]> {
   // Since we filter for non-null imagePath in the DB query, we can safely cast the type
   const tiles = (await db
-    .select({
-      ...s.tileColumns,
-    })
+    .select(s.tileColumns)
     .from(s.tiles)
     .innerJoin(s.savedTiles, eq(s.tiles.id, s.savedTiles.tileId))
     .where(and(eq(s.savedTiles.userId, userId), isNotNull(s.tiles.imagePath), eq(s.savedTiles.isSaved, true)))
