@@ -2,7 +2,6 @@ import { eq, and, isNotNull, desc, inArray } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
-import { SavedTilesModel } from '@/models/savedTiles'
 import type * as t from '@/models/types'
 
 export const TileModel = {
@@ -22,7 +21,7 @@ async function getRawById(id: string): Promise<t.TileRaw | null> {
   return tiles[0]
 }
 
-async function getById(id: string, authUserId?: string): Promise<t.Tile | null> {
+async function getById(id: string): Promise<t.TileRawWithImage | null> {
   // Since we're filtering for non-null imagePath in the query, we can safely cast the type
   const tiles = (await db
     .select()
@@ -31,14 +30,10 @@ async function getById(id: string, authUserId?: string): Promise<t.Tile | null> 
 
   if (tiles === null || tiles.length === 0) return null
 
-  if (authUserId) {
-    await getSavedState(tiles, authUserId)
-  }
-
   return tiles[0]
 }
 
-async function getBySupplierId(supplierId: string, authUserId?: string): Promise<t.Tile[]> {
+async function getBySupplierId(supplierId: string): Promise<t.TileRawWithImage[]> {
   // Since we're filtering for non-null imagePath in the query, we can safely cast the type
   const tiles = (await db
     .select({
@@ -49,16 +44,10 @@ async function getBySupplierId(supplierId: string, authUserId?: string): Promise
     .where(and(eq(s.tileSuppliers.supplierId, supplierId), eq(s.tiles.isPrivate, false), isNotNull(s.tiles.imagePath)))
     .orderBy(desc(s.tiles.createdAt))) as t.TileRawWithImage[]
 
-  // Get the user's saved status for each tile
-  if (authUserId) {
-    await getSavedState(tiles, authUserId)
-  }
-
   return tiles
 }
 
-async function getByUserId(userId: string, authUserId?: string): Promise<t.Tile[]> {
-  // Get all the tiles saved by a user.
+async function getByUserId(userId: string): Promise<t.TileRawWithImage[]> {
   // Since we filter for non-null imagePath in the DB query, we can safely cast the type
   const tiles = (await db
     .select({
@@ -69,18 +58,9 @@ async function getByUserId(userId: string, authUserId?: string): Promise<t.Tile[
     .where(and(eq(s.savedTiles.userId, userId), isNotNull(s.tiles.imagePath), eq(s.savedTiles.isSaved, true)))
     .orderBy(desc(s.tiles.createdAt))) as t.TileRawWithImage[]
 
-  // Get the current auth user's saved status for each tile
-  // Note: the authUser can be different from the user we're getting tiles for.
-  if (authUserId) {
-    await getSavedState(tiles, authUserId)
-  }
-
   return tiles
 }
 
-/**
- * Create a tile
- */
 async function createRaw(tileRawData: t.InsertTileRaw): Promise<t.TileRaw> {
   const tilesRaw = await db.insert(s.tiles).values(tileRawData).returning()
   return tilesRaw[0]
@@ -118,16 +98,4 @@ function tileUpdateSafe(tile: t.TileRaw | t.Tile): t.SetTileRaw {
     ...rest,
     updatedAt: new Date(),
   }
-}
-
-async function getSavedState(tiles: t.TileRaw[], authUserId: string) {
-  const savedTiles = await SavedTilesModel.getSavedTilesRaw(
-    tiles.map((t) => t.id),
-    authUserId
-  )
-
-  return tiles.map((tile) => ({
-    ...tile,
-    isSaved: savedTiles.find((st) => st.tileId === tile.id)?.isSaved ?? false,
-  }))
 }
