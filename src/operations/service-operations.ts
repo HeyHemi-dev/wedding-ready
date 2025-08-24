@@ -1,9 +1,21 @@
-import { FindSuppliersResponse } from '@/app/_types/locations'
-import { SERVICES } from '@/db/constants'
+import { FindSuppliersResponse, ServicePage } from '@/app/_types/locations'
+import { SERVICES, Service } from '@/db/constants'
+import { serviceDescriptions } from '@/db/service-descriptions'
 import { supplierServicesModel } from '@/models/supplier-service'
 
 export const serviceOperations = {
+  getForPage,
   getAllWithSupplierCount,
+}
+
+function getForPage(service: Service): ServicePage {
+  const description = serviceDescriptions[service]
+
+  return {
+    key: service,
+    title: description.title,
+    description: description.description,
+  }
 }
 
 async function getAllWithSupplierCount(): Promise<FindSuppliersResponse[]> {

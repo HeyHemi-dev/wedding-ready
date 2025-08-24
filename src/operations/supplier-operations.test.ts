@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterAll } from 'vitest'
 
 import { scene, TEST_SUPPLIER } from '@/testing/scene'
 
@@ -7,6 +7,10 @@ import { supplierOperations } from './supplier-operations'
 describe('supplierOperations', () => {
   beforeEach(async () => {
     await scene.withoutSupplier({ handle: TEST_SUPPLIER.handle })
+  })
+
+  afterAll(async () => {
+    await scene.resetTestData()
   })
 
   describe('register', () => {

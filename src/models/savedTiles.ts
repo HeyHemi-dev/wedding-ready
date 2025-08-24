@@ -16,7 +16,6 @@ async function getSavedTileRaw(tileId: string, userId: string): Promise<t.SavedT
     .from(s.savedTiles)
     .where(and(eq(s.savedTiles.tileId, tileId), eq(s.savedTiles.userId, userId)))
     .limit(1)
-
   return savedTiles.length ? savedTiles[0] : null
 }
 
@@ -43,6 +42,5 @@ async function upsertSavedTileRaw(savedTileData: t.InsertSavedTileRaw): Promise<
       },
     })
     .returning()
-
   return savedTiles[0]
 }

@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { eq, isNull } from 'drizzle-orm'
 
 import { Supplier } from '@/app/_types/suppliers'
 import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
@@ -6,7 +6,7 @@ import { db } from '@/db/connection'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 import * as s from '@/db/schema'
 import { supplierModel } from '@/models/supplier'
-import { TileModel } from '@/models/tile'
+import { tileModel } from '@/models/tile'
 import type * as t from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { authOperations } from '@/operations/auth-operations'
@@ -22,6 +22,7 @@ export const TEST_USER = {
   displayName: 'Test User',
   handle: 'testuser',
 }
+export type TestUser = typeof TEST_USER
 
 export const TEST_SUPPLIER = {
   name: 'Test Supplier',
@@ -31,11 +32,13 @@ export const TEST_SUPPLIER = {
   locations: [LOCATIONS.WELLINGTON, LOCATIONS.AUCKLAND, LOCATIONS.CANTERBURY],
   services: [SERVICES.PHOTOGRAPHER, SERVICES.VIDEOGRAPHER],
 }
+export type TestSupplier = typeof TEST_SUPPLIER
 
 export const TEST_TILE = {
-  imagePath: 'https://jjoptcpwkl.ufs.sh/f/iYLB1yJLiRuVbKRyfIsPcnZN5Oa46i31HzEI09eBlrAQyX28',
+  imagePath: 'https://jjoptcpwkl.ufs.sh/f/iYLB1yJLiRuVlXzYL4dQ2LRxjWbS3ZKApeHDwo1vTIMJFhmP',
   location: LOCATIONS.WELLINGTON,
 }
+export type TestTile = typeof TEST_TILE
 
 export const TEST_ORIGIN = 'http://localhost:3000'
 
@@ -45,6 +48,8 @@ export const scene = {
   hasTile,
   withoutUser,
   withoutSupplier,
+  withoutTilesForSupplier,
+  resetTestData,
 }
 
 async function hasUser({
@@ -87,11 +92,12 @@ async function hasTile({
   const tiles = await db
     .select()
     .from(s.tiles)
-    .where(eq(s.tiles.imagePath, imagePath ?? ''))
+    .where(imagePath === null ? isNull(s.tiles.imagePath) : eq(s.tiles.imagePath, imagePath))
+
   if (tiles.length > 0) return tiles[0]
 
   const newTile = await tileOperations.createForSupplier({ InsertTileRawData: { imagePath, location, createdByUserId }, supplierIds })
-  const tile = await TileModel.getById(newTile.id)
+  const tile = await tileModel.getById(newTile.id)
   if (!tile) throw new Error('Failed to create tile')
   return tile
 }
@@ -99,11 +105,27 @@ async function hasTile({
 async function withoutUser({ handle, supabaseClient }: { handle: string; supabaseClient: SupabaseClient }): Promise<void> {
   const user = await UserDetailModel.getByHandle(handle)
   if (!user) return
-  await Promise.all([supabaseClient.auth.admin.deleteUser(user.id), db.delete(s.user_details).where(eq(s.user_details.id, user.id))])
+
+  // Create a client if none provided
+  const client = supabaseClient || createAdminClient()
+
+  await client.auth.admin.deleteUser(user.id)
 }
 
 async function withoutSupplier({ handle }: { handle: string }): Promise<void> {
   const supplier = await supplierModel.getByHandle(handle)
   if (!supplier) return
   await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
+}
+
+async function withoutTilesForSupplier({ supplierHandle }: { supplierHandle: string }): Promise<void> {
+  const tiles = await tileModel.getManyRawBySupplierHandle(supplierHandle)
+  if (tiles.length === 0) return
+  await tileModel.deleteManyByIds(tiles.map((t) => t.id))
+}
+
+async function resetTestData(): Promise<void> {
+  await withoutTilesForSupplier({ supplierHandle: TEST_SUPPLIER.handle })
+  await withoutSupplier({ handle: TEST_SUPPLIER.handle })
+  // Don't clean up the test user. All tests assume a user exists.
 }

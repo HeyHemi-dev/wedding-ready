@@ -1,4 +1,4 @@
-import { describe, expect, test, beforeEach, afterEach } from 'vitest'
+import { describe, expect, test, beforeEach, afterAll } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
 import { UserDetailModel } from '@/models/user'
@@ -6,7 +6,6 @@ import { scene, TEST_ORIGIN } from '@/testing/scene'
 import { createAdminClient } from '@/utils/supabase/server'
 
 import { authOperations } from './auth-operations'
-
 
 // Define different test users only for auth testing so we can create a delete as needed without affecting other tests
 const AUTH_TEST_USER_1 = {
@@ -33,7 +32,13 @@ describe('authOperations', () => {
     ])
   })
 
-  afterEach(async () => {})
+  afterAll(async () => {
+    await Promise.all([
+      scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: supabaseAdmin }),
+      scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: supabaseAdmin }),
+      scene.resetTestData(),
+    ])
+  })
 
   describe('signUp', () => {
     test('should successfully create a new user account', async () => {

@@ -1,10 +1,11 @@
+import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 
 import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { locationDescriptions } from '@/db/location-descriptions'
-import { supplierModel } from '@/models/supplier'
+import { locationOperations } from '@/operations/location-operations'
+import { supplierOperations } from '@/operations/supplier-operations'
 import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
@@ -14,15 +15,19 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
     notFound()
   }
 
-  const suppliers = await supplierModel.getAll({ location })
+  const loactionData = locationOperations.getForPage(location)
+
+  const suppliers = await unstable_cache(() => supplierOperations.getListForSupplierGrid({ location }), ['supplier-list', location], {
+    revalidate: 60 * 60 * 24,
+  })()
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
       <div className="grid grid-rows-[auto_1fr] gap-area">
         <Area className="bg-transparent">
           <div className="flex max-w-prose flex-col gap-partner">
-            <h1 className="heading-xl">{locationDescriptions[location].title}</h1>
-            <p className="text-muted-foreground">{locationDescriptions[location].description}</p>
+            <h1 className="heading-xl">{loactionData.title}</h1>
+            <p className="ui-small text-muted-foreground">{loactionData.description}</p>
           </div>
         </Area>
         <Area>
@@ -32,11 +37,8 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
                 <SupplierCard
                   key={supplier.id}
                   href={`/suppliers/${supplier.handle}`}
-                  mainImage={'https://images.unsplash.com/photo-1606216794074-735e91aa2c92'}
-                  thumbnailImages={[
-                    'https://images.unsplash.com/photo-1649615644622-6d83f48e69c5',
-                    'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb',
-                  ]}
+                  mainImage={supplier.mainImage}
+                  thumbnailImages={supplier.thumbnailImages}
                   name={supplier.name}
                   subtitle={supplier.services.map((service) => valueToPretty(service)).join(', ')}
                   stat={150}
