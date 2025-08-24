@@ -7,7 +7,7 @@ import { supplierLocationsModel } from '@/models/supplier-location'
 import { supplierServicesModel } from '@/models/supplier-service'
 import { supplierUsersModel } from '@/models/supplier-user'
 import { tileModel } from '@/models/tile'
-import { InsertSupplierRaw, Tile } from '@/models/types'
+import { InsertSupplierRaw } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 
 export const supplierOperations = {
@@ -33,11 +33,13 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
   }
 }
 
-async function getListForSupplierGrid({ location, service }: { location: Location; service: Service }): Promise<SupplierList> {
+async function getListForSupplierGrid({ location, service }: { location?: Location; service?: Service }): Promise<SupplierList> {
   if ((!location && !service) || (location && service)) {
     throw OPERATION_ERROR.BAD_REQUEST()
   }
-  const suppliers = location ? await supplierModel.getAllForLocation(location) : await supplierModel.getAllForService(service)
+  // We can assert that service exists becuase we checked that at least location or service exists, then we check if location doesn't exist. By elimination, service must exist.
+  const suppliers = location ? await supplierModel.getAllForLocation(location) : await supplierModel.getAllForService(service!)
+
   const supplierIds = suppliers.map((supplier) => supplier.id)
 
   // TODO: make this actually an array of getBySupplierId promises
