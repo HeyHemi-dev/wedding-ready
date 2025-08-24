@@ -44,7 +44,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
 async function getListForSupplier(supplierId: string, authUserId?: string): Promise<TileListItem[]> {
   const tiles = await tileModel.getManyBySupplierId(supplierId)
 
-  let savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
+  const savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
   if (authUserId) {
     const tileIds = tiles.map((t) => t.id)
     const savedStates = await getSavedStates(tileIds, authUserId)
@@ -63,7 +63,7 @@ async function getListForSupplier(supplierId: string, authUserId?: string): Prom
 async function getListForUser(userId: string, authUserId?: string): Promise<TileListItem[]> {
   const tiles = await tileModel.getManyByUserId(userId)
 
-  let savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
+  const savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
   if (authUserId) {
     // Get the current auth user's saved status for each tile
     // Note: the authUser can be different from the user we're getting tiles for.

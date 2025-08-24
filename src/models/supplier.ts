@@ -1,9 +1,9 @@
-import { and, eq, or, ilike, inArray, isNotNull } from 'drizzle-orm'
+import { and, eq, or, ilike } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import { Service, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
-import { InsertSupplierRaw, SupplierRaw, Supplier, SupplierWithUsers, SupplierWithThumbnails } from '@/models/types'
+import { InsertSupplierRaw, SupplierRaw, Supplier, SupplierWithUsers } from '@/models/types'
 
 export const supplierModel = {
   getRawById,

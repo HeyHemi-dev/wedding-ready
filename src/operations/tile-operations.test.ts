@@ -1,6 +1,8 @@
 import { afterAll, describe, expect, it } from 'vitest'
-import { tileOperations } from './tile-operations'
+
 import { scene } from '@/testing/scene'
+
+import { tileOperations } from './tile-operations'
 
 describe('tileOperations', () => {
   afterAll(async () => {

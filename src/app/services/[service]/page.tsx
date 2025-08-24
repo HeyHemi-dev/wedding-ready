@@ -1,14 +1,12 @@
+import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 
 import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { serviceDescriptions } from '@/db/service-descriptions'
-
-import { serviceHelpers, valueToPretty } from '@/utils/const-helpers'
 import { serviceOperations } from '@/operations/service-operations'
-import { unstable_cache } from 'next/cache'
 import { supplierOperations } from '@/operations/supplier-operations'
+import { serviceHelpers, valueToPretty } from '@/utils/const-helpers'
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
   const service = serviceHelpers.paramToConst((await params).service)

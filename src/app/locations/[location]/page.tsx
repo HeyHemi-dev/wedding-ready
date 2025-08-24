@@ -1,14 +1,12 @@
+import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 
 import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { locationDescriptions } from '@/db/location-descriptions'
-import { supplierModel } from '@/models/supplier'
-import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
 import { locationOperations } from '@/operations/location-operations'
 import { supplierOperations } from '@/operations/supplier-operations'
-import { unstable_cache } from 'next/cache'
+import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
   const location = locationHelpers.paramToConst((await params).location)
