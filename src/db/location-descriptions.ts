@@ -9,7 +9,7 @@ export type LocationDescription = {
   description: string
 }
 
-export const locationPretty: Record<Location, LocationPretty> = {
+export const locationPretty = {
   [LOCATIONS.NORTHLAND]: {
     value: 'Northland',
   },
@@ -55,9 +55,9 @@ export const locationPretty: Record<Location, LocationPretty> = {
   [LOCATIONS.SOUTHLAND]: {
     value: 'Southland',
   },
-} as const
+} as const satisfies Record<Location, LocationPretty>
 
-export const locationDescriptions: Record<Location, LocationDescription> = {
+export const locationDescriptions = {
   [LOCATIONS.NORTHLAND]: {
     title: 'Northland Wedding Suppliers',
     description:
@@ -133,4 +133,4 @@ export const locationDescriptions: Record<Location, LocationDescription> = {
     description:
       'Southland is all about subtle magic. The landscapes don’t shout—they hum. Rolling green hills, crisp southern air, and the kind of hospitality that feels like coming home. It’s a region where weddings are heartfelt and unfussy. Where the lamb is local, the jokes are dry, and the moments linger long after the last dance. Southland suits couples who value depth over dazzle.',
   },
-} as const
+} as const satisfies Record<Location, LocationDescription>

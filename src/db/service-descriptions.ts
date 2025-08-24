@@ -9,7 +9,7 @@ export type ServiceDescription = {
   description: string
 }
 
-export const servicePretty: Record<Service, ServicePretty> = {
+export const servicePretty = {
   [SERVICES.ACCOMODATION]: {
     value: 'Accommodation',
   },
@@ -88,9 +88,9 @@ export const servicePretty: Record<Service, ServicePretty> = {
   [SERVICES.VIDEOGRAPHER]: {
     value: 'Videographer',
   },
-} as const
+} as const satisfies Record<Service, ServicePretty>
 
-export const serviceDescriptions: Record<Service, ServiceDescription> = {
+export const serviceDescriptions = {
   [SERVICES.ACCOMODATION]: {
     title: 'New Zealand Wedding Accommodation',
     description:
@@ -221,4 +221,4 @@ export const serviceDescriptions: Record<Service, ServiceDescription> = {
     description:
       'Videographers and content creators bring a relaxed, cinematic approach to capturing your day. Whether it’s the heartfelt vows, the wild dance floor, or quiet moments in between, they’ll stitch together a story that reflects the real feel of your celebration. Many also offer short-form edits perfect for sharing with friends or posting on socials — so you can relive the magic and share it your way.',
   },
-} as const
+} as const satisfies Record<Service, ServiceDescription>
