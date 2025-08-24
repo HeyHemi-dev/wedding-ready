@@ -82,14 +82,11 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
 }
 
 async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTileRawData: t.InsertTileRaw; supplierIds: string[] }): Promise<{ id: string }> {
-  if (InsertTileRawData.imagePath === '') {
-    throw OPERATION_ERROR.DATA_INTEGRITY()
-  }
+  if (supplierIds.length === 0) throw OPERATION_ERROR.BAD_REQUEST()
+  if (InsertTileRawData.imagePath === '') throw OPERATION_ERROR.DATA_INTEGRITY()
 
   const supplier = await supplierModel.getRawById(supplierIds[0])
-  if (!supplier) {
-    throw OPERATION_ERROR.DATA_INTEGRITY()
-  }
+  if (!supplier) throw OPERATION_ERROR.DATA_INTEGRITY()
 
   const tileRaw = await tileModel.createRaw(InsertTileRawData)
   await tileSupplierModel.createRaw({ tileId: tileRaw.id, supplierId: supplierIds[0] })
