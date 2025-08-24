@@ -8,7 +8,7 @@ export const tileModel = {
   getRawById,
   getById,
   getManyBySupplierId,
-  getManyBySupplierHandle,
+  getManyRawBySupplierHandle,
   getManyByUserId,
   createRaw,
   updateRaw,
@@ -48,14 +48,13 @@ async function getManyBySupplierId(supplierId: string): Promise<t.TileRawWithIma
   return tiles
 }
 
-async function getManyBySupplierHandle(supplierHandle: string): Promise<t.TileRawWithImage[]> {
-  // Since we're filtering for non-null imagePath in the query, we can safely cast the type
-  const tiles = (await db
+async function getManyRawBySupplierHandle(supplierHandle: string): Promise<t.TileRaw[]> {
+  const tiles = await db
     .select(s.tileColumns)
     .from(s.tiles)
     .innerJoin(s.tileSuppliers, eq(s.tiles.id, s.tileSuppliers.tileId))
     .innerJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
-    .where(and(eq(s.suppliers.handle, supplierHandle), isNotNull(s.tiles.imagePath)))) as t.TileRawWithImage[]
+    .where(and(eq(s.suppliers.handle, supplierHandle)))
   return tiles
 }
 

@@ -1,4 +1,4 @@
-import { eq, inArray } from 'drizzle-orm'
+import { eq, isNull } from 'drizzle-orm'
 
 import { Supplier } from '@/app/_types/suppliers'
 import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
@@ -22,6 +22,7 @@ export const TEST_USER = {
   displayName: 'Test User',
   handle: 'testuser',
 }
+export type TestUser = typeof TEST_USER
 
 export const TEST_SUPPLIER = {
   name: 'Test Supplier',
@@ -31,11 +32,13 @@ export const TEST_SUPPLIER = {
   locations: [LOCATIONS.WELLINGTON, LOCATIONS.AUCKLAND, LOCATIONS.CANTERBURY],
   services: [SERVICES.PHOTOGRAPHER, SERVICES.VIDEOGRAPHER],
 }
+export type TestSupplier = typeof TEST_SUPPLIER
 
 export const TEST_TILE = {
   imagePath: 'https://jjoptcpwkl.ufs.sh/f/iYLB1yJLiRuVlXzYL4dQ2LRxjWbS3ZKApeHDwo1vTIMJFhmP',
   location: LOCATIONS.WELLINGTON,
 }
+export type TestTile = typeof TEST_TILE
 
 export const TEST_ORIGIN = 'http://localhost:3000'
 
@@ -89,7 +92,8 @@ async function hasTile({
   const tiles = await db
     .select()
     .from(s.tiles)
-    .where(eq(s.tiles.imagePath, imagePath ?? ''))
+    .where(imagePath === null ? isNull(s.tiles.imagePath) : eq(s.tiles.imagePath, imagePath))
+
   if (tiles.length > 0) return tiles[0]
 
   const newTile = await tileOperations.createForSupplier({ InsertTileRawData: { imagePath, location, createdByUserId }, supplierIds })
@@ -98,14 +102,14 @@ async function hasTile({
   return tile
 }
 
-async function withoutUser({ handle, supabaseClient }: { handle: string; supabaseClient?: SupabaseClient }): Promise<void> {
+async function withoutUser({ handle, supabaseClient }: { handle: string; supabaseClient: SupabaseClient }): Promise<void> {
   const user = await UserDetailModel.getByHandle(handle)
   if (!user) return
 
   // Create a client if none provided
   const client = supabaseClient || createAdminClient()
 
-  await Promise.all([client.auth.admin.deleteUser(user.id), db.delete(s.user_details).where(eq(s.user_details.id, user.id))])
+  await client.auth.admin.deleteUser(user.id)
 }
 
 async function withoutSupplier({ handle }: { handle: string }): Promise<void> {
@@ -115,15 +119,13 @@ async function withoutSupplier({ handle }: { handle: string }): Promise<void> {
 }
 
 async function withoutTilesForSupplier({ supplierHandle }: { supplierHandle: string }): Promise<void> {
-  const tiles = await tileModel.getManyBySupplierHandle(supplierHandle)
+  const tiles = await tileModel.getManyRawBySupplierHandle(supplierHandle)
   if (tiles.length === 0) return
   await tileModel.deleteManyByIds(tiles.map((t) => t.id))
 }
 
 async function resetTestData(): Promise<void> {
-  await Promise.all([
-    withoutUser({ handle: TEST_USER.handle }),
-    withoutSupplier({ handle: TEST_SUPPLIER.handle }),
-    withoutTilesForSupplier({ supplierHandle: TEST_SUPPLIER.handle }),
-  ])
+  await withoutTilesForSupplier({ supplierHandle: TEST_SUPPLIER.handle })
+  await withoutSupplier({ handle: TEST_SUPPLIER.handle })
+  // Don't clean up the test user. All tests assume a user exists.
 }
