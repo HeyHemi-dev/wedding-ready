@@ -24,6 +24,7 @@ async function getAllWithSupplierCount(): Promise<{ service: Service; supplierCo
 }
 
 async function getForSupplierIds(supplierIds: string[]): Promise<{ supplierId: string; services: Service[] }[]> {
+  if (supplierIds.length === 0) return []
   const result = await db.select().from(s.supplierServices).where(inArray(s.supplierServices.supplierId, supplierIds))
   return aggregateServicesBySupplierId(result)
 }
