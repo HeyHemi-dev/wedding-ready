@@ -1,11 +1,8 @@
-import { afterAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, describe, expect, it } from 'vitest'
 import { tileOperations } from './tile-operations'
 import { scene } from '@/testing/scene'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 
 describe('tileOperations', () => {
-  beforeEach(async () => {})
-
   afterAll(async () => {
     await scene.resetTestData()
   })
@@ -37,10 +34,10 @@ describe('tileOperations', () => {
       // Arrange
       const user = await scene.hasUser()
       const supplier = await scene.hasSupplier({ createdByUserId: user.id })
-      const tile = await scene.hasTile({ imagePath: '', createdByUserId: user.id, supplierIds: [supplier.id] })
+      const tile = await scene.hasTile({ imagePath: null, createdByUserId: user.id, supplierIds: [supplier.id] })
 
       // Act & Assert
-      await expect(tileOperations.getById(tile.id)).rejects.toThrow()
+      await expect(tileOperations.getById(tile.id)).rejects.toThrow('Not Found')
     })
   })
 })

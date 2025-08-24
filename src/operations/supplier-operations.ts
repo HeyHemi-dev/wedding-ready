@@ -35,7 +35,7 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
 
 async function getListForSupplierGrid({ location, service }: { location: Location; service: Service }): Promise<SupplierList> {
   if ((!location && !service) || (location && service)) {
-    throw OPERATION_ERROR.BAD_REQUEST
+    throw OPERATION_ERROR.BAD_REQUEST()
   }
   const suppliers = location ? await supplierModel.getAllForLocation(location) : await supplierModel.getAllForService(service)
   const supplierIds = suppliers.map((supplier) => supplier.id)
@@ -73,12 +73,12 @@ async function getListForSupplierGrid({ location, service }: { location: Locatio
 async function register({ name, handle, websiteUrl, description, services, locations, createdByUserId }: SupplierRegistrationForm): Promise<Supplier> {
   const user = await UserDetailModel.getById(createdByUserId)
   if (!user) {
-    throw OPERATION_ERROR.FORBIDDEN
+    throw OPERATION_ERROR.FORBIDDEN()
   }
 
   const isAvailable = await supplierModel.isHandleAvailable({ handle })
   if (!isAvailable) {
-    throw OPERATION_ERROR.HANDLE_TAKEN
+    throw OPERATION_ERROR.HANDLE_TAKEN()
   }
 
   const insertSupplierData: InsertSupplierRaw = {

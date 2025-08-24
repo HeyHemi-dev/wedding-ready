@@ -19,7 +19,7 @@ export const tileOperations = {
 async function getById(id: string, authUserId?: string): Promise<Tile> {
   const [tile, tileCredits] = await Promise.all([tileModel.getById(id), tileSupplierModel.getCreditsByTileId(id)])
 
-  if (!tile) throw OPERATION_ERROR.NOT_FOUND
+  if (!tile) throw OPERATION_ERROR.NOT_FOUND()
 
   const isSaved = authUserId ? await getSavedState(id, authUserId) : undefined
 
@@ -82,13 +82,13 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
 }
 
 async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTileRawData: t.InsertTileRaw; supplierIds: string[] }): Promise<{ id: string }> {
-  if (!InsertTileRawData.imagePath) {
-    throw OPERATION_ERROR.DATA_INTEGRITY
+  if (InsertTileRawData.imagePath === '') {
+    throw OPERATION_ERROR.DATA_INTEGRITY()
   }
 
   const supplier = await supplierModel.getRawById(supplierIds[0])
   if (!supplier) {
-    throw OPERATION_ERROR.DATA_INTEGRITY
+    throw OPERATION_ERROR.DATA_INTEGRITY()
   }
 
   const tileRaw = await tileModel.createRaw(InsertTileRawData)
@@ -113,11 +113,11 @@ async function createCreditForTile({ tileId, credit, userId }: { tileId: string;
   const [tile, supplier] = await Promise.all([tileModel.getRawById(tileId), supplierModel.getRawById(credit.supplier.id)])
 
   if (!tile || !supplier) {
-    throw OPERATION_ERROR.DATA_INTEGRITY
+    throw OPERATION_ERROR.DATA_INTEGRITY()
   }
 
   if (tile.createdByUserId !== userId) {
-    throw OPERATION_ERROR.FORBIDDEN
+    throw OPERATION_ERROR.FORBIDDEN()
   }
 
   await tileSupplierModel.createRaw({ tileId, supplierId: credit.supplier.id, service: credit.service, serviceDescription: credit.serviceDescription })
