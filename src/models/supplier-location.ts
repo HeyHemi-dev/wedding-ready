@@ -38,6 +38,7 @@ async function createForSupplierId({ supplierId, locations }: { supplierId: stri
 }
 
 function aggregateLocationsBySupplierId(supplierLocations: t.SupplierLocationRaw[]): { supplierId: string; locations: Location[] }[] {
+  // We don't need to dedup locations because supplierId + location is the primary key
   const byId = new Map<string, { supplierId: string; locations: Location[] }>()
   for (const { supplierId, location } of supplierLocations) {
     const existing = byId.get(supplierId)
