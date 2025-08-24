@@ -37,7 +37,7 @@ async function getAll({ service, location }: { service?: Service; location?: Loc
 
 async function getAllForLocation(location: Location): Promise<SupplierRaw[]> {
   return await db
-    .select({
+    .selectDistinct({
       ...schema.supplierColumns,
     })
     .from(schema.suppliers)
@@ -47,7 +47,7 @@ async function getAllForLocation(location: Location): Promise<SupplierRaw[]> {
 
 async function getAllForService(service: Service): Promise<SupplierRaw[]> {
   return await db
-    .select({
+    .selectDistinct({
       ...schema.supplierColumns,
     })
     .from(schema.suppliers)
