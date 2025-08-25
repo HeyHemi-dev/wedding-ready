@@ -24,7 +24,7 @@ async function getRawById(id: string): Promise<SupplierRaw | null> {
 }
 
 async function getAllRawForLocation(location: Location): Promise<SupplierRaw[]> {
-  return await db
+  return db
     .selectDistinct({
       ...schema.supplierColumns,
     })
@@ -34,7 +34,7 @@ async function getAllRawForLocation(location: Location): Promise<SupplierRaw[]> 
 }
 
 async function getAllRawForService(service: Service): Promise<SupplierRaw[]> {
-  return await db
+  return db
     .selectDistinct({
       ...schema.supplierColumns,
     })
