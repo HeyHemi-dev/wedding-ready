@@ -38,7 +38,7 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
     throw OPERATION_ERROR.BAD_REQUEST()
   }
   // We can assert that service exists becuase we checked that at least location or service exists, then we check if location doesn't exist. By elimination, service must exist.
-  const suppliers = location ? await supplierModel.getAllForLocation(location) : await supplierModel.getAllForService(service!)
+  const suppliers = location ? await supplierModel.getAllRawForLocation(location) : await supplierModel.getAllRawForService(service!)
 
   const supplierIds = suppliers.map((supplier) => supplier.id)
 

@@ -7,9 +7,8 @@ import { InsertSupplierRaw, SupplierRaw, Supplier, SupplierWithUsers } from '@/m
 
 export const supplierModel = {
   getRawById,
-  getAll,
-  getAllForLocation,
-  getAllForService,
+  getAllRawForLocation,
+  getAllRawForService,
   getByHandle,
   create,
   isHandleAvailable,
@@ -24,18 +23,7 @@ async function getRawById(id: string): Promise<SupplierRaw | null> {
   return suppliers[0]
 }
 
-async function getAll({ service, location }: { service?: Service; location?: Location } = {}): Promise<Supplier[]> {
-  const conditions = []
-
-  if (service) conditions.push(eq(schema.supplierServices.service, service))
-
-  if (location) conditions.push(eq(schema.supplierLocations.location, location))
-
-  const result = await supplierBaseQuery.where(conditions.length > 0 ? and(...conditions) : undefined)
-  return aggregateSupplierQueryResults(result)
-}
-
-async function getAllForLocation(location: Location): Promise<SupplierRaw[]> {
+async function getAllRawForLocation(location: Location): Promise<SupplierRaw[]> {
   return await db
     .selectDistinct({
       ...schema.supplierColumns,
@@ -45,7 +33,7 @@ async function getAllForLocation(location: Location): Promise<SupplierRaw[]> {
     .where(eq(schema.supplierLocations.location, location))
 }
 
-async function getAllForService(service: Service): Promise<SupplierRaw[]> {
+async function getAllRawForService(service: Service): Promise<SupplierRaw[]> {
   return await db
     .selectDistinct({
       ...schema.supplierColumns,
