@@ -39,9 +39,10 @@ export const ROUTE_ERRORS = {
 }
 
 export const OPERATION_ERROR = {
-  UNAUTHORIZED: new Error('Unauthorized'),
-  FORBIDDEN: new Error('Forbidden'),
-  DATA_INTEGRITY: new Error('Data Integrity'),
-  NOT_FOUND: new Error('Not Found'),
-  HANDLE_TAKEN: new Error('Handle is already taken'),
+  UNAUTHORIZED: (message = 'Unauthorized') => new Error(message),
+  FORBIDDEN: (message = 'Forbidden') => new Error(message),
+  DATA_INTEGRITY: (message = 'Data Integrity') => new Error(message),
+  NOT_FOUND: (message = 'Not Found') => new Error(message),
+  HANDLE_TAKEN: (message = 'Handle is already taken') => new Error(message),
+  BAD_REQUEST: (message = 'Bad Request') => new Error(message),
 }

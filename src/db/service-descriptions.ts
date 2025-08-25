@@ -1,4 +1,94 @@
-import { SERVICES } from '@/db/constants'
+import { SERVICES, Service } from '@/db/constants'
+
+export type ServicePretty = {
+  value: string
+}
+
+export type ServiceDescription = {
+  title: string
+  description: string
+}
+
+export const servicePretty = {
+  [SERVICES.ACCOMODATION]: {
+    value: 'Accommodation',
+  },
+  [SERVICES.BAND]: {
+    value: 'Band',
+  },
+  [SERVICES.BEAUTY]: {
+    value: 'Beauty',
+  },
+  [SERVICES.BRIDAL_ACCESSORY]: {
+    value: 'Bridal accessory',
+  },
+  [SERVICES.BRIDAL_WEAR]: {
+    value: 'Bridal wear',
+  },
+  [SERVICES.BRIDESMAIDS_WEAR]: {
+    value: 'Bridesmaid wear',
+  },
+  [SERVICES.CAKE]: {
+    value: 'Cake',
+  },
+  [SERVICES.CATERER]: {
+    value: 'Catering',
+  },
+  [SERVICES.CELEBRANT]: {
+    value: 'Celebrant',
+  },
+  [SERVICES.ENTERTAINMENT]: {
+    value: 'Entertainment',
+  },
+  [SERVICES.FLORIST]: {
+    value: 'Florist',
+  },
+  [SERVICES.HAIR]: {
+    value: 'Hair',
+  },
+  [SERVICES.HIRE]: {
+    value: 'Hire',
+  },
+  [SERVICES.MAKEUP]: {
+    value: 'Makeup',
+  },
+  [SERVICES.MC]: {
+    value: 'MC',
+  },
+  [SERVICES.MENSWEAR]: {
+    value: 'Menswear',
+  },
+  [SERVICES.MENSWEAR_ACCESSORY]: {
+    value: 'Menswear accessory',
+  },
+  [SERVICES.PHOTOGRAPHER]: {
+    value: 'Photographer',
+  },
+  [SERVICES.PLANNER]: {
+    value: 'Planner',
+  },
+  [SERVICES.RINGS]: {
+    value: 'Rings',
+  },
+  [SERVICES.STATIONERY]: {
+    value: 'Stationery',
+  },
+  [SERVICES.STYLIST]: {
+    value: 'Stylist',
+  },
+  [SERVICES.SUPPORT]: {
+    value: 'Support',
+  },
+  [SERVICES.TRANSPORT]: {
+    value: 'Transport',
+  },
+  [SERVICES.VENUE]: {
+    value: 'Venue',
+  },
+  [SERVICES.VIDEOGRAPHER]: {
+    value: 'Videographer',
+  },
+} as const satisfies Record<Service, ServicePretty>
 
 export const serviceDescriptions = {
   [SERVICES.ACCOMODATION]: {
@@ -131,4 +221,4 @@ export const serviceDescriptions = {
     description:
       'Videographers and content creators bring a relaxed, cinematic approach to capturing your day. Whether it’s the heartfelt vows, the wild dance floor, or quiet moments in between, they’ll stitch together a story that reflects the real feel of your celebration. Many also offer short-form edits perfect for sharing with friends or posting on socials — so you can relive the magic and share it your way.',
   },
-} as const
+} as const satisfies Record<Service, ServiceDescription>

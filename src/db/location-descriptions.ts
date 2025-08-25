@@ -1,4 +1,61 @@
-import { LOCATIONS } from '@/db/constants'
+import { LOCATIONS, Location } from '@/db/constants'
+
+export type LocationPretty = {
+  value: string
+}
+
+export type LocationDescription = {
+  title: string
+  description: string
+}
+
+export const locationPretty = {
+  [LOCATIONS.NORTHLAND]: {
+    value: 'Northland',
+  },
+  [LOCATIONS.AUCKLAND]: {
+    value: 'Auckland',
+  },
+  [LOCATIONS.WAIKATO]: {
+    value: 'Waikato',
+  },
+  [LOCATIONS.BAY_OF_PLENTY]: {
+    value: 'Bay of Plenty',
+  },
+  [LOCATIONS.GISBORNE]: {
+    value: 'Gisborne',
+  },
+  [LOCATIONS.HAWKES_BAY]: {
+    value: "Hawke's Bay",
+  },
+  [LOCATIONS.TARANAKI]: {
+    value: 'Taranaki',
+  },
+  [LOCATIONS.MANAWATU_WHANGANUI]: {
+    value: 'Manawatū–Whanganui',
+  },
+  [LOCATIONS.WELLINGTON]: {
+    value: 'Wellington',
+  },
+  [LOCATIONS.NELSON_TASMAN]: {
+    value: 'Nelson–Tasman',
+  },
+  [LOCATIONS.MARLBOROUGH]: {
+    value: 'Marlborough',
+  },
+  [LOCATIONS.WEST_COAST]: {
+    value: 'West Coast',
+  },
+  [LOCATIONS.CANTERBURY]: {
+    value: 'Canterbury',
+  },
+  [LOCATIONS.OTAGO]: {
+    value: 'Otago',
+  },
+  [LOCATIONS.SOUTHLAND]: {
+    value: 'Southland',
+  },
+} as const satisfies Record<Location, LocationPretty>
 
 export const locationDescriptions = {
   [LOCATIONS.NORTHLAND]: {
@@ -76,4 +133,4 @@ export const locationDescriptions = {
     description:
       'Southland is all about subtle magic. The landscapes don’t shout—they hum. Rolling green hills, crisp southern air, and the kind of hospitality that feels like coming home. It’s a region where weddings are heartfelt and unfussy. Where the lamb is local, the jokes are dry, and the moments linger long after the last dance. Southland suits couples who value depth over dazzle.',
   },
-} as const
+} as const satisfies Record<Location, LocationDescription>

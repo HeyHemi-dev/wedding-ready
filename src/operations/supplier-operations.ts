@@ -1,16 +1,18 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
-import { Supplier, SupplierSearchResult } from '@/app/_types/suppliers'
+import { Supplier, SupplierList, SupplierSearchResult } from '@/app/_types/suppliers'
 import { Handle, SupplierRegistrationForm } from '@/app/_types/validation-schema'
-import { SUPPLIER_ROLES } from '@/db/constants'
+import { Location, Service, SUPPLIER_ROLES } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
 import { supplierLocationsModel } from '@/models/supplier-location'
 import { supplierServicesModel } from '@/models/supplier-service'
 import { supplierUsersModel } from '@/models/supplier-user'
+import { tileModel } from '@/models/tile'
 import { InsertSupplierRaw } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 
 export const supplierOperations = {
   getByHandle,
+  getListForSupplierGrid,
   register,
   search,
 }
@@ -31,15 +33,54 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
   }
 }
 
+async function getListForSupplierGrid({ location, service }: { location?: Location; service?: Service }): Promise<SupplierList> {
+  if ((!location && !service) || (location && service)) {
+    throw OPERATION_ERROR.BAD_REQUEST()
+  }
+  // We can assert that service exists becuase we checked that at least location or service exists, then we check if location doesn't exist. By elimination, service must exist.
+  const suppliers = location ? await supplierModel.getAllRawForLocation(location) : await supplierModel.getAllRawForService(service!)
+
+  const supplierIds = suppliers.map((supplier) => supplier.id)
+
+  // TODO: make this actually an array of getBySupplierId promises
+  const tilePromises = supplierIds.map(async (supplierId) => {
+    const tiles = await tileModel.getManyBySupplierId(supplierId)
+    return { supplierId, tiles }
+  })
+
+  const [locationsForSuppliers, servicesForSuppliers, ...rest] = await Promise.all([
+    supplierLocationsModel.getForSupplierIds(supplierIds),
+    supplierServicesModel.getForSupplierIds(supplierIds),
+    ...tilePromises,
+  ])
+
+  const tilesForSuppliers = rest
+
+  const locationsMap = new Map(locationsForSuppliers.map((item) => [item.supplierId, item.locations]))
+  const servicesMap = new Map(servicesForSuppliers.map((item) => [item.supplierId, item.services]))
+  const tilesMap = new Map(tilesForSuppliers.map((item) => [item.supplierId, item.tiles]))
+
+  return suppliers.map((supplier) => ({
+    id: supplier.id,
+    name: supplier.name,
+    handle: supplier.handle,
+    mainImage: tilesMap.get(supplier.id)?.[0]?.imagePath ?? '',
+    thumbnailImages: [tilesMap.get(supplier.id)?.[0]?.imagePath ?? '', tilesMap.get(supplier.id)?.[1]?.imagePath ?? ''],
+    services: servicesMap.get(supplier.id) ?? [],
+    locations: locationsMap.get(supplier.id) ?? [],
+    follows: 154, // TODO: get from supplierFollows table
+  }))
+}
+
 async function register({ name, handle, websiteUrl, description, services, locations, createdByUserId }: SupplierRegistrationForm): Promise<Supplier> {
   const user = await UserDetailModel.getById(createdByUserId)
   if (!user) {
-    throw OPERATION_ERROR.FORBIDDEN
+    throw OPERATION_ERROR.FORBIDDEN()
   }
 
   const isAvailable = await supplierModel.isHandleAvailable({ handle })
   if (!isAvailable) {
-    throw OPERATION_ERROR.HANDLE_TAKEN
+    throw OPERATION_ERROR.HANDLE_TAKEN()
   }
 
   const insertSupplierData: InsertSupplierRaw = {
@@ -66,7 +107,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
     websiteUrl: supplier.websiteUrl,
     description: supplier.description,
     services: supplierServices.map((service) => service.service!),
-    locations: supplierLocations.map((location) => location.location!),
+    locations: supplierLocations.map((location) => location.location),
     users: supplierUsers.map((user) => ({ id: user.userId, role: user.role })),
   }
 }

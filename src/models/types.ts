@@ -78,6 +78,15 @@ export interface SupplierWithUsers extends Supplier {
   users: SupplierUserRaw[]
 }
 
+export interface Thumbnail {
+  id: string
+  imagePath: string
+}
+
+export interface SupplierWithThumbnails extends Supplier {
+  thumbnails: Thumbnail[]
+}
+
 export interface TileRawWithImage extends TileRaw {
   imagePath: string
 }
@@ -93,4 +102,14 @@ export interface Tile extends TileRawWithImage {
 
 export interface TileCredit extends TileSupplierRaw {
   supplier: SupplierRaw
+}
+
+export interface LocationsForSupplierId {
+  supplierId: string
+  locations: Location[]
+}
+
+export interface ServicesForSupplierId {
+  supplierId: string
+  services: Service[]
 }
