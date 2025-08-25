@@ -6,6 +6,7 @@ import { SupplierWithUsers, User } from '@/models/types'
 
 import { FileWithMetadata } from './upload-dropzone'
 import { UploadPreviewForm } from './upload-preview-form'
+import { Supplier } from '@/app/_types/suppliers'
 
 export function UploadPreviewList({
   files,
@@ -14,7 +15,7 @@ export function UploadPreviewList({
   onCompleteAction,
 }: {
   files: FileWithMetadata[]
-  supplier: SupplierWithUsers
+  supplier: Supplier
   user: User
   onCompleteAction: (fileIndex: number) => void
 }) {

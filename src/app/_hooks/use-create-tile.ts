@@ -8,6 +8,7 @@ import { tileNewRequestBody, tileNewResponseBody } from '@/app/api/tiles/route'
 import type * as t from '@/models/types'
 import { tryCatchFetch } from '@/utils/try-catch'
 import { useUploadThing } from '@/utils/uploadthing'
+import { Supplier } from '@/app/_types/suppliers'
 
 const CREATE_TILE_STATUS = {
   IDLE: 'idle',
@@ -55,7 +56,7 @@ export function useCreateTile(options: { signal?: AbortSignal; onUploadComplete?
   }: {
     files: File[]
     tileData: t.InsertTileRaw
-    suppliers: t.SupplierRaw[]
+    suppliers: Supplier[]
     user: t.User
   }): Promise<void> {
     setStatus(CREATE_TILE_STATUS.CREATING)

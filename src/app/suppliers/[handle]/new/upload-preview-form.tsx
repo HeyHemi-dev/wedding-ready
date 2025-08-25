@@ -19,6 +19,7 @@ import { InsertTileRaw, SupplierRaw, User } from '@/models/types'
 import { locationHelpers } from '@/utils/const-helpers'
 
 import { FileWithMetadata } from './upload-dropzone'
+import { Supplier } from '@/app/_types/suppliers'
 
 export function UploadPreviewForm({
   file,
@@ -27,7 +28,7 @@ export function UploadPreviewForm({
   onCompleteAction,
 }: {
   file: FileWithMetadata
-  supplier: SupplierRaw
+  supplier: Supplier
   user: User
   onCompleteAction: () => void
 }) {
@@ -45,7 +46,7 @@ export function UploadPreviewForm({
       suppliers: [
         {
           id: supplier.id,
-          service: 'photographer', // Default service - you might want to get this from the supplier
+          service: supplier.services[0],
           serviceDescription: '',
         },
       ],

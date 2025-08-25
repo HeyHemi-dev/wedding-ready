@@ -3,9 +3,10 @@ import { NextResponse } from 'next/server'
 import * as t from '@/models/types'
 import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
+import { Supplier } from '@/app/_types/suppliers'
 
 export interface tileNewRequestBody extends t.InsertTileRaw {
-  suppliers: t.SupplierRaw[]
+  suppliers: Supplier[]
 }
 
 export type tileNewResponseBody = { id: string }

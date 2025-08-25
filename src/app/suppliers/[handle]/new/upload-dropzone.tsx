@@ -11,13 +11,14 @@ import { SupplierWithUsers, User } from '@/models/types'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { UploadPreviewList } from './upload-preview'
+import { Supplier } from '@/app/_types/suppliers'
 
 export type FileWithMetadata = {
   file: File
   fileObjectUrl: string
 }
 
-export function UploadDropzone({ supplier, user }: { supplier: SupplierWithUsers; user: User }) {
+export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: User }) {
   const [files, setFiles] = React.useState<FileWithMetadata[]>([])
   const { routeConfig } = useUploadThing('tileUploader')
 

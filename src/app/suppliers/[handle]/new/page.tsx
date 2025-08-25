@@ -7,10 +7,11 @@ import { Section } from '@/components/ui/section'
 import { supplierModel } from '@/models/supplier'
 
 import { UploadDropzone } from './upload-dropzone'
+import { supplierOperations } from '@/operations/supplier-operations'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const supplier = await supplierModel.getByHandle(handle)
+  const supplier = await supplierOperations.getByHandle(handle)
 
   if (!supplier) {
     redirect(`/404`)
@@ -18,7 +19,7 @@ export default async function NewSupplierTilePage({ params }: { params: Promise<
 
   // Check if the user is the owner of the supplier to allow creating tiles
   const user = await getCurrentUser()
-  const isSupplierUser = supplier?.users.some((u) => u.userId === user?.id)
+  const isSupplierUser = supplier?.users.some((u) => u.id === user?.id)
 
   if (!user || !isSupplierUser) {
     redirect(`/suppliers/${handle}`)
