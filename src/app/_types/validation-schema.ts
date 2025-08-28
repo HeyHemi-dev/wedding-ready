@@ -94,3 +94,4 @@ export const tileUploadPreviewFormSchema = z.object({
   credits: z.array(creditSchema),
 })
 export type TileUploadPreviewForm = z.infer<typeof tileUploadPreviewFormSchema>
+export type TileCreate = TileUploadPreviewForm & { imagePath: string }

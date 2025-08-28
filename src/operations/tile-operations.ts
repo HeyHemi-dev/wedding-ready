@@ -1,6 +1,6 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
-import { TileCreditForm } from '@/app/_types/validation-schema'
+import { TileCreditForm, TileCreate } from '@/app/_types/validation-schema'
 import { SavedTilesModel } from '@/models/savedTiles'
 import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
@@ -81,15 +81,16 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
   }))
 }
 
-async function createForSupplier({ InsertTileRawData, supplierIds }: { InsertTileRawData: t.InsertTileRaw; supplierIds: string[] }): Promise<{ id: string }> {
-  if (supplierIds.length === 0) throw OPERATION_ERROR.BAD_REQUEST()
-  if (InsertTileRawData.imagePath === '') throw OPERATION_ERROR.DATA_INTEGRITY()
+async function createForSupplier({ imagePath, title, description, location, createdByUserId, isPrivate, credits }: TileCreate): Promise<{ id: string }> {
+  if (credits.length === 0) throw OPERATION_ERROR.BAD_REQUEST()
 
-  const supplier = await supplierModel.getRawById(supplierIds[0])
+  const supplier = await supplierModel.getRawById(credits[0].supplier.id)
   if (!supplier) throw OPERATION_ERROR.DATA_INTEGRITY()
 
-  const tileRaw = await tileModel.createRaw(InsertTileRawData)
-  await tileSupplierModel.createRaw({ tileId: tileRaw.id, supplierId: supplierIds[0] })
+  const tileData: t.InsertTileRaw = { imagePath, title, description, location, createdByUserId, isPrivate }
+
+  const tileRaw = await tileModel.createRaw(tileData)
+  await tileSupplierModel.createRaw({ tileId: tileRaw.id, supplierId: supplier.id })
 
   return {
     id: tileRaw.id,
