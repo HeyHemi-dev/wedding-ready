@@ -86,17 +86,11 @@ export const tileUploaderInputSchema = z.object({
 })
 
 export const tileUploadPreviewFormSchema = z.object({
-  title: z.string().trim().min(1, 'Title is required').max(100, "Title can't exceed 100 characters"),
+  title: z.string().trim().max(100, "Title can't exceed 100 characters").optional(),
   description: z.string().trim().optional(),
-  location: z.nativeEnum(LOCATIONS).nullable(),
+  location: z.nativeEnum(LOCATIONS).optional(),
   createdByUserId: z.string(),
   isPrivate: z.boolean(),
-  suppliers: z.array(
-    z.object({
-      id: z.string(),
-      service: z.nativeEnum(SERVICES),
-      serviceDescription: z.string().optional(),
-    })
-  ),
+  credits: z.array(creditSchema),
 })
 export type TileUploadPreviewForm = z.infer<typeof tileUploadPreviewFormSchema>
