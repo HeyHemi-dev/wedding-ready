@@ -9,9 +9,9 @@ import { useCreateTile } from '@/app/_hooks/use-create-tile'
 import { TileUploadPreviewForm, tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
@@ -39,16 +39,20 @@ export function UploadPreviewForm({
   const form = useForm<TileUploadPreviewForm>({
     resolver: zodResolver(tileUploadPreviewFormSchema),
     defaultValues: {
-      title: '',
-      description: '',
-      location: null,
+      title: undefined,
+      description: undefined,
+      location: undefined,
       createdByUserId: user.id,
       isPrivate: false,
-      suppliers: [
+      credits: [
         {
-          id: supplier.id,
+          supplier: {
+            id: supplier.id,
+            name: supplier.name,
+            handle: supplier.handle,
+          },
           service: supplier.services[0],
-          serviceDescription: '',
+          serviceDescription: undefined,
         },
       ],
     },
@@ -136,17 +140,19 @@ export function UploadPreviewForm({
 
               <FormField
                 control={form.control}
-                name="suppliers"
-                render={() => (
-                  <FormItem>
-                    <FormLabel>Credit suppliers</FormLabel>
+                name="credits"
+                render={({ field }) => (
+                  <FormFieldItem label="Credit suppliers">
                     <FormControl>
                       <div className="text-sm text-muted-foreground">
-                        {supplier.name} - {supplier.services[0]}
+                        {field.value.map((credit) => (
+                          <div key={credit.supplier.id}>
+                            {credit.supplier.name} - {credit.service}
+                          </div>
+                        ))}
                       </div>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                  </FormFieldItem>
                 )}
               />
             </div>
