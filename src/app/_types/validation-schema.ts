@@ -21,12 +21,6 @@ export const userSignupFormSchema = z.object({
 })
 export type UserSignupForm = z.infer<typeof userSignupFormSchema>
 
-const userOmitAuth = userSignupFormSchema.omit({
-  email: true,
-  password: true,
-  handle: true,
-})
-
 export const userSigninFormSchema = z.object({
   email: z.string(),
   password: z.string(),
@@ -39,10 +33,15 @@ export type UserForgotPasswordForm = z.infer<typeof userForgotPasswordFormSchema
 export const userResetPasswordFormSchema = userSigninFormSchema.pick({ password: true }).extend({ confirmPassword: z.string() })
 export type UserResetPasswordForm = z.infer<typeof userResetPasswordFormSchema>
 
-export const userUpdateEmailFormSchema = userSigninFormSchema.pick({ email: true })
+export const userUpdateEmailFormSchema = userSignupFormSchema.pick({ email: true })
 export type UserUpdateEmailForm = z.infer<typeof userUpdateEmailFormSchema>
 
-// Create base schema from the database schema
+const userOmitAuth = userSignupFormSchema.omit({
+  email: true,
+  password: true,
+  handle: true,
+})
+
 export const userUpdateFormSchema = userOmitAuth.extend({
   id: z.string().uuid(),
   bio: z.string().max(160, "Bio can't exceed 160 characters").or(z.literal('')),
