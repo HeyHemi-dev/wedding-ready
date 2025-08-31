@@ -48,46 +48,46 @@ export function useCreateTile(options: { signal?: AbortSignal; onUploadComplete?
     },
   })
 
-  async function startCreateTile({
-    files,
-    tileData,
-    suppliers,
-    user,
-  }: {
-    files: File[]
-    tileData: t.InsertTileRaw
-    suppliers: Supplier[]
-    user: t.User
-  }): Promise<void> {
-    setStatus(CREATE_TILE_STATUS.CREATING)
+  // async function startCreateTile({
+  //   files,
+  //   tileData,
+  //   suppliers,
+  //   user,
+  // }: {
+  //   files: File[]
+  //   tileData: t.InsertTileRaw
+  //   suppliers: Supplier[]
+  //   user: t.User
+  // }): Promise<void> {
+  //   setStatus(CREATE_TILE_STATUS.CREATING)
 
-    const reqBody: tileNewRequestBody = {
-      ...tileData,
-      suppliers: suppliers,
-    }
+  //   const reqBody: tileNewRequestBody = {
+  //     ...tileData,
+  //     suppliers: suppliers,
+  //   }
 
-    // Create the tile in the database
-    const { data: tile, error } = await tryCatchFetch<tileNewResponseBody>('/api/tiles', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reqBody),
-    })
+  //   // Create the tile in the database
+  //   const { data: tile, error } = await tryCatchFetch<tileNewResponseBody>('/api/tiles', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify(reqBody),
+  //   })
 
-    if (error) {
-      setStatus(CREATE_TILE_STATUS.ERROR)
-      toast.error(error?.message || 'Failed to create tile')
-      return
-    }
+  //   if (error) {
+  //     setStatus(CREATE_TILE_STATUS.ERROR)
+  //     toast.error(error?.message || 'Failed to create tile')
+  //     return
+  //   }
 
-    // Upload the file with some metadata so we can authorize the upload
-    await startUpload(files, {
-      createdByUserId: user.id,
-      tileId: tile.id,
-    })
-  }
+  //   // Upload the file with some metadata so we can authorize the upload
+  //   await startUpload(files, {
+  //     createdByUserId: user.id,
+  //     tileId: tile.id,
+  //   })
+  // }
 
   return {
-    startCreateTile,
+    startUpload,
     routeConfig,
     status,
     uploadProgress,

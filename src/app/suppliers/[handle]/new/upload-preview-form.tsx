@@ -32,7 +32,7 @@ export function UploadPreviewForm({
   user: User
   onCompleteAction: () => void
 }) {
-  const { startCreateTile, status, uploadProgress } = useCreateTile({
+  const { startUpload, status, uploadProgress } = useCreateTile({
     onUploadComplete: onCompleteAction,
   })
 
@@ -60,19 +60,8 @@ export function UploadPreviewForm({
   })
 
   async function onSubmit(data: TileUploadPreviewForm) {
-    const tileData: InsertTileRaw = {
-      title: data.title,
-      description: data.description || null,
-      location: data.location || null,
-      createdByUserId: user.id,
-      isPrivate: false,
-    }
-
-    await startCreateTile({
-      files: [file.file],
-      tileData,
-      suppliers: [supplier],
-      user,
+    await startUpload([file.file], {
+      ...data,
     })
   }
 
