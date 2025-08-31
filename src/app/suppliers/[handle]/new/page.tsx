@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { Section } from '@/components/ui/section'
-import { supplierModel } from '@/models/supplier'
 
 import { UploadDropzone } from './upload-dropzone'
 import { supplierOperations } from '@/operations/supplier-operations'

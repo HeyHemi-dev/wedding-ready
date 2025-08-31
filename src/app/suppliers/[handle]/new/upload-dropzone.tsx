@@ -7,7 +7,7 @@ import { generateClientDropzoneAccept, generatePermittedFileTypes, isValidFileSi
 import { ExpandedRouteConfig } from 'uploadthing/types'
 
 import { Button } from '@/components/ui/button'
-import { SupplierWithUsers, User } from '@/models/types'
+import { User } from '@/models/types'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { UploadPreviewList } from './upload-preview'
