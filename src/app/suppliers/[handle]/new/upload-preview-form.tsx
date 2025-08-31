@@ -15,11 +15,13 @@ import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { InsertTileRaw, SupplierRaw, User } from '@/models/types'
+import { User } from '@/models/types'
 import { locationHelpers } from '@/utils/const-helpers'
 
 import { FileWithMetadata } from './upload-dropzone'
 import { Supplier } from '@/app/_types/suppliers'
+import { tryCatch } from '@/utils/try-catch'
+import { toast } from 'sonner'
 
 export function UploadPreviewForm({
   file,
@@ -60,9 +62,8 @@ export function UploadPreviewForm({
   })
 
   async function onSubmit(data: TileUploadPreviewForm) {
-    await startUpload([file.file], {
-      ...data,
-    })
+    // startUpload catches and handles errors
+    startUpload([file.file], data)
   }
 
   return (
