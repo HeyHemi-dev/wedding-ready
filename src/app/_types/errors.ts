@@ -38,6 +38,25 @@ export const ROUTE_ERRORS = {
   ),
 }
 
+export const ROUTE_ERROR = {
+  INVALID_REQUEST: (message = 'Invalid Request') =>
+    NextResponse.json(
+      {
+        code: 'INVALID_REQUEST',
+        message: message,
+      },
+      { status: 400 }
+    ),
+  UNAUTHORIZED: (message = 'Unauthorized') =>
+    NextResponse.json(
+      {
+        code: 'UNAUTHORIZED',
+        message: message,
+      },
+      { status: 401 }
+    ),
+}
+
 export const OPERATION_ERROR = {
   UNAUTHORIZED: (message = 'Unauthorized') => new Error(message),
   FORBIDDEN: (message = 'Forbidden') => new Error(message),
