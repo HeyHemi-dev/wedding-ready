@@ -96,7 +96,19 @@ async function hasTile({
 
   if (tiles.length > 0) return tiles[0]
 
-  const newTile = await tileOperations.createForSupplier({ InsertTileRawData: { imagePath, location, createdByUserId }, supplierIds })
+  const newTile = await tileOperations.createForSupplier({
+    imagePath: imagePath || TEST_TILE.imagePath,
+    location: location || TEST_TILE.location,
+    createdByUserId,
+    isPrivate: false,
+    credits: [
+      {
+        supplier: { id: supplierIds[0], handle: '', name: '' },
+        service: SERVICES.PHOTOGRAPHER,
+        serviceDescription: 'Test Service Description',
+      },
+    ],
+  })
   const tile = await tileModel.getById(newTile.id)
   if (!tile) throw new Error('Failed to create tile')
   return tile
