@@ -5,6 +5,7 @@ import * as React from 'react'
 import { toast } from 'sonner'
 
 import { useUploadThing } from '@/utils/uploadthing'
+import { useUploadContext } from '../suppliers/[handle]/new/upload-context'
 
 const CREATE_TILE_STATUS = {
   IDLE: 'idle',
@@ -20,7 +21,8 @@ type CreateTileStatus = (typeof CREATE_TILE_STATUS)[keyof typeof CREATE_TILE_STA
  * Creates a tile in the database, and then uploads the image to UploadThing
  * Updating the tile with the image url is handled in the Uploadthing Endpoint
  */
-export function useCreateTile(options: { signal?: AbortSignal; onUploadComplete?: () => void }) {
+export function useCreateTile(options: { signal?: AbortSignal; fileKey: number }) {
+  const { removeFile } = useUploadContext()
   const [status, setStatus] = React.useState<CreateTileStatus>(CREATE_TILE_STATUS.IDLE)
   const [uploadProgress, setUploadProgress] = React.useState(0)
 
@@ -36,7 +38,7 @@ export function useCreateTile(options: { signal?: AbortSignal; onUploadComplete?
     onClientUploadComplete: () => {
       setStatus(CREATE_TILE_STATUS.COMPLETE)
       toast('Tile uploaded')
-      options.onUploadComplete?.()
+      removeFile(options.fileKey)
     },
     onUploadError: () => {
       setStatus(CREATE_TILE_STATUS.ERROR)

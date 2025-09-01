@@ -18,24 +18,12 @@ import { Textarea } from '@/components/ui/textarea'
 import { User } from '@/models/types'
 import { locationHelpers } from '@/utils/const-helpers'
 
-import { FileWithMetadata } from './upload-dropzone'
+import { FileWithMetadata } from './upload-context'
 import { Supplier } from '@/app/_types/suppliers'
-import { tryCatch } from '@/utils/try-catch'
-import { toast } from 'sonner'
 
-export function UploadPreviewForm({
-  file,
-  supplier,
-  user,
-  onCompleteAction,
-}: {
-  file: FileWithMetadata
-  supplier: Supplier
-  user: User
-  onCompleteAction: () => void
-}) {
+export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: FileWithMetadata; supplier: Supplier; user: User; fileIndex: number }) {
   const { startUpload, status, uploadProgress } = useCreateTile({
-    onUploadComplete: onCompleteAction,
+    fileKey: fileIndex,
   })
 
   const form = useForm<TileUploadPreviewForm>({

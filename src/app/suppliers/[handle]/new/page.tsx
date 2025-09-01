@@ -6,6 +6,7 @@ import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { Section } from '@/components/ui/section'
 
 import { UploadDropzone } from './upload-dropzone'
+import { UploadProvider } from './upload-context'
 import { supplierOperations } from '@/operations/supplier-operations'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
@@ -32,7 +33,9 @@ export default async function NewSupplierTilePage({ params }: { params: Promise<
       </Link>
       <h1 className="text-2xl font-semibold">Create new tiles for {supplier.name}</h1>
 
-      <UploadDropzone supplier={supplier} user={user} />
+      <UploadProvider>
+        <UploadDropzone supplier={supplier} user={user} />
+      </UploadProvider>
     </Section>
   )
 }

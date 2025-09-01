@@ -12,14 +12,10 @@ import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { UploadPreviewList } from './upload-preview'
 import { Supplier } from '@/app/_types/suppliers'
-
-export type FileWithMetadata = {
-  file: File
-  fileObjectUrl: string
-}
+import { useUploadContext, FileWithMetadata } from './upload-context'
 
 export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: User }) {
-  const [files, setFiles] = React.useState<FileWithMetadata[]>([])
+  const { files, addFiles } = useUploadContext()
   const { routeConfig } = useUploadThing('tileUploader')
 
   const onDrop = React.useCallback(
@@ -29,13 +25,13 @@ export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: U
         return
       }
 
-      const files = acceptedFiles.map((file) => ({
+      const filesWithMetadata: FileWithMetadata[] = acceptedFiles.map((file) => ({
         file,
         fileObjectUrl: URL.createObjectURL(file),
       }))
-      setFiles(() => [...files])
+      addFiles(filesWithMetadata)
     },
-    [routeConfig]
+    [routeConfig, addFiles]
   )
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -43,24 +39,11 @@ export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: U
     accept: generateClientDropzoneAccept(generatePermittedFileTypes(routeConfig).fileTypes),
   })
 
-  React.useEffect(() => {
-    return () => files.forEach((file) => URL.revokeObjectURL(file.fileObjectUrl))
-  }, [files])
-
   return (
     <>
       {files.length === 0 && <Dropzone getRootProps={getRootProps} getInputProps={getInputProps} />}
 
-      {files.length > 0 && (
-        <UploadPreviewList
-          files={files}
-          supplier={supplier}
-          user={user}
-          onCompleteAction={(fileIndex) => {
-            setFiles((prev) => prev.filter((_, i) => i !== fileIndex))
-          }}
-        />
-      )}
+      {files.length > 0 && <UploadPreviewList files={files} supplier={supplier} user={user} />}
     </>
   )
 }
