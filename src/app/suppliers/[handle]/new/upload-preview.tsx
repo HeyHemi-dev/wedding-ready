@@ -1,12 +1,12 @@
 import React from 'react'
 
+import { Supplier } from '@/app/_types/suppliers'
 import { Area } from '@/components/ui/area'
 import { Separator } from '@/components/ui/separator'
-import { SupplierWithUsers, User } from '@/models/types'
+import { User } from '@/models/types'
 
 import { FileWithMetadata } from './upload-context'
 import { UploadPreviewForm } from './upload-preview-form'
-import { Supplier } from '@/app/_types/suppliers'
 
 export function UploadPreviewList({ files, supplier, user }: { files: FileWithMetadata[]; supplier: Supplier; user: User }) {
   return (

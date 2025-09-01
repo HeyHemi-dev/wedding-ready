@@ -6,12 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
 import { useCreateTile } from '@/app/_hooks/use-create-tile'
+import { Supplier } from '@/app/_types/suppliers'
 import { TileUploadPreviewForm, tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
@@ -19,7 +19,6 @@ import { User } from '@/models/types'
 import { locationHelpers } from '@/utils/const-helpers'
 
 import { FileWithMetadata } from './upload-context'
-import { Supplier } from '@/app/_types/suppliers'
 
 export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: FileWithMetadata; supplier: Supplier; user: User; fileIndex: number }) {
   const { startUpload, status, uploadProgress } = useCreateTile({

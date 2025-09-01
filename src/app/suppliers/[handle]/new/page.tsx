@@ -4,10 +4,10 @@ import { redirect } from 'next/navigation'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { Section } from '@/components/ui/section'
-
-import { UploadDropzone } from './upload-dropzone'
-import { UploadProvider } from './upload-context'
 import { supplierOperations } from '@/operations/supplier-operations'
+
+import { UploadProvider } from './upload-context'
+import { UploadDropzone } from './upload-dropzone'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

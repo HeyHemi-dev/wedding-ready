@@ -1,12 +1,10 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
-import { UploadThingError } from 'uploadthing/server'
 
-import { tileUploaderInputSchema, tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
-import { tileModel } from '@/models/tile'
-import { getAuthUserId } from '@/utils/auth'
-import { OPERATION_ERROR, ROUTE_ERROR } from '@/app/_types/errors'
+import { OPERATION_ERROR } from '@/app/_types/errors'
+import { tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
 import { supplierModel } from '@/models/supplier'
 import { tileOperations } from '@/operations/tile-operations'
+import { getAuthUserId } from '@/utils/auth'
 
 const f = createUploadthing()
 

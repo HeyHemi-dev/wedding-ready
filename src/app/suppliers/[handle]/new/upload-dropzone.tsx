@@ -6,13 +6,13 @@ import { toast } from 'sonner'
 import { generateClientDropzoneAccept, generatePermittedFileTypes, isValidFileSize } from 'uploadthing/client'
 import { ExpandedRouteConfig } from 'uploadthing/types'
 
+import { Supplier } from '@/app/_types/suppliers'
 import { Button } from '@/components/ui/button'
 import { User } from '@/models/types'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
-import { UploadPreviewList } from './upload-preview'
-import { Supplier } from '@/app/_types/suppliers'
 import { useUploadContext, FileWithMetadata } from './upload-context'
+import { UploadPreviewList } from './upload-preview'
 
 export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: User }) {
   const { files, addFiles } = useUploadContext()
