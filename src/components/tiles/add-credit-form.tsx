@@ -60,7 +60,7 @@ export function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDi
                   <SupplierSearchCombobox
                     value={field.value}
                     onValueSelect={(supplierId) => {
-                      field.onChange(supplierId || '')
+                      field.onChange(supplierId)
                     }}
                   />
                 </FormControl>
