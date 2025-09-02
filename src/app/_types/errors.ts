@@ -55,6 +55,30 @@ export const ROUTE_ERROR = {
       },
       { status: 401 }
     ),
+  FORBIDDEN: (message = 'Forbidden') =>
+    NextResponse.json(
+      {
+        code: 'FORBIDDEN',
+        message: message,
+      },
+      { status: 403 }
+    ),
+  NOT_FOUND: (message = 'Not Found') =>
+    NextResponse.json(
+      {
+        code: 'NOT_FOUND',
+        message: message,
+      },
+      { status: 404 }
+    ),
+  INTERNAL_SERVER_ERROR: (message = 'Internal Server Error') =>
+    NextResponse.json(
+      {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: message,
+      },
+      { status: 500 }
+    ),
 }
 
 export const OPERATION_ERROR = {
