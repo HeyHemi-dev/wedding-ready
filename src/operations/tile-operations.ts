@@ -84,7 +84,7 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
 async function createForSupplier({ imagePath, title, description, location, createdByUserId, isPrivate, credits }: TileCreate): Promise<{ id: string }> {
   if (credits.length === 0) throw OPERATION_ERROR.BAD_REQUEST()
 
-  const supplier = await supplierModel.getRawById(credits[0].supplier.id)
+  const supplier = await supplierModel.getRawById(credits[0].supplierId)
   if (!supplier) throw OPERATION_ERROR.DATA_INTEGRITY()
 
   const tileData: t.InsertTileRaw = { imagePath, title, description, location, createdByUserId, isPrivate }
@@ -108,7 +108,7 @@ async function getCreditsForTile(tileId: string): Promise<TileCredit[]> {
 }
 
 async function createCreditForTile({ tileId, credit, userId }: { tileId: string; credit: TileCreditForm; userId: string }): Promise<TileCredit[]> {
-  const [tile, supplier] = await Promise.all([tileModel.getRawById(tileId), supplierModel.getRawById(credit.supplier.id)])
+  const [tile, supplier] = await Promise.all([tileModel.getRawById(tileId), supplierModel.getRawById(credit.supplierId)])
 
   if (!tile || !supplier) {
     throw OPERATION_ERROR.DATA_INTEGRITY()
@@ -118,7 +118,7 @@ async function createCreditForTile({ tileId, credit, userId }: { tileId: string;
     throw OPERATION_ERROR.FORBIDDEN()
   }
 
-  await tileSupplierModel.createRaw({ tileId, supplierId: credit.supplier.id, service: credit.service, serviceDescription: credit.serviceDescription })
+  await tileSupplierModel.createRaw({ tileId, supplierId: credit.supplierId, service: credit.service, serviceDescription: credit.serviceDescription })
   const tileCredits = await tileSupplierModel.getCreditsByTileId(tileId)
 
   return tileCredits.map((credit) => ({
