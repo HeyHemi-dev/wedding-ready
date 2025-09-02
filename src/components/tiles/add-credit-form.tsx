@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 
 import { useSupplierSearch } from '@/app/_hooks/use-supplier-search'
 import { useTileCredit } from '@/app/_hooks/use-tile-credit'
-import { SupplierSearchResult } from '@/app/_types/suppliers'
+
 import { TileCreditForm as FormValues, tileCreditFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { Button } from '@/components/ui/button'
@@ -23,12 +23,13 @@ import { tryCatch } from '@/utils/try-catch'
 
 export function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpen: (open: boolean) => void }) {
   const { addCredit } = useTileCredit(tileId)
+
   const form = useForm<FormValues>({
     resolver: zodResolver(tileCreditFormSchema),
     defaultValues: {
-      supplier: undefined,
+      supplierId: undefined,
       service: undefined,
-      serviceDescription: '',
+      serviceDescription: undefined,
     },
     mode: 'onBlur',
   })
@@ -52,11 +53,16 @@ export function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDi
         <div className="grid gap-sibling">
           <FormField
             control={form.control}
-            name="supplier"
+            name="supplierId"
             render={({ field }) => (
               <FormFieldItem label="Supplier">
                 <FormControl>
-                  <SupplierSearchCombobox value={field.value} onValueSelect={field.onChange} />
+                  <SupplierSearchCombobox
+                    value={field.value}
+                    onValueSelect={(supplierId) => {
+                      field.onChange(supplierId || '')
+                    }}
+                  />
                 </FormControl>
               </FormFieldItem>
             )}
@@ -106,18 +112,19 @@ export function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDi
 }
 
 type SupplierSearchComboboxProps = {
-  value: SupplierSearchResult
-  onValueSelect: (supplier: SupplierSearchResult | undefined) => void
+  value: string | undefined
+  onValueSelect: (supplierId: string | undefined) => void
 }
 
 export function SupplierSearchCombobox({ value, onValueSelect }: SupplierSearchComboboxProps) {
   const { setSearchQuery, data: suppliers } = useSupplierSearch()
+  const selectedSupplier = suppliers?.find((s) => s.id === value)
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button size="sm" variant="input" role="combobox" className="w-full justify-between" data-placeholder={!value ? true : null}>
-          {value ? `${value.name} @${value.handle}` : 'Select supplier'}
+          {selectedSupplier ? `${selectedSupplier.name} @${selectedSupplier.handle}` : 'Select supplier'}
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -132,9 +139,9 @@ export function SupplierSearchCombobox({ value, onValueSelect }: SupplierSearchC
                   key={supplier.handle}
                   value={supplier.handle}
                   onSelect={() => {
-                    onValueSelect(supplier)
+                    onValueSelect(supplier.id)
                   }}>
-                  <Check className={cn('mr-2 h-4 w-4', value?.id === supplier.id ? 'opacity-100' : 'opacity-0')} />
+                  <Check className={cn('mr-2 h-4 w-4', value === supplier.id ? 'opacity-100' : 'opacity-0')} />
                   <div className="flex flex-col">
                     <span className="ui-small-s1">{supplier.name}</span>
                     <span className="ui-small opacity-80">@{supplier.handle}</span>

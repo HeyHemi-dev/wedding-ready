@@ -68,11 +68,7 @@ export type SupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSc
 // TILE VALIDATION
 
 const creditSchema = z.object({
-  supplier: z.object({
-    id: z.string(),
-    name: z.string(),
-    handle: z.string(),
-  }),
+  supplierId: z.string(),
   service: z.nativeEnum(SERVICES).optional(),
   serviceDescription: z.string().optional(),
 })
