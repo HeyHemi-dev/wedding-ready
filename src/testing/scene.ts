@@ -1,7 +1,7 @@
 import { eq, isNull } from 'drizzle-orm'
 
 import { Supplier } from '@/app/_types/suppliers'
-import { SupplierRegistrationForm, TileCreate, TileCreditForm, UserSignupForm } from '@/app/_types/validation-schema'
+import { SupplierRegistrationForm, TileCreate, UserSignupForm } from '@/app/_types/validation-schema'
 import { db } from '@/db/connection'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 import * as s from '@/db/schema'

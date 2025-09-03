@@ -1,9 +1,9 @@
 import { afterAll, describe, expect, it } from 'vitest'
 
+import { SERVICES } from '@/db/constants'
 import { scene } from '@/testing/scene'
 
 import { tileOperations } from './tile-operations'
-import { SERVICES } from '@/db/constants'
 
 describe('tileOperations', () => {
   afterAll(async () => {
