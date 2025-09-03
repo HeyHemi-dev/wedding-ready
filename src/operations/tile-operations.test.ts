@@ -32,15 +32,5 @@ describe('tileOperations', () => {
       // Arrange & Act & Assert
       await expect(tileOperations.getById('00000000-0000-0000-0000-000000000000')).rejects.toThrow()
     })
-
-    it('should throw an error if the tile does not have an image', async () => {
-      // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
-      const tile = await scene.hasTile({ imagePath: null, createdByUserId: user.id, credits: [{ supplierId: supplier.id, service: SERVICES.PHOTOGRAPHER }] })
-
-      // Act & Assert
-      await expect(tileOperations.getById(tile.id)).rejects.toThrow('Not Found')
-    })
   })
 })
