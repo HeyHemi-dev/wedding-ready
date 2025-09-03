@@ -3,6 +3,7 @@ import { afterAll, describe, expect, it } from 'vitest'
 import { scene } from '@/testing/scene'
 
 import { tileOperations } from './tile-operations'
+import { SERVICES } from '@/db/constants'
 
 describe('tileOperations', () => {
   afterAll(async () => {
@@ -14,7 +15,7 @@ describe('tileOperations', () => {
       // Arrange
       const user = await scene.hasUser()
       const supplier = await scene.hasSupplier({ createdByUserId: user.id })
-      const tile = await scene.hasTile({ createdByUserId: user.id, supplierIds: [supplier.id] })
+      const tile = await scene.hasTile({ createdByUserId: user.id, credits: [{ supplierId: supplier.id, service: SERVICES.PHOTOGRAPHER }] })
 
       // Act
       const result = await tileOperations.getById(tile.id)
@@ -36,7 +37,7 @@ describe('tileOperations', () => {
       // Arrange
       const user = await scene.hasUser()
       const supplier = await scene.hasSupplier({ createdByUserId: user.id })
-      const tile = await scene.hasTile({ imagePath: null, createdByUserId: user.id, supplierIds: [supplier.id] })
+      const tile = await scene.hasTile({ imagePath: null, createdByUserId: user.id, credits: [{ supplierId: supplier.id, service: SERVICES.PHOTOGRAPHER }] })
 
       // Act & Assert
       await expect(tileOperations.getById(tile.id)).rejects.toThrow('Not Found')

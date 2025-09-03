@@ -1,7 +1,7 @@
 import { eq, isNull } from 'drizzle-orm'
 
 import { Supplier } from '@/app/_types/suppliers'
-import { SupplierRegistrationForm, UserSignupForm } from '@/app/_types/validation-schema'
+import { SupplierRegistrationForm, TileCreditForm, UserSignupForm } from '@/app/_types/validation-schema'
 import { db } from '@/db/connection'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 import * as s from '@/db/schema'
@@ -87,8 +87,8 @@ async function hasTile({
   imagePath = TEST_TILE.imagePath,
   location = TEST_TILE.location,
   createdByUserId,
-  supplierIds,
-}: t.InsertTileRaw & { supplierIds: string[] }): Promise<t.TileRaw> {
+  credits,
+}: t.InsertTileRaw & { credits: TileCreditForm[] }): Promise<t.TileRaw> {
   const tiles = await db
     .select()
     .from(s.tiles)
@@ -101,13 +101,7 @@ async function hasTile({
     location: location || TEST_TILE.location,
     createdByUserId,
     isPrivate: false,
-    credits: [
-      {
-        supplier: { id: supplierIds[0], handle: '', name: '' },
-        service: SERVICES.PHOTOGRAPHER,
-        serviceDescription: 'Test Service Description',
-      },
-    ],
+    credits: credits,
   })
   const tile = await tileModel.getById(newTile.id)
   if (!tile) throw new Error('Failed to create tile')

@@ -42,7 +42,12 @@ async function seedDatabase() {
 
   await Promise.all(
     UPLOADTHING_IMAGES.map(async (image: UploadThingImage) => {
-      await scene.hasTile({ createdByUserId: user.id, supplierIds: [supplier.id], imagePath: image.url, location: LOCATIONS.WELLINGTON })
+      await scene.hasTile({
+        createdByUserId: user.id,
+        credits: [{ supplierId: supplier.id, service: supplier.services[0] }],
+        imagePath: image.url,
+        location: LOCATIONS.WELLINGTON,
+      })
     })
   )
   console.log('Tiles created')
