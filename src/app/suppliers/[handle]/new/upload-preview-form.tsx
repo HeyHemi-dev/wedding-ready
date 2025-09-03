@@ -35,11 +35,7 @@ export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: F
       isPrivate: false,
       credits: [
         {
-          supplier: {
-            id: supplier.id,
-            name: supplier.name,
-            handle: supplier.handle,
-          },
+          supplierId: supplier.id,
           service: supplier.services[0],
           serviceDescription: undefined,
         },
@@ -123,8 +119,8 @@ export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: F
                     <FormControl>
                       <div className="text-sm text-muted-foreground">
                         {field.value.map((credit) => (
-                          <div key={credit.supplier.id}>
-                            {credit.supplier.name} - {credit.service}
+                          <div key={credit.supplierId}>
+                            {credit.supplierId} - {credit.service}
                           </div>
                         ))}
                       </div>

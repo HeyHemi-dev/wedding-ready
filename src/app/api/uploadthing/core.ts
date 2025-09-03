@@ -32,7 +32,7 @@ export const uploadthingRouter = {
       }
 
       for (const credit of input.credits) {
-        const supplier = await supplierModel.getRawById(credit.supplier.id)
+        const supplier = await supplierModel.getRawById(credit.supplierId)
         if (!supplier) {
           throw OPERATION_ERROR.DATA_INTEGRITY()
         }
