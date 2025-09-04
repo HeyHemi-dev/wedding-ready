@@ -1,6 +1,6 @@
 import { ArrowLeftIcon } from 'lucide-react'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { Section } from '@/components/ui/section'
@@ -8,13 +8,14 @@ import { supplierOperations } from '@/operations/supplier-operations'
 
 import { UploadProvider } from './upload-context'
 import { UploadDropzone } from './upload-dropzone'
+import React from 'react'
 
-export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
-  const { handle } = await params
+export default async function NewSupplierTilePage({ params }: { params: { handle: string } }): Promise<React.ReactNode> {
+  const { handle } = params
   const supplier = await supplierOperations.getByHandle(handle)
 
   if (!supplier) {
-    redirect(`/404`)
+    notFound()
   }
 
   // Check if the user is the owner of the supplier to allow creating tiles
