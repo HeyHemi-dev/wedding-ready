@@ -107,6 +107,6 @@ export const tileUploadPreviewFormSchema = z.object({
 export type TileUploadPreviewForm = z.infer<typeof tileUploadPreviewFormSchema>
 
 export const tileCreateSchema = tileUploadPreviewFormSchema.extend({
-  imagePath: z.string(),
+  imagePath: z.string().min(1, 'Image path is required'),
 })
 export type TileCreate = z.infer<typeof tileCreateSchema>
