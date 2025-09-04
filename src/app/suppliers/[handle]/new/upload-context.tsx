@@ -24,19 +24,26 @@ export function UploadProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const removeFile = React.useCallback((fileIndex: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== fileIndex))
+    setFiles((prev) => {
+      const fileToRemove = prev[fileIndex]
+      URL.revokeObjectURL(fileToRemove.fileObjectUrl)
+      return prev.filter((_, i) => i !== fileIndex)
+    })
   }, [])
 
   const clearFiles = React.useCallback(() => {
-    setFiles([])
+    setFiles((prev) => {
+      prev.forEach((file) => URL.revokeObjectURL(file.fileObjectUrl))
+      return []
+    })
   }, [])
 
-  // Cleanup object URLs when files are removed
+  // Cleanup object URLs on unmount
   React.useEffect(() => {
     return () => {
       files.forEach((file) => URL.revokeObjectURL(file.fileObjectUrl))
     }
-  }, [files])
+  }, [])
 
   const value = React.useMemo(
     () => ({
