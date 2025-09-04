@@ -133,21 +133,6 @@ export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: F
             <div className="col-span-full">
               <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
             </div>
-
-            {/* Hidden fields for form schema compliance */}
-            <FormField control={form.control} name="createdByUserId" render={({ field }) => <input {...field} type="hidden" />} />
-
-            <FormField
-              control={form.control}
-              name="isPrivate"
-              render={({ field }) => (
-                <FormFieldItem label="Private">
-                  <FormControl>
-                    <Checkbox style={{ display: 'none' }} checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                </FormFieldItem>
-              )}
-            />
           </form>
         </div>
       ) : (
