@@ -10,6 +10,7 @@ import { Supplier } from '@/app/_types/suppliers'
 import { TileUploadPreviewForm, tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
@@ -135,10 +136,17 @@ export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: F
 
             {/* Hidden fields for form schema compliance */}
             <FormField control={form.control} name="createdByUserId" render={({ field }) => <input {...field} type="hidden" />} />
+
             <FormField
               control={form.control}
               name="isPrivate"
-              render={({ field }) => <input {...field} type="hidden" value={field.value ? 'true' : 'false'} />}
+              render={({ field }) => (
+                <FormFieldItem label="Private">
+                  <FormControl>
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                </FormFieldItem>
+              )}
             />
           </form>
         </div>
