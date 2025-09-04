@@ -18,18 +18,23 @@ export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: U
   const { files, addFiles } = useUploadContext()
   const { routeConfig } = useUploadThing('tileUploader')
 
+  // If routeConfig is undefined upload is broken
+  if (!routeConfig) {
+    return (
+      <div className="text-center">
+        <p className="ui-s1">Upload unavailable</p>
+        <p className="ui-small text-muted-foreground">Please try refreshing the page or contact support if the problem persists.</p>
+      </div>
+    )
+  }
+
   const onDrop = React.useCallback(
     async (acceptedFiles: File[]) => {
       if (!checkFileSizes(acceptedFiles, routeConfig)) {
         toast.error('File size is too large')
         return
       }
-
-      const filesWithMetadata: FileWithMetadata[] = acceptedFiles.map((file) => ({
-        file,
-        fileObjectUrl: URL.createObjectURL(file),
-      }))
-      addFiles(filesWithMetadata)
+      addFiles(acceptedFiles)
     },
     [routeConfig, addFiles]
   )
@@ -69,12 +74,8 @@ function Dropzone({
   )
 }
 
-function checkFileSizes(files: File[], routeConfig: ExpandedRouteConfig | undefined) {
+function checkFileSizes(files: File[], routeConfig: ExpandedRouteConfig) {
   for (const file of files) {
-    if (routeConfig) {
-      return isValidFileSize(file, routeConfig)
-    } else {
-      return file.size < 1024 * 1024 * 1 // Number of MB
-    }
+    return isValidFileSize(file, routeConfig)
   }
 }

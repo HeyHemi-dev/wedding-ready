@@ -9,7 +9,7 @@ export type FileWithMetadata = {
 
 type UploadContextType = {
   files: FileWithMetadata[]
-  addFiles: (newFiles: FileWithMetadata[]) => void
+  addFiles: (files: File[]) => void
   removeFile: (fileIndex: number) => void
   clearFiles: () => void
 }
@@ -19,8 +19,12 @@ const UploadContext = React.createContext<UploadContextType | undefined>(undefin
 export function UploadProvider({ children }: { children: React.ReactNode }) {
   const [files, setFiles] = React.useState<FileWithMetadata[]>([])
 
-  const addFiles = React.useCallback((newFiles: FileWithMetadata[]) => {
-    setFiles((prev) => [...prev, ...newFiles])
+  const addFiles = React.useCallback((files: File[]) => {
+    const filesWithMetadata: FileWithMetadata[] = files.map((file) => ({
+      file,
+      fileObjectUrl: URL.createObjectURL(file),
+    }))
+    setFiles((prev) => [...prev, ...filesWithMetadata])
   }, [])
 
   const removeFile = React.useCallback((fileIndex: number) => {
