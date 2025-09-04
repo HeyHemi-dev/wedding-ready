@@ -12,5 +12,5 @@ export const supplierKeys = {
 }
 
 export const nextCacheKey = {
-  supplierList: ({ constValue }: { constValue: Location | Service }) => ['suppliers-list', constValue] as const,
+  supplierList: ({ constValue }: { constValue: Location | Service }) => ['supplier-list', constValue] as const,
 }
