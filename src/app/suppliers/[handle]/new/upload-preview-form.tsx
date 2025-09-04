@@ -10,7 +10,6 @@ import { Supplier } from '@/app/_types/suppliers'
 import { TileUploadPreviewForm, tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
@@ -20,6 +19,7 @@ import { User } from '@/models/types'
 import { locationHelpers } from '@/utils/const-helpers'
 
 import { FileWithMetadata } from './upload-context'
+import { Checkbox } from '@/components/ui/checkbox'
 
 export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: FileWithMetadata; supplier: Supplier; user: User; fileIndex: number }) {
   const { startUpload, status, uploadProgress } = useCreateTile({
@@ -143,7 +143,7 @@ export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: F
               render={({ field }) => (
                 <FormFieldItem label="Private">
                   <FormControl>
-                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                    <Checkbox style={{ display: 'none' }} checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormFieldItem>
               )}
