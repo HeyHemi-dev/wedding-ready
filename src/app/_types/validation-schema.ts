@@ -3,6 +3,10 @@ import { z } from 'zod'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 import { SetUserDetailRaw } from '@/models/types'
 
+const emailSchema = z.string().trim().email('Invalid email')
+
+const passwordSchema = z.string().min(8, 'Password must be at least 8 characters')
+
 const handleSchema = z
   .string()
   .trim()
@@ -14,8 +18,8 @@ export type Handle = z.infer<typeof handleSchema>
 // USER VALIDATION
 
 export const userSignupFormSchema = z.object({
-  email: z.string().trim().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  email: emailSchema,
+  password: passwordSchema,
   displayName: z.string().trim().min(1, 'Display name is required').max(30, "Display name can't exceed 30 characters"),
   handle: handleSchema,
 })
@@ -27,10 +31,21 @@ export const userSigninFormSchema = z.object({
 })
 export type UserSigninForm = z.infer<typeof userSigninFormSchema>
 
-export const userForgotPasswordFormSchema = userSigninFormSchema.omit({ password: true })
+export const userForgotPasswordFormSchema = z.object({
+  email: emailSchema,
+})
 export type UserForgotPasswordForm = z.infer<typeof userForgotPasswordFormSchema>
 
-export const userResetPasswordFormSchema = userSignupFormSchema.pick({ password: true }).extend({ confirmPassword: z.string() })
+export const userResetPasswordFormSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Passwords do not match',
+  })
+
 export type UserResetPasswordForm = z.infer<typeof userResetPasswordFormSchema>
 
 export const userUpdateEmailFormSchema = userSignupFormSchema.pick({ email: true })
