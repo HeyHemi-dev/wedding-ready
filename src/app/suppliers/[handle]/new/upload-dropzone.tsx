@@ -6,19 +6,17 @@ import { toast } from 'sonner'
 import { generateClientDropzoneAccept, generatePermittedFileTypes, isValidFileSize } from 'uploadthing/client'
 import { ExpandedRouteConfig } from 'uploadthing/types'
 
+import { Supplier } from '@/app/_types/suppliers'
 import { Button } from '@/components/ui/button'
-import { SupplierWithUsers, User } from '@/models/types'
+import { User } from '@/models/types'
+import { MAX_UPLOAD_FILE_SIZE } from '@/utils/constants'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
+import { useUploadContext } from './upload-context'
 import { UploadPreviewList } from './upload-preview'
 
-export type FileWithMetadata = {
-  file: File
-  fileObjectUrl: string
-}
-
-export function UploadDropzone({ supplier, user }: { supplier: SupplierWithUsers; user: User }) {
-  const [files, setFiles] = React.useState<FileWithMetadata[]>([])
+export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: User }) {
+  const { files, addFiles } = useUploadContext()
   const { routeConfig } = useUploadThing('tileUploader')
 
   const onDrop = React.useCallback(
@@ -27,14 +25,9 @@ export function UploadDropzone({ supplier, user }: { supplier: SupplierWithUsers
         toast.error('File size is too large')
         return
       }
-
-      const files = acceptedFiles.map((file) => ({
-        file,
-        fileObjectUrl: URL.createObjectURL(file),
-      }))
-      setFiles(() => [...files])
+      addFiles(acceptedFiles)
     },
-    [routeConfig]
+    [routeConfig, addFiles]
   )
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -42,24 +35,11 @@ export function UploadDropzone({ supplier, user }: { supplier: SupplierWithUsers
     accept: generateClientDropzoneAccept(generatePermittedFileTypes(routeConfig).fileTypes),
   })
 
-  React.useEffect(() => {
-    return () => files.forEach((file) => URL.revokeObjectURL(file.fileObjectUrl))
-  }, [files])
-
   return (
     <>
       {files.length === 0 && <Dropzone getRootProps={getRootProps} getInputProps={getInputProps} />}
 
-      {files.length > 0 && (
-        <UploadPreviewList
-          files={files}
-          supplier={supplier}
-          user={user}
-          onCompleteAction={(fileIndex) => {
-            setFiles((prev) => prev.filter((_, i) => i !== fileIndex))
-          }}
-        />
-      )}
+      {files.length > 0 && <UploadPreviewList files={files} supplier={supplier} user={user} />}
     </>
   )
 }
@@ -85,12 +65,9 @@ function Dropzone({
   )
 }
 
-function checkFileSizes(files: File[], routeConfig: ExpandedRouteConfig | undefined) {
-  for (const file of files) {
-    if (routeConfig) {
-      return isValidFileSize(file, routeConfig)
-    } else {
-      return file.size < 1024 * 1024 * 1 // Number of MB
-    }
+function checkFileSizes(files: File[], routeConfig: ExpandedRouteConfig | undefined): boolean {
+  if (routeConfig) {
+    return files.every((file) => isValidFileSize(file, routeConfig))
   }
+  return files.every((file) => file.size < MAX_UPLOAD_FILE_SIZE)
 }

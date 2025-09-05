@@ -1,23 +1,14 @@
 import React from 'react'
 
+import { Supplier } from '@/app/_types/suppliers'
 import { Area } from '@/components/ui/area'
 import { Separator } from '@/components/ui/separator'
-import { SupplierWithUsers, User } from '@/models/types'
+import { User } from '@/models/types'
 
-import { FileWithMetadata } from './upload-dropzone'
+import { FileWithMetadata } from './upload-context'
 import { UploadPreviewForm } from './upload-preview-form'
 
-export function UploadPreviewList({
-  files,
-  supplier,
-  user,
-  onCompleteAction,
-}: {
-  files: FileWithMetadata[]
-  supplier: SupplierWithUsers
-  user: User
-  onCompleteAction: (fileIndex: number) => void
-}) {
+export function UploadPreviewList({ files, supplier, user }: { files: FileWithMetadata[]; supplier: Supplier; user: User }) {
   return (
     <>
       <Separator />
@@ -25,7 +16,7 @@ export function UploadPreviewList({
         {files.map((file, index) => (
           <React.Fragment key={file.fileObjectUrl}>
             <Area>
-              <UploadPreviewForm file={file} supplier={supplier} user={user} onCompleteAction={() => onCompleteAction(index)} />
+              <UploadPreviewForm file={file} supplier={supplier} user={user} fileIndex={index} />
             </Area>
           </React.Fragment>
         ))}

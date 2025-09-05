@@ -38,6 +38,49 @@ export const ROUTE_ERRORS = {
   ),
 }
 
+export const ROUTE_ERROR = {
+  INVALID_REQUEST: (message = 'Invalid Request') =>
+    NextResponse.json(
+      {
+        code: 'INVALID_REQUEST',
+        message: message,
+      },
+      { status: 400 }
+    ),
+  UNAUTHORIZED: (message = 'Unauthorized') =>
+    NextResponse.json(
+      {
+        code: 'UNAUTHORIZED',
+        message: message,
+      },
+      { status: 401 }
+    ),
+  FORBIDDEN: (message = 'Forbidden') =>
+    NextResponse.json(
+      {
+        code: 'FORBIDDEN',
+        message: message,
+      },
+      { status: 403 }
+    ),
+  NOT_FOUND: (message = 'Not Found') =>
+    NextResponse.json(
+      {
+        code: 'NOT_FOUND',
+        message: message,
+      },
+      { status: 404 }
+    ),
+  INTERNAL_SERVER_ERROR: (message = 'Internal Server Error') =>
+    NextResponse.json(
+      {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: message,
+      },
+      { status: 500 }
+    ),
+}
+
 export const OPERATION_ERROR = {
   UNAUTHORIZED: (message = 'Unauthorized') => new Error(message),
   FORBIDDEN: (message = 'Forbidden') => new Error(message),

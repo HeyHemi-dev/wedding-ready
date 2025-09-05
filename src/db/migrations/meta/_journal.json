@@ -43,6 +43,13 @@
       "when": 1745884616998,
       "tag": "0005_open_dragon_lord",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1756934202638,
+      "tag": "0006_sparkling_captain_america",
+      "breakpoints": true
     }
   ]
 }

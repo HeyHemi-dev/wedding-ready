@@ -1,24 +1,27 @@
+import React from 'react'
+
 import { ArrowLeftIcon } from 'lucide-react'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { Section } from '@/components/ui/section'
-import { supplierModel } from '@/models/supplier'
+import { supplierOperations } from '@/operations/supplier-operations'
 
+import { UploadProvider } from './upload-context'
 import { UploadDropzone } from './upload-dropzone'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const supplier = await supplierModel.getByHandle(handle)
+  const supplier = await supplierOperations.getByHandle(handle)
 
   if (!supplier) {
-    redirect(`/404`)
+    notFound()
   }
 
   // Check if the user is the owner of the supplier to allow creating tiles
   const user = await getCurrentUser()
-  const isSupplierUser = supplier?.users.some((u) => u.userId === user?.id)
+  const isSupplierUser = supplier.users.some((u) => u.id === user?.id)
 
   if (!user || !isSupplierUser) {
     redirect(`/suppliers/${handle}`)
@@ -32,7 +35,9 @@ export default async function NewSupplierTilePage({ params }: { params: Promise<
       </Link>
       <h1 className="text-2xl font-semibold">Create new tiles for {supplier.name}</h1>
 
-      <UploadDropzone supplier={supplier} user={user} />
+      <UploadProvider>
+        <UploadDropzone supplier={supplier} user={user} />
+      </UploadProvider>
     </Section>
   )
 }
