@@ -10,8 +10,8 @@ import { UploadProvider } from './upload-context'
 import { UploadDropzone } from './upload-dropzone'
 import React from 'react'
 
-export default async function NewSupplierTilePage({ params }: { params: { handle: string } }): Promise<React.ReactNode> {
-  const { handle } = params
+export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
+  const { handle } = await params
   const supplier = await supplierOperations.getByHandle(handle)
 
   if (!supplier) {
