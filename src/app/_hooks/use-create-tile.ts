@@ -27,7 +27,7 @@ export function useCreateTile(options: { signal?: AbortSignal; fileKey: number }
   const [status, setStatus] = React.useState<CreateTileStatus>(CREATE_TILE_STATUS.IDLE)
   const [uploadProgress, setUploadProgress] = React.useState(0)
 
-  const { startUpload, routeConfig } = useUploadThing('tileUploader', {
+  const { startUpload } = useUploadThing('tileUploader', {
     headers: {},
     signal: options.signal,
     onUploadBegin: () => {
@@ -47,47 +47,8 @@ export function useCreateTile(options: { signal?: AbortSignal; fileKey: number }
     },
   })
 
-  // async function startCreateTile({
-  //   files,
-  //   tileData,
-  //   suppliers,
-  //   user,
-  // }: {
-  //   files: File[]
-  //   tileData: t.InsertTileRaw
-  //   suppliers: Supplier[]
-  //   user: t.User
-  // }): Promise<void> {
-  //   setStatus(CREATE_TILE_STATUS.CREATING)
-
-  //   const reqBody: tileNewRequestBody = {
-  //     ...tileData,
-  //     suppliers: suppliers,
-  //   }
-
-  //   // Create the tile in the database
-  //   const { data: tile, error } = await tryCatchFetch<tileNewResponseBody>('/api/tiles', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify(reqBody),
-  //   })
-
-  //   if (error) {
-  //     setStatus(CREATE_TILE_STATUS.ERROR)
-  //     toast.error(error?.message || 'Failed to create tile')
-  //     return
-  //   }
-
-  //   // Upload the file with some metadata so we can authorize the upload
-  //   await startUpload(files, {
-  //     createdByUserId: user.id,
-  //     tileId: tile.id,
-  //   })
-  // }
-
   return {
     startUpload,
-    routeConfig,
     status,
     uploadProgress,
   }
