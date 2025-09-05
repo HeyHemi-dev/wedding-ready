@@ -39,6 +39,7 @@ export function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDi
 
     if (error) {
       toast.error(error.message)
+      return
     }
 
     toast.success('Credit added')
