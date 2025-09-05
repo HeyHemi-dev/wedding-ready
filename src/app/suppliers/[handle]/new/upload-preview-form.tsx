@@ -19,7 +19,6 @@ import { User } from '@/models/types'
 import { locationHelpers } from '@/utils/const-helpers'
 
 import { FileWithMetadata } from './upload-context'
-import { Checkbox } from '@/components/ui/checkbox'
 
 export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: FileWithMetadata; supplier: Supplier; user: User; fileIndex: number }) {
   const { startUpload, status, uploadProgress } = useCreateTile({

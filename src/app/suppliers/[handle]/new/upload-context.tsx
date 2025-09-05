@@ -42,12 +42,12 @@ export function UploadProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
-  // Cleanup object URLs on unmount
+  // Cleanup object URLs on unmount only
   React.useEffect(() => {
     return () => {
       files.forEach((file) => URL.revokeObjectURL(file.fileObjectUrl))
     }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const value = React.useMemo(
     () => ({

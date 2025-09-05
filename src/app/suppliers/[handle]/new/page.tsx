@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { ArrowLeftIcon } from 'lucide-react'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
@@ -8,7 +10,6 @@ import { supplierOperations } from '@/operations/supplier-operations'
 
 import { UploadProvider } from './upload-context'
 import { UploadDropzone } from './upload-dropzone'
-import React from 'react'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
