@@ -9,11 +9,11 @@ import { ExpandedRouteConfig } from 'uploadthing/types'
 import { Supplier } from '@/app/_types/suppliers'
 import { Button } from '@/components/ui/button'
 import { User } from '@/models/types'
+import { MAX_UPLOAD_FILE_SIZE } from '@/utils/constants'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { useUploadContext } from './upload-context'
 import { UploadPreviewList } from './upload-preview'
-import { MAX_UPLOAD_FILE_SIZE } from '@/utils/constants'
 
 export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: User }) {
   const { files, addFiles } = useUploadContext()
