@@ -84,13 +84,20 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
 async function createForSupplier({ imagePath, title, description, location, createdByUserId, isPrivate, credits }: TileCreate): Promise<{ id: string }> {
   if (credits.length === 0) throw OPERATION_ERROR.BAD_REQUEST()
 
-  const supplier = await supplierModel.getRawById(credits[0].supplierId)
+  // TODO: Support multiple credits
+  const credit = credits[0]
+  const supplier = await supplierModel.getRawById(credit.supplierId)
   if (!supplier) throw OPERATION_ERROR.DATA_INTEGRITY()
 
   const tileData: t.InsertTileRaw = { imagePath, title, description, location, createdByUserId, isPrivate }
 
   const tileRaw = await tileModel.createRaw(tileData)
-  await tileSupplierModel.createRaw({ tileId: tileRaw.id, supplierId: supplier.id })
+  await tileSupplierModel.createRaw({
+    tileId: tileRaw.id,
+    supplierId: credit.supplierId,
+    service: credit.service,
+    serviceDescription: credit.serviceDescription,
+  })
 
   return {
     id: tileRaw.id,
