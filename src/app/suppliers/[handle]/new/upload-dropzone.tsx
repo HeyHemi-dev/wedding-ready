@@ -13,6 +13,7 @@ import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { useUploadContext } from './upload-context'
 import { UploadPreviewList } from './upload-preview'
+import { MAX_UPLOAD_FILE_SIZE } from '@/utils/constants'
 
 export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: User }) {
   const { files, addFiles } = useUploadContext()
@@ -64,12 +65,9 @@ function Dropzone({
   )
 }
 
-function checkFileSizes(files: File[], routeConfig: ExpandedRouteConfig | undefined) {
-  for (const file of files) {
-    if (routeConfig) {
-      return isValidFileSize(file, routeConfig)
-    } else {
-      return file.size < 1024 * 1024 * 1 // Number of MB
-    }
+function checkFileSizes(files: File[], routeConfig: ExpandedRouteConfig | undefined): boolean {
+  if (routeConfig) {
+    return files.every((file) => isValidFileSize(file, routeConfig))
   }
+  return files.every((file) => file.size < MAX_UPLOAD_FILE_SIZE)
 }
