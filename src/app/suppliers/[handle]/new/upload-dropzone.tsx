@@ -11,22 +11,12 @@ import { Button } from '@/components/ui/button'
 import { User } from '@/models/types'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
-import { useUploadContext, FileWithMetadata } from './upload-context'
+import { useUploadContext } from './upload-context'
 import { UploadPreviewList } from './upload-preview'
 
 export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: User }) {
   const { files, addFiles } = useUploadContext()
   const { routeConfig } = useUploadThing('tileUploader')
-
-  // If routeConfig is undefined upload is broken
-  if (!routeConfig) {
-    return (
-      <div className="text-center">
-        <p className="ui-s1">Upload unavailable</p>
-        <p className="ui-small text-muted-foreground">Please try refreshing the page or contact support if the problem persists.</p>
-      </div>
-    )
-  }
 
   const onDrop = React.useCallback(
     async (acceptedFiles: File[]) => {
@@ -74,8 +64,12 @@ function Dropzone({
   )
 }
 
-function checkFileSizes(files: File[], routeConfig: ExpandedRouteConfig) {
+function checkFileSizes(files: File[], routeConfig: ExpandedRouteConfig | undefined) {
   for (const file of files) {
-    return isValidFileSize(file, routeConfig)
+    if (routeConfig) {
+      return isValidFileSize(file, routeConfig)
+    } else {
+      return file.size < 1024 * 1024 * 1 // Number of MB
+    }
   }
 }
