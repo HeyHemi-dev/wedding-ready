@@ -21,7 +21,7 @@ export default async function NewSupplierTilePage({ params }: { params: Promise<
 
   // Check if the user is the owner of the supplier to allow creating tiles
   const user = await getCurrentUser()
-  const isSupplierUser = supplier?.users.some((u) => u.id === user?.id)
+  const isSupplierUser = supplier.users.some((u) => u.id === user?.id)
 
   if (!user || !isSupplierUser) {
     redirect(`/suppliers/${handle}`)
