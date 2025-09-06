@@ -4,7 +4,7 @@ import { SERVICES } from '@/db/constants'
 import { scene } from '@/testing/scene'
 
 import { tileOperations } from './tile-operations'
-import { savedTilesModel } from '@/models/savedTiles'
+import { savedTilesModel } from '@/models/saved-tiles'
 
 describe('tileOperations', () => {
   afterAll(async () => {

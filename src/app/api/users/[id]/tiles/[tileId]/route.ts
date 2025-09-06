@@ -1,4 +1,4 @@
-import { savedTilesModel } from '@/models/savedTiles'
+import { savedTilesModel } from '@/models/saved-tiles'
 import * as t from '@/models/types'
 import { getAuthUserId } from '@/utils/auth'
 

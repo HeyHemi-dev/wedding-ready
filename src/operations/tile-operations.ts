@@ -1,7 +1,7 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
 import { TileCreditForm, TileCreate } from '@/app/_types/validation-schema'
-import { savedTilesModel } from '@/models/savedTiles'
+import { savedTilesModel } from '@/models/saved-tiles'
 import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
