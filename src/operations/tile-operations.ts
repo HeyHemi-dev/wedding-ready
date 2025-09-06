@@ -1,7 +1,7 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
 import { TileCreditForm, TileCreate } from '@/app/_types/validation-schema'
-import { SavedTilesModel } from '@/models/savedTiles'
+import { savedTilesModel } from '@/models/savedTiles'
 import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
@@ -114,14 +114,14 @@ async function getCreditsForTile(tileId: string): Promise<TileCredit[]> {
   }))
 }
 
-async function createCreditForTile({ tileId, credit, userId }: { tileId: string; credit: TileCreditForm; userId: string }): Promise<TileCredit[]> {
+async function createCreditForTile({ tileId, credit, authUserId }: { tileId: string; credit: TileCreditForm; authUserId: string }): Promise<TileCredit[]> {
   const [tile, supplier] = await Promise.all([tileModel.getRawById(tileId), supplierModel.getRawById(credit.supplierId)])
 
   if (!tile || !supplier) {
     throw OPERATION_ERROR.DATA_INTEGRITY()
   }
 
-  if (tile.createdByUserId !== userId) {
+  if (tile.createdByUserId !== authUserId) {
     throw OPERATION_ERROR.FORBIDDEN()
   }
 
@@ -137,12 +137,12 @@ async function createCreditForTile({ tileId, credit, userId }: { tileId: string;
 }
 
 async function getSavedState(tileId: string, authUserId: string): Promise<boolean> {
-  const savedTile = await SavedTilesModel.getSavedTileRaw(tileId, authUserId)
+  const savedTile = await savedTilesModel.getSavedTileRaw(tileId, authUserId)
   return savedTile?.isSaved ?? false
 }
 
 async function getSavedStates(tileIds: string[], authUserId: string): Promise<{ tileId: string; isSaved: boolean }[]> {
-  const savedTiles = await SavedTilesModel.getSavedTilesRaw(tileIds, authUserId)
+  const savedTiles = await savedTilesModel.getSavedTilesRaw(tileIds, authUserId)
   return tileIds.map((tileId) => ({
     tileId,
     isSaved: savedTiles.find((st) => st.tileId === tileId)?.isSaved ?? false,

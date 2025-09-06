@@ -4,7 +4,7 @@ import { db } from '@/db/connection'
 import * as s from '@/db/schema'
 import * as t from '@/models/types'
 
-export const SavedTilesModel = {
+export const savedTilesModel = {
   getSavedTileRaw,
   getSavedTilesRaw,
   upsertSavedTileRaw,
