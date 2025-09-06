@@ -37,7 +37,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ tileId:
     return ROUTE_ERROR.UNAUTHORIZED()
   }
 
-  const { data, error } = await tryCatch(tileOperations.createCreditForTile({ tileId, credit: parsed.data, userId: authUserId }))
+  const { data, error } = await tryCatch(tileOperations.createCreditForTile({ tileId, credit: parsed.data, authUserId }))
   if (error) {
     return ROUTE_ERROR.INTERNAL_SERVER_ERROR()
   }
