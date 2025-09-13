@@ -7,7 +7,7 @@ import { UserUpdateForm, userUpdateFormSchema } from '@/app/_types/validation-sc
 import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
 import { nullishToEmptyString } from '@/utils/empty-strings'
-import { tryCatch } from '@/utils/try-catch'
+
 import { OPERATION_ERROR } from '../_types/errors'
 
 export async function updateProfileFormAction(data: UserUpdateForm): Promise<UserUpdateForm> {
