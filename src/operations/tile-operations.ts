@@ -87,7 +87,7 @@ async function createForSupplier({ imagePath, title, description, location, crea
   // TODO: Support multiple credits
   const credit = credits[0]
   const supplier = await supplierModel.getRawById(credit.supplierId)
-  if (!supplier) throw OPERATION_ERROR.DATA_INTEGRITY()
+  if (!supplier) throw OPERATION_ERROR.BAD_REQUEST()
 
   const tileData: t.InsertTileRaw = { imagePath, title, description, location, createdByUserId, isPrivate }
 
@@ -118,11 +118,11 @@ async function createCreditForTile({ tileId, credit, authUserId }: { tileId: str
   const [tile, supplier] = await Promise.all([tileModel.getRawById(tileId), supplierModel.getRawById(credit.supplierId)])
 
   if (!tile || !supplier) {
-    throw OPERATION_ERROR.DATA_INTEGRITY()
+    throw OPERATION_ERROR.BAD_REQUEST()
   }
 
   if (tile.createdByUserId !== authUserId) {
-    throw OPERATION_ERROR.FORBIDDEN()
+    throw OPERATION_ERROR.UNAUTHORIZED()
   }
 
   await tileSupplierModel.createRaw({ tileId, supplierId: credit.supplierId, service: credit.service, serviceDescription: credit.serviceDescription })

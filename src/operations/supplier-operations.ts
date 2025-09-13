@@ -75,12 +75,12 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
 async function register({ name, handle, websiteUrl, description, services, locations, createdByUserId }: SupplierRegistrationForm): Promise<Supplier> {
   const user = await UserDetailModel.getById(createdByUserId)
   if (!user) {
-    throw OPERATION_ERROR.FORBIDDEN()
+    throw OPERATION_ERROR.BAD_REQUEST()
   }
 
   const isAvailable = await supplierModel.isHandleAvailable({ handle })
   if (!isAvailable) {
-    throw OPERATION_ERROR.HANDLE_TAKEN()
+    throw OPERATION_ERROR.BAD_REQUEST()
   }
 
   const insertSupplierData: InsertSupplierRaw = {

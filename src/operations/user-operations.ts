@@ -12,7 +12,7 @@ async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<
   const user = await UserDetailModel.getById(data.id)
   if (!user) throw OPERATION_ERROR.NOT_FOUND()
 
-  if (user.id !== authUserId) throw OPERATION_ERROR.FORBIDDEN()
+  if (user.id !== authUserId) throw OPERATION_ERROR.UNAUTHORIZED()
 
   const setUserDetailData: SetUserDetailRaw = emptyStringToNullIfAllowed({
     displayName: data.displayName,

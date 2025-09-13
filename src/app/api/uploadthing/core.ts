@@ -27,14 +27,13 @@ export const uploadthingRouter = {
       }
 
       const authUserId = await getAuthUserId()
-      if (!authUserId || authUserId !== input.createdByUserId) {
-        throw OPERATION_ERROR.UNAUTHORIZED()
-      }
+      if (!authUserId) throw OPERATION_ERROR.NOT_AUTHENTICATED()
+      if (authUserId !== input.createdByUserId) throw OPERATION_ERROR.UNAUTHORIZED()
 
       for (const credit of input.credits) {
         const supplier = await supplierModel.getRawById(credit.supplierId)
         if (!supplier) {
-          throw OPERATION_ERROR.DATA_INTEGRITY()
+          throw OPERATION_ERROR.BAD_REQUEST()
         }
       }
 

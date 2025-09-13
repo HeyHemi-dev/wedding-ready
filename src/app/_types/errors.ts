@@ -82,10 +82,11 @@ export const ROUTE_ERROR = {
 }
 
 export const OPERATION_ERROR = {
+  NOT_AUTHENTICATED: (message = 'Not Authenticated') => new Error(message),
   UNAUTHORIZED: (message = 'Unauthorized') => new Error(message),
-  FORBIDDEN: (message = 'Forbidden') => new Error(message),
-  DATA_INTEGRITY: (message = 'Data Integrity') => new Error(message),
-  NOT_FOUND: (message = 'Not Found') => new Error(message),
-  HANDLE_TAKEN: (message = 'Handle is already taken') => new Error(message),
   BAD_REQUEST: (message = 'Bad Request') => new Error(message),
+  NOT_FOUND: (message = 'Not Found') => new Error(message),
+  // FORBIDDEN: (message = 'Forbidden') => new Error(message),
+  // DATA_INTEGRITY: (message = 'Data Integrity') => new Error(message),
+  // HANDLE_TAKEN: (message = 'Handle is already taken') => new Error(message),
 }

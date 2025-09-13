@@ -18,7 +18,7 @@ export async function updateProfileFormAction(data: UserUpdateForm): Promise<Use
 
   const authUserId = await getAuthUserId()
   if (!authUserId) {
-    throw OPERATION_ERROR.UNAUTHORIZED()
+    throw OPERATION_ERROR.NOT_AUTHENTICATED()
   }
 
   const user = await userOperations.updateProfile(validatedData, authUserId)
