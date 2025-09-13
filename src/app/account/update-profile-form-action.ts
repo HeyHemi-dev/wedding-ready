@@ -5,27 +5,23 @@ import { revalidateTag } from 'next/cache'
 import { tags } from '@/app/_types/tags'
 import { UserUpdateForm, userUpdateFormSchema } from '@/app/_types/validation-schema'
 import { userOperations } from '@/operations/user-operations'
-import { getAuthUserIdFromSupabase } from '@/utils/auth'
+import { getAuthUserId } from '@/utils/auth'
 import { nullishToEmptyString } from '@/utils/empty-strings'
 import { tryCatch } from '@/utils/try-catch'
+import { OPERATION_ERROR } from '../_types/errors'
 
-
-export async function updateProfileFormAction({ data }: { data: UserUpdateForm }): Promise<UserUpdateForm> {
+export async function updateProfileFormAction(data: UserUpdateForm): Promise<UserUpdateForm> {
   const { success, error: parseError, data: validatedData } = userUpdateFormSchema.safeParse(data)
   if (!success || parseError) {
-    throw new Error(JSON.stringify(parseError?.flatten().fieldErrors))
+    throw OPERATION_ERROR.BAD_REQUEST(JSON.stringify(parseError?.flatten().fieldErrors))
   }
 
-  const { data: authUserId, error: authUserIdError } = await tryCatch(getAuthUserIdFromSupabase())
-  if (authUserIdError || !authUserId || validatedData.id !== authUserId) {
-    throw new Error('Unauthorized')
+  const authUserId = await getAuthUserId()
+  if (!authUserId) {
+    throw OPERATION_ERROR.UNAUTHORIZED()
   }
 
-  const { data: user, error: updateError } = await tryCatch(userOperations.updateProfile(validatedData))
-
-  if (updateError) {
-    throw new Error(updateError?.message || 'Failed to update profile')
-  }
+  const user = await userOperations.updateProfile(validatedData, authUserId)
 
   revalidateTag(tags.currentUser(user.id))
 
