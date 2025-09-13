@@ -47,11 +47,7 @@ export class UserDetailModel {
     }
     userDetailRawData.updatedAt = new Date()
 
-    const userDetailsRaw = await db
-      .update(schema.user_details)
-      .set(emptyStringToNullIfAllowed(userDetailRawData))
-      .where(eq(schema.user_details.id, id))
-      .returning()
+    const userDetailsRaw = await db.update(schema.user_details).set(userDetailRawData).where(eq(schema.user_details.id, id)).returning()
 
     return userDetailsRaw[0]
   }
