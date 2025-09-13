@@ -16,7 +16,6 @@ import { tryCatch } from '@/utils/try-catch'
 import { updateProfileFormAction } from './update-profile-form-action'
 import { userUpdateFormSchema, UserUpdateForm } from '../_types/validation-schema'
 
-
 export default function UpdateProfileForm({ defaultValues, className }: { defaultValues: UserUpdateForm; className?: string }) {
   const form = useForm<UserUpdateForm>({
     resolver: zodResolver(userUpdateFormSchema),
@@ -27,7 +26,7 @@ export default function UpdateProfileForm({ defaultValues, className }: { defaul
   })
 
   async function onSubmit(data: UserUpdateForm) {
-    const { data: newValues, error } = await tryCatch(updateProfileFormAction({ data }))
+    const { data: newValues, error } = await tryCatch(updateProfileFormAction(data))
     if (error) {
       toast.error(error.message)
     }
