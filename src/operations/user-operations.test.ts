@@ -28,15 +28,18 @@ describe('userOperations', () => {
       const user = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: supabaseAdmin })
 
       // Act
-      const updatedUser = await userOperations.updateProfile({
-        id: user.id,
-        displayName: 'Updated User',
-        bio: 'Updated Bio',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        instagramUrl: 'https://example.com/instagram',
-        tiktokUrl: 'https://example.com/tiktok',
-        websiteUrl: 'https://example.com',
-      })
+      const updatedUser = await userOperations.updateProfile(
+        {
+          id: user.id,
+          displayName: 'Updated User',
+          bio: 'Updated Bio',
+          avatarUrl: 'https://example.com/avatar.jpg',
+          instagramUrl: 'https://example.com/instagram',
+          tiktokUrl: 'https://example.com/tiktok',
+          websiteUrl: 'https://example.com',
+        },
+        user.id
+      )
 
       // Assert
       expect(updatedUser).toBeDefined()
