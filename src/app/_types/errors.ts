@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 // ============================================================================
-// ERROR CODES - Centralized error code definitions
+// ERROR MESSAGES - Centralized error message definitions
 // ============================================================================
 
 export const ERROR_MESSAGE = {
@@ -27,26 +27,21 @@ export const ERROR_MESSAGE = {
   DATABASE_ERROR: 'Database operation failed',
 } as const
 
-export type ErrorCode = (typeof ERROR_MESSAGE)[keyof typeof ERROR_MESSAGE]
+export type ErrorMessage = (typeof ERROR_MESSAGE)[keyof typeof ERROR_MESSAGE]
 
 // ============================================================================
 // OPERATION ERRORS - For use in business logic/operations layer
 // ============================================================================
 
 export const OPERATION_ERROR = {
-  // Authentication - user is not signed in
   NOT_AUTHENTICATED: (message?: string) => new Error(message ?? ERROR_MESSAGE.NOT_AUTHENTICATED),
 
-  // Authorization - user is authenticated but lacks permission
   FORBIDDEN: (message?: string) => new Error(message ?? ERROR_MESSAGE.FORBIDDEN),
 
-  // Validation - input data doesn't meet requirements
   VALIDATION_ERROR: (message?: string) => new Error(message ?? ERROR_MESSAGE.VALIDATION_ERROR),
 
-  // Business logic - operation violates business rules
   BUSINESS_RULE_VIOLATION: (message?: string) => new Error(message ?? ERROR_MESSAGE.BUSINESS_RULE_VIOLATION),
 
-  // Resource conflicts - duplicate resources, etc.
   RESOURCE_CONFLICT: (message?: string) => new Error(message ?? ERROR_MESSAGE.RESOURCE_CONFLICT),
 
   // Resource not found
@@ -57,84 +52,61 @@ export const OPERATION_ERROR = {
 } as const
 
 // ============================================================================
-// ROUTE ERRORS - For use in API routes (NextResponse)
+// HTTP ERRORS - For use in API routes (NextResponse)
 // ============================================================================
 
-export const ROUTE_ERROR = {
-  // 400 - Bad Request
-  VALIDATION_ERROR: (message?: string) =>
+export const HTTP_ERROR = {
+  BAD_REQUEST: (message?: string) =>
     NextResponse.json(
       {
-        code: ERROR_MESSAGE.VALIDATION_ERROR,
+        code: 'Bad Request',
         message,
       },
       { status: 400 }
     ),
 
-  BUSINESS_RULE_VIOLATION: (message?: string) =>
+  UNAUTHORIZED: (message?: string) =>
     NextResponse.json(
       {
-        code: ERROR_MESSAGE.BUSINESS_RULE_VIOLATION,
-        message,
-      },
-      { status: 400 }
-    ),
-
-  RESOURCE_CONFLICT: (message?: string) =>
-    NextResponse.json(
-      {
-        code: ERROR_MESSAGE.RESOURCE_CONFLICT,
-        message,
-      },
-      { status: 400 }
-    ),
-
-  // 401 - Unauthorized (not authenticated)
-  NOT_AUTHENTICATED: (message?: string) =>
-    NextResponse.json(
-      {
-        code: ERROR_MESSAGE.NOT_AUTHENTICATED,
+        code: 'Unauthorized',
         message,
       },
       { status: 401 }
     ),
 
-  // 403 - Forbidden (authenticated but not authorized)
   FORBIDDEN: (message?: string) =>
     NextResponse.json(
       {
-        code: ERROR_MESSAGE.FORBIDDEN,
+        code: 'Forbidden',
         message,
       },
       { status: 403 }
     ),
 
-  // 404 - Not Found
-  RESOURCE_NOT_FOUND: (message?: string) =>
+  NOT_FOUND: (message?: string) =>
     NextResponse.json(
       {
-        code: ERROR_MESSAGE.RESOURCE_NOT_FOUND,
+        code: 'Not Found',
         message,
       },
       { status: 404 }
     ),
 
-  // 500 - Internal Server Error
   INTERNAL_SERVER_ERROR: (message?: string) =>
     NextResponse.json(
       {
-        code: ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
+        code: 'Internal Server Error',
         message,
       },
       { status: 500 }
     ),
+} as const
 
-  DATABASE_ERROR: (message?: string) =>
-    NextResponse.json(
-      {
-        code: ERROR_MESSAGE.DATABASE_ERROR,
-        message,
-      },
-      { status: 500 }
-    ),
+/** @deprecated Use HTTP_ERROR instead */
+export const ROUTE_ERROR = {
+  VALIDATION_ERROR: HTTP_ERROR.BAD_REQUEST,
+  NOT_AUTHENTICATED: HTTP_ERROR.UNAUTHORIZED,
+  FORBIDDEN: HTTP_ERROR.FORBIDDEN,
+  RESOURCE_NOT_FOUND: HTTP_ERROR.NOT_FOUND,
+  INTERNAL_SERVER_ERROR: HTTP_ERROR.INTERNAL_SERVER_ERROR,
 } as const
