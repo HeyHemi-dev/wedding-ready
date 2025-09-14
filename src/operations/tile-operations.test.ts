@@ -1,9 +1,9 @@
 import { afterAll, afterEach, describe, expect, it } from 'vitest'
 
+import { savedTilesModel } from '@/models/saved-tiles'
 import { scene, TEST_TILE } from '@/testing/scene'
 
 import { tileOperations } from './tile-operations'
-import { savedTilesModel } from '@/models/saved-tiles'
 
 const CURRENT_USER = {
   email: 'currentUser@example.com',
@@ -119,7 +119,8 @@ describe('tileOperations', () => {
       const user = await scene.hasUser()
       const supplier = await scene.hasSupplier({ createdByUserId: user.id })
       const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [{ supplierId: supplier.id }] })
-      const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [{ supplierId: supplier.id }] })
+      await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [{ supplierId: supplier.id }] })
+
       await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
 
       // Act

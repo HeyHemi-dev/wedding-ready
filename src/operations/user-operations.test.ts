@@ -1,7 +1,10 @@
-import { scene } from '@/testing/scene'
 import { afterAll, afterEach, describe, expect, it } from 'vitest'
-import { userOperations } from './user-operations'
+
+import { scene } from '@/testing/scene'
 import { createAdminClient } from '@/utils/supabase/server'
+
+import { userOperations } from './user-operations'
+
 
 const TEST_USER_OPERATIONS = {
   email: 'testUserOperations@example.com',

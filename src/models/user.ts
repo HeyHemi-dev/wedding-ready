@@ -3,7 +3,6 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db/connection'
 import * as schema from '@/db/schema'
 import { InsertUserDetailRaw, SetUserDetailRaw, UserDetailRaw } from '@/models/types'
-import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export class UserDetailModel {
   private userDetailRaw: UserDetailRaw
