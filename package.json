@@ -96,7 +96,10 @@
     ],
     "onlyBuiltDependencies": [
       "supabase"
-    ]
+    ],
+    "overrides": {
+      "whatwg-url": "13.0.0"
+    }
   },
   "overrides": {
     "@radix-ui/react-dismissable-layer": "1.0.5",
