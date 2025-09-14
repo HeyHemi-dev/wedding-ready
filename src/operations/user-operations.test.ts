@@ -34,8 +34,8 @@ describe('userOperations', () => {
           displayName: 'Updated User',
           bio: 'Updated Bio',
           avatarUrl: 'https://example.com/avatar.jpg',
-          instagramUrl: 'https://example.com/instagram',
-          tiktokUrl: 'https://example.com/tiktok',
+          instagramUrl: 'https://instagram.com/example',
+          tiktokUrl: 'https://tiktok.com/example',
           websiteUrl: 'https://example.com',
         },
         user.id
@@ -46,6 +46,75 @@ describe('userOperations', () => {
       expect(updatedUser.id).toBe(user.id)
       expect(user.displayName).toBe(TEST_USER_OPERATIONS.displayName)
       expect(updatedUser.displayName).toBe('Updated User')
+    })
+    it('should throw an error if the user is not found', async () => {
+      // Arrange,
+      const fakeUserId = '00000000-0000-0000-0000-000000000000'
+
+      // Act & Assert
+      await expect(
+        userOperations.updateProfile(
+          {
+            id: fakeUserId,
+            displayName: 'Updated User',
+            bio: 'Updated Bio',
+            avatarUrl: 'https://example.com/avatar.jpg',
+            instagramUrl: 'https://instagram.com/example',
+            tiktokUrl: 'https://tiktok.com/example',
+            websiteUrl: 'https://example.com',
+          },
+          fakeUserId
+        )
+      ).rejects.toThrow()
+    })
+    it('should throw an error if the user is not the current user', async () => {
+      // Arrange
+      const user = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: supabaseAdmin })
+      const fakeUserId = '00000000-0000-0000-0000-000000000000'
+
+      // Act & Assert
+      await expect(
+        userOperations.updateProfile(
+          {
+            id: user.id,
+            displayName: 'Updated User',
+            bio: 'Updated Bio',
+            avatarUrl: 'https://example.com/avatar.jpg',
+            instagramUrl: 'https://instagram.com/example',
+            tiktokUrl: 'https://tiktok.com/example',
+            websiteUrl: 'https://example.com',
+          },
+          fakeUserId
+        )
+      ).rejects.toThrow()
+    })
+    it('should handle empty strings as null', async () => {
+      // Arrange
+      const user = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: supabaseAdmin })
+
+      // Act
+      const updatedUser = await userOperations.updateProfile(
+        {
+          id: user.id,
+          displayName: 'Updated User',
+          bio: 'Updated Bio',
+          avatarUrl: '',
+          instagramUrl: '',
+          tiktokUrl: '',
+          websiteUrl: '',
+        },
+        user.id
+      )
+
+      // Assert
+      expect(updatedUser).toBeDefined()
+      expect(updatedUser.id).toBe(user.id)
+      expect(updatedUser.displayName).toBe('Updated User')
+      expect(updatedUser.bio).toBe('Updated Bio')
+      expect(updatedUser.avatarUrl).toBeNull()
+      expect(updatedUser.instagramUrl).toBeNull()
+      expect(updatedUser.tiktokUrl).toBeNull()
+      expect(updatedUser.websiteUrl).toBeNull()
     })
   })
 })
