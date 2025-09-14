@@ -10,9 +10,9 @@ export const userOperations = {
 
 async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<User> {
   const user = await UserDetailModel.getById(data.id)
-  if (!user) throw OPERATION_ERROR.NOT_FOUND()
+  if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
-  if (user.id !== authUserId) throw OPERATION_ERROR.UNAUTHORIZED()
+  if (user.id !== authUserId) throw OPERATION_ERROR.FORBIDDEN()
 
   const setUserDetailData: SetUserDetailRaw = emptyStringToNullIfAllowed({
     displayName: data.displayName,

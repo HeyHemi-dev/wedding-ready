@@ -13,7 +13,7 @@ import { OPERATION_ERROR } from '../_types/errors'
 export async function updateProfileFormAction(data: UserUpdateForm): Promise<UserUpdateForm> {
   const { success, error: parseError, data: validatedData } = userUpdateFormSchema.safeParse(data)
   if (!success || parseError) {
-    throw OPERATION_ERROR.BAD_REQUEST(JSON.stringify(parseError?.flatten().fieldErrors))
+    throw OPERATION_ERROR.VALIDATION_ERROR()
   }
 
   const authUserId = await getAuthUserId()

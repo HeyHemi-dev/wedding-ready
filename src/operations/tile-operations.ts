@@ -19,7 +19,7 @@ export const tileOperations = {
 async function getById(id: string, authUserId?: string): Promise<Tile> {
   const [tile, tileCredits] = await Promise.all([tileModel.getById(id), tileSupplierModel.getCreditsByTileId(id)])
 
-  if (!tile) throw OPERATION_ERROR.NOT_FOUND()
+  if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
   const isSaved = authUserId ? await getSavedState(id, authUserId) : undefined
 
@@ -82,12 +82,12 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
 }
 
 async function createForSupplier({ imagePath, title, description, location, createdByUserId, isPrivate, credits }: TileCreate): Promise<{ id: string }> {
-  if (credits.length === 0) throw OPERATION_ERROR.BAD_REQUEST()
+  if (credits.length === 0) throw OPERATION_ERROR.BUSINESS_RULE_VIOLATION()
 
   // TODO: Support multiple credits
   const credit = credits[0]
   const supplier = await supplierModel.getRawById(credit.supplierId)
-  if (!supplier) throw OPERATION_ERROR.BAD_REQUEST()
+  if (!supplier) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
   const tileData: t.InsertTileRaw = { imagePath, title, description, location, createdByUserId, isPrivate }
 
@@ -118,11 +118,11 @@ async function createCreditForTile({ tileId, credit, authUserId }: { tileId: str
   const [tile, supplier] = await Promise.all([tileModel.getRawById(tileId), supplierModel.getRawById(credit.supplierId)])
 
   if (!tile || !supplier) {
-    throw OPERATION_ERROR.BAD_REQUEST()
+    throw OPERATION_ERROR.RESOURCE_NOT_FOUND('Tile or supplier not found')
   }
 
   if (tile.createdByUserId !== authUserId) {
-    throw OPERATION_ERROR.UNAUTHORIZED()
+    throw OPERATION_ERROR.FORBIDDEN('Only the tile creator can add credits')
   }
 
   await tileSupplierModel.createRaw({ tileId, supplierId: credit.supplierId, service: credit.service, serviceDescription: credit.serviceDescription })

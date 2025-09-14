@@ -1,32 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
-import { ROUTE_ERRORS } from '@/app/_types/errors'
+import { ROUTE_ERROR } from '@/app/_types/errors'
 import { SupplierSearchResult } from '@/app/_types/suppliers'
 import { supplierOperations } from '@/operations/supplier-operations'
 import { parseQueryParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
-type ErrorResponse = {
-  message: string
-  error?: string
-}
-
 const supplierSearchGetRequestParams = z.object({
   q: z.string().optional(),
 })
-
 export type SupplierSearchGetRequestParams = z.infer<typeof supplierSearchGetRequestParams>
-
 export type SupplierSearchGetResponseBody = SupplierSearchResult[]
 
-export async function GET(req: NextRequest): Promise<NextResponse<SupplierSearchGetResponseBody | ErrorResponse>> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   const userId = await getAuthUserId()
-
-  if (!userId) {
-    return ROUTE_ERRORS.UNAUTHORIZED
-  }
+  if (!userId) return ROUTE_ERROR.NOT_AUTHENTICATED()
 
   const parsedQueryParams = parseQueryParams(req.nextUrl, supplierSearchGetRequestParams)
 
@@ -35,10 +25,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<SupplierSearch
   }
 
   const { data: suppliers, error } = await tryCatch(supplierOperations.search(parsedQueryParams.q.trim()))
-
-  if (error) {
-    return NextResponse.json({ message: 'Error searching suppliers', error: error.message } as ErrorResponse, { status: 500 })
-  }
+  if (error) return ROUTE_ERROR.INTERNAL_SERVER_ERROR()
 
   return NextResponse.json(suppliers)
 }
