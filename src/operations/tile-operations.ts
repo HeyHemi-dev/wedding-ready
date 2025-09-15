@@ -118,11 +118,11 @@ async function createCreditForTile({ tileId, credit, authUserId }: { tileId: str
   const [tile, supplier] = await Promise.all([tileModel.getRawById(tileId), supplierModel.getRawById(credit.supplierId)])
 
   if (!tile || !supplier) {
-    throw OPERATION_ERROR.RESOURCE_NOT_FOUND('Tile or supplier not found')
+    throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
   }
-
+  // Only the person who created the tile can add a credit
   if (tile.createdByUserId !== authUserId) {
-    throw OPERATION_ERROR.FORBIDDEN('Only the tile creator can add credits')
+    throw OPERATION_ERROR.FORBIDDEN()
   }
 
   await tileSupplierModel.createRaw({ tileId, supplierId: credit.supplierId, service: credit.service, serviceDescription: credit.serviceDescription })

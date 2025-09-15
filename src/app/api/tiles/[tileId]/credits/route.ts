@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { ROUTE_ERROR } from '@/app/_types/errors'
+import { HTTP_ERROR } from '@/app/_types/errors'
 import { TileCredit } from '@/app/_types/tiles'
 import { tileCreditFormSchema, TileCreditForm } from '@/app/_types/validation-schema'
 import { tileOperations } from '@/operations/tile-operations'
@@ -14,7 +14,7 @@ export type TileCreditPostResponseBody = TileCredit
 export async function GET(_req: Request, { params }: { params: Promise<{ tileId: string }> }): Promise<NextResponse> {
   const { tileId } = await params
   const { data, error } = await tryCatch(tileOperations.getCreditsForTile(tileId))
-  if (error) return ROUTE_ERROR.INTERNAL_SERVER_ERROR()
+  if (error) return HTTP_ERROR.INTERNAL_SERVER_ERROR()
 
   return NextResponse.json(data)
 }
@@ -22,20 +22,15 @@ export async function GET(_req: Request, { params }: { params: Promise<{ tileId:
 export async function POST(req: Request, { params }: { params: Promise<{ tileId: string }> }): Promise<NextResponse> {
   const { tileId } = await params
 
-  // Validate the request body
   const body = (await req.json()) as TileCreditPostRequestBody
   const parsed = tileCreditFormSchema.safeParse(body)
-  if (!parsed.success) return ROUTE_ERROR.VALIDATION_ERROR()
+  if (!parsed.success) return HTTP_ERROR.BAD_REQUEST()
 
-  // Only the person who created the tile can add a credit
-  const tile = await tileOperations.getById(tileId)
   const authUserId = await getAuthUserId()
-  if (!authUserId || tile.createdByUserId != authUserId) {
-    return ROUTE_ERROR.FORBIDDEN()
-  }
+  if (!authUserId) return HTTP_ERROR.UNAUTHORIZED()
 
   const { data, error } = await tryCatch(tileOperations.createCreditForTile({ tileId, credit: parsed.data, authUserId }))
-  if (error) return ROUTE_ERROR.INTERNAL_SERVER_ERROR()
+  if (error) return HTTP_ERROR.INTERNAL_SERVER_ERROR()
 
   return NextResponse.json(data)
 }
