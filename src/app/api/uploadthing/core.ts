@@ -21,15 +21,15 @@ export const uploadthingRouter = {
     // Whatever is returned is accessible in onUploadComplete as `metadata`
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .middleware(async ({ req, input }) => {
-      const { data: validatedInput, error: parseError } = tileUploadPreviewFormSchema.safeParse(input)
-      if (parseError) throw OPERATION_ERROR.VALIDATION_ERROR()
-      if (input.isPrivate === true) throw OPERATION_ERROR.FORBIDDEN()
+      const { success, data: validatedInput } = tileUploadPreviewFormSchema.safeParse(input)
+      if (!success) throw OPERATION_ERROR.VALIDATION_ERROR()
+      if (validatedInput.isPrivate === true) throw OPERATION_ERROR.FORBIDDEN()
 
       const authUserId = await getAuthUserId()
       if (!authUserId) throw OPERATION_ERROR.NOT_AUTHENTICATED()
-      if (authUserId !== input.createdByUserId) throw OPERATION_ERROR.FORBIDDEN()
+      if (authUserId !== validatedInput.createdByUserId) throw OPERATION_ERROR.FORBIDDEN()
 
-      for (const credit of input.credits) {
+      for (const credit of validatedInput.credits) {
         const supplier = await supplierModel.getRawById(credit.supplierId)
         if (!supplier) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
       }
