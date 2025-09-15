@@ -30,6 +30,9 @@ export async function getAuthUserId(): Promise<string | null> {
 }
 
 /**
+ * @deprecated Use getAuthUserId() instead
+ * middleware does run on server actions, so this is no longer needed
+ *
  * Gets the authenticated user's ID from Supabase Auth.
  * Use only when middleware hasn't run (e.g. form actions).
  *

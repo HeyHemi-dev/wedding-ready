@@ -109,7 +109,7 @@ async function hasTile({
   return tile
 }
 
-async function withoutUser({ handle, supabaseClient }: { handle: string; supabaseClient: SupabaseClient }): Promise<void> {
+async function withoutUser({ handle = TEST_USER.handle, supabaseClient }: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
   const user = await UserDetailModel.getByHandle(handle)
   if (!user) return
 
@@ -119,13 +119,13 @@ async function withoutUser({ handle, supabaseClient }: { handle: string; supabas
   await client.auth.admin.deleteUser(user.id)
 }
 
-async function withoutSupplier({ handle }: { handle: string }): Promise<void> {
+async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {
   const supplier = await supplierModel.getByHandle(handle)
   if (!supplier) return
   await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
 }
 
-async function withoutTilesForSupplier({ supplierHandle }: { supplierHandle: string }): Promise<void> {
+async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }: Partial<{ supplierHandle: string }> = {}): Promise<void> {
   const tiles = await tileModel.getManyRawBySupplierHandle(supplierHandle)
   if (tiles.length === 0) return
   await tileModel.deleteManyByIds(tiles.map((t) => t.id))

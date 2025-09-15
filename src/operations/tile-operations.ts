@@ -1,7 +1,7 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
 import { TileCreditForm, TileCreate } from '@/app/_types/validation-schema'
-import { SavedTilesModel } from '@/models/savedTiles'
+import { savedTilesModel } from '@/models/saved-tiles'
 import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
@@ -19,7 +19,7 @@ export const tileOperations = {
 async function getById(id: string, authUserId?: string): Promise<Tile> {
   const [tile, tileCredits] = await Promise.all([tileModel.getById(id), tileSupplierModel.getCreditsByTileId(id)])
 
-  if (!tile) throw OPERATION_ERROR.NOT_FOUND()
+  if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
   const isSaved = authUserId ? await getSavedState(id, authUserId) : undefined
 
@@ -82,12 +82,12 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
 }
 
 async function createForSupplier({ imagePath, title, description, location, createdByUserId, isPrivate, credits }: TileCreate): Promise<{ id: string }> {
-  if (credits.length === 0) throw OPERATION_ERROR.BAD_REQUEST()
+  if (credits.length === 0) throw OPERATION_ERROR.BUSINESS_RULE_VIOLATION()
 
   // TODO: Support multiple credits
   const credit = credits[0]
   const supplier = await supplierModel.getRawById(credit.supplierId)
-  if (!supplier) throw OPERATION_ERROR.DATA_INTEGRITY()
+  if (!supplier) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
   const tileData: t.InsertTileRaw = { imagePath, title, description, location, createdByUserId, isPrivate }
 
@@ -114,14 +114,14 @@ async function getCreditsForTile(tileId: string): Promise<TileCredit[]> {
   }))
 }
 
-async function createCreditForTile({ tileId, credit, userId }: { tileId: string; credit: TileCreditForm; userId: string }): Promise<TileCredit[]> {
+async function createCreditForTile({ tileId, credit, authUserId }: { tileId: string; credit: TileCreditForm; authUserId: string }): Promise<TileCredit[]> {
   const [tile, supplier] = await Promise.all([tileModel.getRawById(tileId), supplierModel.getRawById(credit.supplierId)])
 
   if (!tile || !supplier) {
-    throw OPERATION_ERROR.DATA_INTEGRITY()
+    throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
   }
-
-  if (tile.createdByUserId !== userId) {
+  // Only the person who created the tile can add a credit
+  if (tile.createdByUserId !== authUserId) {
     throw OPERATION_ERROR.FORBIDDEN()
   }
 
@@ -137,12 +137,12 @@ async function createCreditForTile({ tileId, credit, userId }: { tileId: string;
 }
 
 async function getSavedState(tileId: string, authUserId: string): Promise<boolean> {
-  const savedTile = await SavedTilesModel.getSavedTileRaw(tileId, authUserId)
+  const savedTile = await savedTilesModel.getSavedTileRaw(tileId, authUserId)
   return savedTile?.isSaved ?? false
 }
 
 async function getSavedStates(tileIds: string[], authUserId: string): Promise<{ tileId: string; isSaved: boolean }[]> {
-  const savedTiles = await SavedTilesModel.getSavedTilesRaw(tileIds, authUserId)
+  const savedTiles = await savedTilesModel.getSavedTilesRaw(tileIds, authUserId)
   return tileIds.map((tileId) => ({
     tileId,
     isSaved: savedTiles.find((st) => st.tileId === tileId)?.isSaved ?? false,

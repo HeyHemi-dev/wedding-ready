@@ -35,7 +35,7 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
 
 async function getListForSupplierGrid({ location, service }: { location?: Location; service?: Service }): Promise<SupplierList> {
   if ((!location && !service) || (location && service)) {
-    throw OPERATION_ERROR.BAD_REQUEST()
+    throw OPERATION_ERROR.VALIDATION_ERROR()
   }
   // We can assert that service exists becuase we checked that at least location or service exists, then we check if location doesn't exist. By elimination, service must exist.
   const suppliers = location ? await supplierModel.getAllRawForLocation(location) : await supplierModel.getAllRawForService(service!)
@@ -75,12 +75,12 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
 async function register({ name, handle, websiteUrl, description, services, locations, createdByUserId }: SupplierRegistrationForm): Promise<Supplier> {
   const user = await UserDetailModel.getById(createdByUserId)
   if (!user) {
-    throw OPERATION_ERROR.FORBIDDEN()
+    throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
   }
 
   const isAvailable = await supplierModel.isHandleAvailable({ handle })
   if (!isAvailable) {
-    throw OPERATION_ERROR.HANDLE_TAKEN()
+    throw OPERATION_ERROR.RESOURCE_CONFLICT()
   }
 
   const insertSupplierData: InsertSupplierRaw = {

@@ -6,12 +6,12 @@
 
 | Layer | Responsibility | Implementation |
 |-------|---------------|----------------|
-| Presentation/UI | UI rendering and layout | - 'Dumb' components |
+| Presentation/UI | - UI layout | - 'Dumb' components |
 | Presentation/Client-side Logic | - Animations<br>- State<br>- Data formatting<br> | - Motion<br>- React (state, effects etc.)<br>- Pages |
-| Presentation/Client-side Boundary | - UX<br>- Toasts<br>- Zod parsing | - Fetch (inside custom hooks)<br>- Forms |
-| Presentation/Server-side Boundary | - Authentication<br>- Headers/cookies<br>- Zod declaration/parsing<br>- UI-type definitions<br>- User-facing errors | - SSR (pages)<br>- API endpoints (routes)<br>- Form actions |
-| Operations | - Authorization<br>- Data integrity<br>- Type conversion<br>- Business logic | - Operation Objects (e.g. authOperations, supplierOperations) |
-| Data/Access | - CRUD operations | - Models (e.g. supplierModel) |
+| Presentation/Client-side Boundary | - UX<br>- Toasts<br>- Form field validation | - Fetch (inside custom hooks)<br>- Forms |
+| Presentation/Server-side Boundary | - Authentication<br>- Headers/cookies<br>- Zod parsing<br>- User-facing errors | - SSR (pages)<br>- API endpoints (routes)<br>- Form actions<br>- Front-end types |
+| Operations | - Authorization<br>- Data integrity (e.g relations exist, convert empty strings etc.)<br>- Type conversion<br>- Business logic | - Operation Objects (e.g. authOperations, supplierOperations) |
+| Data/Access | - CRUD operations<br>- Set dates (e.g. updatedAt) | - Models (e.g. supplierModel) |
 | Data/Definition | - Data shape definition | - Schema<br>- Constants (e.g. SUPPLIER_ROLES)<br>- Types (e.g. SupplierRaw)<br>- Migrations |
 
 ## Implementation Details
