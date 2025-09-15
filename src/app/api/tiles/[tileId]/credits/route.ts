@@ -9,7 +9,7 @@ import { tryCatch } from '@/utils/try-catch'
 
 export type TileCreditGetResponseBody = TileCredit[]
 export type TileCreditPostRequestBody = TileCreditForm
-export type TileCreditPostResponseBody = TileCredit
+export type TileCreditPostResponseBody = TileCredit[]
 
 export async function GET(_req: Request, { params }: { params: Promise<{ tileId: string }> }): Promise<NextResponse> {
   const { tileId } = await params
