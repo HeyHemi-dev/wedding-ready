@@ -42,19 +42,17 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
 
   const supplierIds = suppliers.map((supplier) => supplier.id)
 
-  // TODO: make this actually an array of getBySupplierId promises
-  const tilePromises = supplierIds.map(async (supplierId) => {
-    const tiles = await tileModel.getManyBySupplierId(supplierId)
-    return { supplierId, tiles }
-  })
+  const tilesForSuppliers = await Promise.all(
+    supplierIds.map(async (supplierId) => {
+      const tiles = await tileModel.getManyBySupplierId(supplierId)
+      return { supplierId, tiles }
+    })
+  )
 
-  const [locationsForSuppliers, servicesForSuppliers, ...rest] = await Promise.all([
+  const [locationsForSuppliers, servicesForSuppliers] = await Promise.all([
     supplierLocationsModel.getForSupplierIds(supplierIds),
     supplierServicesModel.getForSupplierIds(supplierIds),
-    ...tilePromises,
   ])
-
-  const tilesForSuppliers = rest
 
   const locationsMap = new Map(locationsForSuppliers.map((item) => [item.supplierId, item.locations]))
   const servicesMap = new Map(servicesForSuppliers.map((item) => [item.supplierId, item.services]))
@@ -65,7 +63,7 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
     name: supplier.name,
     handle: supplier.handle,
     mainImage: tilesMap.get(supplier.id)?.[0]?.imagePath ?? '',
-    thumbnailImages: [tilesMap.get(supplier.id)?.[0]?.imagePath ?? '', tilesMap.get(supplier.id)?.[1]?.imagePath ?? ''],
+    thumbnailImages: [tilesMap.get(supplier.id)?.[1]?.imagePath ?? '', tilesMap.get(supplier.id)?.[2]?.imagePath ?? ''],
     services: servicesMap.get(supplier.id) ?? [],
     locations: locationsMap.get(supplier.id) ?? [],
     follows: 154, // TODO: get from supplierFollows table
