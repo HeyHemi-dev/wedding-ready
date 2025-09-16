@@ -1,16 +1,34 @@
-import { describe, it, expect, beforeEach, afterAll } from 'vitest'
+import { describe, it, expect, afterEach, afterAll } from 'vitest'
 
 import { scene, TEST_SUPPLIER } from '@/testing/scene'
 
 import { supplierOperations } from './supplier-operations'
 
 describe('supplierOperations', () => {
-  beforeEach(async () => {
-    await scene.withoutSupplier({ handle: TEST_SUPPLIER.handle })
+  afterEach(async () => {
+    await scene.resetTestData()
   })
 
   afterAll(async () => {
     await scene.resetTestData()
+  })
+
+  describe('getListForSupplierGrid', () => {
+    it('should return a list of suppliers with their locations, services, and tiles', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const tile = await scene.hasTile({ createdByUserId: user.id, credits: [{ supplierId: supplier.id }] })
+
+      // Act
+      const result = await supplierOperations.getListForSupplierGrid({ location: supplier.locations[0] })
+
+      // Assert
+      expect(result).toBeDefined()
+      expect(result.length).toBeGreaterThan(0)
+      expect(result.find((item) => item.handle === supplier.handle)).toBeDefined()
+      expect(result.find((item) => item.handle === supplier.handle)?.mainImage).toBe(tile.imagePath)
+    })
   })
 
   describe('register', () => {

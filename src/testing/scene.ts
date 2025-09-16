@@ -35,7 +35,7 @@ export const TEST_SUPPLIER = {
 export type TestSupplier = typeof TEST_SUPPLIER
 
 export const TEST_TILE = {
-  imagePath: 'https://jjoptcpwkl.ufs.sh/f/iYLB1yJLiRuVlXzYL4dQ2LRxjWbS3ZKApeHDwo1vTIMJFhmP',
+  imagePath: 'https://example.com/fake-image.jpg',
   location: LOCATIONS.WELLINGTON,
 }
 export type TestTile = typeof TEST_TILE
@@ -90,10 +90,7 @@ async function hasTile({
   isPrivate = false,
   credits,
 }: Partial<TileCreate> & Pick<TileCreate, 'createdByUserId' | 'credits'>): Promise<t.TileRaw> {
-  const tiles = await db
-    .select()
-    .from(s.tiles)
-    .where(imagePath === null ? isNull(s.tiles.imagePath) : eq(s.tiles.imagePath, imagePath))
+  const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, imagePath))
 
   if (tiles.length > 0) return tiles[0]
 
