@@ -36,16 +36,18 @@ async function getById(id: string): Promise<t.TileRawWithImage | null> {
   return tiles[0]
 }
 
-async function getManyBySupplierId(supplierId: string): Promise<t.TileRawWithImage[]> {
-  // Since we're filtering for non-null imagePath in the query, we can safely cast the type
-  const tiles = (await db
+async function getManyBySupplierId(supplierId: string, { limit, offset = 0 }: { limit?: number; offset?: number } = {}): Promise<t.TileRaw[]> {
+  const tilesQuery = db
     .select(s.tileColumns)
     .from(s.tiles)
     .innerJoin(s.tileSuppliers, eq(s.tileSuppliers.tileId, s.tiles.id))
-    .where(and(eq(s.tileSuppliers.supplierId, supplierId), eq(s.tiles.isPrivate, false), isNotNull(s.tiles.imagePath)))
-    .orderBy(desc(s.tiles.createdAt))) as t.TileRawWithImage[]
+    .where(and(eq(s.tileSuppliers.supplierId, supplierId), eq(s.tiles.isPrivate, false)))
+    .orderBy(desc(s.tiles.createdAt))
 
-  return tiles
+  if (limit) {
+    return await tilesQuery.limit(limit).offset(offset)
+  }
+  return await tilesQuery
 }
 
 async function getManyRawBySupplierHandle(supplierHandle: string): Promise<t.TileRaw[]> {
