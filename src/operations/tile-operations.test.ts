@@ -19,6 +19,8 @@ describe('tileOperations', () => {
   afterAll(async () => {
     await scene.resetTestData()
     await scene.withoutUser({ handle: CURRENT_USER.handle })
+    await scene.withoutTilesForSupplier({ supplierHandle: 'testsupplier2' })
+    await scene.withoutSupplier({ handle: 'testsupplier2' })
   })
 
   describe('getById', () => {

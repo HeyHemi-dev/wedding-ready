@@ -42,30 +42,28 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
 
   const supplierIds = suppliers.map((supplier) => supplier.id)
 
-  // TODO: make this actually an array of getBySupplierId promises
-  const tilePromises = supplierIds.map(async (supplierId) => {
-    const tiles = await tileModel.getManyBySupplierId(supplierId)
-    return { supplierId, tiles }
-  })
-
-  const [locationsForSuppliers, servicesForSuppliers, ...rest] = await Promise.all([
+  // Get tiles, locations, and services asyncronously to prevent waterfall
+  const [tilesForSuppliers, locationsForSuppliers, servicesForSuppliers] = await Promise.all([
+    Promise.all(
+      supplierIds.map(async (supplierId) => {
+        const tiles = await tileModel.getManyBySupplierId(supplierId, { limit: 3 })
+        return { supplierId, tiles }
+      })
+    ),
     supplierLocationsModel.getForSupplierIds(supplierIds),
     supplierServicesModel.getForSupplierIds(supplierIds),
-    ...tilePromises,
   ])
 
-  const tilesForSuppliers = rest
-
+  const tilesMap = new Map(tilesForSuppliers.map((item) => [item.supplierId, item.tiles]))
   const locationsMap = new Map(locationsForSuppliers.map((item) => [item.supplierId, item.locations]))
   const servicesMap = new Map(servicesForSuppliers.map((item) => [item.supplierId, item.services]))
-  const tilesMap = new Map(tilesForSuppliers.map((item) => [item.supplierId, item.tiles]))
 
   return suppliers.map((supplier) => ({
     id: supplier.id,
     name: supplier.name,
     handle: supplier.handle,
     mainImage: tilesMap.get(supplier.id)?.[0]?.imagePath ?? '',
-    thumbnailImages: [tilesMap.get(supplier.id)?.[0]?.imagePath ?? '', tilesMap.get(supplier.id)?.[1]?.imagePath ?? ''],
+    thumbnailImages: [tilesMap.get(supplier.id)?.[1]?.imagePath ?? '', tilesMap.get(supplier.id)?.[2]?.imagePath ?? ''],
     services: servicesMap.get(supplier.id) ?? [],
     locations: locationsMap.get(supplier.id) ?? [],
     follows: 154, // TODO: get from supplierFollows table
