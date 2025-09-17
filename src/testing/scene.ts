@@ -1,4 +1,4 @@
-import { eq, isNull } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 
 import { Supplier } from '@/app/_types/suppliers'
 import { SupplierRegistrationForm, TileCreate, UserSignupForm } from '@/app/_types/validation-schema'
