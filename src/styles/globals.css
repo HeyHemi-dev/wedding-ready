@@ -109,12 +109,12 @@
 
   * {
     @apply border-border;
+    text-box: trim-both cap alphabetic;
   }
   body {
     @apply bg-background text-foreground;
     scrollbar-gutter: stable;
     overflow-y: scroll;
-    text-box: trim-both cap alphabetic;
   }
 }
 
@@ -125,7 +125,7 @@
     padding: var(--padding-area);
   }
 
-  .supplier-header {
+  /* .supplier-header {
     display: grid;
     grid-template-rows: auto 1fr;
     grid-template-columns: clamp(30ch, 66%, var(--width-prose)) 1fr;
@@ -143,7 +143,7 @@
 
   .supplier-header .right-column {
     grid-column: 2;
-  }
+  } */
 }
 
 @layer components {
@@ -177,6 +177,10 @@
       --text-size-base: 1rem;
       --text-scale: 1.25;
     }
+  }
+
+  .prose * {
+    text-box: trim-both text text;
   }
 
   .heading-2xl {
