@@ -29,8 +29,8 @@ export type SupplierListItem = {
   id: string
   name: string
   handle: string
-  mainImage: string
-  thumbnailImages: string[]
+  mainImage: string | null
+  thumbnailImages: (string | null)[]
   services: Service[]
   locations: Location[]
   follows: number
