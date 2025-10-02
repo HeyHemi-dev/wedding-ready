@@ -109,7 +109,7 @@
 
   * {
     @apply border-border;
-    text-box: trim-both cap alphabetic;
+    /* text-box: trim-both cap alphabetic; */
   }
   body {
     @apply bg-background text-foreground;
