@@ -80,6 +80,13 @@ export const supplierRegistrationFormSchema = z.object({
 })
 export type SupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>
 
+export const supplierUpdateFormSchema = supplierRegistrationFormSchema.pick({
+  name: true,
+  websiteUrl: true,
+  description: true,
+})
+export type SupplierUpdateForm = z.infer<typeof supplierUpdateFormSchema>
+
 // TILE VALIDATION
 
 const creditSchema = z.object({
