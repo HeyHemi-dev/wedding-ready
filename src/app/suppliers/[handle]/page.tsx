@@ -63,10 +63,10 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
 function SupplierHeader({ supplier, authUserId, isSupplierUser }: { supplier: Supplier; authUserId: string | null; isSupplierUser: boolean }) {
   return (
     <div className="grid grid-rows-[auto_1fr] gap-friend laptop:grid-cols-[clamp(30ch,66%,var(--width-prose))_1fr]">
-      <div className="col-span-full flex flex-wrap items-center gap-friend">
+      <div className="col-span-full flex flex-wrap items-center gap-sibling">
         {isSupplierUser ? (
           <Button disabled={!authUserId} className="gap-spouse" asChild>
-            <Link href={`/suppliers/${supplier.handle}/edit`}>
+            <Link href={`/account/manage-suppliers/${supplier.handle}`}>
               <SquarePenIcon className="h-4 w-4" />
               Edit Profile
             </Link>
