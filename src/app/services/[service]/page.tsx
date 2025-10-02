@@ -6,7 +6,8 @@ import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { serviceOperations } from '@/operations/service-operations'
 import { supplierOperations } from '@/operations/supplier-operations'
-import { serviceHelpers, valueToPretty } from '@/utils/const-helpers'
+import { serviceHelpers } from '@/utils/const-helpers'
+import { locationPretty } from '@/db/location-descriptions'
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
   const service = serviceHelpers.paramToConst((await params).service)
@@ -40,7 +41,7 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
                   mainImage={supplier.mainImage}
                   thumbnailImages={supplier.thumbnailImages}
                   name={supplier.name}
-                  subtitle={supplier.locations.map((location) => valueToPretty(location)).join(', ')}
+                  subtitle={supplier.locations.map((location) => locationPretty[location].value).join(', ')}
                   stat={150}
                 />
               ))}

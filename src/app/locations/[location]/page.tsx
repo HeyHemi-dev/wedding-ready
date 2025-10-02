@@ -6,7 +6,8 @@ import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { locationOperations } from '@/operations/location-operations'
 import { supplierOperations } from '@/operations/supplier-operations'
-import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
+import { locationHelpers } from '@/utils/const-helpers'
+import { servicePretty } from '@/db/service-descriptions'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
   const location = locationHelpers.paramToConst((await params).location)
@@ -40,7 +41,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
                   mainImage={supplier.mainImage}
                   thumbnailImages={supplier.thumbnailImages}
                   name={supplier.name}
-                  subtitle={supplier.services.map((service) => valueToPretty(service)).join(', ')}
+                  subtitle={supplier.services.map((service) => servicePretty[service].value).join(', ')}
                   stat={150}
                 />
               ))}
