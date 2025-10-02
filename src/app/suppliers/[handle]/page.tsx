@@ -64,7 +64,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
 function SupplierHeader({ supplier, authUserId }: { supplier: Supplier; authUserId: string | null }) {
   return (
     <div className="grid grid-rows-[auto_1fr] gap-friend laptop:grid-cols-[clamp(30ch,66%,var(--width-prose))_1fr]">
-      <div className="col-span-full flex items-center gap-friend">
+      <div className="col-span-full flex flex-wrap items-center gap-friend">
         <Button disabled={!authUserId} className="gap-spouse">
           <StarIcon className="h-4 w-4" />
           {`Follow @${supplier.handle}`}
