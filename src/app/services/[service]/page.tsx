@@ -4,10 +4,10 @@ import { notFound } from 'next/navigation'
 import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
+import { locationPretty } from '@/db/location-descriptions'
 import { serviceOperations } from '@/operations/service-operations'
 import { supplierOperations } from '@/operations/supplier-operations'
 import { serviceHelpers } from '@/utils/const-helpers'
-import { locationPretty } from '@/db/location-descriptions'
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
   const service = serviceHelpers.paramToConst((await params).service)
