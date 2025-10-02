@@ -70,7 +70,7 @@ function SupplierHeader({ supplier, authUserId }: { supplier: Supplier; authUser
         </Button>
 
         {supplier.websiteUrl && (
-          <Link href={supplier.websiteUrl} target="_blank">
+          <Link href={supplier.websiteUrl} target="_blank" rel="noopener noreferrer">
             <Button variant={'outline'} className="gap-spouse">
               <ExternalLinkIcon className="h-4 w-4" />
               Visit Website
