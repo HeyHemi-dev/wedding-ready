@@ -10,13 +10,12 @@ import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
-import { supplierOperations } from '@/operations/supplier-operations'
-import { valueToPretty } from '@/utils/enum-helpers'
 import { locationPretty } from '@/db/location-descriptions'
 import { servicePretty } from '@/db/service-descriptions'
+import { supplierOperations } from '@/operations/supplier-operations'
+import { getAuthUserId } from '@/utils/auth'
 
 import { SupplierTiles } from './supplier-tiles'
-import { getAuthUserId } from '@/utils/auth'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
