@@ -62,8 +62,8 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
     id: supplier.id,
     name: supplier.name,
     handle: supplier.handle,
-    mainImage: tilesMap.get(supplier.id)?.[0]?.imagePath ?? '',
-    thumbnailImages: [tilesMap.get(supplier.id)?.[1]?.imagePath ?? '', tilesMap.get(supplier.id)?.[2]?.imagePath ?? ''],
+    mainImage: tilesMap.get(supplier.id)?.[0]?.imagePath ?? null,
+    thumbnailImages: [tilesMap.get(supplier.id)?.[1]?.imagePath ?? null, tilesMap.get(supplier.id)?.[2]?.imagePath ?? null],
     services: servicesMap.get(supplier.id) ?? [],
     locations: locationsMap.get(supplier.id) ?? [],
     follows: 154, // TODO: get from supplierFollows table

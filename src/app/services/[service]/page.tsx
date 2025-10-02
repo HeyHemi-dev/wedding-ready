@@ -4,9 +4,10 @@ import { notFound } from 'next/navigation'
 import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
+import { locationPretty } from '@/db/location-descriptions'
 import { serviceOperations } from '@/operations/service-operations'
 import { supplierOperations } from '@/operations/supplier-operations'
-import { serviceHelpers, valueToPretty } from '@/utils/const-helpers'
+import { serviceHelpers } from '@/utils/const-helpers'
 
 export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
   const service = serviceHelpers.paramToConst((await params).service)
@@ -37,13 +38,10 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
                 <SupplierCard
                   key={supplier.id}
                   href={`/suppliers/${supplier.handle}`}
-                  mainImage={'https://images.unsplash.com/photo-1606216794074-735e91aa2c92'}
-                  thumbnailImages={[
-                    'https://images.unsplash.com/photo-1649615644622-6d83f48e69c5',
-                    'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb',
-                  ]}
+                  mainImage={supplier.mainImage}
+                  thumbnailImages={supplier.thumbnailImages}
                   name={supplier.name}
-                  subtitle={supplier.locations.map((location) => valueToPretty(location)).join(', ')}
+                  subtitle={supplier.locations.map((location) => locationPretty[location].value).join(', ')}
                   stat={150}
                 />
               ))}

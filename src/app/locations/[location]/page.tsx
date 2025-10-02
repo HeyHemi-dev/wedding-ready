@@ -4,9 +4,10 @@ import { notFound } from 'next/navigation'
 import { SuppliersGrid, SupplierCard } from '@/components/suppliers/suppliers-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
+import { servicePretty } from '@/db/service-descriptions'
 import { locationOperations } from '@/operations/location-operations'
 import { supplierOperations } from '@/operations/supplier-operations'
-import { locationHelpers, valueToPretty } from '@/utils/const-helpers'
+import { locationHelpers } from '@/utils/const-helpers'
 
 export default async function LocationPage({ params }: { params: Promise<{ location: string }> }) {
   const location = locationHelpers.paramToConst((await params).location)
@@ -25,7 +26,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
     <Section className="min-h-svh-minus-header pt-0">
       <div className="grid grid-rows-[auto_1fr] gap-area">
         <Area className="bg-transparent">
-          <div className="flex max-w-prose flex-col gap-partner">
+          <div className="prose flex max-w-prose flex-col gap-sibling">
             <h1 className="heading-xl">{loactionData.title}</h1>
             <p className="ui-small text-muted-foreground">{loactionData.description}</p>
           </div>
@@ -40,7 +41,7 @@ export default async function LocationPage({ params }: { params: Promise<{ locat
                   mainImage={supplier.mainImage}
                   thumbnailImages={supplier.thumbnailImages}
                   name={supplier.name}
-                  subtitle={supplier.services.map((service) => valueToPretty(service)).join(', ')}
+                  subtitle={supplier.services.map((service) => servicePretty[service].value).join(', ')}
                   stat={150}
                 />
               ))}
