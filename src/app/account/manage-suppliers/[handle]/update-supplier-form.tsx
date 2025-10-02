@@ -11,6 +11,9 @@ import { cn } from '@/utils/shadcn-utils'
 import { SupplierUpdateForm, supplierUpdateFormSchema } from '@/app/_types/validation-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { updateSupplierFormAction } from './update-supplier-form-action'
+import { tryCatch } from '@/utils/try-catch'
+import { toast } from 'sonner'
 
 export default function UpdateSupplierForm({
   defaultValues,
@@ -29,7 +32,14 @@ export default function UpdateSupplierForm({
   })
 
   async function onSubmit(data: SupplierUpdateForm) {
-    console.log('onSubmit', data, supplierId, authUserId)
+    const { data: newValues, error } = await tryCatch(updateSupplierFormAction(supplierId, data, authUserId))
+    if (error) {
+      toast.error(error.message)
+      return
+    }
+
+    toast.success('Supplier updated')
+    form.reset(newValues)
   }
 
   return (
