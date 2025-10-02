@@ -37,11 +37,8 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
                 <SupplierCard
                   key={supplier.id}
                   href={`/suppliers/${supplier.handle}`}
-                  mainImage={'https://images.unsplash.com/photo-1606216794074-735e91aa2c92'}
-                  thumbnailImages={[
-                    'https://images.unsplash.com/photo-1649615644622-6d83f48e69c5',
-                    'https://images.unsplash.com/photo-1665607437981-973dcd6a22bb',
-                  ]}
+                  mainImage={supplier.mainImage}
+                  thumbnailImages={supplier.thumbnailImages}
                   name={supplier.name}
                   subtitle={supplier.locations.map((location) => valueToPretty(location)).join(', ')}
                   stat={150}
