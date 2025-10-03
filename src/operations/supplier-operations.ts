@@ -97,7 +97,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
     supplierLocationsModel.createForSupplierId({ supplierId: supplier.id, locations }),
     supplierServicesModel.createForSupplierId({ supplierId: supplier.id, services }),
     // The user who creates the supplier is an admin by default
-    supplierUsersModel.createForSupplierId({ supplierId: supplier.id, users: [{ id: user.id, role: SUPPLIER_ROLES.ADMIN }] }),
+    supplierUsersModel.createForSupplierId(supplier.id, [{ id: user.id, role: SUPPLIER_ROLES.ADMIN }]),
   ])
 
   return {

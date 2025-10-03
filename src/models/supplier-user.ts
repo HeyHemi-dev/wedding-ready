@@ -13,7 +13,7 @@ async function getForSupplierId(supplierId: string): Promise<t.SupplierUserRaw[]
   return await db.select().from(s.supplierUsers).where(eq(s.supplierUsers.supplierId, supplierId))
 }
 
-async function createForSupplierId({ supplierId, users }: { supplierId: string; users: { id: string; role: SupplierRole }[] }): Promise<t.SupplierUserRaw[]> {
+async function createForSupplierId(supplierId: string, users: { id: string; role: SupplierRole }[]): Promise<t.SupplierUserRaw[]> {
   const insertSupplierUserData: t.InsertSupplierUserRaw[] = users.map((user) => ({
     supplierId,
     userId: user.id,
