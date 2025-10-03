@@ -1,19 +1,21 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Supplier, SupplierList, SupplierSearchResult } from '@/app/_types/suppliers'
-import { Handle, SupplierRegistrationForm } from '@/app/_types/validation-schema'
+import { Handle, SupplierRegistrationForm, SupplierUpdateForm } from '@/app/_types/validation-schema'
 import { Location, Service, SUPPLIER_ROLES } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
 import { supplierLocationsModel } from '@/models/supplier-location'
 import { supplierServicesModel } from '@/models/supplier-service'
 import { supplierUsersModel } from '@/models/supplier-user'
 import { tileModel } from '@/models/tile'
-import { InsertSupplierRaw } from '@/models/types'
+import * as t from '@/models/types'
 import { UserDetailModel } from '@/models/user'
+import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export const supplierOperations = {
   getByHandle,
   getListForSupplierGrid,
   register,
+  updateProfile,
   search,
 }
 
@@ -81,7 +83,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
     throw OPERATION_ERROR.RESOURCE_CONFLICT()
   }
 
-  const insertSupplierData: InsertSupplierRaw = {
+  const insertSupplierData: t.InsertSupplierRaw = {
     name,
     handle,
     createdByUserId,
@@ -108,6 +110,21 @@ async function register({ name, handle, websiteUrl, description, services, locat
     locations: supplierLocations.map((location) => location.location),
     users: supplierUsers.map((user) => ({ id: user.userId, role: user.role })),
   }
+}
+
+async function updateProfile(supplierId: string, data: SupplierUpdateForm, authUserId: string) {
+  const supplier = await supplierModel.getRawById(supplierId)
+  if (!supplier) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
+
+  const supplierUsers = await supplierUsersModel.getForSupplierId(supplierId)
+  const authUserRole = supplierUsers.find((su) => su.userId === authUserId)?.role
+  if (authUserRole !== SUPPLIER_ROLES.ADMIN && authUserRole !== SUPPLIER_ROLES.STANDARD) throw OPERATION_ERROR.FORBIDDEN()
+
+  const setSupplierData: t.SetSupplierRaw = emptyStringToNullIfAllowed({
+    name: data.name,
+    websiteUrl: data.websiteUrl,
+    description: data.description,
+  })
 }
 
 async function search(query: string): Promise<SupplierSearchResult[]> {
