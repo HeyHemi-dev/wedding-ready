@@ -3,7 +3,7 @@ import { eq, or, ilike } from 'drizzle-orm'
 import { db } from '@/db/connection'
 import { Service, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
-import { InsertSupplierRaw, SupplierRaw, Supplier, SupplierWithUsers } from '@/models/types'
+import { InsertSupplierRaw, SupplierRaw, Supplier, SupplierWithUsers, SetSupplierRaw } from '@/models/types'
 
 export const supplierModel = {
   getRawById,
@@ -11,6 +11,7 @@ export const supplierModel = {
   getAllRawForService,
   getByHandle,
   create,
+  update,
   isHandleAvailable,
   search,
 }
@@ -64,6 +65,12 @@ async function getByHandle(handle: string): Promise<SupplierWithUsers | null> {
 
 async function create(insertSupplierData: InsertSupplierRaw): Promise<SupplierRaw> {
   const suppliers = await db.insert(schema.suppliers).values(insertSupplierData).returning()
+  return suppliers[0]
+}
+
+async function update(supplierId: string, setSupplierData: SetSupplierRaw): Promise<SupplierRaw> {
+  setSupplierData.updatedAt = new Date()
+  const suppliers = await db.update(schema.suppliers).set(setSupplierData).where(eq(schema.suppliers.id, supplierId)).returning()
   return suppliers[0]
 }
 
