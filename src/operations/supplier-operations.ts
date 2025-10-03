@@ -112,7 +112,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
   }
 }
 
-async function updateProfile(supplierId: string, data: SupplierUpdateForm, authUserId: string) {
+async function updateProfile(supplierId: string, data: SupplierUpdateForm, authUserId: string): Promise<SupplierUpdateForm> {
   const supplier = await supplierModel.getRawById(supplierId)
   if (!supplier) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
@@ -125,6 +125,13 @@ async function updateProfile(supplierId: string, data: SupplierUpdateForm, authU
     websiteUrl: data.websiteUrl,
     description: data.description,
   })
+
+  const updatedSupplier = await supplierModel.update(supplierId, setSupplierData)
+  return {
+    name: updatedSupplier.name,
+    websiteUrl: updatedSupplier.websiteUrl ?? undefined,
+    description: updatedSupplier.description ?? undefined,
+  }
 }
 
 async function search(query: string): Promise<SupplierSearchResult[]> {
