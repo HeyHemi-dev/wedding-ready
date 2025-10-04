@@ -1,10 +1,10 @@
 import { describe, it, expect, afterEach, afterAll } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
+import { supplierModel } from '@/models/supplier'
 import { scene, TEST_SUPPLIER } from '@/testing/scene'
 
 import { supplierOperations } from './supplier-operations'
-import { supplierModel } from '@/models/supplier'
 
 describe('supplierOperations', () => {
   afterEach(async () => {

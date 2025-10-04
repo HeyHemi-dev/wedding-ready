@@ -1,6 +1,8 @@
+import { notFound, redirect } from 'next/navigation'
+
 import { supplierOperations } from '@/operations/supplier-operations'
 import { getAuthUserId } from '@/utils/auth'
-import { notFound, redirect } from 'next/navigation'
+
 import UpdateSupplierForm from './update-supplier-form'
 
 export default async function SupplierEditPage({ params }: { params: Promise<{ handle: string }> }) {
