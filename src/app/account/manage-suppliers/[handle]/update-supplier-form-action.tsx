@@ -12,8 +12,7 @@ export async function updateSupplierFormAction(supplierId: string, data: Supplie
   const { success, error, data: validatedData } = supplierUpdateFormSchema.safeParse(data)
   if (!success || error) throw OPERATION_ERROR.VALIDATION_ERROR()
 
-  supplierOperations.updateProfile(supplierId, validatedData, authUserId)
+  const updatedSupplier = await supplierOperations.updateProfile(supplierId, validatedData, authUserId)
 
-  console.log('updateSupplierFormAction', data)
-  return data
+  return updatedSupplier
 }
