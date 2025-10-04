@@ -16,7 +16,6 @@ import { tryCatch } from '@/utils/try-catch'
 
 import { updateSupplierFormAction } from './update-supplier-form-action'
 
-
 export default function UpdateSupplierForm({
   defaultValues,
   supplierId,
@@ -84,7 +83,7 @@ export default function UpdateSupplierForm({
         </div>
 
         <div className="flex justify-end gap-close-friend">
-          <Button variant={'ghost'} type="button" onClick={() => form.reset(defaultValues)} disabled={!form.formState.isDirty || form.formState.isSubmitting}>
+          <Button variant={'ghost'} type="button" onClick={() => form.reset()} disabled={!form.formState.isDirty || form.formState.isSubmitting}>
             Cancel
           </Button>
           <SubmitButton pendingChildren="Saving..." type="submit" disabled={!form.formState.isDirty || form.formState.isSubmitting}>
