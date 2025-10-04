@@ -24,7 +24,7 @@ export default async function SupplierRegisterPage() {
               highlight your business, making it easy for couples to find you.
             </p>
           </div>
-          <RegistrationForm createdByUserId={authUserId} />
+          <RegistrationForm authUserId={authUserId} />
         </div>
       </Area>
     </Section>

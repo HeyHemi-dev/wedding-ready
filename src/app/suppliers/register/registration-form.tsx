@@ -23,7 +23,7 @@ import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 
 import { registrationFormAction } from './registration-form-action'
 
-export default function RegistrationForm({ createdByUserId }: { createdByUserId: string }) {
+export default function RegistrationForm({ authUserId }: { authUserId: string }) {
   const router = useRouter()
   const controller = useRef(new AbortController())
   const [handleStatus, setHandleStatus] = useState<HandleStatus>(status.Undefined)
@@ -36,7 +36,6 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
       description: '',
       locations: [],
       services: [],
-      createdByUserId,
     },
     mode: 'onBlur',
   })
@@ -73,7 +72,7 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
       toast.error('Handle is already taken')
       return
     }
-    const { data: supplier, error } = await tryCatch(registrationFormAction({ data }))
+    const { data: supplier, error } = await tryCatch(registrationFormAction(data, authUserId))
     if (error) {
       toast.error(error.message)
     }
@@ -218,7 +217,6 @@ export default function RegistrationForm({ createdByUserId }: { createdByUserId:
               </FormFieldItem>
             )}
           />
-          <FormField control={form.control} name="createdByUserId" render={({ field }) => <Input {...field} type="hidden" value={createdByUserId} />} />
         </div>
 
         <div className="flex justify-end">

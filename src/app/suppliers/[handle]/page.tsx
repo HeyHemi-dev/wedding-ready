@@ -1,4 +1,4 @@
-import { ExternalLinkIcon, SquarePlusIcon, StarIcon } from 'lucide-react'
+import { ExternalLinkIcon, SquarePenIcon, SquarePlusIcon, StarIcon } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -33,7 +33,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
     <>
       <Section className="min-h-svh-minus-header pt-0">
         <Area>
-          <SupplierHeader supplier={supplier} authUserId={authUserId} />
+          <SupplierHeader supplier={supplier} authUserId={authUserId} isSupplierUser={isSupplierUser} />
         </Area>
         {isSupplierUser && (
           <ActionBar className="col-span-full">
@@ -60,22 +60,31 @@ export default async function SupplierPage({ params }: { params: Promise<{ handl
   )
 }
 
-function SupplierHeader({ supplier, authUserId }: { supplier: Supplier; authUserId: string | null }) {
+function SupplierHeader({ supplier, authUserId, isSupplierUser }: { supplier: Supplier; authUserId: string | null; isSupplierUser: boolean }) {
   return (
     <div className="grid grid-rows-[auto_1fr] gap-friend laptop:grid-cols-[clamp(30ch,66%,var(--width-prose))_1fr]">
-      <div className="col-span-full flex flex-wrap items-center gap-friend">
-        <Button disabled={!authUserId} className="gap-spouse">
-          <StarIcon className="h-4 w-4" />
-          {`Follow @${supplier.handle}`}
-        </Button>
+      <div className="col-span-full flex flex-wrap items-center gap-sibling">
+        {isSupplierUser ? (
+          <Button disabled={!authUserId} className="gap-spouse" asChild>
+            <Link href={`/account/manage-suppliers/${supplier.handle}`}>
+              <SquarePenIcon className="h-4 w-4" />
+              Edit Profile
+            </Link>
+          </Button>
+        ) : (
+          <Button disabled={!authUserId} className="gap-spouse">
+            <StarIcon className="h-4 w-4" />
+            {`Follow @${supplier.handle}`}
+          </Button>
+        )}
 
         {supplier.websiteUrl && (
-          <Link href={supplier.websiteUrl} target="_blank" rel="noopener noreferrer">
-            <Button variant={'outline'} className="gap-spouse">
+          <Button variant={'outline'} className="gap-spouse" asChild>
+            <Link href={supplier.websiteUrl} target="_blank" rel="noopener noreferrer">
               <ExternalLinkIcon className="h-4 w-4" />
               Visit Website
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         )}
       </div>
       <div className="grid place-content-start gap-spouse">
@@ -87,7 +96,9 @@ function SupplierHeader({ supplier, authUserId }: { supplier: Supplier; authUser
           <h2 className="ui-small-s2">Services Offered</h2>
           <div className="col-span-full flex flex-wrap gap-partner">
             {supplier.services.map((service) => (
-              <Badge key={service}>{servicePretty[service].value}</Badge>
+              <Link key={service} href={`/services/${service}`} passHref>
+                <Badge>{servicePretty[service].value}</Badge>
+              </Link>
             ))}
           </div>
         </div>
@@ -95,7 +106,9 @@ function SupplierHeader({ supplier, authUserId }: { supplier: Supplier; authUser
           <h2 className="ui-small-s2">Areas Served</h2>
           <div className="col-span-full flex flex-wrap gap-partner">
             {supplier.locations.map((location) => (
-              <Badge key={location}>{locationPretty[location].value}</Badge>
+              <Link key={location} href={`/locations/${location}`} passHref>
+                <Badge>{locationPretty[location].value}</Badge>
+              </Link>
             ))}
           </div>
         </div>

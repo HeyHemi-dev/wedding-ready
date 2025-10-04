@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach, afterAll } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
+import { supplierModel } from '@/models/supplier'
 import { scene, TEST_SUPPLIER } from '@/testing/scene'
 
 import { supplierOperations } from './supplier-operations'
@@ -67,10 +68,7 @@ describe('supplierOperations', () => {
       const user = await scene.hasUser()
 
       // Act
-      const result = await supplierOperations.register({
-        ...TEST_SUPPLIER,
-        createdByUserId: user.id,
-      })
+      const result = await supplierOperations.register(TEST_SUPPLIER, user.id)
 
       // Assert
       expect(result).toBeDefined()
@@ -83,22 +81,58 @@ describe('supplierOperations', () => {
       await scene.hasSupplier({ createdByUserId: user.id })
 
       // Act & Assert
-      await expect(
-        supplierOperations.register({
-          ...TEST_SUPPLIER,
-          createdByUserId: user.id,
-        })
-      ).rejects.toThrow()
+      await expect(supplierOperations.register(TEST_SUPPLIER, user.id)).rejects.toThrow()
     })
 
     it('should throw error when user is not found', async () => {
       // Arrange, Act & Assert
-      await expect(
-        supplierOperations.register({
-          ...TEST_SUPPLIER,
-          createdByUserId: '00000000-0000-0000-0000-000000000000',
-        })
-      ).rejects.toThrow()
+      await expect(supplierOperations.register(TEST_SUPPLIER, '00000000-0000-0000-0000-000000000000')).rejects.toThrow()
+    })
+  })
+
+  describe('updateProfile', () => {
+    it('should successfully update a supplier profile', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id, name: 'Test Supplier' })
+
+      const updatedSupplier = await supplierOperations.updateProfile(supplier.id, { name: 'Updated Supplier' }, user.id)
+
+      // Assert
+      expect(updatedSupplier).toBeDefined()
+      expect(updatedSupplier.name).toBe('Updated Supplier')
+      expect(updatedSupplier.name).not.toBe(supplier.name)
+    })
+
+    it('should throw error when supplier is not found', async () => {
+      // Arrange,
+      const user = await scene.hasUser()
+
+      // Act & Assert
+      await expect(supplierOperations.updateProfile('00000000-0000-0000-0000-000000000000', { name: 'Updated Supplier' }, user.id)).rejects.toThrow()
+    })
+
+    it('should throw error when user does not have the correct role', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+
+      await expect(supplierOperations.updateProfile(supplier.id, { name: 'Updated Supplier' }, '00000000-0000-0000-0000-000000000000')).rejects.toThrow()
+    })
+
+    it('should handle empty strings', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+
+      // Act
+      await supplierOperations.updateProfile(supplier.id, { name: 'Updated Supplier', websiteUrl: '', description: '' }, user.id)
+
+      // Assert
+      const updatedSupplier = await supplierModel.getRawById(supplier.id)
+      expect(updatedSupplier?.name).toBe('Updated Supplier')
+      expect(updatedSupplier?.websiteUrl).toBeNull()
+      expect(updatedSupplier?.description).toBeNull()
     })
   })
 
