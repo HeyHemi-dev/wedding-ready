@@ -76,11 +76,11 @@ async function hasSupplier({
   locations = TEST_SUPPLIER.locations,
   services = TEST_SUPPLIER.services,
   createdByUserId,
-}: Partial<SupplierRegistrationForm> & Pick<SupplierRegistrationForm, 'createdByUserId'>): Promise<Supplier> {
+}: Partial<SupplierRegistrationForm> & { createdByUserId: string }): Promise<Supplier> {
   const supplier = await supplierOperations.getByHandle(handle)
   if (supplier) return supplier
 
-  return await supplierOperations.register({ name, handle, websiteUrl, description, locations, services, createdByUserId })
+  return await supplierOperations.register({ name, handle, websiteUrl, description, locations, services }, createdByUserId)
 }
 
 async function hasTile({

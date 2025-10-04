@@ -68,10 +68,7 @@ describe('supplierOperations', () => {
       const user = await scene.hasUser()
 
       // Act
-      const result = await supplierOperations.register({
-        ...TEST_SUPPLIER,
-        createdByUserId: user.id,
-      })
+      const result = await supplierOperations.register(TEST_SUPPLIER, user.id)
 
       // Assert
       expect(result).toBeDefined()
@@ -84,22 +81,12 @@ describe('supplierOperations', () => {
       await scene.hasSupplier({ createdByUserId: user.id })
 
       // Act & Assert
-      await expect(
-        supplierOperations.register({
-          ...TEST_SUPPLIER,
-          createdByUserId: user.id,
-        })
-      ).rejects.toThrow()
+      await expect(supplierOperations.register(TEST_SUPPLIER, user.id)).rejects.toThrow()
     })
 
     it('should throw error when user is not found', async () => {
       // Arrange, Act & Assert
-      await expect(
-        supplierOperations.register({
-          ...TEST_SUPPLIER,
-          createdByUserId: '00000000-0000-0000-0000-000000000000',
-        })
-      ).rejects.toThrow()
+      await expect(supplierOperations.register(TEST_SUPPLIER, '00000000-0000-0000-0000-000000000000')).rejects.toThrow()
     })
   })
 

@@ -76,7 +76,6 @@ export const supplierRegistrationFormSchema = z.object({
   description: z.string().optional(),
   locations: z.array(z.nativeEnum(LOCATIONS)).min(1, 'At least one location required'),
   services: z.array(z.nativeEnum(SERVICES)).min(1, 'At least one service required'),
-  createdByUserId: z.string().uuid(),
 })
 export type SupplierRegistrationForm = z.infer<typeof supplierRegistrationFormSchema>
 

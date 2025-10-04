@@ -72,8 +72,8 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
   }))
 }
 
-async function register({ name, handle, websiteUrl, description, services, locations, createdByUserId }: SupplierRegistrationForm): Promise<Supplier> {
-  const user = await UserDetailModel.getById(createdByUserId)
+async function register({ name, handle, websiteUrl, description, services, locations }: SupplierRegistrationForm, authUserId: string): Promise<Supplier> {
+  const user = await UserDetailModel.getById(authUserId)
   if (!user) {
     throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
   }
@@ -86,11 +86,10 @@ async function register({ name, handle, websiteUrl, description, services, locat
   const insertSupplierData: t.InsertSupplierRaw = {
     name,
     handle,
-    createdByUserId,
+    createdByUserId: authUserId,
     description,
     websiteUrl,
   }
-
   const supplier = await supplierModel.create(insertSupplierData)
 
   const [supplierLocations, supplierServices, supplierUsers] = await Promise.all([
