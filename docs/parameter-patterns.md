@@ -119,7 +119,7 @@ async function update(id: string, data: SetEntityRaw): Promise<Entity>
 
 ### Form Actions
 Form actions should consistently accept form data, and submittedBy:
-
+s
 ```typescript
 // ✅ Standard form action pattern
 export async function updateProfileFormAction(
@@ -139,7 +139,7 @@ export async function updateProfileFormAction(
 ```typescript
 // Clear separation of concerns
 async function updateProfile(
-  id: string
+  id: string,
   { displayName, bio, avatarUrl }: UserUpdateForm,
   submittedBy: string
 ): Promise<User>
