@@ -7,7 +7,7 @@ import * as t from '@/models/types'
 
 export const supplierServicesModel = {
   getAllWithSupplierCount,
-  getForSupplierIds,
+  getMapBySupplierIds,
   createForSupplierId,
 }
 
@@ -23,10 +23,11 @@ async function getAllWithSupplierCount(): Promise<{ service: Service; supplierCo
   return result
 }
 
-async function getForSupplierIds(supplierIds: string[]): Promise<{ supplierId: string; services: Service[] }[]> {
-  if (supplierIds.length === 0) return []
+type SupplierServicesMap = Map<string, Service[]>
+async function getMapBySupplierIds(supplierIds: string[]): Promise<SupplierServicesMap> {
+  if (supplierIds.length === 0) return new Map()
   const result = await db.select().from(s.supplierServices).where(inArray(s.supplierServices.supplierId, supplierIds))
-  return aggregateServicesBySupplierId(result)
+  return mapServicesBySupplierId(result)
 }
 
 async function createForSupplierId({ supplierId, services }: { supplierId: string; services: Service[] }): Promise<t.SupplierServiceRaw[]> {
@@ -37,16 +38,16 @@ async function createForSupplierId({ supplierId, services }: { supplierId: strin
   return await db.insert(s.supplierServices).values(insertSupplierServiceData).returning()
 }
 
-function aggregateServicesBySupplierId(supplierServices: t.SupplierServiceRaw[]): { supplierId: string; services: Service[] }[] {
+function mapServicesBySupplierId(supplierServices: t.SupplierServiceRaw[]): SupplierServicesMap {
   // We don't need to dedup services because supplierId + service is the primary key
-  const byId = new Map<string, { supplierId: string; services: Service[] }>()
+  const byId = new Map<string, Service[]>()
   for (const { supplierId, service } of supplierServices) {
     const existing = byId.get(supplierId)
     if (!existing) {
-      byId.set(supplierId, { supplierId, services: [service] })
+      byId.set(supplierId, [service])
     } else {
-      existing.services.push(service)
+      existing.push(service)
     }
   }
-  return Array.from(byId.values())
+  return byId
 }
