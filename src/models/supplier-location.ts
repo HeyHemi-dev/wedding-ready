@@ -23,10 +23,10 @@ async function getAllWithSupplierCount(): Promise<{ location: Location; supplier
   return result
 }
 
-async function getForSupplierIds(supplierIds: string[]): Promise<{ supplierId: string; locations: Location[] }[]> {
-  if (supplierIds.length === 0) return []
+async function getForSupplierIds(supplierIds: string[]): Promise<Map<string, Location[]>> {
+  if (supplierIds.length === 0) return new Map()
   const result = await db.select().from(s.supplierLocations).where(inArray(s.supplierLocations.supplierId, supplierIds))
-  return aggregateLocationsBySupplierId(result)
+  return aggregateLocationsBySupplierIdToMap(result)
 }
 
 async function createForSupplierId({ supplierId, locations }: { supplierId: string; locations: Location[] }): Promise<t.SupplierLocationRaw[]> {
@@ -37,16 +37,16 @@ async function createForSupplierId({ supplierId, locations }: { supplierId: stri
   return await db.insert(s.supplierLocations).values(insertSupplierLocationData).returning()
 }
 
-function aggregateLocationsBySupplierId(supplierLocations: t.SupplierLocationRaw[]): { supplierId: string; locations: Location[] }[] {
+function aggregateLocationsBySupplierIdToMap(supplierLocations: t.SupplierLocationRaw[]): Map<string, Location[]> {
   // We don't need to dedup locations because supplierId + location is the primary key
-  const byId = new Map<string, { supplierId: string; locations: Location[] }>()
+  const byId = new Map<string, Location[]>()
   for (const { supplierId, location } of supplierLocations) {
     const existing = byId.get(supplierId)
     if (!existing) {
-      byId.set(supplierId, { supplierId, locations: [location] })
+      byId.set(supplierId, [location])
     } else {
-      existing.locations.push(location)
+      existing.push(location)
     }
   }
-  return Array.from(byId.values())
+  return byId
 }
