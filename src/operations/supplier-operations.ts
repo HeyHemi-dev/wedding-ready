@@ -78,7 +78,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
     throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
   }
 
-  const isAvailable = await supplierModel.isHandleAvailable({ handle })
+  const isAvailable = await supplierModel.isHandleAvailable(handle)
   if (!isAvailable) {
     throw OPERATION_ERROR.RESOURCE_CONFLICT()
   }

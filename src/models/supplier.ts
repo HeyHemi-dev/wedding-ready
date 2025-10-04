@@ -74,7 +74,7 @@ async function update(supplierId: string, setSupplierData: SetSupplierRaw): Prom
   return suppliers[0]
 }
 
-async function isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {
+async function isHandleAvailable(handle: string): Promise<boolean> {
   const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
   return suppliers.length === 0
 }
