@@ -45,19 +45,19 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
   const supplierIds = suppliers.map((supplier) => supplier.id)
 
   // Get tiles, locations, and services asyncronously to prevent waterfall
-  const [tilesForSuppliers, locationsForSuppliers, servicesForSuppliers] = await Promise.all([
+  const [tilesForSuppliers, locationsMap, servicesForSuppliers] = await Promise.all([
     Promise.all(
       supplierIds.map(async (supplierId) => {
         const tiles = await tileModel.getManyBySupplierId(supplierId, { limit: 3 })
         return { supplierId, tiles }
       })
     ),
-    supplierLocationsModel.getForSupplierIds(supplierIds),
+    supplierLocationsModel.getMapBySupplierIds(supplierIds),
     supplierServicesModel.getForSupplierIds(supplierIds),
   ])
 
   const tilesMap = new Map(tilesForSuppliers.map((item) => [item.supplierId, item.tiles]))
-  const locationsMap = locationsForSuppliers
+
   const servicesMap = new Map(servicesForSuppliers.map((item) => [item.supplierId, item.services]))
 
   return suppliers.map((supplier) => ({

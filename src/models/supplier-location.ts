@@ -7,7 +7,7 @@ import * as t from '@/models/types'
 
 export const supplierLocationsModel = {
   getAllWithSupplierCount,
-  getForSupplierIds,
+  getMapBySupplierIds,
   createForSupplierId,
 }
 
@@ -23,10 +23,11 @@ async function getAllWithSupplierCount(): Promise<{ location: Location; supplier
   return result
 }
 
-async function getForSupplierIds(supplierIds: string[]): Promise<Map<string, Location[]>> {
+type SupplierLocationsMap = Map<string, Location[]>
+async function getMapBySupplierIds(supplierIds: string[]): Promise<SupplierLocationsMap> {
   if (supplierIds.length === 0) return new Map()
   const result = await db.select().from(s.supplierLocations).where(inArray(s.supplierLocations.supplierId, supplierIds))
-  return aggregateLocationsBySupplierIdToMap(result)
+  return mapLocationsBySupplierId(result)
 }
 
 async function createForSupplierId({ supplierId, locations }: { supplierId: string; locations: Location[] }): Promise<t.SupplierLocationRaw[]> {
@@ -37,7 +38,7 @@ async function createForSupplierId({ supplierId, locations }: { supplierId: stri
   return await db.insert(s.supplierLocations).values(insertSupplierLocationData).returning()
 }
 
-function aggregateLocationsBySupplierIdToMap(supplierLocations: t.SupplierLocationRaw[]): Map<string, Location[]> {
+function mapLocationsBySupplierId(supplierLocations: t.SupplierLocationRaw[]): SupplierLocationsMap {
   // We don't need to dedup locations because supplierId + location is the primary key
   const byId = new Map<string, Location[]>()
   for (const { supplierId, location } of supplierLocations) {
