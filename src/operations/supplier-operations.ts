@@ -1,19 +1,21 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Supplier, SupplierList, SupplierSearchResult } from '@/app/_types/suppliers'
-import { Handle, SupplierRegistrationForm } from '@/app/_types/validation-schema'
+import { Handle, SupplierRegistrationForm, SupplierUpdateForm } from '@/app/_types/validation-schema'
 import { Location, Service, SUPPLIER_ROLES } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
 import { supplierLocationsModel } from '@/models/supplier-location'
 import { supplierServicesModel } from '@/models/supplier-service'
 import { supplierUsersModel } from '@/models/supplier-user'
 import { tileModel } from '@/models/tile'
-import { InsertSupplierRaw } from '@/models/types'
+import * as t from '@/models/types'
 import { UserDetailModel } from '@/models/user'
+import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export const supplierOperations = {
   getByHandle,
   getListForSupplierGrid,
   register,
+  updateProfile,
   search,
 }
 
@@ -43,20 +45,18 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
   const supplierIds = suppliers.map((supplier) => supplier.id)
 
   // Get tiles, locations, and services asyncronously to prevent waterfall
-  const [tilesForSuppliers, locationsForSuppliers, servicesForSuppliers] = await Promise.all([
+  const [tilesForSuppliers, locationsMap, servicesMap] = await Promise.all([
     Promise.all(
       supplierIds.map(async (supplierId) => {
         const tiles = await tileModel.getManyBySupplierId(supplierId, { limit: 3 })
         return { supplierId, tiles }
       })
     ),
-    supplierLocationsModel.getForSupplierIds(supplierIds),
-    supplierServicesModel.getForSupplierIds(supplierIds),
+    supplierLocationsModel.getMapBySupplierIds(supplierIds),
+    supplierServicesModel.getMapBySupplierIds(supplierIds),
   ])
 
   const tilesMap = new Map(tilesForSuppliers.map((item) => [item.supplierId, item.tiles]))
-  const locationsMap = new Map(locationsForSuppliers.map((item) => [item.supplierId, item.locations]))
-  const servicesMap = new Map(servicesForSuppliers.map((item) => [item.supplierId, item.services]))
 
   return suppliers.map((supplier) => ({
     id: supplier.id,
@@ -70,32 +70,31 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
   }))
 }
 
-async function register({ name, handle, websiteUrl, description, services, locations, createdByUserId }: SupplierRegistrationForm): Promise<Supplier> {
-  const user = await UserDetailModel.getById(createdByUserId)
+async function register({ name, handle, websiteUrl, description, services, locations }: SupplierRegistrationForm, authUserId: string): Promise<Supplier> {
+  const user = await UserDetailModel.getById(authUserId)
   if (!user) {
     throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
   }
 
-  const isAvailable = await supplierModel.isHandleAvailable({ handle })
+  const isAvailable = await supplierModel.isHandleAvailable(handle)
   if (!isAvailable) {
     throw OPERATION_ERROR.RESOURCE_CONFLICT()
   }
 
-  const insertSupplierData: InsertSupplierRaw = {
+  const insertSupplierData: t.InsertSupplierRaw = {
     name,
     handle,
-    createdByUserId,
+    createdByUserId: authUserId,
     description,
     websiteUrl,
   }
-
   const supplier = await supplierModel.create(insertSupplierData)
 
   const [supplierLocations, supplierServices, supplierUsers] = await Promise.all([
     supplierLocationsModel.createForSupplierId({ supplierId: supplier.id, locations }),
     supplierServicesModel.createForSupplierId({ supplierId: supplier.id, services }),
     // The user who creates the supplier is an admin by default
-    supplierUsersModel.createForSupplierId({ supplierId: supplier.id, users: [{ id: user.id, role: SUPPLIER_ROLES.ADMIN }] }),
+    supplierUsersModel.createForSupplierId(supplier.id, [{ id: user.id, role: SUPPLIER_ROLES.ADMIN }]),
   ])
 
   return {
@@ -107,6 +106,28 @@ async function register({ name, handle, websiteUrl, description, services, locat
     services: supplierServices.map((service) => service.service!),
     locations: supplierLocations.map((location) => location.location),
     users: supplierUsers.map((user) => ({ id: user.userId, role: user.role })),
+  }
+}
+
+async function updateProfile(supplierId: string, data: SupplierUpdateForm, authUserId: string): Promise<SupplierUpdateForm> {
+  const supplier = await supplierModel.getRawById(supplierId)
+  if (!supplier) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
+
+  const supplierUsers = await supplierUsersModel.getForSupplierId(supplierId)
+  const authUserRole = supplierUsers.find((su) => su.userId === authUserId)?.role
+  if (authUserRole !== SUPPLIER_ROLES.ADMIN && authUserRole !== SUPPLIER_ROLES.STANDARD) throw OPERATION_ERROR.FORBIDDEN()
+
+  const setSupplierData: t.SetSupplierRaw = emptyStringToNullIfAllowed({
+    name: data.name,
+    websiteUrl: data.websiteUrl,
+    description: data.description,
+  })
+
+  const updatedSupplier = await supplierModel.update(supplierId, setSupplierData)
+  return {
+    name: updatedSupplier.name,
+    websiteUrl: updatedSupplier.websiteUrl ?? undefined,
+    description: updatedSupplier.description ?? undefined,
   }
 }
 
