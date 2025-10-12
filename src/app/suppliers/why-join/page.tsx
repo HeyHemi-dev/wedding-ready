@@ -129,7 +129,7 @@ export default function JoinAsSupplierPage() {
             <p className="ui-large text-balance text-muted-foreground">Join the platform made specifically for the New Zealand wedding industry</p>
           </div>
         </Area>
-        <div className="grid grid-cols-1 gap-sibling tablet:grid-cols-2">
+        <div className="grid grid-cols-1 gap-friend tablet:grid-cols-2">
           {benefits.map((benefit) => (
             <FeatureCard key={benefit.title} title={benefit.title} description={benefit.description} />
           ))}
@@ -138,11 +138,13 @@ export default function JoinAsSupplierPage() {
 
       {/* Spotlight Feature Section */}
       <FadeInDiv stagger={0.1}>
-        <div className="grid items-center gap-area laptop:grid-cols-2">
+        <Area className="grid gap-acquaintance laptop:grid-cols-2">
           <div className="flex flex-col gap-friend">
-            <h2 className="heading-xl">Spotlight feature: Supplier crediting</h2>
-            <p className="ui-large text-muted-foreground">Fair, networked, and built to promote you</p>
-            <ul className="flex flex-col gap-sibling">
+            <div className="grid gap-sibling">
+              <h2 className="heading-xl">Spotlight feature: Supplier crediting</h2>
+              <p className="ui-large text-muted-foreground">Fair, networked, and built to promote you</p>
+            </div>
+            <ul className="ml-6 flex list-disc flex-col gap-sibling marker:text-muted-foreground">
               {[
                 'Credits on every Tile show who did what across the NZ team',
                 "Request to be credited when you're missed, and add context to describe your contribution",
@@ -150,33 +152,34 @@ export default function JoinAsSupplierPage() {
                 'Credits link straight to profiles, turning saved inspiration into enquiries',
                 'Crediting data suggests compatible "dream teams" and better matches',
               ].map((item, index) => (
-                <li key={index} className="flex items-start gap-sibling">
-                  <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
-                  <span>{item}</span>
+                <li key={index}>
+                  <p>{item}</p>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="text-center">
-            <Users className="mb-friend mx-auto h-16 w-16 text-primary" />
-            <p className="text-muted-foreground">Visual coming soon</p>
+          <div className="grid place-content-center rounded border-2 border-dashed border-white p-6">
+            <Users className="mb-friend mx-auto h-16 w-16 text-muted-foreground" />
+            <p className="ui-small text-muted-foreground">Visual coming soon</p>
           </div>
-        </div>
+        </Area>
       </FadeInDiv>
 
       {/* Pricing Section */}
       <FadeInDiv stagger={0.2}>
-        <div className="mb-acquaintance text-center">
-          <h2 className="heading-xl mb-friend">Simple, transparent pricing</h2>
-          <p className="ui-large mx-auto max-w-2xl text-muted-foreground">Start free, upgrade when you're ready for more visibility</p>
-        </div>
-        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-area laptop:grid-cols-2">
+        <Area className="grid justify-items-center bg-transparent">
+          <div className="grid max-w-2xl gap-partner text-center">
+            <h2 className="heading-xl">Simple, transparent pricing</h2>
+            <p className="ui-large text-balance text-muted-foreground">Start for free, upgrade for more visibility</p>
+          </div>
+        </Area>
+        <div className="grid grid-cols-1 gap-friend laptop:grid-cols-2">
           <PricingCard
             name="Free"
             price="Free"
             description="Perfect for getting started"
-            features={['Create supplier profile', 'Upload Tiles', 'Credit suppliers and request to be credited', 'Basic profile visibility']}
+            features={['Create a supplier profile', 'Upload tiles', 'Credit other suppliers', 'Request to be credited']}
             ctaText="Get started free"
             ctaHref="/suppliers/register"
           />
