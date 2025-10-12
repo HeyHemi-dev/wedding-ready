@@ -176,7 +176,7 @@ export default function WhyJoinPage() {
         </Area>
         <div className="grid grid-cols-1 gap-friend laptop:grid-cols-2">
           <PricingCard
-            name="Free"
+            name="Basic Profile"
             price="Free"
             description="Perfect for getting started"
             features={['Create a supplier profile', 'Upload tiles', 'Credit other suppliers', 'Request to be credited']}
@@ -184,7 +184,7 @@ export default function WhyJoinPage() {
             ctaHref="/suppliers/register"
           />
           <PricingCard
-            name="Premium"
+            name="Featured Profile"
             price="$20"
             description="For suppliers ready to maximize their reach"
             features={['Everything in Free', 'Enhanced profile placement in directory', 'Priority support', 'Advanced analytics', 'Featured Tile placement']}
