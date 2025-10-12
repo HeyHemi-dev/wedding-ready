@@ -14,24 +14,14 @@ import { HowItWorksArrow, HowItWorksStep } from '@/components/suppliers/how-it-w
 
 const benefits = [
   {
-    title: 'Reach couples earlier',
+    title: 'Reach couples early',
     description: "Be seen while they're still dreaming, not price‑shopping.",
     icon: Eye,
   },
   {
-    title: 'Local visibility by design',
-    description: 'Inspiration ties to the real NZ team who created it.',
+    title: 'Local by design',
+    description: 'Inspiration is tied to the real New Zealand team who created it.',
     icon: Users,
-  },
-  {
-    title: 'Premium presentation',
-    description: 'Look like a feature, not a directory listing.',
-    icon: Star,
-  },
-  {
-    title: 'Real work in context',
-    description: 'Your contribution shown inside a full wedding story.',
-    icon: Network,
   },
   {
     title: 'Evergreen exposure',
@@ -39,7 +29,7 @@ const benefits = [
     icon: Clock,
   },
   {
-    title: 'Built for the ecosystem',
+    title: 'Celebrate the community',
     description: 'Credits lift you and your collaborators together.',
     icon: Zap,
   },
@@ -68,11 +58,11 @@ export default function JoinAsSupplierPage() {
   return (
     <Section className="pt-0">
       {/* Hero Section */}
-      <Area className="grid place-content-center gap-acquaintance bg-transparent laptop:col-span-full laptop:row-span-1">
+      <Area className="grid place-content-center gap-acquaintance bg-transparent laptop:col-span-full">
         <div className="flex flex-col gap-sibling text-center">
-          <h1 className="heading-2xl">Show your work where couples are already dreaming</h1>
-          <p className="ui-large mx-auto max-w-2xl text-pretty text-muted-foreground">
-            Every Tile credits your business, so "I love this" becomes "Let's book them."
+          <h1 className="heading-2xl text-balance">Show your work where couples are already dreaming</h1>
+          <p className="ui-large mx-auto max-w-2xl text-balance text-muted-foreground">
+            Every Tile credits your business, so "I&nbsp;love&nbsp;this" becomes "Let's&nbsp;book&nbsp;them."
           </p>
         </div>
 
@@ -85,22 +75,19 @@ export default function JoinAsSupplierPage() {
           </Button>
           <Button variant="ghost" size="lg" asChild>
             <Link href="#how-it-works">
-              <span>Learn how it works</span>
+              <span>Why join WeddingReady</span>
             </Link>
           </Button>
         </div>
-        <ul className="mx-auto flex max-w-xl flex-col gap-sibling text-left">
-          <li className="flex items-start gap-sibling">
-            <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
-            <span>Join the platform where NZ couples turn moodboards into action</span>
+        <ul className="flex list-none flex-col gap-sibling text-center">
+          <li>
+            <p>Join the platform where New Zealand couples turn moodboards into action</p>
           </li>
-          <li className="flex items-start gap-sibling">
-            <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
-            <span>Be credited, and credit others, to grow a collaborative community</span>
+          <li>
+            <p>Be credited, and credit others, to grow a collaborative community</p>
           </li>
-          <li className="flex items-start gap-sibling">
-            <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
-            <span>Free to start. No card required</span>
+          <li>
+            <p>Free to start. No card required</p>
           </li>
         </ul>
       </Area>
@@ -112,11 +99,11 @@ export default function JoinAsSupplierPage() {
             <h2 className="heading-xl">How it works</h2>
             <p className="ui-large text-balance text-muted-foreground">Three simple steps to get your work in front of couples who are ready to book</p>
           </div>
-          <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-area">
+          <div className="grid grid-cols-[1fr_auto] items-center gap-area laptop:grid-cols-[1fr_auto_1fr_auto_1fr]">
             <HowItWorksStep
               step={1}
-              title="Upload a Tile"
-              description="Show your best work in context. Upload upto 10 images at a time using photos you already have."
+              title="Upload a tile"
+              description="Show your best work in context. Upload up to 10 images at a time using photos you already have."
             />
             <HowItWorksArrow />
             <HowItWorksStep
@@ -142,7 +129,7 @@ export default function JoinAsSupplierPage() {
             <p className="ui-large text-balance text-muted-foreground">Join the platform made specifically for the New Zealand wedding industry</p>
           </div>
         </Area>
-        <div className="grid grid-cols-1 gap-sibling tablet:grid-cols-2 laptop:grid-cols-3">
+        <div className="grid grid-cols-1 gap-sibling tablet:grid-cols-2">
           {benefits.map((benefit) => (
             <FeatureCard key={benefit.title} title={benefit.title} description={benefit.description} />
           ))}
