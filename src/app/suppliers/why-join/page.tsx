@@ -54,7 +54,7 @@ const faqItems = [
   },
 ]
 
-export default function JoinAsSupplierPage() {
+export default function WhyJoinPage() {
   return (
     <Section className="pt-0">
       {/* Hero Section */}
