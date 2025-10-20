@@ -1,9 +1,9 @@
 import { Check } from 'lucide-react'
 
 import { Area } from '@/components/ui/area'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
-import { Badge } from '@/components/ui/badge'
 
 interface PricingCardProps {
   name: string

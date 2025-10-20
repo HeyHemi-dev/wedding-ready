@@ -1,19 +1,18 @@
 import { ArrowRight, Users, Eye, Star, Clock, Network, Zap, Check, X } from 'lucide-react'
 import Link from 'next/link'
 
-import { Area } from '@/components/ui/area'
-import { FadeInDiv } from '@/components/ui/animated-section'
-import { Button } from '@/components/ui/button'
-import { Section } from '@/components/ui/section'
 
-import { FeatureCard } from '@/components/suppliers/feature-card'
 import { FAQItem } from '@/components/suppliers/faq-item'
-
+import { FeatureCard } from '@/components/suppliers/feature-card'
 import { HowItWorksArrow, HowItWorksStep } from '@/components/suppliers/how-it-works-step'
-import { PricingTable, FeatureBoolean, FeatureTextWithSubtext } from '@/components/ui/pricing-table'
-import { Testimonial } from '@/components/testimonial/testimonial'
 import { Logos } from '@/components/testimonial/logos'
+import { Testimonial } from '@/components/testimonial/testimonial'
+import { FadeInDiv } from '@/components/ui/animated-section'
+import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { PricingTable, FeatureBoolean, FeatureTextWithSubtext } from '@/components/ui/pricing-table'
+import { Section } from '@/components/ui/section'
 
 const benefits = [
   {

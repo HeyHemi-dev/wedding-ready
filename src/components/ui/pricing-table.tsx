@@ -1,10 +1,12 @@
 import { ReactNode } from 'react'
 
+import { Check, X } from 'lucide-react'
+import Link from 'next/link'
+
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
-import Link from 'next/link'
-import { Badge } from '@/components/ui/badge'
-import { Check, X } from 'lucide-react'
+
 
 export const pricingFeatures = [
   'Create a supplier profile',
