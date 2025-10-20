@@ -35,28 +35,7 @@ interface PricingTableProps {
 export function PricingTable({ plans }: PricingTableProps) {
   return (
     <div className="grid">
-      {/* Header Row */}
-      <div className="grid auto-rows-max grid-cols-3 gap-sibling">
-        <div className="row-span-full grid grid-rows-subgrid"></div>
-        {plans.map((plan) => (
-          <div
-            key={plan.name}
-            className={cn('row-span-4 grid grid-rows-subgrid justify-items-center gap-sibling rounded-t-area p-6', plan.featured && 'bg-area')}>
-            <div className="flex items-center gap-partner">
-              <h3 className="heading-md">{plan.name}</h3>
-              {plan.featured && <Badge>Popular</Badge>}
-            </div>
-            <div className="flex items-baseline gap-partner">
-              <p className="heading-2xl">{plan.price}</p>
-              {plan.price !== 'Free' && <span className="ui text-muted-foreground">/month</span>}
-            </div>
-            <p className="ui text-center text-muted-foreground">{plan.description}</p>
-            <Button asChild>
-              <Link href={plan.ctaHref}>{plan.ctaText}</Link>
-            </Button>
-          </div>
-        ))}
-      </div>
+      <PricingTableHeaderRow plans={plans} />
       {/* Feature Rows */}
       <PricingTableFeatureRow feature={'Create a supplier profile'} plans={plans} />
       <PricingTableFeatureRow feature={'Upload tiles'} plans={plans} />
@@ -64,6 +43,32 @@ export function PricingTable({ plans }: PricingTableProps) {
       <PricingTableFeatureRow feature={'Request to be credited'} plans={plans} />
       <PricingTableFeatureRow feature={'Featured in Locations directory'} plans={plans} />
       <PricingTableFeatureRow feature={'Featured in Services directory'} plans={plans} isLast={true} />
+    </div>
+  )
+}
+
+function PricingTableHeaderRow({ plans }: { plans: PricingPlan[] }) {
+  return (
+    <div className="grid auto-rows-max grid-cols-3 gap-sibling">
+      <div className="row-span-full grid grid-rows-subgrid"></div>
+      {plans.map((plan) => (
+        <div
+          key={plan.name}
+          className={cn('row-span-4 grid grid-rows-subgrid justify-items-center gap-sibling rounded-t-area p-6', plan.featured && 'bg-area')}>
+          <div className="flex items-center gap-partner">
+            <h3 className="heading-md">{plan.name}</h3>
+            {plan.featured && <Badge>Popular</Badge>}
+          </div>
+          <div className="flex items-baseline gap-partner">
+            <p className="heading-2xl">{plan.price}</p>
+            {plan.price !== 'Free' && <span className="ui text-muted-foreground">/month</span>}
+          </div>
+          <p className="ui text-center text-muted-foreground">{plan.description}</p>
+          <Button asChild>
+            <Link href={plan.ctaHref}>{plan.ctaText}</Link>
+          </Button>
+        </div>
+      ))}
     </div>
   )
 }
