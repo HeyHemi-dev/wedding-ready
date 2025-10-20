@@ -155,48 +155,50 @@ export default function WhyJoinPage() {
 
       {/* Pricing Section */}
       <FadeInDiv stagger={0.2}>
-        <Area className="grid justify-items-center bg-transparent">
-          <div className="grid max-w-2xl gap-partner text-center">
-            <h2 className="heading-xl">Simple, transparent pricing</h2>
-            <p className="ui-large text-balance text-muted-foreground">Start for free, upgrade for more visibility</p>
+        <Area className="grid gap-acquaintance bg-transparent">
+          <div className="grid justify-items-center">
+            <div className="grid max-w-2xl gap-partner text-center">
+              <h2 className="heading-xl">Simple, transparent pricing</h2>
+              <p className="ui-large text-balance text-muted-foreground">Start for free, upgrade for more visibility</p>
+            </div>
           </div>
-        </Area>
 
-        <PricingTable
-          plans={[
-            {
-              name: 'Basic',
-              price: 'Free',
-              description: 'Perfect for getting started',
-              ctaText: 'Get started free',
-              ctaHref: '/suppliers/register',
-              features: {
-                'Create a supplier profile': <FeatureBoolean value={true} />,
-                'Upload tiles': <p>20 per month</p>,
-                'Credit other suppliers': <FeatureBoolean value={true} />,
-                'Request to be credited': <FeatureBoolean value={true} />,
-                'Featured in Locations directory': <FeatureBoolean value={false} />,
-                'Featured in Services directory': <FeatureBoolean value={false} />,
+          <PricingTable
+            plans={[
+              {
+                name: 'Basic',
+                price: 'Free',
+                description: 'Perfect for getting started',
+                ctaText: 'Get started free',
+                ctaHref: '/suppliers/register',
+                features: {
+                  'Create a supplier profile': <FeatureBoolean value={true} />,
+                  'Upload tiles': <p>20 per month</p>,
+                  'Credit other suppliers': <FeatureBoolean value={true} />,
+                  'Request to be credited': <FeatureBoolean value={true} />,
+                  'Featured in Locations directory': <FeatureBoolean value={false} />,
+                  'Featured in Services directory': <FeatureBoolean value={false} />,
+                },
               },
-            },
-            {
-              name: 'Plus',
-              price: '$30',
-              description: 'For suppliers ready to maximize their reach',
-              ctaText: 'Start premium trial',
-              ctaHref: '/suppliers/register?plan=premium',
-              featured: true,
-              features: {
-                'Create a supplier profile': <FeatureBoolean value={true} />,
-                'Upload tiles': <p>Unlimited</p>,
-                'Credit other suppliers': <FeatureBoolean value={true} />,
-                'Request to be credited': <FeatureBoolean value={true} />,
-                'Featured in Locations directory': <FeatureTextWithSubtext text="1 Location included" subtext="$10 per additional location" />,
-                'Featured in Services directory': <FeatureTextWithSubtext text="1 Service included" subtext="$10 per additional service" />,
+              {
+                name: 'Plus',
+                price: '$30',
+                description: 'For suppliers ready to maximize their reach',
+                ctaText: 'Start premium trial',
+                ctaHref: '/suppliers/register?plan=premium',
+                featured: true,
+                features: {
+                  'Create a supplier profile': <FeatureBoolean value={true} />,
+                  'Upload tiles': <p>Unlimited</p>,
+                  'Credit other suppliers': <FeatureBoolean value={true} />,
+                  'Request to be credited': <FeatureBoolean value={true} />,
+                  'Featured in Locations directory': <FeatureTextWithSubtext text="1 Location included" subtext="$10 per additional location" />,
+                  'Featured in Services directory': <FeatureTextWithSubtext text="1 Service included" subtext="$10 per additional service" />,
+                },
               },
-            },
-          ]}
-        />
+            ]}
+          />
+        </Area>
       </FadeInDiv>
 
       {/* Social Proof Section */}
