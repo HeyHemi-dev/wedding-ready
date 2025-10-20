@@ -139,43 +139,42 @@ export default function WhyJoinPage() {
               <p className="ui-large text-balance text-muted-foreground">Start for free, upgrade for more visibility</p>
             </div>
           </div>
-
-          <PricingTable
-            plans={[
-              {
-                name: 'Basic',
-                price: 'Free',
-                description: 'Perfect for getting started',
-                ctaText: 'Join as a supplier',
-                ctaHref: '/suppliers/register',
-                features: {
-                  'Create a supplier profile': <FeatureBoolean value={true} />,
-                  'Upload tiles': <p>20 per month</p>,
-                  'Credit other suppliers': <FeatureBoolean value={true} />,
-                  'Request to be credited': <FeatureBoolean value={true} />,
-                  'Featured in Locations directory': <FeatureBoolean value={false} />,
-                  'Featured in Services directory': <FeatureBoolean value={false} />,
-                },
-              },
-              {
-                name: 'Plus',
-                price: '$30',
-                description: 'For suppliers ready to maximize their reach',
-                ctaText: 'Join as a supplier',
-                ctaHref: '/suppliers/register?plan=premium',
-                featured: true,
-                features: {
-                  'Create a supplier profile': <FeatureBoolean value={true} />,
-                  'Upload tiles': <p>Unlimited</p>,
-                  'Credit other suppliers': <FeatureBoolean value={true} />,
-                  'Request to be credited': <FeatureBoolean value={true} />,
-                  'Featured in Locations directory': <FeatureTextWithSubtext text="1 Location included" subtext="$10 per additional location" />,
-                  'Featured in Services directory': <FeatureTextWithSubtext text="1 Service included" subtext="$10 per additional service" />,
-                },
-              },
-            ]}
-          />
         </Area>
+        <PricingTable
+          plans={[
+            {
+              name: 'Basic',
+              price: 'Free',
+              description: 'Perfect for getting started',
+              ctaText: 'Join as a supplier',
+              ctaHref: '/suppliers/register',
+              features: {
+                'Create a supplier profile': <FeatureBoolean value={true} />,
+                'Upload tiles': <p>20 per month</p>,
+                'Credit other suppliers': <FeatureBoolean value={true} />,
+                'Request to be credited': <FeatureBoolean value={true} />,
+                'Featured in Locations directory': <FeatureBoolean value={false} />,
+                'Featured in Services directory': <FeatureBoolean value={false} />,
+              },
+            },
+            {
+              name: 'Plus',
+              price: '$30',
+              description: 'For suppliers ready to maximize their reach',
+              ctaText: 'Join as a supplier',
+              ctaHref: '/suppliers/register?plan=premium',
+              featured: true,
+              features: {
+                'Create a supplier profile': <FeatureBoolean value={true} />,
+                'Upload tiles': <p>Unlimited</p>,
+                'Credit other suppliers': <FeatureBoolean value={true} />,
+                'Request to be credited': <FeatureBoolean value={true} />,
+                'Featured in Locations directory': <FeatureTextWithSubtext text="1 Location included" subtext="$10 per additional location" />,
+                'Featured in Services directory': <FeatureTextWithSubtext text="1 Service included" subtext="$10 per additional service" />,
+              },
+            },
+          ]}
+        />
       </FadeInDiv>
 
       {/* Social Proof Section */}
