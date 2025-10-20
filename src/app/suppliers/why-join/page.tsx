@@ -1,7 +1,7 @@
 import { ArrowRight, Users, Eye, Clock, Zap, Sparkle, Sparkles, MapPin, Infinity, HeartHandshake } from 'lucide-react'
 import Link from 'next/link'
 
-import { FAQItem } from '@/components/suppliers/faq-item'
+import { FAQ } from '@/components/faq/faq'
 import { FeatureCard } from '@/components/suppliers/feature-card'
 import { HowItWorksArrow, HowItWorksStep } from '@/components/suppliers/how-it-works-step'
 import { Logos } from '@/components/testimonial/logos'
@@ -12,29 +12,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { PricingTable, FeatureBoolean, FeatureTextWithSubtext } from '@/components/pricing/pricing-table'
 import { Section } from '@/components/ui/section'
-
-const benefits = [
-  {
-    title: 'Reach couples early',
-    description: "Be seen while they're still dreaming, not price‑shopping.",
-    icon: Eye,
-  },
-  {
-    title: 'Local by design',
-    description: 'Inspiration is tied to the real New Zealand team who created it.',
-    icon: Users,
-  },
-  {
-    title: 'Evergreen exposure',
-    description: 'Tiles keep working for you over time.',
-    icon: Clock,
-  },
-  {
-    title: 'Celebrate the community',
-    description: 'Credits lift you and your collaborators together.',
-    icon: Zap,
-  },
-]
 
 export default function WhyJoinPage() {
   return (
@@ -63,7 +40,7 @@ export default function WhyJoinPage() {
         </div>
         <ul className="flex list-none flex-col gap-sibling text-center">
           <li>
-            <p>Join the platform where New Zealand couples turn moodboards into action</p>
+            <p>The platform where New Zealand couples turn moodboards into action</p>
           </li>
           <li>
             <p>Be credited, and credit others, to grow a collaborative community</p>
@@ -79,7 +56,7 @@ export default function WhyJoinPage() {
         <Area className="grid justify-items-center gap-acquaintance">
           <div className="grid max-w-2xl gap-partner text-center">
             <h2 className="heading-xl">How it works</h2>
-            <p className="ui-large text-balance text-muted-foreground">Three simple steps to get your work in front of couples who are ready to book</p>
+            <p className="ui-large text-balance text-muted-foreground">Three simple steps to get your work in front of couples who want to book</p>
           </div>
           <div className="grid grid-cols-[1fr_auto] items-center gap-area laptop:grid-cols-[1fr_auto_1fr_auto_1fr]">
             <HowItWorksStep
@@ -130,12 +107,12 @@ export default function WhyJoinPage() {
               </h2>
               <p className="ui-large text-muted-foreground">Fair, networked, and built to promote you</p>
             </div>
-            <ul className="ml-6 flex list-disc flex-col gap-sibling marker:text-muted-foreground">
+            <ul className="ml-6 flex list-disc flex-col gap-sibling text-pretty marker:text-muted-foreground">
               {[
-                'Every Tile credits the suppliers whose work is featured.',
-                "Request to be credited when you're missed, and add context to describe your contribution.",
-                "Credited Tiles appear on each contributor's profile, multiplying reach.",
-                'Credits link to your supplier profile, turning saved inspiration into enquiries.',
+                'Every Tile credits the suppliers who helped make it happen.',
+                "Request to be credited when you're missed, and can optionally describe your contribution.",
+                "Credited Tiles appear on each contributor's profile, multiplying your reach.",
+                'Credits link to your supplier profile, so couples can save more of your work.',
                 'Credits help WeddingReady suggest compatible "dream teams" for couples to book.',
               ].map((item, index) => (
                 <li key={index}>
@@ -206,7 +183,7 @@ export default function WhyJoinPage() {
           <div className="grid justify-items-center">
             <div className="grid max-w-2xl gap-partner text-center">
               <h2 className="heading-xl">Join the community</h2>
-              <p className="ui-large text-muted-foreground">What other New Zealand suppliers are saying about WeddingReady</p>
+              <p className="ui-large text-muted-foreground">What New Zealand suppliers are saying about WeddingReady</p>
             </div>
           </div>
 
@@ -266,12 +243,14 @@ export default function WhyJoinPage() {
             </div>
           </div>
           <div className="grid grid-cols-1">
-            <FAQItem
+            <FAQ
               question={"I don't have time for another marketing platform."}
               content={
                 <>
-                  <p>Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products.</p>
-                  <p>Upload content in bulk (up to 10 images at a time) and build a lasting digital presence that works for you, not the other way around.</p>
+                  <p>
+                    Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products. Upload
+                    content in bulk (up to 10 images at a time) and build a lasting digital presence that keeps working for you.
+                  </p>
                   <p className="rounded bg-primary/20 p-4">
                     We&apos;re also exploring an Instagram integration to automatically import images and credits.{' '}
                     <a href="https://weddingready.co.nz/contact" className="underline">
@@ -279,20 +258,21 @@ export default function WhyJoinPage() {
                     </a>
                   </p>
                 </>
-              }
-              className="border-b border-border p-6"></FAQItem>
-            <FAQItem
+              }></FAQ>
+            <FAQ
               question={'How is WeddingReady different from Pinterest or Instagram?'}
               content={
                 <>
                   <p>
-                    Pinterest and Instagram aren&apos;t interested in local; so couples are often frustrated, saving inspiration that they will never be able to
-                    book.
+                    Pinterest and Instagram aren&apos;t invested in supporting local. This often leaves couples frustrated, saving inspiration that they will
+                    never be able to book.
                   </p>
-                  <p>WeddingReady ties inspiration to local New Zealand suppliers they can actually hire.</p>
+                  <p>
+                    On WeddingReady, local suppliers create the inspiration. This means everything a couple saves, is linked to local New Zealand suppliers they
+                    can actually book.
+                  </p>
                 </>
-              }
-              className="border-b border-border p-6"></FAQItem>
+              }></FAQ>
           </div>
         </Area>
       </FadeInDiv>
