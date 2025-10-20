@@ -34,7 +34,7 @@ interface PricingTableProps {
 
 export function PricingTable({ plans }: PricingTableProps) {
   return (
-    <div className="grid">
+    <div className="grid overflow-x-auto">
       <PricingTableHeaderRow plans={plans} />
       {/* Feature Rows */}
       <PricingTableFeatureRow feature={'Create a supplier profile'} plans={plans} />
@@ -49,8 +49,8 @@ export function PricingTable({ plans }: PricingTableProps) {
 
 function PricingTableHeaderRow({ plans }: { plans: PricingPlan[] }) {
   return (
-    <div className="grid auto-rows-max grid-cols-3 gap-sibling">
-      <div className="row-span-full grid grid-rows-subgrid"></div>
+    <div className="grid auto-rows-max grid-cols-[15ch_minmax(20ch,1fr)_minmax(20ch,1fr)] gap-sibling laptop:grid-cols-3">
+      <div className="sticky left-0 z-10 row-span-4 grid grid-rows-subgrid bg-transparent laptop:block laptop:bg-transparent"></div>
       {plans.map((plan) => (
         <div
           key={plan.name}
@@ -75,8 +75,12 @@ function PricingTableHeaderRow({ plans }: { plans: PricingPlan[] }) {
 
 function PricingTableFeatureRow({ feature, plans, isLast = false }: { feature: Feature; plans: PricingPlan[]; isLast?: boolean }) {
   return (
-    <div className="grid grid-cols-3 gap-sibling border-t border-border transition-all duration-200 hover:bg-primary/20">
-      <div className={cn('flex items-center p-6', isLast && 'pb-12')}>
+    <div className="grid grid-cols-[15ch_minmax(20ch,1fr)_minmax(20ch,1fr)] gap-sibling border-t border-border transition-all duration-200 laptop:grid-cols-3 laptop:hover:bg-primary/20">
+      <div
+        className={cn(
+          'sticky left-0 z-10 flex items-center bg-background p-6 shadow-[3px_0px_3px_-1px_rgba(0,_0,_0,_0.1)] laptop:block laptop:bg-transparent laptop:shadow-none',
+          isLast && 'pb-12'
+        )}>
         <p className="ui">{feature}</p>
       </div>
       {plans.map((plan) => (
