@@ -10,7 +10,7 @@ import { FadeInDiv } from '@/components/ui/animated-section'
 import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { PricingTable, FeatureBoolean, FeatureTextWithSubtext } from '@/components/ui/pricing-table'
+import { PricingTable, FeatureBoolean, FeatureTextWithSubtext } from '@/components/pricing/pricing-table'
 import { Section } from '@/components/ui/section'
 
 const benefits = [
@@ -267,7 +267,7 @@ export default function WhyJoinPage() {
           </div>
           <div className="grid grid-cols-1">
             <FAQItem
-              question={"What if I don't have time for another marketing platform?"}
+              question={"I don't have time for another marketing platform."}
               content={
                 <>
                   <p>Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products.</p>
