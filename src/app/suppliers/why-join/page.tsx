@@ -125,19 +125,19 @@ export default function WhyJoinPage() {
         <Area className="grid gap-acquaintance laptop:grid-cols-2">
           <div className="flex flex-col gap-friend">
             <div className="grid gap-sibling">
-              <h2 className="grid justify-items-start gap-spouse">
-                <Badge className="ui-small-s1">Spotlight feature</Badge>
+              <h2 className="grid justify-items-start gap-partner">
+                <Badge className="ui-small-s1"> Feature spotlight</Badge>
                 <span className="heading-xl">Supplier crediting</span>
               </h2>
               <p className="ui-large text-muted-foreground">Fair, networked, and built to promote you</p>
             </div>
             <ul className="ml-6 flex list-disc flex-col gap-sibling marker:text-muted-foreground">
               {[
-                'Credits on every Tile show who did what across the NZ team',
-                "Request to be credited when you're missed, and add context to describe your contribution",
-                "Credited Tiles appear on each contributor's profile, multiplying reach",
-                'Credits link straight to profiles, turning saved inspiration into enquiries',
-                'Crediting data suggests compatible "dream teams" and better matches',
+                'Every Tile credits the suppliers whose work is featured.',
+                "Request to be credited when you're missed, and add context to describe your contribution.",
+                "Credited Tiles appear on each contributor's profile, multiplying reach.",
+                'Credits link to your supplier profile, turning saved inspiration into enquiries.',
+                'Credits help WeddingReady suggest compatible "dream teams" for couples to book.',
               ].map((item, index) => (
                 <li key={index}>
                   <p>{item}</p>
@@ -169,7 +169,7 @@ export default function WhyJoinPage() {
                 name: 'Basic',
                 price: 'Free',
                 description: 'Perfect for getting started',
-                ctaText: 'Get started free',
+                ctaText: 'Join as a supplier',
                 ctaHref: '/suppliers/register',
                 features: {
                   'Create a supplier profile': <FeatureBoolean value={true} />,
@@ -184,7 +184,7 @@ export default function WhyJoinPage() {
                 name: 'Plus',
                 price: '$30',
                 description: 'For suppliers ready to maximize their reach',
-                ctaText: 'Start premium trial',
+                ctaText: 'Join as a supplier',
                 ctaHref: '/suppliers/register?plan=premium',
                 featured: true,
                 features: {
