@@ -251,7 +251,7 @@ export default function WhyJoinPage() {
                     Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products. Upload
                     content in bulk (up to 10 images at a time) and build a lasting digital presence that keeps working for you.
                   </p>
-                  <p className="rounded bg-primary/20 p-4">
+                  <p className="rounded bg-muted p-4">
                     We&apos;re also exploring an Instagram integration to automatically import images and credits.{' '}
                     <a href="https://weddingready.co.nz/contact" className="underline">
                       Register your interest.
