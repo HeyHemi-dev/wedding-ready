@@ -1,15 +1,17 @@
+import { Icon, LucideIcon } from 'lucide-react'
+
 interface FeatureCardProps {
+  Icon: LucideIcon
   title: string
   description: string
 }
 
-export function FeatureCard({ title, description }: FeatureCardProps) {
+export function FeatureCard({ Icon, title, description }: FeatureCardProps) {
   return (
-    <div className="rounded-area border border-area p-6">
-      <div className="flex flex-col gap-spouse">
-        <h3 className="ui-large">{title}</h3>
-        <p className="ui text-pretty text-muted-foreground">{description}</p>
-      </div>
+    <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-x-partner gap-y-spouse rounded-area border border-area p-6">
+      <Icon className="h-6 w-6 self-center text-muted-foreground" />
+      <h3 className="ui-large col-start-2">{title}</h3>
+      <p className="ui col-start-2 text-pretty text-muted-foreground">{description}</p>
     </div>
   )
 }
