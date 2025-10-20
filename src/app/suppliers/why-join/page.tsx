@@ -2,8 +2,8 @@ import { ArrowRight, Users, Eye, Clock, Zap, Sparkle, Sparkles, MapPin, Infinity
 import Link from 'next/link'
 
 import { FAQ } from '@/components/faq/faq'
-import { FeatureCard } from '@/components/suppliers/feature-card'
-import { HowItWorksArrow, HowItWorksStep } from '@/components/suppliers/how-it-works-step'
+import { FeatureCard } from '@/components/card/feature-card'
+import { HowItWorksArrow, HowItWorksStep } from '@/components/card/how-it-works-step'
 import { Logos } from '@/components/testimonial/logos'
 import { Testimonial } from '@/components/testimonial/testimonial'
 import { FadeInDiv } from '@/components/ui/animated-section'
