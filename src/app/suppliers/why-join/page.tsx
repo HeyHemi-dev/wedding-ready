@@ -1,6 +1,5 @@
-import { ArrowRight, Users, Eye, Star, Clock, Network, Zap, Check, X } from 'lucide-react'
+import { ArrowRight, Users, Eye, Clock, Zap } from 'lucide-react'
 import Link from 'next/link'
-
 
 import { FAQItem } from '@/components/suppliers/faq-item'
 import { FeatureCard } from '@/components/suppliers/feature-card'
@@ -45,7 +44,7 @@ export default function WhyJoinPage() {
         <div className="flex flex-col gap-sibling text-center">
           <h1 className="heading-2xl text-balance">Show your work where couples are already dreaming</h1>
           <p className="ui-large mx-auto max-w-2xl text-balance text-muted-foreground">
-            Every Tile credits your business, so "I&nbsp;love&nbsp;this" becomes "Let's&nbsp;book&nbsp;them."
+            Every Tile credits your business, so &ldquo;I&nbsp;love&nbsp;this&rdquo; becomes &ldquo;Let&apos;s&nbsp;book&nbsp;them.&rdquo;
           </p>
         </div>
 
@@ -264,7 +263,7 @@ export default function WhyJoinPage() {
                 <p>Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products.</p>
                 <p>Upload content in bulk (up to 10 images at a time) and build a lasting digital presence that works for you, not the other way around.</p>
                 <p className="rounded border border-primary bg-primary/10 p-4 text-primary-foreground">
-                  We're also exploring an Instagram integration to automatically import images and credits.{' '}
+                  We&apos;re also exploring an Instagram integration to automatically import images and credits.
                   <a href="https://weddingready.co.nz/contact" className="underline">
                     Register your interest.
                   </a>
@@ -274,7 +273,8 @@ export default function WhyJoinPage() {
             <FAQItem question={'How is WeddingReady different from Pinterest or Instagram?'} className="border-b border-border p-6">
               <div className="prose ui flex flex-col gap-sibling text-pretty">
                 <p>
-                  Pinterest and Instagram aren't interested in local; so couples are often frustrated, saving inspiration that they will never be able to book.
+                  Pinterest and Instagram aren&apos;t interested in local; so couples are often frustrated, saving inspiration that they will never be able to
+                  book.
                 </p>
                 <p>WeddingReady ties inspiration to local New Zealand suppliers they can actually hire.</p>
               </div>
