@@ -49,7 +49,7 @@ export function PricingTable({ plans }: PricingTableProps) {
               <p className="heading-2xl">{plan.price}</p>
               {plan.price !== 'Free' && <span className="ui text-muted-foreground">/month</span>}
             </div>
-            <p className="ui-small text-center text-muted-foreground">{plan.description}</p>
+            <p className="ui text-center text-muted-foreground">{plan.description}</p>
             <Button asChild>
               <Link href={plan.ctaHref}>{plan.ctaText}</Link>
             </Button>
@@ -69,8 +69,10 @@ export function PricingTable({ plans }: PricingTableProps) {
 
 function PricingTableFeatureRow({ feature, plans, isLast = false }: { feature: Feature; plans: PricingPlan[]; isLast?: boolean }) {
   return (
-    <div className="border-borde grid grid-cols-3 items-center gap-sibling border-t">
-      <p className="ui p-6">{feature}</p>
+    <div className="border-borde grid grid-cols-3 gap-sibling border-t">
+      <div className={cn('flex items-center p-6', isLast && 'pb-12')}>
+        <p className="ui">{feature}</p>
+      </div>
       {plans.map((plan) => (
         <div
           key={plan.name}
@@ -82,13 +84,13 @@ function PricingTableFeatureRow({ feature, plans, isLast = false }: { feature: F
   )
 }
 
-export function FeatureRowBoolean({ value }: { value: boolean }) {
-  return value ? <Check className="h-4 w-4 text-secondary-foreground" /> : <X className="h-4 w-4 text-muted-foreground" />
+export function FeatureBoolean({ value }: { value: boolean }) {
+  return value ? <Check className="h-6 w-6" /> : <X className="h-6 w-6 text-destructive" />
 }
 
-export function FeatureRowTextWithSubtext({ text, subtext }: { text: string; subtext: string }) {
+export function FeatureTextWithSubtext({ text, subtext }: { text: string; subtext: string }) {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col">
       <p className="ui">{text}</p>
       <p className="ui-small text-muted-foreground">{subtext}</p>
     </div>
