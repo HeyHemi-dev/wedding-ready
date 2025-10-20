@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
+import { Check, X } from 'lucide-react'
 
 export const pricingFeatures = [
   'Create a supplier profile',
@@ -61,18 +62,35 @@ export function PricingTable({ plans }: PricingTableProps) {
       <PricingTableFeatureRow feature={'Credit other suppliers'} plans={plans} />
       <PricingTableFeatureRow feature={'Request to be credited'} plans={plans} />
       <PricingTableFeatureRow feature={'Featured in Locations directory'} plans={plans} />
-      <PricingTableFeatureRow feature={'Featured in Services directory'} plans={plans} />
+      <PricingTableFeatureRow feature={'Featured in Services directory'} plans={plans} isLast={true} />
     </div>
   )
 }
 
-function PricingTableFeatureRow({ feature, plans }: { feature: Feature; plans: PricingPlan[] }) {
+function PricingTableFeatureRow({ feature, plans, isLast = false }: { feature: Feature; plans: PricingPlan[]; isLast?: boolean }) {
   return (
     <div className="border-borde grid grid-cols-3 items-center gap-sibling border-t">
       <p className="ui p-6">{feature}</p>
       {plans.map((plan) => (
-        <div className={cn('ui flex items-center justify-center p-6 text-center', plan.featured && 'bg-area')}>{plan.features[feature]}</div>
+        <div
+          key={plan.name}
+          className={cn('ui flex items-center justify-center p-6 text-center', plan.featured && 'bg-area', isLast && 'rounded-b-area pb-12')}>
+          {plan.features[feature]}
+        </div>
       ))}
+    </div>
+  )
+}
+
+export function FeatureRowBoolean({ value }: { value: boolean }) {
+  return value ? <Check className="h-4 w-4 text-secondary-foreground" /> : <X className="h-4 w-4 text-muted-foreground" />
+}
+
+export function FeatureRowTextWithSubtext({ text, subtext }: { text: string; subtext: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center">
+      <p className="ui">{text}</p>
+      <p className="ui-small text-muted-foreground">{subtext}</p>
     </div>
   )
 }
