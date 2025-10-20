@@ -1,4 +1,4 @@
-import { ArrowRight, Users, Eye, Clock, Zap } from 'lucide-react'
+import { ArrowRight, Users, Eye, Clock, Zap, Sparkle, Sparkles, MapPin, Infinity, HeartHandshake } from 'lucide-react'
 import Link from 'next/link'
 
 import { FAQItem } from '@/components/suppliers/faq-item'
@@ -112,9 +112,10 @@ export default function WhyJoinPage() {
           </div>
         </Area>
         <div className="grid grid-cols-1 gap-friend tablet:grid-cols-2">
-          {benefits.map((benefit) => (
-            <FeatureCard key={benefit.title} title={benefit.title} description={benefit.description} />
-          ))}
+          <FeatureCard Icon={Sparkles} title={'Reach couples early'} description={"Be seen while they're still dreaming, not price-shopping."} />
+          <FeatureCard Icon={MapPin} title={'Local by design'} description="Inspiration is tied to the real New Zealand team who created it." />
+          <FeatureCard Icon={Infinity} title={'Evergreen exposure'} description="Tiles keep working for you over time." />
+          <FeatureCard Icon={HeartHandshake} title={'Celebrate the community'} description="Credits lift you and your collaborators together." />
         </div>
       </FadeInDiv>
 
@@ -217,7 +218,14 @@ export default function WhyJoinPage() {
               avatar: { src: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-1.webp', alt: 'Jane Smith' },
             }}
           />
-          <Logos />
+          <Logos
+            title="Trusted by New Zealand suppliers"
+            logos={[
+              { name: 'Together Journal', logo: '/assets/why-join-logos/together-transparent-black.png' },
+              { name: 'Hooray', logo: '/assets/why-join-logos/hooray-transparent.png' },
+              { name: 'Hello May', logo: '/assets/why-join-logos/hello-may-logo-transparent.png' },
+            ]}
+          />
         </Area>
       </FadeInDiv>
 
@@ -258,27 +266,33 @@ export default function WhyJoinPage() {
             </div>
           </div>
           <div className="grid grid-cols-1">
-            <FAQItem question={"What if I don't have time for another marketing platform?"} className="border-b border-border p-6">
-              <div className="prose ui flex flex-col gap-sibling text-pretty">
-                <p>Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products.</p>
-                <p>Upload content in bulk (up to 10 images at a time) and build a lasting digital presence that works for you, not the other way around.</p>
-                <p className="rounded border border-primary bg-primary/10 p-4 text-primary-foreground">
-                  We&apos;re also exploring an Instagram integration to automatically import images and credits.
-                  <a href="https://weddingready.co.nz/contact" className="underline">
-                    Register your interest.
-                  </a>
-                </p>
-              </div>
-            </FAQItem>
-            <FAQItem question={'How is WeddingReady different from Pinterest or Instagram?'} className="border-b border-border p-6">
-              <div className="prose ui flex flex-col gap-sibling text-pretty">
-                <p>
-                  Pinterest and Instagram aren&apos;t interested in local; so couples are often frustrated, saving inspiration that they will never be able to
-                  book.
-                </p>
-                <p>WeddingReady ties inspiration to local New Zealand suppliers they can actually hire.</p>
-              </div>
-            </FAQItem>
+            <FAQItem
+              question={"What if I don't have time for another marketing platform?"}
+              content={
+                <>
+                  <p>Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products.</p>
+                  <p>Upload content in bulk (up to 10 images at a time) and build a lasting digital presence that works for you, not the other way around.</p>
+                  <p className="rounded bg-primary/20 p-4">
+                    We&apos;re also exploring an Instagram integration to automatically import images and credits.{' '}
+                    <a href="https://weddingready.co.nz/contact" className="underline">
+                      Register your interest.
+                    </a>
+                  </p>
+                </>
+              }
+              className="border-b border-border p-6"></FAQItem>
+            <FAQItem
+              question={'How is WeddingReady different from Pinterest or Instagram?'}
+              content={
+                <>
+                  <p>
+                    Pinterest and Instagram aren&apos;t interested in local; so couples are often frustrated, saving inspiration that they will never be able to
+                    book.
+                  </p>
+                  <p>WeddingReady ties inspiration to local New Zealand suppliers they can actually hire.</p>
+                </>
+              }
+              className="border-b border-border p-6"></FAQItem>
           </div>
         </Area>
       </FadeInDiv>
