@@ -1,4 +1,4 @@
-import { ArrowRight, Users, Eye, Star, Clock, Network, Zap } from 'lucide-react'
+import { ArrowRight, Users, Eye, Star, Clock, Network, Zap, Check, X } from 'lucide-react'
 import { motion } from 'motion/react'
 import Link from 'next/link'
 
@@ -11,6 +11,7 @@ import { FeatureCard } from '@/components/suppliers/feature-card'
 import { FAQItem } from '@/components/suppliers/faq-item'
 import { PricingCard } from '@/components/suppliers/pricing-card'
 import { HowItWorksArrow, HowItWorksStep } from '@/components/suppliers/how-it-works-step'
+import { PricingTable, pricingFeatures } from '@/components/ui/pricing-table'
 
 const benefits = [
   {
@@ -32,25 +33,6 @@ const benefits = [
     title: 'Celebrate the community',
     description: 'Credits lift you and your collaborators together.',
     icon: Zap,
-  },
-]
-
-const faqItems = [
-  {
-    question: '"I don\'t have time for another platform."',
-    answer: (
-      <div className="flex flex-col gap-sibling">
-        <p>
-          Upload content in bulk (up to 10 images at a time) using photos you already have. Unlike social media that demands constant updates, your content
-          stays relevant as long as you offer the services shown—helping you build a lasting digital presence that works for you, not the other way around.
-        </p>
-        <p>We're exploring an Instagram integration to automatically import your images and credits. Click here to register your interest.</p>
-      </div>
-    ),
-  },
-  {
-    question: '"How is this different from Pinterest or Instagram?"',
-    answer: 'They inspire globally with no path to book. WeddingReady ties inspiration to local NZ suppliers you can hire.',
   },
 ]
 
@@ -174,78 +156,134 @@ export default function WhyJoinPage() {
             <p className="ui-large text-balance text-muted-foreground">Start for free, upgrade for more visibility</p>
           </div>
         </Area>
-        <div className="grid grid-cols-1 gap-friend laptop:grid-cols-2">
-          <PricingCard
-            name="Basic Profile"
-            price="Free"
-            description="Perfect for getting started"
-            features={['Create a supplier profile', 'Upload tiles', 'Credit other suppliers', 'Request to be credited']}
-            ctaText="Get started free"
-            ctaHref="/suppliers/register"
-          />
-          <PricingCard
-            name="Featured Profile"
-            price="$20"
-            description="For suppliers ready to maximize their reach"
-            features={['Everything in Free', 'Enhanced profile placement in directory', 'Priority support', 'Advanced analytics', 'Featured Tile placement']}
-            ctaText="Start premium trial"
-            ctaHref="/suppliers/register?plan=premium"
-            featured={true}
-          />
-        </div>
-      </FadeInDiv>
 
-      {/* FAQ Section */}
-      <FadeInDiv stagger={0.1}>
-        <div className="mb-acquaintance text-center">
-          <h2 className="heading-xl mb-friend">Frequently asked questions</h2>
-          <p className="ui-large mx-auto max-w-2xl text-muted-foreground">Everything you need to know about joining WeddingReady</p>
-        </div>
-        <div className="mx-auto max-w-3xl">
-          {faqItems.map((item, index) => (
-            <FAQItem key={index} question={item.question} answer={item.answer} />
-          ))}
-        </div>
+        <PricingTable
+          plans={[
+            {
+              name: 'Basic',
+              price: 'Free',
+              description: 'Perfect for getting started',
+              ctaText: 'Get started free',
+              ctaHref: '/suppliers/register',
+              features: {
+                'Create a supplier profile': <Check />,
+                'Upload tiles': <p>20 tiles per month</p>,
+                'Credit other suppliers': <Check />,
+                'Request to be credited': <Check />,
+                'Featured in Locations directory': <X />,
+                'Featured in Services directory': <X />,
+              },
+            },
+            {
+              name: 'Plus',
+              price: '$30',
+              description: 'For suppliers ready to maximize their reach',
+              ctaText: 'Start premium trial',
+              ctaHref: '/suppliers/register?plan=premium',
+              featured: true,
+              features: {
+                'Create a supplier profile': <Check />,
+                'Upload tiles': (
+                  <div className="flex items-center gap-spouse">
+                    <Check />
+                    <p>Unlimited</p>
+                  </div>
+                ),
+                'Credit other suppliers': <Check />,
+                'Request to be credited': <Check />,
+                'Featured in Locations directory': (
+                  <div className="flex flex-col text-center">
+                    <p className="ui">1 Location included</p>
+                    <p className="ui-small text-muted-foreground">$10 per additional location</p>
+                  </div>
+                ),
+                'Featured in Services directory': (
+                  <div className="flex flex-col text-center">
+                    <p className="ui">1 Service included</p>
+                    <p className="ui-small text-muted-foreground">$10 per additional service</p>
+                  </div>
+                ),
+              },
+            },
+          ]}
+        />
       </FadeInDiv>
 
       {/* Social Proof Section */}
       <FadeInDiv stagger={0.2}>
-        <div className="text-center">
-          <h2 className="heading-xl mb-friend">Join the community</h2>
-          <p className="ui-large mb-friend mx-auto max-w-2xl text-muted-foreground">
-            Early adopters are shaping the platform and securing first-mover visibility
-          </p>
+        <Area className="grid justify-items-center gap-acquaintance bg-transparent">
+          <div className="grid max-w-2xl gap-partner text-center">
+            <h2 className="heading-xl">Join the community</h2>
+            <p className="ui-large text-muted-foreground">What other New Zealand suppliers are saying about WeddingReady</p>
+          </div>
 
           <div className="text-center">
             <Star className="mb-friend mx-auto h-12 w-12 text-primary" />
             <p className="text-muted-foreground">Supplier testimonials and logos coming soon</p>
           </div>
-        </div>
+        </Area>
       </FadeInDiv>
 
       {/* Final CTA Section */}
       <FadeInDiv>
-        <div className="text-center">
-          <h2 className="heading-xl mb-friend">Ready to join?</h2>
-          <p className="ui-large mb-acquaintance mx-auto max-w-2xl text-muted-foreground">Be where couples are already dreaming — and ready to book.</p>
-          <div className="mx-auto flex max-w-md flex-col gap-friend">
-            <Button size="lg" asChild>
-              <Link href="/suppliers/register" className="flex items-center gap-spouse">
-                <span>Join as a supplier</span>
-                <ArrowRight />
-              </Link>
-            </Button>
-            <div className="space-y-sibling text-sm text-muted-foreground">
-              <p>You keep ownership of your images. By sharing, you allow WeddingReady to display and promote them so couples can discover your work.</p>
-              <p>
-                <a href="/terms" className="underline hover:no-underline">
-                  View full terms of use
-                </a>
-              </p>
-              <p className="font-medium">Free to start. No card required.</p>
+        <Area className="grid justify-items-center gap-friend">
+          <div className="grid max-w-2xl gap-partner text-center">
+            <h2 className="heading-2xl">Ready to join?</h2>
+            <p className="ui-large text-muted-foreground">Be where couples are already dreaming —and ready to book.</p>
+          </div>
+
+          <Button size="lg" asChild>
+            <Link href="/suppliers/register" className="flex items-center gap-spouse">
+              <span>Join as a supplier</span>
+              <ArrowRight />
+            </Link>
+          </Button>
+
+          <div className="prose ui-small grid max-w-2xl gap-partner text-balance text-center text-muted-foreground">
+            <p>You keep ownership of your images. By sharing, you allow WeddingReady to display and promote them so couples can discover your work.</p>
+            <p>
+              <a href="/terms" className="underline">
+                View full terms of use
+              </a>
+            </p>
+            <p className="ui-small-s1">Free to start. No card required.</p>
+          </div>
+        </Area>
+      </FadeInDiv>
+
+      {/* FAQ Section */}
+      <FadeInDiv stagger={0.1}>
+        <Area className="grid justify-items-center bg-transparent">
+          <div className="grid w-full max-w-2xl gap-acquaintance">
+            <div className="grid gap-partner text-center">
+              <h2 className="heading-xl">Frequently asked questions</h2>
+              <p className="ui-large text-muted-foreground">Everything you need to know about joining WeddingReady</p>
+            </div>
+            <div className="grid grid-cols-1 gap-friend">
+              <FAQItem question={"What if I don't have time for another marketing platform?"}>
+                <div className="prose ui flex flex-col gap-sibling text-pretty">
+                  <p>Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products.</p>
+                  <p>Upload content in bulk (up to 10 images at a time) and build a lasting digital presence that works for you, not the other way around.</p>
+                  <p className="rounded border border-primary bg-primary/10 p-4 text-primary-foreground">
+                    We're also exploring an Instagram integration to automatically import images and credits.{' '}
+                    <a href="https://weddingready.co.nz/contact" className="underline">
+                      Register your interest.
+                    </a>
+                  </p>
+                </div>
+              </FAQItem>
+              <FAQItem question={'How is WeddingReady different from Pinterest or Instagram?'}>
+                <div className="prose ui flex flex-col gap-sibling text-pretty">
+                  <p>
+                    Pinterest and Instagram aren't interested in local; so couples are often frustrated, saving inspiration that they will never be able to
+                    book.
+                  </p>
+                  <p>WeddingReady ties inspiration to local New Zealand suppliers they can actually hire.</p>
+                </div>
+              </FAQItem>
             </div>
           </div>
-        </div>
+        </Area>
       </FadeInDiv>
     </Section>
   )
