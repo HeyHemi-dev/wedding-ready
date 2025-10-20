@@ -1,40 +1,20 @@
-'use client'
-
-import { useState } from 'react'
-
-import { AnimatePresence, motion } from 'motion/react'
 import { ChevronDown } from 'lucide-react'
-
-import { cn } from '@/utils/shadcn-utils'
 
 interface FAQItemProps {
   question: string
-  answer: string | React.ReactNode
+  children: React.ReactNode
 }
 
-export function FAQItem({ question, answer }: FAQItemProps) {
-  const [isOpen, setIsOpen] = useState(false)
-
+export function FAQItem({ question, children }: FAQItemProps): React.ReactElement {
   return (
-    <div className="border-b border-border">
-      <button onClick={() => setIsOpen(!isOpen)} className="py-friend flex w-full items-center justify-between gap-sibling text-left">
+    <details name={'faq'} className="group border-border">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-sibling">
         <span className="heading-sm">{question}</span>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown className="h-5 w-5 text-muted-foreground" />
-        </motion.div>
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden">
-            <div className="pb-friend text-muted-foreground">{typeof answer === 'string' ? <p className="text-pretty">{answer}</p> : answer}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+        <ChevronDown className="h-6 w-6 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
+      </summary>
+      <div className="-translate-y-4 py-4 text-foreground/80 opacity-0 transition-all duration-200 group-open:translate-y-0 group-open:opacity-100">
+        {children}
+      </div>
+    </details>
   )
 }
