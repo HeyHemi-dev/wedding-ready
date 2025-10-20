@@ -14,7 +14,7 @@ export function FAQItem({ question, content, className }: FAQItemProps) {
   return (
     <details name={'faq'} className={cn('group', className)}>
       <summary className="flex cursor-pointer list-none items-center justify-between gap-sibling">
-        <span className="ui-large">{question}</span>
+        <h3 className="ui-large">{question}</h3>
         <ChevronDown className="h-6 w-6 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
       </summary>
       <div className="-translate-y-4 py-6 text-foreground/80 opacity-0 transition-all duration-200 group-open:translate-y-0 group-open:opacity-100">
