@@ -192,25 +192,25 @@
   .heading-xl {
     font-family: serif;
     font-size: var(--text-size-4xl);
-    line-height: 1.1;
+    line-height: 1.2;
     text-wrap: balance;
   }
   .heading-lg {
     font-family: serif;
     font-size: var(--text-size-3xl);
-    line-height: 1.1;
+    line-height: 1.2;
     text-wrap: balance;
   }
   .heading-md {
     font-family: serif;
     font-size: var(--text-size-2xl);
-    line-height: 1.1;
+    line-height: 1.2;
     text-wrap: balance;
   }
   .heading-sm {
     font-family: serif;
     font-size: var(--text-size-xl);
-    line-height: 1.1;
+    line-height: 1.3;
     text-wrap: balance;
   }
   /* large text */
