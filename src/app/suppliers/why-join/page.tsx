@@ -1,5 +1,4 @@
 import { ArrowRight, Users, Eye, Star, Clock, Network, Zap, Check, X } from 'lucide-react'
-import { motion } from 'motion/react'
 import Link from 'next/link'
 
 import { Area } from '@/components/ui/area'
@@ -9,9 +8,9 @@ import { Section } from '@/components/ui/section'
 
 import { FeatureCard } from '@/components/suppliers/feature-card'
 import { FAQItem } from '@/components/suppliers/faq-item'
-import { PricingCard } from '@/components/suppliers/pricing-card'
+
 import { HowItWorksArrow, HowItWorksStep } from '@/components/suppliers/how-it-works-step'
-import { PricingTable, pricingFeatures } from '@/components/ui/pricing-table'
+import { PricingTable, FeatureBoolean, FeatureTextWithSubtext } from '@/components/ui/pricing-table'
 
 const benefits = [
   {
@@ -166,12 +165,12 @@ export default function WhyJoinPage() {
               ctaText: 'Get started free',
               ctaHref: '/suppliers/register',
               features: {
-                'Create a supplier profile': <Check />,
-                'Upload tiles': <p>20 tiles per month</p>,
-                'Credit other suppliers': <Check />,
-                'Request to be credited': <Check />,
-                'Featured in Locations directory': <X />,
-                'Featured in Services directory': <X />,
+                'Create a supplier profile': <FeatureBoolean value={true} />,
+                'Upload tiles': <p>20 per month</p>,
+                'Credit other suppliers': <FeatureBoolean value={true} />,
+                'Request to be credited': <FeatureBoolean value={true} />,
+                'Featured in Locations directory': <FeatureBoolean value={false} />,
+                'Featured in Services directory': <FeatureBoolean value={false} />,
               },
             },
             {
@@ -182,27 +181,12 @@ export default function WhyJoinPage() {
               ctaHref: '/suppliers/register?plan=premium',
               featured: true,
               features: {
-                'Create a supplier profile': <Check />,
-                'Upload tiles': (
-                  <div className="flex items-center gap-spouse">
-                    <Check />
-                    <p>Unlimited</p>
-                  </div>
-                ),
-                'Credit other suppliers': <Check />,
-                'Request to be credited': <Check />,
-                'Featured in Locations directory': (
-                  <div className="flex flex-col text-center">
-                    <p className="ui">1 Location included</p>
-                    <p className="ui-small text-muted-foreground">$10 per additional location</p>
-                  </div>
-                ),
-                'Featured in Services directory': (
-                  <div className="flex flex-col text-center">
-                    <p className="ui">1 Service included</p>
-                    <p className="ui-small text-muted-foreground">$10 per additional service</p>
-                  </div>
-                ),
+                'Create a supplier profile': <FeatureBoolean value={true} />,
+                'Upload tiles': <p>Unlimited</p>,
+                'Credit other suppliers': <FeatureBoolean value={true} />,
+                'Request to be credited': <FeatureBoolean value={true} />,
+                'Featured in Locations directory': <FeatureTextWithSubtext text="1 Location included" subtext="$10 per additional location" />,
+                'Featured in Services directory': <FeatureTextWithSubtext text="1 Service included" subtext="$10 per additional service" />,
               },
             },
           ]}
