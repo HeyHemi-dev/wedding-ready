@@ -11,6 +11,9 @@ import { FAQItem } from '@/components/suppliers/faq-item'
 
 import { HowItWorksArrow, HowItWorksStep } from '@/components/suppliers/how-it-works-step'
 import { PricingTable, FeatureBoolean, FeatureTextWithSubtext } from '@/components/ui/pricing-table'
+import { Testimonial } from '@/components/testimonial/testimonial'
+import { Logos } from '@/components/testimonial/logos'
+import { Badge } from '@/components/ui/badge'
 
 const benefits = [
   {
@@ -122,7 +125,10 @@ export default function WhyJoinPage() {
         <Area className="grid gap-acquaintance laptop:grid-cols-2">
           <div className="flex flex-col gap-friend">
             <div className="grid gap-sibling">
-              <h2 className="heading-xl">Spotlight feature: Supplier crediting</h2>
+              <h2 className="grid justify-items-start gap-spouse">
+                <Badge className="ui-small-s1">Spotlight feature</Badge>
+                <span className="heading-xl">Supplier crediting</span>
+              </h2>
               <p className="ui-large text-muted-foreground">Fair, networked, and built to promote you</p>
             </div>
             <ul className="ml-6 flex list-disc flex-col gap-sibling marker:text-muted-foreground">
@@ -195,16 +201,23 @@ export default function WhyJoinPage() {
 
       {/* Social Proof Section */}
       <FadeInDiv stagger={0.2}>
-        <Area className="grid justify-items-center gap-acquaintance bg-transparent">
-          <div className="grid max-w-2xl gap-partner text-center">
-            <h2 className="heading-xl">Join the community</h2>
-            <p className="ui-large text-muted-foreground">What other New Zealand suppliers are saying about WeddingReady</p>
+        <Area className="grid gap-acquaintance bg-transparent">
+          <div className="grid justify-items-center">
+            <div className="grid max-w-2xl gap-partner text-center">
+              <h2 className="heading-xl">Join the community</h2>
+              <p className="ui-large text-muted-foreground">What other New Zealand suppliers are saying about WeddingReady</p>
+            </div>
           </div>
 
-          <div className="text-center">
-            <Star className="mb-friend mx-auto h-12 w-12 text-primary" />
-            <p className="text-muted-foreground">Supplier testimonials and logos coming soon</p>
-          </div>
+          <Testimonial
+            quote="WeddingReady has been a game-changer for our business. It's easy to use and has helped us reach more couples looking for our services."
+            author={{
+              name: 'Jane Smith',
+              role: 'Wedding Planner',
+              avatar: { src: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-1.webp', alt: 'Jane Smith' },
+            }}
+          />
+          <Logos />
         </Area>
       </FadeInDiv>
 
@@ -237,35 +250,34 @@ export default function WhyJoinPage() {
 
       {/* FAQ Section */}
       <FadeInDiv stagger={0.1}>
-        <Area className="grid justify-items-center bg-transparent">
-          <div className="grid w-full max-w-2xl gap-acquaintance">
-            <div className="grid gap-partner text-center">
+        <Area className="grid gap-acquaintance bg-transparent">
+          <div className="grid justify-items-center">
+            <div className="grid w-full max-w-2xl gap-partner text-center">
               <h2 className="heading-xl">Frequently asked questions</h2>
               <p className="ui-large text-muted-foreground">Everything you need to know about joining WeddingReady</p>
             </div>
-            <div className="grid grid-cols-1 gap-friend">
-              <FAQItem question={"What if I don't have time for another marketing platform?"}>
-                <div className="prose ui flex flex-col gap-sibling text-pretty">
-                  <p>Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products.</p>
-                  <p>Upload content in bulk (up to 10 images at a time) and build a lasting digital presence that works for you, not the other way around.</p>
-                  <p className="rounded border border-primary bg-primary/10 p-4 text-primary-foreground">
-                    We're also exploring an Instagram integration to automatically import images and credits.{' '}
-                    <a href="https://weddingready.co.nz/contact" className="underline">
-                      Register your interest.
-                    </a>
-                  </p>
-                </div>
-              </FAQItem>
-              <FAQItem question={'How is WeddingReady different from Pinterest or Instagram?'}>
-                <div className="prose ui flex flex-col gap-sibling text-pretty">
-                  <p>
-                    Pinterest and Instagram aren't interested in local; so couples are often frustrated, saving inspiration that they will never be able to
-                    book.
-                  </p>
-                  <p>WeddingReady ties inspiration to local New Zealand suppliers they can actually hire.</p>
-                </div>
-              </FAQItem>
-            </div>
+          </div>
+          <div className="grid grid-cols-1">
+            <FAQItem question={"What if I don't have time for another marketing platform?"} className="border-b border-border p-6">
+              <div className="prose ui flex flex-col gap-sibling text-pretty">
+                <p>Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products.</p>
+                <p>Upload content in bulk (up to 10 images at a time) and build a lasting digital presence that works for you, not the other way around.</p>
+                <p className="rounded border border-primary bg-primary/10 p-4 text-primary-foreground">
+                  We're also exploring an Instagram integration to automatically import images and credits.{' '}
+                  <a href="https://weddingready.co.nz/contact" className="underline">
+                    Register your interest.
+                  </a>
+                </p>
+              </div>
+            </FAQItem>
+            <FAQItem question={'How is WeddingReady different from Pinterest or Instagram?'} className="border-b border-border p-6">
+              <div className="prose ui flex flex-col gap-sibling text-pretty">
+                <p>
+                  Pinterest and Instagram aren't interested in local; so couples are often frustrated, saving inspiration that they will never be able to book.
+                </p>
+                <p>WeddingReady ties inspiration to local New Zealand suppliers they can actually hire.</p>
+              </div>
+            </FAQItem>
           </div>
         </Area>
       </FadeInDiv>
