@@ -75,7 +75,7 @@ function PricingTableHeaderRow({ plans }: { plans: PricingPlan[] }) {
 
 function PricingTableFeatureRow({ feature, plans, isLast = false }: { feature: Feature; plans: PricingPlan[]; isLast?: boolean }) {
   return (
-    <div className="grid grid-cols-3 gap-sibling border-t border-border transition-all duration-200 hover:border-primary hover:bg-primary/30">
+    <div className="grid grid-cols-3 gap-sibling border-t border-border transition-all duration-200 hover:bg-primary/20">
       <div className={cn('flex items-center p-6', isLast && 'pb-12')}>
         <p className="ui">{feature}</p>
       </div>
