@@ -58,8 +58,8 @@ export default function WhyJoinPage() {
             </Link>
           </Button>
           <Button variant="ghost" size="lg" asChild>
-            <Link href="#how-it-works">
-              <span>Why join WeddingReady</span>
+            <Link href="#pricing">
+              <span>Pricing plans</span>
             </Link>
           </Button>
         </div>
@@ -77,7 +77,7 @@ export default function WhyJoinPage() {
       </Area>
 
       {/* How It Works Section */}
-      <FadeInDiv id="how-it-works" stagger={0.1}>
+      <FadeInDiv stagger={0.1}>
         <Area className="grid justify-items-center gap-acquaintance">
           <div className="grid max-w-2xl gap-partner text-center">
             <h2 className="heading-xl">How it works</h2>
@@ -154,7 +154,7 @@ export default function WhyJoinPage() {
       </FadeInDiv>
 
       {/* Pricing Section */}
-      <FadeInDiv stagger={0.2}>
+      <FadeInDiv stagger={0.2} id="pricing">
         <Area className="grid gap-acquaintance bg-transparent">
           <div className="grid justify-items-center">
             <div className="grid max-w-2xl gap-partner text-center">
