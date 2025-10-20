@@ -2,8 +2,6 @@ import type { ReactNode } from 'react'
 
 import { ChevronDown } from 'lucide-react'
 
-import { cn } from '@/utils/shadcn-utils'
-
 interface FAQProps {
   question: string
   content: ReactNode
