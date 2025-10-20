@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
 
-
 export const pricingFeatures = [
   'Create a supplier profile',
   'Upload tiles',
@@ -87,7 +86,7 @@ function PricingTableFeatureRow({ feature, plans, isLast = false }: { feature: F
 }
 
 export function FeatureBoolean({ value }: { value: boolean }) {
-  return value ? <Check className="h-6 w-6" /> : <X className="h-6 w-6 text-destructive" />
+  return value ? <Check className="h-6 w-6" aria-label="Yes" role="img" /> : <X className="h-6 w-6 text-destructive" aria-label="No" role="img" />
 }
 
 export function FeatureTextWithSubtext({ text, subtext }: { text: string; subtext: string }) {
