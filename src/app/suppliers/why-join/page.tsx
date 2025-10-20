@@ -1,4 +1,4 @@
-import { ArrowRight, Users, Sparkles, MapPin, Infinity, HeartHandshake } from 'lucide-react'
+import { ArrowRight, Users, Sparkles, MapPin, InfinityIcon, HeartHandshake } from 'lucide-react'
 import Link from 'next/link'
 
 import { FeatureCard } from '@/components/card/feature-card'
@@ -17,10 +17,10 @@ export default function WhyJoinPage() {
   return (
     <Section className="pt-0">
       {/* Hero Section */}
-      <Area className="grid place-content-center gap-acquaintance bg-transparent laptop:col-span-full">
-        <div className="flex flex-col gap-sibling text-center">
+      <Area className="grid gap-acquaintance bg-transparent laptop:col-span-full">
+        <div className="grid justify-items-center gap-sibling text-center">
           <h1 className="heading-2xl text-balance">Show your work where couples are already dreaming</h1>
-          <p className="ui-large mx-auto max-w-2xl text-balance text-muted-foreground">
+          <p className="ui-large max-w-2xl text-balance text-muted-foreground">
             Every Tile credits your business, so &ldquo;I&nbsp;love&nbsp;this&rdquo; becomes &ldquo;Let&apos;s&nbsp;book&nbsp;them.&rdquo;
           </p>
         </div>
@@ -38,7 +38,8 @@ export default function WhyJoinPage() {
             </Link>
           </Button>
         </div>
-        <ul className="flex list-none flex-col gap-sibling text-center">
+
+        <ul className="grid list-none gap-sibling text-center">
           <li>
             <p>The platform where New Zealand couples turn moodboards into action</p>
           </li>
@@ -91,7 +92,7 @@ export default function WhyJoinPage() {
         <div className="grid grid-cols-1 gap-friend tablet:grid-cols-2">
           <FeatureCard Icon={Sparkles} title={'Reach couples early'} description={"Be seen while they're still dreaming, not price-shopping."} />
           <FeatureCard Icon={MapPin} title={'Local by design'} description="Inspiration is tied to the real New Zealand team who created it." />
-          <FeatureCard Icon={Infinity} title={'Evergreen exposure'} description="Tiles keep working for you over time." />
+          <FeatureCard Icon={InfinityIcon} title={'Evergreen exposure'} description="Tiles keep working for you over time." />
           <FeatureCard Icon={HeartHandshake} title={'Celebrate the community'} description="Credits lift you and your collaborators together." />
         </div>
       </FadeInDiv>
