@@ -1,0 +1,78 @@
+import { ReactNode } from 'react'
+
+import { Button } from '@/components/ui/button'
+import { cn } from '@/utils/shadcn-utils'
+import Link from 'next/link'
+import { Badge } from '@/components/ui/badge'
+
+export const pricingFeatures = [
+  'Create a supplier profile',
+  'Upload tiles',
+  'Credit other suppliers',
+  'Request to be credited',
+  'Featured in Locations directory',
+  'Featured in Services directory',
+] as const
+
+export type Feature = (typeof pricingFeatures)[number]
+
+interface PricingPlan {
+  name: string
+  price: string
+  description: string
+  ctaText: string
+  ctaHref: string
+  featured?: boolean
+  features: Record<Feature, ReactNode>
+}
+
+interface PricingTableProps {
+  plans: PricingPlan[]
+}
+
+export function PricingTable({ plans }: PricingTableProps) {
+  return (
+    <div className="grid">
+      {/* Header Row */}
+      <div className="grid auto-rows-max grid-cols-3 gap-sibling">
+        <div className="row-span-full grid grid-rows-subgrid"></div>
+        {plans.map((plan) => (
+          <div
+            key={plan.name}
+            className={cn('row-span-4 grid grid-rows-subgrid justify-items-center gap-sibling rounded-t-area p-6', plan.featured && 'bg-area')}>
+            <div className="flex items-center gap-partner">
+              <h3 className="heading-md">{plan.name}</h3>
+              {plan.featured && <Badge>Popular</Badge>}
+            </div>
+            <div className="flex items-baseline gap-partner">
+              <p className="heading-2xl">{plan.price}</p>
+              {plan.price !== 'Free' && <span className="ui text-muted-foreground">/month</span>}
+            </div>
+            <p className="ui-small text-center text-muted-foreground">{plan.description}</p>
+            <Button asChild>
+              <Link href={plan.ctaHref}>{plan.ctaText}</Link>
+            </Button>
+          </div>
+        ))}
+      </div>
+      {/* Feature Rows */}
+      <PricingTableFeatureRow feature={'Create a supplier profile'} plans={plans} />
+      <PricingTableFeatureRow feature={'Upload tiles'} plans={plans} />
+      <PricingTableFeatureRow feature={'Credit other suppliers'} plans={plans} />
+      <PricingTableFeatureRow feature={'Request to be credited'} plans={plans} />
+      <PricingTableFeatureRow feature={'Featured in Locations directory'} plans={plans} />
+      <PricingTableFeatureRow feature={'Featured in Services directory'} plans={plans} />
+    </div>
+  )
+}
+
+function PricingTableFeatureRow({ feature, plans }: { feature: Feature; plans: PricingPlan[] }) {
+  return (
+    <div className="border-borde grid grid-cols-3 items-center gap-sibling border-t">
+      <p className="ui p-6">{feature}</p>
+      {plans.map((plan) => (
+        <div className={cn('ui flex items-center justify-center p-6 text-center', plan.featured && 'bg-area')}>{plan.features[feature]}</div>
+      ))}
+    </div>
+  )
+}
