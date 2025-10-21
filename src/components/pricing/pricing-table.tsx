@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
+import { Href } from '@/app/_types/generics'
 
 export const pricingFeatures = [
   'Create a supplier profile',

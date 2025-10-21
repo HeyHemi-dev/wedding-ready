@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { SignOutForm } from './signout-form'
+import { Href } from '@/app/_types/generics'
 
 export default async function Header() {
   const user = await getCurrentUser()

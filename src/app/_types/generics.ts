@@ -1,4 +1,4 @@
-type Href = {
+export type Href = {
   href: string
   label: string
 }

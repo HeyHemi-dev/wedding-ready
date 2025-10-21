@@ -1,10 +1,11 @@
 import { Check } from 'lucide-react'
+import Link from 'next/link'
 
 import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
-import Link from 'next/link'
+import { Href } from '@/app/_types/generics'
 
 interface PricingCardProps {
   name: string
