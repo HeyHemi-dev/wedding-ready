@@ -11,6 +11,10 @@ export const supplierKeys = {
   search: (query: string) => ['suppliers', 'search', query] as const,
 }
 
+export const userKeys = {
+  authUser: (authUserId: string | null) => ['user', 'authUser', authUserId] as const,
+}
+
 export const nextCacheKey = {
   supplierList: ({ constValue }: { constValue: Location | Service }) => ['supplier-list', constValue] as const,
 }
