@@ -146,8 +146,10 @@ export default function WhyJoinPage() {
               name: 'Basic',
               price: 'Free',
               description: 'Perfect for getting started',
-              ctaText: 'Join as a supplier',
-              ctaHref: '/suppliers/register',
+              cta: {
+                text: 'Join as a supplier',
+                href: '/suppliers/register',
+              },
               features: {
                 'Create a supplier profile': <FeatureBoolean value={true} />,
                 'Upload tiles': <p>20 per month</p>,
@@ -161,8 +163,10 @@ export default function WhyJoinPage() {
               name: 'Plus',
               price: '$30',
               description: 'For suppliers ready to maximize their reach',
-              ctaText: 'Join as a supplier',
-              ctaHref: '/suppliers/register?plan=premium',
+              cta: {
+                text: 'Join as a supplier',
+                href: '/suppliers/register?plan=plus',
+              },
               featured: true,
               features: {
                 'Create a supplier profile': <FeatureBoolean value={true} />,
