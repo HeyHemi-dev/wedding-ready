@@ -6,7 +6,7 @@ import { useAuthUser } from '@/app/_hooks/use-auth-user'
 import { useTileCredit } from '@/app/_hooks/use-tile-credit'
 import { AuthUserId } from '@/app/_types/users'
 
-import { Skeleton } from '../ui/skeleton'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface CreditsListProps {
   tileId: string
@@ -19,15 +19,20 @@ export function CreditsList({ tileId, authUserId }: CreditsListProps) {
 
   return (
     <div className="flex flex-col gap-sibling">
-      {credits.map((credit) => (
-        <SupplierCredit
-          key={credit.supplierHandle}
-          name={credit.supplierName}
-          contribution={credit.service}
-          detail={credit.serviceDescription}
-          href={`/suppliers/${credit.supplierHandle}`}
-        />
-      ))}
+      {credits.map((credit) => {
+        const supplierRole = authUser?.suppliers.find((s) => s.id === credit.supplierId)?.role
+
+        return (
+          <SupplierCredit
+            key={credit.supplierHandle}
+            name={credit.supplierName}
+            contribution={credit.service}
+            detail={credit.serviceDescription}
+            href={`/suppliers/${credit.supplierHandle}`}
+            editor={supplierRole ? authUser.id : null}
+          />
+        )
+      })}
     </div>
   )
 }
@@ -37,9 +42,10 @@ type SupplierCreditProps = {
   contribution: string | null
   detail: string | null
   href: string
+  editor: string | null
 }
 
-function SupplierCredit({ name, contribution, detail, href }: SupplierCreditProps) {
+function SupplierCredit({ name, contribution, detail, href, editor }: SupplierCreditProps) {
   return (
     <div className="grid grid-cols-[auto_1fr] items-center gap-x-sibling gap-y-spouse">
       <div className="ui-small flex items-center gap-partner">
@@ -50,6 +56,12 @@ function SupplierCredit({ name, contribution, detail, href }: SupplierCreditProp
           <>
             <span>•</span>
             <p>{contribution}</p>
+          </>
+        )}
+        {editor && (
+          <>
+            <span>•</span>
+            <p>Edit</p>
           </>
         )}
       </div>
