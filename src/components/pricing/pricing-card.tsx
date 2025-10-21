@@ -4,6 +4,7 @@ import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
+import Link from 'next/link'
 
 interface PricingCardProps {
   name: string
@@ -13,7 +14,6 @@ interface PricingCardProps {
   ctaText: string
   ctaHref: string
   featured?: boolean
-  index?: number
 }
 
 export function PricingCard({ name, price, description, features, ctaText, ctaHref, featured = false }: PricingCardProps) {
@@ -43,7 +43,7 @@ export function PricingCard({ name, price, description, features, ctaText, ctaHr
 
       <div className="pt-friend mt-auto">
         <Button size="lg" className="w-full" asChild>
-          <a href={ctaHref}>{ctaText}</a>
+          <Link href={ctaHref}>{ctaText}</Link>
         </Button>
       </div>
     </Area>
