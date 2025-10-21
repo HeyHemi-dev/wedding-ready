@@ -2,9 +2,13 @@ import { SupplierRole } from '@/db/constants'
 
 export type User = {
   id: string
-  name: string
   handle: string
+  displayName: string
+  bio: string | null
   avatarUrl: string | null
+  instagramUrl: string | null
+  tiktokUrl: string | null
+  websiteUrl: string | null
   suppliers: {
     id: string
     role: SupplierRole
