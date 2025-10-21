@@ -13,6 +13,7 @@ export type Tile = {
 }
 
 export type TileCredit = {
+  supplierId: string
   supplierHandle: string
   supplierName: string
   service: Service | null

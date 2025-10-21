@@ -33,6 +33,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
     location: tile.location,
     isSaved,
     credits: tileCredits.map((credit) => ({
+      supplierId: credit.supplierId,
       supplierHandle: credit.supplier.handle,
       supplierName: credit.supplier.name,
       service: credit.service,
@@ -107,6 +108,7 @@ async function createForSupplier({ imagePath, title, description, location, crea
 async function getCreditsForTile(tileId: string): Promise<TileCredit[]> {
   const tileCredits = await tileSupplierModel.getCreditsByTileId(tileId)
   return tileCredits.map((credit) => ({
+    supplierId: credit.supplierId,
     supplierHandle: credit.supplier.handle,
     supplierName: credit.supplier.name,
     service: credit.service,
@@ -129,6 +131,7 @@ async function createCreditForTile({ tileId, credit, authUserId }: { tileId: str
   const tileCredits = await tileSupplierModel.getCreditsByTileId(tileId)
 
   return tileCredits.map((credit) => ({
+    supplierId: credit.supplierId,
     supplierHandle: credit.supplier.handle,
     supplierName: credit.supplier.name,
     service: credit.service,
