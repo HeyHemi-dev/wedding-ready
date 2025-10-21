@@ -1,14 +1,36 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
+import { User } from '@/app/_types/users'
 import { UserUpdateForm } from '@/app/_types/validation-schema'
-import { SetUserDetailRaw, User } from '@/models/types'
+import { supplierModel } from '@/models/supplier'
+import { supplierUsersModel } from '@/models/supplier-user'
+import { SetUserDetailRaw, UserDetailRaw } from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export const userOperations = {
+  getById,
   updateProfile,
 }
 
-async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<User> {
+async function getById(id: string): Promise<User> {
+  const user = await UserDetailModel.getById(id)
+  if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
+
+  const userSuppliers = await supplierUsersModel.getForUserId(id)
+
+  return {
+    id: user.id,
+    name: user.displayName,
+    handle: user.handle,
+    avatarUrl: user.avatarUrl,
+    suppliers: userSuppliers.map((su) => ({
+      id: su.supplierId,
+      role: su.role,
+    })),
+  }
+}
+
+async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<UserDetailRaw> {
   const user = await UserDetailModel.getById(data.id)
   if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
