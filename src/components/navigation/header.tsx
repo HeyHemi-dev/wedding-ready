@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
+import { Href } from '@/app/_types/generics'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -53,12 +54,7 @@ export default async function Header() {
   )
 }
 
-type LinkType = {
-  href: string
-  label: string
-}
-
-function NavLink({ link }: { link: LinkType }) {
+function NavLink({ link }: { link: Href }) {
   return (
     <Link href={link.href} className="ui-small-s1 rounded px-4 py-2 hover:bg-primary/80">
       {link.label}
