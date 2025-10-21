@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { getCurrentUser } from '@/app/_actions/get-current-user'
+import { Href } from '@/app/_types/generics'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,7 +17,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { SignOutForm } from './signout-form'
-import { Href } from '@/app/_types/generics'
 
 export default async function Header() {
   const user = await getCurrentUser()
