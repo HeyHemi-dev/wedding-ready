@@ -7,11 +7,16 @@ import * as t from '@/models/types'
 
 export const supplierUsersModel = {
   getForSupplierId,
+  getForUserId,
   createForSupplierId,
 }
 
 async function getForSupplierId(supplierId: string): Promise<t.SupplierUserRaw[]> {
   return await db.select().from(s.supplierUsers).where(eq(s.supplierUsers.supplierId, supplierId))
+}
+
+async function getForUserId(userId: string): Promise<t.SupplierUserRaw[]> {
+  return await db.select().from(s.supplierUsers).where(eq(s.supplierUsers.userId, userId))
 }
 
 async function createForSupplierId(supplierId: string, users: { id: string; role: SupplierRole }[]): Promise<t.SupplierUserRaw[]> {
