@@ -11,12 +11,11 @@ interface PricingCardProps {
   price: string
   description: string
   features: string[]
-  ctaText: string
-  ctaHref: string
+  cta: Href
   featured?: boolean
 }
 
-export function PricingCard({ name, price, description, features, ctaText, ctaHref, featured = false }: PricingCardProps) {
+export function PricingCard({ name, price, description, features, cta, featured = false }: PricingCardProps) {
   return (
     <Area className={cn('grid gap-acquaintance', featured && 'border-2 border-primary bg-primary/10')}>
       <div className="flex flex-col gap-friend">
@@ -27,7 +26,7 @@ export function PricingCard({ name, price, description, features, ctaText, ctaHr
         <div className="flex flex-col">
           <div className="flex items-baseline gap-spouse">
             <span className="heading-2xl">{price}</span>
-            {name !== 'Free' && <span className="text-muted-foreground">/month</span>}
+            {price !== 'Free' && <span className="text-muted-foreground">/month</span>}
           </div>
           <p className="ui-small text-pretty text-muted-foreground">{description}</p>
         </div>
@@ -43,7 +42,7 @@ export function PricingCard({ name, price, description, features, ctaText, ctaHr
 
       <div className="pt-friend mt-auto">
         <Button size="lg" className="w-full" asChild>
-          <Link href={ctaHref}>{ctaText}</Link>
+          <Link href={cta.href}>{cta.label}</Link>
         </Button>
       </div>
     </Area>

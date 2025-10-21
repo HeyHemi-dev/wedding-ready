@@ -22,10 +22,7 @@ interface PricingPlan {
   name: string
   price: string
   description: string
-  cta: {
-    text: string
-    href: string
-  }
+  cta: Href
   featured?: boolean
   features: Record<Feature, ReactNode>
 }
@@ -67,7 +64,7 @@ function PricingTableHeaderRow({ plans }: { plans: PricingPlan[] }) {
           </div>
           <p className="ui text-center text-muted-foreground">{plan.description}</p>
           <Button asChild>
-            <Link href={plan.cta.href}>{plan.cta.text}</Link>
+            <Link href={plan.cta.href}>{plan.cta.label}</Link>
           </Button>
         </div>
       ))}

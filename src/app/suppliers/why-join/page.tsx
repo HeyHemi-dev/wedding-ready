@@ -147,7 +147,7 @@ export default function WhyJoinPage() {
               price: 'Free',
               description: 'Perfect for getting started',
               cta: {
-                text: 'Join as a supplier',
+                label: 'Join as a supplier',
                 href: '/suppliers/register',
               },
               features: {
@@ -164,7 +164,7 @@ export default function WhyJoinPage() {
               price: '$30',
               description: 'For suppliers ready to maximize their reach',
               cta: {
-                text: 'Join as a supplier',
+                label: 'Join as a supplier',
                 href: '/suppliers/register?plan=plus',
               },
               featured: true,
