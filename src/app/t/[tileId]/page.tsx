@@ -1,3 +1,5 @@
+import { Suspense } from 'react'
+
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
@@ -12,7 +14,6 @@ import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
 import { formatRelativeDate } from '@/utils/format-date'
-import { Suspense } from 'react'
 
 export default async function TilePage({ params }: { params: Promise<{ tileId: string }> }) {
   const { tileId } = await params

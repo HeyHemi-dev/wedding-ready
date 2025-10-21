@@ -7,9 +7,9 @@ import { noTiles } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { UserDetailModel } from '@/models/user'
+import { getAuthUserId } from '@/utils/auth'
 
 import { UserTiles } from './user-tiles'
-import { getAuthUserId } from '@/utils/auth'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

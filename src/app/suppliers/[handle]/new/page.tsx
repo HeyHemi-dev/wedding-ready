@@ -6,10 +6,10 @@ import { notFound, redirect } from 'next/navigation'
 
 import { Section } from '@/components/ui/section'
 import { supplierOperations } from '@/operations/supplier-operations'
+import { getAuthUserId } from '@/utils/auth'
 
 import { UploadProvider } from './upload-context'
 import { UploadDropzone } from './upload-dropzone'
-import { getAuthUserId } from '@/utils/auth'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

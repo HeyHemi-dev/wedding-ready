@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 
+import { useAuthUser } from '@/app/_hooks/use-auth-user'
 import { useTileCredit } from '@/app/_hooks/use-tile-credit'
 import { AuthUserId } from '@/app/_types/users'
-import { useAuthUser } from '@/app/_hooks/use-auth-user'
+
 import { Skeleton } from '../ui/skeleton'
 
 interface CreditsListProps {

@@ -1,10 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-import { User, AuthUserId } from '@/app/_types/users'
 import { userKeys } from '@/app/_types/queryKeys'
-import { tryCatchFetch } from '@/utils/try-catch'
+import { User, AuthUserId } from '@/app/_types/users'
 import { AuthMeResponseBody } from '@/app/api/auth/current/route'
 import { AUTH_STALE_TIME } from '@/utils/constants'
+import { tryCatchFetch } from '@/utils/try-catch'
 
 async function fetchAuthUser(): Promise<User | null> {
   const { data, error } = await tryCatchFetch<AuthMeResponseBody>(`/api/auth/current`)

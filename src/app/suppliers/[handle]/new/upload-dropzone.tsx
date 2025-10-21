@@ -8,7 +8,6 @@ import { ExpandedRouteConfig } from 'uploadthing/types'
 
 import { Supplier } from '@/app/_types/suppliers'
 import { Button } from '@/components/ui/button'
-
 import { MAX_UPLOAD_FILE_SIZE } from '@/utils/constants'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 

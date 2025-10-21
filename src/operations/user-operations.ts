@@ -1,7 +1,6 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { User } from '@/app/_types/users'
 import { UserUpdateForm } from '@/app/_types/validation-schema'
-import { supplierModel } from '@/models/supplier'
 import { supplierUsersModel } from '@/models/supplier-user'
 import * as t from '@/models/types'
 import { UserDetailModel } from '@/models/user'

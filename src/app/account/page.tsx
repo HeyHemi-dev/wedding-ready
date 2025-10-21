@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation'
 
-import UpdateProfileForm from './update-profile-form'
 import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
+
+import UpdateProfileForm from './update-profile-form'
 
 export default async function AccountPage() {
   const authUserId = await getAuthUserId()
