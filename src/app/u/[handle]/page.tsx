@@ -2,7 +2,6 @@ import { SquarePenIcon } from 'lucide-react'
 import Link from 'next/link'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { getCurrentUser } from '@/app/_actions/get-current-user'
 import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
@@ -10,6 +9,7 @@ import { Section } from '@/components/ui/section'
 import { UserDetailModel } from '@/models/user'
 
 import { UserTiles } from './user-tiles'
+import { getAuthUserId } from '@/utils/auth'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -18,8 +18,8 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
   if (!userDetail) {
     return <div>User not found</div>
   }
-  const authUser = await getCurrentUser()
-  const isCurrentUser = authUser?.id === userDetail.id
+  const authUserId = await getAuthUserId()
+  const isCurrentUser = authUserId === userDetail.id
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
@@ -57,7 +57,7 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
                 <div className="flex place-self-end"></div>
               </ActionBar>
             )}
-            <UserTiles user={userDetail} authUserId={authUser ? authUser.id : null} />
+            <UserTiles user={userDetail} authUserId={authUserId} />
           </ErrorBoundary>
         </div>
       </div>

@@ -3,12 +3,11 @@ import React from 'react'
 import { Supplier } from '@/app/_types/suppliers'
 import { Area } from '@/components/ui/area'
 import { Separator } from '@/components/ui/separator'
-import { User } from '@/models/types'
 
 import { FileWithMetadata } from './upload-context'
 import { UploadPreviewForm } from './upload-preview-form'
 
-export function UploadPreviewList({ files, supplier, user }: { files: FileWithMetadata[]; supplier: Supplier; user: User }) {
+export function UploadPreviewList({ files, supplier, userId }: { files: FileWithMetadata[]; supplier: Supplier; userId: string }) {
   return (
     <>
       <Separator />
@@ -16,7 +15,7 @@ export function UploadPreviewList({ files, supplier, user }: { files: FileWithMe
         {files.map((file, index) => (
           <React.Fragment key={file.fileObjectUrl}>
             <Area>
-              <UploadPreviewForm file={file} supplier={supplier} user={user} fileIndex={index} />
+              <UploadPreviewForm file={file} supplier={supplier} userId={userId} fileIndex={index} />
             </Area>
           </React.Fragment>
         ))}

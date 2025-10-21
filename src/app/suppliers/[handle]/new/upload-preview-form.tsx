@@ -15,12 +15,12 @@ import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { User } from '@/models/types'
+
 import { locationHelpers } from '@/utils/const-helpers'
 
 import { FileWithMetadata } from './upload-context'
 
-export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: FileWithMetadata; supplier: Supplier; user: User; fileIndex: number }) {
+export function UploadPreviewForm({ file, supplier, userId, fileIndex }: { file: FileWithMetadata; supplier: Supplier; userId: string; fileIndex: number }) {
   const { startUpload, status, uploadProgress } = useCreateTile({
     fileKey: fileIndex,
   })
@@ -31,7 +31,7 @@ export function UploadPreviewForm({ file, supplier, user, fileIndex }: { file: F
       title: undefined,
       description: undefined,
       location: undefined,
-      createdByUserId: user.id,
+      createdByUserId: userId,
       isPrivate: false,
       credits: [
         {
