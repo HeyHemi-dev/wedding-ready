@@ -3,22 +3,27 @@
 import Link from 'next/link'
 
 import { useTileCredit } from '@/app/_hooks/use-tile-credit'
+import { AuthUserId } from '@/app/_types/users'
+import { useAuthUser } from '@/app/_hooks/use-auth-user'
+import { Skeleton } from '../ui/skeleton'
 
 interface CreditsListProps {
   tileId: string
+  authUserId: AuthUserId
 }
 
-export function CreditsList({ tileId }: CreditsListProps) {
+export function CreditsList({ tileId, authUserId }: CreditsListProps) {
   const { data } = useTileCredit(tileId)
+  const { data: authUser } = useAuthUser(authUserId)
 
   return (
     <div className="flex flex-col gap-sibling">
-      {data?.map((credit) => (
+      {data.map((credit) => (
         <SupplierCredit
           key={credit.supplierHandle}
           name={credit.supplierName}
-          contribution={credit.service ?? 'Photography'}
-          detail={credit.serviceDescription ?? '8 hours coverage'}
+          contribution={credit.service}
+          detail={credit.serviceDescription}
           href={`/suppliers/${credit.supplierHandle}`}
         />
       ))}
@@ -41,6 +46,16 @@ function SupplierCredit({ name, contribution, detail, href }: { name: string; co
         )}
       </div>
       {detail && <div className="ui-small col-span-2 row-start-2 text-muted-foreground">{detail}</div>}
+    </div>
+  )
+}
+
+export function CreditsListSkeleton() {
+  return (
+    <div className="flex flex-col gap-sibling">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <Skeleton key={index} className="h-10 w-full" />
+      ))}
     </div>
   )
 }
