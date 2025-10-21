@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 
 import { tileKeys } from '@/app/_types/queryKeys'
 import { AddCreditButton } from '@/components/tiles/add-credit-button'
-import { CreditsList } from '@/components/tiles/credits-list'
+import { CreditsList, CreditsListSkeleton } from '@/components/tiles/credits-list'
 import { SaveTileButton } from '@/components/tiles/save-button'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
@@ -12,6 +12,7 @@ import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
 import { valueToPretty } from '@/utils/enum-helpers'
 import { formatRelativeDate } from '@/utils/format-date'
+import { Suspense } from 'react'
 
 export default async function TilePage({ params }: { params: Promise<{ tileId: string }> }) {
   const { tileId } = await params
@@ -48,7 +49,9 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
               {authUserId === tile.createdByUserId && <AddCreditButton tileId={tile.id} />}
             </div>
             <HydrationBoundary state={dehydrate(queryClient)}>
-              <CreditsList tileId={tile.id} />
+              <Suspense fallback={<CreditsListSkeleton />}>
+                <CreditsList tileId={tile.id} authUserId={authUserId} />
+              </Suspense>
             </HydrationBoundary>
           </div>
           {/* <div className="flex flex-row-reverse">
