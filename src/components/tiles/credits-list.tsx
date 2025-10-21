@@ -14,12 +14,12 @@ interface CreditsListProps {
 }
 
 export function CreditsList({ tileId, authUserId }: CreditsListProps) {
-  const { data } = useTileCredit(tileId)
+  const { data: credits } = useTileCredit(tileId)
   const { data: authUser } = useAuthUser(authUserId)
 
   return (
     <div className="flex flex-col gap-sibling">
-      {data.map((credit) => (
+      {credits.map((credit) => (
         <SupplierCredit
           key={credit.supplierHandle}
           name={credit.supplierName}
@@ -32,7 +32,14 @@ export function CreditsList({ tileId, authUserId }: CreditsListProps) {
   )
 }
 
-function SupplierCredit({ name, contribution, detail, href }: { name: string; contribution: string | null; detail: string | null; href: string }) {
+type SupplierCreditProps = {
+  name: string
+  contribution: string | null
+  detail: string | null
+  href: string
+}
+
+function SupplierCredit({ name, contribution, detail, href }: SupplierCreditProps) {
   return (
     <div className="grid grid-cols-[auto_1fr] items-center gap-x-sibling gap-y-spouse">
       <div className="ui-small flex items-center gap-partner">
