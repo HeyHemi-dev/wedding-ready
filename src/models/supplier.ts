@@ -3,7 +3,7 @@ import { eq, or, ilike } from 'drizzle-orm'
 import { db } from '@/db/connection'
 import { Service, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
-import { InsertSupplierRaw, SupplierRaw, Supplier, SupplierWithUsers, SetSupplierRaw } from '@/models/types'
+import * as t from '@/models/types'
 
 export const supplierModel = {
   getRawById,
@@ -16,7 +16,7 @@ export const supplierModel = {
   search,
 }
 
-async function getRawById(id: string): Promise<SupplierRaw | null> {
+async function getRawById(id: string): Promise<t.SupplierRaw | null> {
   const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.id, id))
 
   if (suppliers === null || suppliers.length === 0) return null
@@ -24,7 +24,7 @@ async function getRawById(id: string): Promise<SupplierRaw | null> {
   return suppliers[0]
 }
 
-async function getAllRawForLocation(location: Location): Promise<SupplierRaw[]> {
+async function getAllRawForLocation(location: Location): Promise<t.SupplierRaw[]> {
   return db
     .selectDistinct({
       ...schema.supplierColumns,
@@ -34,7 +34,7 @@ async function getAllRawForLocation(location: Location): Promise<SupplierRaw[]> 
     .where(eq(schema.supplierLocations.location, location))
 }
 
-async function getAllRawForService(service: Service): Promise<SupplierRaw[]> {
+async function getAllRawForService(service: Service): Promise<t.SupplierRaw[]> {
   return db
     .selectDistinct({
       ...schema.supplierColumns,
@@ -44,7 +44,7 @@ async function getAllRawForService(service: Service): Promise<SupplierRaw[]> {
     .where(eq(schema.supplierServices.service, service))
 }
 
-async function getByHandle(handle: string): Promise<SupplierWithUsers | null> {
+async function getByHandle(handle: string): Promise<t.SupplierWithUsers | null> {
   const result = await supplierBaseQuery.where(eq(schema.suppliers.handle, handle))
 
   if (result.length === 0) {
@@ -63,12 +63,12 @@ async function getByHandle(handle: string): Promise<SupplierWithUsers | null> {
   }
 }
 
-async function create(insertSupplierData: InsertSupplierRaw): Promise<SupplierRaw> {
+async function create(insertSupplierData: t.InsertSupplierRaw): Promise<t.SupplierRaw> {
   const suppliers = await db.insert(schema.suppliers).values(insertSupplierData).returning()
   return suppliers[0]
 }
 
-async function update(supplierId: string, setSupplierData: SetSupplierRaw): Promise<SupplierRaw> {
+async function update(supplierId: string, setSupplierData: t.SetSupplierRaw): Promise<t.SupplierRaw> {
   setSupplierData.updatedAt = new Date()
   const suppliers = await db.update(schema.suppliers).set(setSupplierData).where(eq(schema.suppliers.id, supplierId)).returning()
   return suppliers[0]
@@ -79,7 +79,7 @@ async function isHandleAvailable(handle: string): Promise<boolean> {
   return suppliers.length === 0
 }
 
-async function search(query: string): Promise<SupplierRaw[]> {
+async function search(query: string): Promise<t.SupplierRaw[]> {
   const suppliers = await db
     .select()
     .from(schema.suppliers)
@@ -99,14 +99,14 @@ const supplierBaseQuery = db
   .leftJoin(schema.supplierServices, eq(schema.suppliers.id, schema.supplierServices.supplierId))
   .leftJoin(schema.supplierLocations, eq(schema.suppliers.id, schema.supplierLocations.supplierId))
 
-interface SupplierBaseQueryResult extends SupplierRaw {
+interface SupplierBaseQueryResult extends t.SupplierRaw {
   service: Service | null
   location: Location | null
 }
 
-function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): Supplier[] {
+function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): t.Supplier[] {
   // Create a map that we can iterate through, constructing a  Supplier for each supplier
-  const supplierMap = new Map<string, Supplier>()
+  const supplierMap = new Map<string, t.Supplier>()
 
   for (const row of result) {
     const supplierId = row.id

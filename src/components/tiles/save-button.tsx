@@ -6,7 +6,7 @@ import Form from 'next/form'
 
 import { useTileSaveState } from '@/app/_hooks/use-tile-saved-state'
 import { tileKeys } from '@/app/_types/queryKeys'
-import type { SavedTileRaw } from '@/models/types'
+import * as t from '@/models/types'
 import { cn } from '@/utils/shadcn-utils'
 
 import { Button } from '../ui/button'
@@ -22,7 +22,7 @@ export function SaveTileButton({ tileId, authUserId, className }: SaveTileButton
   const saveState = useTileSaveState(tileId, authUserId)
 
   // Get the current saved state from the cache
-  const cachedData = queryClient.getQueryData<SavedTileRaw>(tileKeys.saveState(tileId, authUserId))
+  const cachedData = queryClient.getQueryData<t.SavedTileRaw>(tileKeys.saveState(tileId, authUserId))
 
   const isSaved = cachedData?.isSaved ?? false
 

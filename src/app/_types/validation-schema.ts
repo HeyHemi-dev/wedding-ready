@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { LOCATIONS, SERVICES } from '@/db/constants'
-import { SetUserDetailRaw } from '@/models/types'
+import * as t from '@/models/types'
 
 const emailSchema = z.string().trim().email('Invalid email')
 
@@ -64,7 +64,7 @@ export const userUpdateFormSchema = userOmitAuth.extend({
   instagramUrl: z.string().trim().url('Must be a valid Instagram URL').or(z.literal('')),
   tiktokUrl: z.string().trim().url('Must be a valid TikTok URL').or(z.literal('')),
   websiteUrl: z.string().trim().url('Must be a valid website URL').or(z.literal('')),
-}) satisfies z.ZodType<SetUserDetailRaw>
+}) satisfies z.ZodType<t.SetUserDetailRaw>
 export type UserUpdateForm = z.infer<typeof userUpdateFormSchema>
 
 // SUPPLIER VALIDATION
