@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
 import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 import { tileKeys } from '@/app/_types/queryKeys'
@@ -14,7 +14,7 @@ import { TileListItem } from '../_types/tiles'
 export function useUserTiles(userId: string, authUserId: string | null) {
   const queryClient = useQueryClient()
 
-  const userTilesQuery = useQuery({
+  const userTilesQuery = useSuspenseQuery({
     queryKey: tileKeys.userTiles(userId),
     queryFn: async () => {
       const data = await fetchTilesForUser(userId, authUserId ?? undefined)
