@@ -4,10 +4,12 @@ import Link from 'next/link'
 
 import { useAuthUser } from '@/app/_hooks/use-auth-user'
 import { useTileCredit } from '@/app/_hooks/use-tile-credit'
-import { AuthUserId } from '@/app/_types/users'
+import { AuthUserId, User } from '@/app/_types/users'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import { AddCreditButton } from '@/components/tiles/add-credit-button'
+import { RequestCreditButton } from '@/components/tiles/request-credit-button'
+import { SupplierSearchResult } from '@/app/_types/suppliers'
 
 interface CreditsListProps {
   tile: {
@@ -22,17 +24,18 @@ export function CreditsList({ tile, authUserId }: CreditsListProps) {
   const { data: authUser } = useAuthUser(authUserId)
 
   const isTileCreator = authUserId === tile.createdByUserId
-  const authUserSuppliers = authUser?.suppliers
+  const userSuppliers = userToSupplierSearchResults(authUser)
 
   return (
     <div className="flex flex-col gap-sibling">
       <div className="flex items-center justify-between gap-friend">
         <h2 className="ui-s1">Supplier credits</h2>
         {isTileCreator && <AddCreditButton tileId={tile.id} />}
+        {!isTileCreator && userSuppliers && <RequestCreditButton tileId={tile.id} userSuppliers={userSuppliers} />}
       </div>
       <div className="flex flex-col gap-sibling">
         {credits.map((credit) => {
-          const supplierRole = authUserSuppliers?.find((s) => s.id === credit.supplierId)?.role
+          const supplierRole = authUser?.suppliers?.find((s) => s.id === credit.supplierId)?.role
 
           return (
             <SupplierCredit
@@ -41,13 +44,23 @@ export function CreditsList({ tile, authUserId }: CreditsListProps) {
               contribution={credit.service}
               detail={credit.serviceDescription}
               href={`/suppliers/${credit.supplierHandle}`}
-              editor={supplierRole ? authUser!.id : null}
+              editor={supplierRole ? authUser.id : null}
             />
           )
         })}
       </div>
     </div>
   )
+}
+
+function userToSupplierSearchResults(user: User | null): SupplierSearchResult[] | null {
+  if (!user?.suppliers) return null
+  if (user.suppliers.length === 0) return null
+  return user.suppliers.map((supplier) => ({
+    id: supplier.id,
+    name: 'fake name',
+    handle: 'fake handle',
+  }))
 }
 
 type SupplierCreditProps = {
