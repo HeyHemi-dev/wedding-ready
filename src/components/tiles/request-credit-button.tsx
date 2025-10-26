@@ -20,6 +20,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { SERVICES } from '@/db/constants'
 import { constToPretty } from '@/utils/const-helpers'
 import { tryCatch } from '@/utils/try-catch'
+import { RequestCreditAction } from './request-credit-action'
 
 interface RequestCreditButtonProps {
   tileId: string
@@ -63,7 +64,7 @@ function RequestCreditForm({ tileId, suppliers, setDialogOpen }: RequestCreditFo
 
   async function onSubmit(data: FormValues) {
     console.log('onSubmit', data)
-    const { error } = await tryCatch(new Promise((resolve) => setTimeout(() => resolve(null), 1000)))
+    const { error } = await tryCatch(RequestCreditAction(tileId, data))
 
     if (error) {
       toast.error(error.message)
