@@ -7,32 +7,45 @@ import { useTileCredit } from '@/app/_hooks/use-tile-credit'
 import { AuthUserId } from '@/app/_types/users'
 
 import { Skeleton } from '@/components/ui/skeleton'
+import { AddCreditButton } from '@/components/tiles/add-credit-button'
 
 interface CreditsListProps {
-  tileId: string
+  tile: {
+    id: string
+    createdByUserId: string
+  }
   authUserId: AuthUserId
 }
 
-export function CreditsList({ tileId, authUserId }: CreditsListProps) {
-  const { data: credits } = useTileCredit(tileId)
+export function CreditsList({ tile, authUserId }: CreditsListProps) {
+  const { data: credits } = useTileCredit(tile.id)
   const { data: authUser } = useAuthUser(authUserId)
+
+  const isTileCreator = authUserId === tile.createdByUserId
+  const authUserSuppliers = authUser?.suppliers
 
   return (
     <div className="flex flex-col gap-sibling">
-      {credits.map((credit) => {
-        const supplierRole = authUser?.suppliers.find((s) => s.id === credit.supplierId)?.role
+      <div className="flex items-center justify-between gap-friend">
+        <h2 className="ui-s1">Supplier credits</h2>
+        {isTileCreator && <AddCreditButton tileId={tile.id} />}
+      </div>
+      <div className="flex flex-col gap-sibling">
+        {credits.map((credit) => {
+          const supplierRole = authUserSuppliers?.find((s) => s.id === credit.supplierId)?.role
 
-        return (
-          <SupplierCredit
-            key={credit.supplierHandle}
-            name={credit.supplierName}
-            contribution={credit.service}
-            detail={credit.serviceDescription}
-            href={`/suppliers/${credit.supplierHandle}`}
-            editor={supplierRole ? authUser.id : null}
-          />
-        )
-      })}
+          return (
+            <SupplierCredit
+              key={credit.supplierHandle}
+              name={credit.supplierName}
+              contribution={credit.service}
+              detail={credit.serviceDescription}
+              href={`/suppliers/${credit.supplierHandle}`}
+              editor={supplierRole ? authUser!.id : null}
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }
