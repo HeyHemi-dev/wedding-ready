@@ -19,9 +19,7 @@ import { userUpdateFormSchema, UserUpdateForm } from '../_types/validation-schem
 export default function UpdateProfileForm({ defaultValues, className }: { defaultValues: UserUpdateForm; className?: string }) {
   const form = useForm<UserUpdateForm>({
     resolver: zodResolver(userUpdateFormSchema),
-    defaultValues: {
-      ...defaultValues,
-    },
+    defaultValues: defaultValues,
     mode: 'onBlur',
   })
 

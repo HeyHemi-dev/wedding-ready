@@ -1,19 +1,11 @@
 'use client'
 
 import { useUserTiles } from '@/app/_hooks/use-user-tiles'
-import { noTiles, TileList, TileListSkeleton } from '@/components/tiles/tile-list'
+import { noTiles, TileList } from '@/components/tiles/tile-list'
 import * as t from '@/models/types'
 
 export function UserTiles({ user, authUserId }: { user: t.User; authUserId: string | null }) {
-  const { data: tiles, isLoading, isError, error } = useUserTiles(user.id, authUserId)
-
-  if (isLoading) {
-    return <TileListSkeleton />
-  }
-
-  if (isError) {
-    return noTiles({ message: `${error.message}` })
-  }
+  const { data: tiles } = useUserTiles(user.id, authUserId)
 
   if (!tiles || tiles.length === 0) {
     return noTiles({

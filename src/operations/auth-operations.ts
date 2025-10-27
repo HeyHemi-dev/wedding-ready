@@ -1,7 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
 import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswordForm, UserUpdateEmailForm } from '@/app/_types/validation-schema'
-import { User } from '@/models/types'
+import * as t from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 import { createAdminClient } from '@/utils/supabase/server'
@@ -24,7 +24,7 @@ async function signUp({
   userSignFormData: UserSignupForm
   supabaseClient: SupabaseClient
   origin: string
-}): Promise<User> {
+}): Promise<t.UserDetailRaw> {
   const { email, password, handle, displayName } = userSignFormData
 
   const isAvailable = await UserDetailModel.isHandleAvailable({ handle })

@@ -1,10 +1,11 @@
+import { Suspense } from 'react'
+
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { tileKeys } from '@/app/_types/queryKeys'
-import { AddCreditButton } from '@/components/tiles/add-credit-button'
-import { CreditsList } from '@/components/tiles/credits-list'
+import { CreditsList, CreditsListSkeleton } from '@/components/tiles/credits-list'
 import { SaveTileButton } from '@/components/tiles/save-button'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
@@ -42,15 +43,12 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
             <h1 className="heading-lg">{tile.title ?? 'Untitled'}</h1>
             {tile.description && <p className="text-muted-foreground">{tile.description}</p>}
           </div>
-          <div className="flex flex-col gap-sibling">
-            <div className="flex items-center justify-between gap-friend">
-              <h2 className="ui-s1">Supplier credits</h2>
-              {authUserId === tile.createdByUserId && <AddCreditButton tileId={tile.id} />}
-            </div>
-            <HydrationBoundary state={dehydrate(queryClient)}>
-              <CreditsList tileId={tile.id} />
-            </HydrationBoundary>
-          </div>
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <Suspense fallback={<CreditsListSkeleton />}>
+              <CreditsList tile={{ id: tile.id, createdByUserId: tile.createdByUserId }} authUserId={authUserId} />
+            </Suspense>
+          </HydrationBoundary>
+
           {/* <div className="flex flex-row-reverse">
             <Button variant={'link'} size="sm">
               Report

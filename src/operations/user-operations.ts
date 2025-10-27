@@ -1,20 +1,53 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
+import { User } from '@/app/_types/users'
 import { UserUpdateForm } from '@/app/_types/validation-schema'
-import { SetUserDetailRaw, User } from '@/models/types'
+import { supplierModel } from '@/models/supplier'
+import { supplierUsersModel } from '@/models/supplier-user'
+import * as t from '@/models/types'
 import { UserDetailModel } from '@/models/user'
 import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export const userOperations = {
+  getById,
   updateProfile,
 }
 
-async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<User> {
+async function getById(id: string): Promise<User> {
+  const user = await UserDetailModel.getById(id)
+  if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
+
+  const userSuppliers = await supplierUsersModel.getForUserId(id)
+  const suppliers = await Promise.all(userSuppliers.map((su) => supplierModel.getRawById(su.supplierId)))
+  const userSuppliersMap = new Map(userSuppliers.map((su) => [su.supplierId, su]))
+
+  return {
+    id: user.id,
+    handle: user.handle,
+    displayName: user.displayName,
+    bio: user.bio,
+    avatarUrl: user.avatarUrl,
+    instagramUrl: user.instagramUrl,
+    tiktokUrl: user.tiktokUrl,
+    websiteUrl: user.websiteUrl,
+    suppliers: suppliers.map((s) => {
+      if (!s) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
+      return {
+        id: s.id,
+        name: s.name,
+        handle: s.handle,
+        role: userSuppliersMap.get(s.id)!.role,
+      }
+    }),
+  }
+}
+
+async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<t.UserDetailRaw> {
   const user = await UserDetailModel.getById(data.id)
   if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
   if (user.id !== authUserId) throw OPERATION_ERROR.FORBIDDEN()
 
-  const setUserDetailData: SetUserDetailRaw = emptyStringToNullIfAllowed({
+  const setUserDetailData: t.SetUserDetailRaw = emptyStringToNullIfAllowed({
     displayName: data.displayName,
     bio: data.bio,
     avatarUrl: data.avatarUrl,

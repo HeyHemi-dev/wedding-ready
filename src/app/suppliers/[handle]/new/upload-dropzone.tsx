@@ -8,14 +8,13 @@ import { ExpandedRouteConfig } from 'uploadthing/types'
 
 import { Supplier } from '@/app/_types/suppliers'
 import { Button } from '@/components/ui/button'
-import { User } from '@/models/types'
 import { MAX_UPLOAD_FILE_SIZE } from '@/utils/constants'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { useUploadContext } from './upload-context'
 import { UploadPreviewList } from './upload-preview'
 
-export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: User }) {
+export function UploadDropzone({ supplier, userId }: { supplier: Supplier; userId: string }) {
   const { files, addFiles } = useUploadContext()
   const { routeConfig } = useUploadThing('tileUploader')
 
@@ -39,7 +38,7 @@ export function UploadDropzone({ supplier, user }: { supplier: Supplier; user: U
     <>
       {files.length === 0 && <Dropzone getRootProps={getRootProps} getInputProps={getInputProps} />}
 
-      {files.length > 0 && <UploadPreviewList files={files} supplier={supplier} user={user} />}
+      {files.length > 0 && <UploadPreviewList files={files} supplier={supplier} userId={userId} />}
     </>
   )
 }
