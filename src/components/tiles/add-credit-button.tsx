@@ -19,10 +19,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { SERVICES } from '@/db/constants'
-import { constToPretty } from '@/utils/const-helpers'
+import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
 import { tryCatch } from '@/utils/try-catch'
-import { servicePretty } from '@/db/service-descriptions'
 
 export function AddCreditButton({ tileId }: { tileId: string }) {
   const [isOpen, setIsOpen] = useState(false)
