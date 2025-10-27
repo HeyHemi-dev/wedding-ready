@@ -62,7 +62,6 @@ function RequestCreditForm({ tileId, suppliers, setDialogOpen }: RequestCreditFo
   })
 
   async function onSubmit(data: FormValues) {
-    console.log('onSubmit', data)
     const { error } = await tryCatch(RequestCreditAction(tileId, data))
 
     if (error) {

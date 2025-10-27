@@ -178,7 +178,6 @@ describe('tileOperations', () => {
       const result = await tileOperations.getListForUser(user.id)
 
       // Assert
-      console.log(result)
       expect(result.length).toBe(0)
     })
 

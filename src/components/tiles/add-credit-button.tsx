@@ -2,10 +2,8 @@
 
 import { useState } from 'react'
 
-
-
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus , Check, ChevronDown } from 'lucide-react'
+import { Plus, Check, ChevronDown } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -58,7 +56,6 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
   })
 
   async function onSubmit(data: FormValues) {
-    console.log('onSubmit', data)
     const { error } = await tryCatch(addCredit(data))
 
     if (error) {
