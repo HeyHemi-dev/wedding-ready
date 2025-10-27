@@ -109,7 +109,7 @@ function RequestCreditForm({ tileId, suppliers, setDialogOpen }: RequestCreditFo
             render={({ field }) => (
               <FormFieldItem label="Service">
                 <FormControl>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select service contribution" />
                     </SelectTrigger>

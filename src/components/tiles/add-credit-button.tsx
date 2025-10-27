@@ -22,6 +22,7 @@ import { SERVICES } from '@/db/constants'
 import { constToPretty } from '@/utils/const-helpers'
 import { cn } from '@/utils/shadcn-utils'
 import { tryCatch } from '@/utils/try-catch'
+import { servicePretty } from '@/db/service-descriptions'
 
 export function AddCreditButton({ tileId }: { tileId: string }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -94,14 +95,14 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
             render={({ field }) => (
               <FormFieldItem label="Service">
                 <FormControl>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select service contribution" />
                     </SelectTrigger>
                     <SelectContent>
-                      {constToPretty(SERVICES).map((service) => (
-                        <SelectItem key={service.value} value={service.value}>
-                          {service.label}
+                      {Object.values(SERVICES).map((service) => (
+                        <SelectItem key={service} value={service}>
+                          {servicePretty[service].value}
                         </SelectItem>
                       ))}
                     </SelectContent>
