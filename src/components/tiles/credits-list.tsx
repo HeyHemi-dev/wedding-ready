@@ -55,10 +55,10 @@ export function CreditsList({ tile, authUserId }: CreditsListProps) {
 function userToSupplierSearchResults(user: User | null): SupplierSearchResult[] | null {
   if (!user?.suppliers) return null
   if (user.suppliers.length === 0) return null
-  return user.suppliers.map((supplier) => ({
-    id: supplier.id,
-    name: 'fake name',
-    handle: 'fake handle',
+  return user.suppliers.map((s) => ({
+    id: s.id,
+    name: s.name,
+    handle: s.handle,
   }))
 }
 

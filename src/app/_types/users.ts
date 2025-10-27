@@ -11,6 +11,8 @@ export type User = {
   websiteUrl: string | null
   suppliers: {
     id: string
+    name: string
+    handle: string
     role: SupplierRole
   }[]
 }
