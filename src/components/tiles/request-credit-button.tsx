@@ -21,6 +21,7 @@ import { SERVICES } from '@/db/constants'
 import { constToPretty } from '@/utils/const-helpers'
 import { tryCatch } from '@/utils/try-catch'
 import { RequestCreditAction } from './request-credit-action'
+import { servicePretty } from '@/db/service-descriptions'
 
 interface RequestCreditButtonProps {
   tileId: string
@@ -88,13 +89,15 @@ function RequestCreditForm({ tileId, suppliers, setDialogOpen }: RequestCreditFo
                 <FormControl>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select supplier" />
+                      <SelectValue placeholder="Select from your suppliers" />
                     </SelectTrigger>
                     <SelectContent>
                       {suppliers.map((supplier) => (
                         <SelectItem key={supplier.id} value={supplier.id}>
-                          {supplier.name}
-                          <span className="ui-small opacity-80">@{supplier.handle}</span>
+                          <div className="flex items-center gap-spouse">
+                            <span className="ui-small-s1">{supplier.name}</span>
+                            <span className="ui-small opacity-80">@{supplier.handle}</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -114,9 +117,9 @@ function RequestCreditForm({ tileId, suppliers, setDialogOpen }: RequestCreditFo
                       <SelectValue placeholder="Select service contribution" />
                     </SelectTrigger>
                     <SelectContent>
-                      {constToPretty(SERVICES).map((service) => (
-                        <SelectItem key={service.value} value={service.value}>
-                          {service.label}
+                      {Object.values(SERVICES).map((service) => (
+                        <SelectItem key={service} value={service}>
+                          {servicePretty[service].value}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -139,7 +142,7 @@ function RequestCreditForm({ tileId, suppliers, setDialogOpen }: RequestCreditFo
         </div>
         <div className="flex justify-end">
           <Button type="submit" className="self-end">
-            {form.formState.isSubmitting ? 'Adding...' : 'Add credit'}
+            {form.formState.isSubmitting ? 'Requesting...' : 'Request credit'}
           </Button>
         </div>
       </form>
