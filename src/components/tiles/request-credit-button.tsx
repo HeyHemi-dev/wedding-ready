@@ -61,7 +61,7 @@ function RequestCreditForm({ tileId, suppliers, setDialogOpen }: RequestCreditFo
     mode: 'onBlur',
   })
 
-  async function onSubmit(data: FormValues) {
+  async function onSubmit(data: FormValues): Promise<void> {
     const { error } = await tryCatch(RequestCreditAction(tileId, data))
 
     if (error) {
@@ -84,7 +84,7 @@ function RequestCreditForm({ tileId, suppliers, setDialogOpen }: RequestCreditFo
             render={({ field }) => (
               <FormFieldItem label="Supplier">
                 <FormControl>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select from your suppliers" />
                     </SelectTrigger>

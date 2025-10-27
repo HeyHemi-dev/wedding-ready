@@ -55,7 +55,7 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
     mode: 'onBlur',
   })
 
-  async function onSubmit(data: FormValues) {
+  async function onSubmit(data: FormValues): Promise<void> {
     const { error } = await tryCatch(addCredit(data))
 
     if (error) {
