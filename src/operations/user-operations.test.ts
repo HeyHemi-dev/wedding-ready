@@ -5,7 +5,6 @@ import { createAdminClient } from '@/utils/supabase/server'
 
 import { userOperations } from './user-operations'
 
-
 const TEST_USER_OPERATIONS = {
   email: 'testUserOperations@example.com',
   password: 'testpassword123',
@@ -23,6 +22,21 @@ describe('userOperations', () => {
   afterAll(async () => {
     await scene.resetTestData()
     await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle })
+  })
+
+  describe('getById', () => {
+    it('should get a user by id', async () => {
+      // Arrange
+      const testUser = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: supabaseAdmin })
+
+      // Act
+      const user = await userOperations.getById(testUser.id)
+
+      // Assert
+      expect(user).toBeDefined()
+      expect(user.id).toBe(testUser.id)
+      expect(user.displayName).toBe(TEST_USER_OPERATIONS.displayName)
+    })
   })
 
   describe('updateProfile', () => {
