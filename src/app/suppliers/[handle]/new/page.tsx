@@ -21,11 +21,10 @@ export default async function NewSupplierTilePage({ params }: { params: Promise<
 
   // Check if the user is the owner of the supplier to allow creating tiles
   const authUserId = await getAuthUserId()
-  const isSupplierUser = supplier.users.some((u) => u.id === authUserId)
+  if (!authUserId) redirect(`/suppliers/${handle}`)
 
-  if (!authUserId || !isSupplierUser) {
-    redirect(`/suppliers/${handle}`)
-  }
+  const isSupplierUser = supplier.users.some((u) => u.id === authUserId)
+  if (!isSupplierUser) redirect(`/suppliers/${handle}`)
 
   return (
     <Section>
