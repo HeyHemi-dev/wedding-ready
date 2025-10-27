@@ -1,5 +1,8 @@
+import { Suspense } from 'react'
+
 import { SquarePenIcon } from 'lucide-react'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { ActionBar } from '@/components/action-bar/action-bar'
@@ -10,8 +13,6 @@ import { UserDetailModel } from '@/models/user'
 import { getAuthUserId } from '@/utils/auth'
 
 import { UserTiles } from './user-tiles'
-import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

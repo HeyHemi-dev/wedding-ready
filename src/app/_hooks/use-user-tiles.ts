@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
 import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 import { tileKeys } from '@/app/_types/queryKeys'

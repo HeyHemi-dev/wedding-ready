@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { tileKeys } from '@/app/_types/queryKeys'
-import { AddCreditButton } from '@/components/tiles/add-credit-button'
 import { CreditsList, CreditsListSkeleton } from '@/components/tiles/credits-list'
 import { SaveTileButton } from '@/components/tiles/save-button'
 import { Area } from '@/components/ui/area'

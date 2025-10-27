@@ -4,12 +4,11 @@ import Link from 'next/link'
 
 import { useAuthUser } from '@/app/_hooks/use-auth-user'
 import { useTileCredit } from '@/app/_hooks/use-tile-credit'
+import { SupplierSearchResult } from '@/app/_types/suppliers'
 import { AuthUserId, User } from '@/app/_types/users'
-
-import { Skeleton } from '@/components/ui/skeleton'
 import { AddCreditButton } from '@/components/tiles/add-credit-button'
 import { RequestCreditButton } from '@/components/tiles/request-credit-button'
-import { SupplierSearchResult } from '@/app/_types/suppliers'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface CreditsListProps {
   tile: {
