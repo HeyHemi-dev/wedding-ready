@@ -37,7 +37,7 @@ export function RequestCreditButton({ tileId, userSuppliers }: RequestCreditButt
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Request to be credit</DialogTitle>
+        <DialogTitle>Request to be credited</DialogTitle>
         <RequestCreditForm tileId={tileId} suppliers={userSuppliers} setDialogOpen={setIsOpen} />
       </DialogContent>
     </Dialog>
