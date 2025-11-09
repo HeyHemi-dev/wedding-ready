@@ -54,7 +54,7 @@ async function update(id: string, userProfileRawData: t.SetUserProfileRaw): Prom
 /**
  * @returns true if the handle is available, false otherwise
  */
-async function isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {
-  const userDetails = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.handle, handle))
-  return userDetails.length === 0
+async function isHandleAvailable(handle: string): Promise<boolean> {
+  const userProfiles = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.handle, handle))
+  return userProfiles.length === 0
 }
