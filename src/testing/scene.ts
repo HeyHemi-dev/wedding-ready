@@ -58,7 +58,7 @@ async function hasUser({
   displayName = TEST_USER.displayName,
   handle = TEST_USER.handle,
   supabaseClient,
-}: Partial<UserSignupForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserDetailRaw> {
+}: Partial<UserSignupForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserProfileRaw> {
   const user = await UserDetailModel.getByHandle(handle)
   if (user) return user
 

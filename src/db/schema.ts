@@ -12,7 +12,7 @@ export const services = pgEnum('services', constToPgEnum(SERVICES))
 export const locations = pgEnum('locations', constToPgEnum(LOCATIONS))
 
 // Maintain 1-1 relationship between user_details and auth.users
-export const user_details = pgTable('user_details', {
+export const userProfiles = pgTable('user_profiles', {
   id: uuid('id')
     .primaryKey()
     .notNull()
@@ -28,7 +28,7 @@ export const user_details = pgTable('user_details', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
-export const userDetailColumns = getTableColumns(user_details)
+export const userProfileColumns = getTableColumns(userProfiles)
 
 export const suppliers = pgTable('suppliers', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
