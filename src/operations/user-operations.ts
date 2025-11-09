@@ -9,6 +9,7 @@ import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export const userOperations = {
   getById,
+  getByHandle,
   updateProfile,
 }
 
@@ -16,7 +17,36 @@ async function getById(id: string): Promise<User> {
   const user = await userProfileModel.getRawById(id)
   if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
-  const userSuppliers = await supplierUsersModel.getForUserId(id)
+  const userSuppliers = await supplierUsersModel.getForUserId(user.id)
+  const suppliers = await Promise.all(userSuppliers.map((su) => supplierModel.getRawById(su.supplierId)))
+  const userSuppliersMap = new Map(userSuppliers.map((su) => [su.supplierId, su]))
+
+  return {
+    id: user.id,
+    handle: user.handle,
+    displayName: user.displayName,
+    bio: user.bio,
+    avatarUrl: user.avatarUrl,
+    instagramUrl: user.instagramUrl,
+    tiktokUrl: user.tiktokUrl,
+    websiteUrl: user.websiteUrl,
+    suppliers: suppliers.map((s) => {
+      if (!s) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
+      return {
+        id: s.id,
+        name: s.name,
+        handle: s.handle,
+        role: userSuppliersMap.get(s.id)!.role,
+      }
+    }),
+  }
+}
+
+async function getByHandle(handle: string): Promise<User> {
+  const user = await userProfileModel.getRawByHandle(handle)
+  if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
+
+  const userSuppliers = await supplierUsersModel.getForUserId(user.id)
   const suppliers = await Promise.all(userSuppliers.map((su) => supplierModel.getRawById(su.supplierId)))
   const userSuppliersMap = new Map(userSuppliers.map((su) => [su.supplierId, su]))
 
