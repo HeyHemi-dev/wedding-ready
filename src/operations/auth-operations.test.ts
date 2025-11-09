@@ -1,7 +1,7 @@
 import { describe, expect, test, beforeEach, afterAll } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
-import { UserDetailModel } from '@/models/user'
+import { userProfileModel } from '@/models/user'
 import { scene, TEST_ORIGIN } from '@/testing/scene'
 import { createAdminClient } from '@/utils/supabase/server'
 
@@ -61,7 +61,7 @@ describe('authOperations', () => {
       expect(authUser.user?.email).toBe(AUTH_TEST_USER_1.email)
 
       // Verify user exists in db
-      const user = await UserDetailModel.getByHandle(AUTH_TEST_USER_1.handle)
+      const user = await userProfileModel.getByHandle(AUTH_TEST_USER_1.handle)
       expect(user).toBeDefined()
       expect(user?.id).toBe(testUser.id)
       expect(user?.id).toBe(authUser.user?.id)

@@ -8,7 +8,7 @@ import * as s from '@/db/schema'
 import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
 import type * as t from '@/models/types'
-import { UserDetailModel } from '@/models/user'
+import { userProfileModel } from '@/models/user'
 import { authOperations } from '@/operations/auth-operations'
 import { supplierOperations } from '@/operations/supplier-operations'
 import { tileOperations } from '@/operations/tile-operations'
@@ -59,7 +59,7 @@ async function hasUser({
   handle = TEST_USER.handle,
   supabaseClient,
 }: Partial<UserSignupForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserProfileRaw> {
-  const user = await UserDetailModel.getByHandle(handle)
+  const user = await userProfileModel.getByHandle(handle)
   if (user) return user
 
   // Create a client if none provided
@@ -107,7 +107,7 @@ async function hasTile({
 }
 
 async function withoutUser({ handle = TEST_USER.handle, supabaseClient }: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
-  const user = await UserDetailModel.getByHandle(handle)
+  const user = await userProfileModel.getByHandle(handle)
   if (!user) return
 
   // Create a client if none provided

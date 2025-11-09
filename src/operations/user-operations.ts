@@ -4,7 +4,7 @@ import { UserUpdateForm } from '@/app/_types/validation-schema'
 import { supplierModel } from '@/models/supplier'
 import { supplierUsersModel } from '@/models/supplier-user'
 import * as t from '@/models/types'
-import { UserDetailModel } from '@/models/user'
+import { userProfileModel } from '@/models/user'
 import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export const userOperations = {
@@ -13,7 +13,7 @@ export const userOperations = {
 }
 
 async function getById(id: string): Promise<User> {
-  const user = await UserDetailModel.getById(id)
+  const user = await userProfileModel.getById(id)
   if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
   const userSuppliers = await supplierUsersModel.getForUserId(id)
@@ -42,7 +42,7 @@ async function getById(id: string): Promise<User> {
 }
 
 async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<t.UserProfileRaw> {
-  const user = await UserDetailModel.getById(data.id)
+  const user = await userProfileModel.getById(data.id)
   if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
   if (user.id !== authUserId) throw OPERATION_ERROR.FORBIDDEN()
@@ -56,5 +56,5 @@ async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<
     websiteUrl: data.websiteUrl,
   })
 
-  return UserDetailModel.update(user.id, setUserDetailData)
+  return userProfileModel.update(user.id, setUserDetailData)
 }

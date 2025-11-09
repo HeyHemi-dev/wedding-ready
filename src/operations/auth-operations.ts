@@ -2,7 +2,7 @@ import { SupabaseClient } from '@supabase/supabase-js'
 
 import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswordForm, UserUpdateEmailForm } from '@/app/_types/validation-schema'
 import * as t from '@/models/types'
-import { UserDetailModel } from '@/models/user'
+import { userProfileModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 import { createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
@@ -27,7 +27,7 @@ async function signUp({
 }): Promise<t.UserProfileRaw> {
   const { email, password, handle, displayName } = userSignFormData
 
-  const isAvailable = await UserDetailModel.isHandleAvailable({ handle })
+  const isAvailable = await userProfileModel.isHandleAvailable({ handle })
   if (!isAvailable) {
     throw new Error('Handle is already taken')
   }
@@ -52,7 +52,7 @@ async function signUp({
 
   // Create userDetail record for app data
   const { data: userDetails, error: dbError } = await tryCatch(
-    UserDetailModel.create({
+    userProfileModel.create({
       id: user.id,
       handle,
       displayName,

@@ -9,14 +9,14 @@ import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles, TileListSkeleton } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { UserDetailModel } from '@/models/user'
+import { userProfileModel } from '@/models/user'
 import { getAuthUserId } from '@/utils/auth'
 
 import { UserTiles } from './user-tiles'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const userDetail = await UserDetailModel.getByHandle(handle)
+  const userDetail = await userProfileModel.getByHandle(handle)
   if (!userDetail) return notFound()
 
   const authUserId = await getAuthUserId()
