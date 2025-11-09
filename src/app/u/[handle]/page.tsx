@@ -16,7 +16,7 @@ import { UserTiles } from './user-tiles'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const userDetail = await userProfileModel.getByHandle(handle)
+  const userDetail = await userProfileModel.getRawByHandle(handle)
   if (!userDetail) return notFound()
 
   const authUserId = await getAuthUserId()

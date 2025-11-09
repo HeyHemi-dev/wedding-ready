@@ -71,7 +71,7 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
 }
 
 async function register({ name, handle, websiteUrl, description, services, locations }: SupplierRegistrationForm, authUserId: string): Promise<Supplier> {
-  const user = await userProfileModel.getById(authUserId)
+  const user = await userProfileModel.getRawById(authUserId)
   if (!user) {
     throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
   }

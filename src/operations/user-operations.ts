@@ -13,7 +13,7 @@ export const userOperations = {
 }
 
 async function getById(id: string): Promise<User> {
-  const user = await userProfileModel.getById(id)
+  const user = await userProfileModel.getRawById(id)
   if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
   const userSuppliers = await supplierUsersModel.getForUserId(id)
@@ -42,7 +42,7 @@ async function getById(id: string): Promise<User> {
 }
 
 async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<t.UserProfileRaw> {
-  const user = await userProfileModel.getById(data.id)
+  const user = await userProfileModel.getRawById(data.id)
   if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
   if (user.id !== authUserId) throw OPERATION_ERROR.FORBIDDEN()
@@ -56,5 +56,5 @@ async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<
     websiteUrl: data.websiteUrl,
   })
 
-  return userProfileModel.update(user.id, setUserDetailData)
+  return userProfileModel.updateRaw(user.id, setUserDetailData)
 }

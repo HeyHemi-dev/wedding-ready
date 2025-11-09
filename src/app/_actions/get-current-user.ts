@@ -56,7 +56,7 @@ export async function getCurrentUser(): Promise<User | null> {
 
   const user = await unstable_cache(
     async () => {
-      const { data: userDetail, error } = await tryCatch(userProfileModel.getById(userId))
+      const { data: userDetail, error } = await tryCatch(userProfileModel.getRawById(userId))
 
       if (error) {
         const databaseError: UserFetchError = {

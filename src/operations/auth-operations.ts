@@ -52,7 +52,7 @@ async function signUp({
 
   // Create userDetail record for app data
   const { data: userDetails, error: dbError } = await tryCatch(
-    userProfileModel.create({
+    userProfileModel.createRaw({
       id: user.id,
       handle,
       displayName,

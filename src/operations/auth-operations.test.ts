@@ -61,7 +61,7 @@ describe('authOperations', () => {
       expect(authUser.user?.email).toBe(AUTH_TEST_USER_1.email)
 
       // Verify user exists in db
-      const user = await userProfileModel.getByHandle(AUTH_TEST_USER_1.handle)
+      const user = await userProfileModel.getRawByHandle(AUTH_TEST_USER_1.handle)
       expect(user).toBeDefined()
       expect(user?.id).toBe(testUser.id)
       expect(user?.id).toBe(authUser.user?.id)

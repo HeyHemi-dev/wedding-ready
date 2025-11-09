@@ -59,7 +59,7 @@ async function hasUser({
   handle = TEST_USER.handle,
   supabaseClient,
 }: Partial<UserSignupForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserProfileRaw> {
-  const user = await userProfileModel.getByHandle(handle)
+  const user = await userProfileModel.getRawByHandle(handle)
   if (user) return user
 
   // Create a client if none provided
@@ -107,7 +107,7 @@ async function hasTile({
 }
 
 async function withoutUser({ handle = TEST_USER.handle, supabaseClient }: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
-  const user = await userProfileModel.getByHandle(handle)
+  const user = await userProfileModel.getRawByHandle(handle)
   if (!user) return
 
   // Create a client if none provided
