@@ -39,6 +39,21 @@ describe('userOperations', () => {
     })
   })
 
+  describe('getByHandle', () => {
+    it('should get a user by handle', async () => {
+      // Arrange
+      const testUser = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: supabaseAdmin })
+
+      // Act
+      const user = await userOperations.getByHandle(testUser.handle)
+
+      // Assert
+      expect(user).toBeDefined()
+      expect(user.id).toBe(testUser.id)
+      expect(user.displayName).toBe(TEST_USER_OPERATIONS.displayName)
+    })
+  })
+
   describe('updateProfile', () => {
     it('should update a user profile', async () => {
       // Arrange
