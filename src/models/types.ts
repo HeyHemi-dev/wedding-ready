@@ -7,16 +7,16 @@ import * as schema from '@/db/schema'
 export type AuthUser = UserRaw
 
 /**
- * A UserDetail (no 's') represents a single row in the user_details table and is used to extend the Supabase Auth user with additional fields.
+ * A UserProfile (no 's') represents a single row in the user_profiles table and is used to extend the Supabase Auth user with additional fields.
  */
-export type UserDetailRaw = InferSelectModel<typeof schema.userProfiles>
+export type UserProfileRaw = InferSelectModel<typeof schema.userProfiles>
 
 /**
- * UserDetail is used to extend the Supabase Auth user with additional fields.
+ * UserProfile is used to extend the Supabase Auth user with additional fields.
  * @requires id - must match the id of the Supabase Auth user
  */
-export type InsertUserDetailRaw = InferInsertModel<typeof schema.userProfiles>
-export type SetUserDetailRaw = Partial<Omit<InsertUserDetailRaw, 'id' | 'createdAt'>>
+export type InsertUserProfileRaw = InferInsertModel<typeof schema.userProfiles>
+export type SetUserProfileRaw = Partial<Omit<InsertUserProfileRaw, 'id' | 'createdAt'>>
 
 export type SupplierRaw = InferSelectModel<typeof schema.suppliers>
 export type InsertSupplierRaw = InferInsertModel<typeof schema.suppliers>
@@ -55,11 +55,11 @@ export type InsertStackTileRaw = InferInsertModel<typeof schema.stackTiles>
 export type SetStackTileRaw = Partial<Omit<InsertStackTileRaw, 'stackId' | 'tileId'>>
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface User extends UserDetailRaw {}
+export interface User extends UserProfileRaw {}
 
-export function makeUser(userDetail: UserDetailRaw): User {
+export function makeUser(userProfileRaw: UserProfileRaw): User {
   return {
-    ...userDetail,
+    ...userProfileRaw,
   } as User
 }
 
