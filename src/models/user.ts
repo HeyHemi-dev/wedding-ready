@@ -13,13 +13,13 @@ export class UserDetailModel {
 
   // Class method example
   static async getById(id: string): Promise<UserDetailRaw | null> {
-    const userDetails = await db.select().from(schema.user_details).where(eq(schema.user_details.id, id)).limit(1)
+    const userDetails = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.id, id)).limit(1)
 
     return userDetails.length ? userDetails[0] : null
   }
 
   static async getByHandle(handle: string): Promise<UserDetailRaw | null> {
-    const userDetails = await db.select().from(schema.user_details).where(eq(schema.user_details.handle, handle)).limit(1)
+    const userDetails = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.handle, handle)).limit(1)
 
     return userDetails.length ? userDetails[0] : null
   }
@@ -36,7 +36,7 @@ export class UserDetailModel {
    * ```
    */
   static async create(userDetailRawData: InsertUserDetailRaw): Promise<UserDetailRaw> {
-    const userDetailsRaw = await db.insert(schema.user_details).values(userDetailRawData).returning()
+    const userDetailsRaw = await db.insert(schema.userProfiles).values(userDetailRawData).returning()
     return userDetailsRaw[0]
   }
 
@@ -46,7 +46,7 @@ export class UserDetailModel {
     }
     userDetailRawData.updatedAt = new Date()
 
-    const userDetailsRaw = await db.update(schema.user_details).set(userDetailRawData).where(eq(schema.user_details.id, id)).returning()
+    const userDetailsRaw = await db.update(schema.userProfiles).set(userDetailRawData).where(eq(schema.userProfiles.id, id)).returning()
 
     return userDetailsRaw[0]
   }
@@ -59,7 +59,7 @@ export class UserDetailModel {
    * @returns true if the handle is available, false otherwise
    */
   static async isHandleAvailable({ handle }: { handle: string }): Promise<boolean> {
-    const userDetails = await db.select().from(schema.user_details).where(eq(schema.user_details.handle, handle))
+    const userDetails = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.handle, handle))
     return userDetails.length === 0
   }
 }

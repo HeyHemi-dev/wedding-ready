@@ -9,13 +9,13 @@ export type AuthUser = UserRaw
 /**
  * A UserDetail (no 's') represents a single row in the user_details table and is used to extend the Supabase Auth user with additional fields.
  */
-export type UserDetailRaw = InferSelectModel<typeof schema.user_details>
+export type UserDetailRaw = InferSelectModel<typeof schema.userProfiles>
 
 /**
  * UserDetail is used to extend the Supabase Auth user with additional fields.
  * @requires id - must match the id of the Supabase Auth user
  */
-export type InsertUserDetailRaw = InferInsertModel<typeof schema.user_details>
+export type InsertUserDetailRaw = InferInsertModel<typeof schema.userProfiles>
 export type SetUserDetailRaw = Partial<Omit<InsertUserDetailRaw, 'id' | 'createdAt'>>
 
 export type SupplierRaw = InferSelectModel<typeof schema.suppliers>
