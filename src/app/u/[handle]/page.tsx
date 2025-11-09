@@ -9,32 +9,33 @@ import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles, TileListSkeleton } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { userProfileModel } from '@/models/user'
+
 import { getAuthUserId } from '@/utils/auth'
 
 import { UserTiles } from './user-tiles'
+import { userOperations } from '@/operations/user-operations'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const userDetail = await userProfileModel.getRawByHandle(handle)
-  if (!userDetail) return notFound()
+  const user = await userOperations.getByHandle(handle)
+  if (!user) return notFound()
 
   const authUserId = await getAuthUserId()
-  const isCurrentUser = authUserId === userDetail.id
+  const isCurrentUser = authUserId === user.id
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
       <div className="grid grid-cols-2 grid-rows-[auto_1fr] gap-area">
         <Area className="grid auto-rows-max gap-close-friend">
-          <p className="ui-small text-muted-foreground">@{userDetail.handle}</p>
+          <p className="ui-small text-muted-foreground">@{user.handle}</p>
           <div className="flex flex-col gap-partner">
-            <h1 className="heading-lg">{userDetail.displayName}</h1>
-            <p>{userDetail.bio}</p>
+            <h1 className="heading-lg">{user.displayName}</h1>
+            <p>{user.bio}</p>
           </div>
           <div className="flex items-center gap-partner text-muted-foreground">
-            {userDetail.instagramUrl && <p>Instagram</p>}
-            {userDetail.tiktokUrl && <p>Tiktok</p>}
-            {userDetail.websiteUrl && <p>Website</p>}
+            {user.instagramUrl && <p>Instagram</p>}
+            {user.tiktokUrl && <p>Tiktok</p>}
+            {user.websiteUrl && <p>Website</p>}
           </div>
         </Area>
         <Area className="grid auto-rows-max gap-friend">
@@ -59,7 +60,7 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
               </ActionBar>
             )}
             <Suspense fallback={<TileListSkeleton />}>
-              <UserTiles user={userDetail} authUserId={authUserId} />
+              <UserTiles user={user} authUserId={authUserId} />
             </Suspense>
           </ErrorBoundary>
         </div>
