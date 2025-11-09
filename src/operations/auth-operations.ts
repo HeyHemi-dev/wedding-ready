@@ -27,7 +27,7 @@ async function signUp({
 }): Promise<t.UserProfileRaw> {
   const { email, password, handle, displayName } = userSignFormData
 
-  const isAvailable = await userProfileModel.isHandleAvailable({ handle })
+  const isAvailable = await userProfileModel.isHandleAvailable(handle)
   if (!isAvailable) {
     throw new Error('Handle is already taken')
   }
