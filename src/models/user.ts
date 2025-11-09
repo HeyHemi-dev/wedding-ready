@@ -5,23 +5,23 @@ import * as schema from '@/db/schema'
 import * as t from '@/models/types'
 
 export const userProfileModel = {
-  getById,
-  getByHandle,
-  create,
-  update,
+  getRawById,
+  getRawByHandle,
+  createRaw,
+  updateRaw,
   isHandleAvailable,
 }
 
-async function getById(id: string): Promise<t.UserProfileRaw | null> {
-  const userDetails = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.id, id)).limit(1)
+async function getRawById(id: string): Promise<t.UserProfileRaw | null> {
+  const userProfilesRaw = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.id, id)).limit(1)
 
-  return userDetails.length ? userDetails[0] : null
+  return userProfilesRaw.length ? userProfilesRaw[0] : null
 }
 
-async function getByHandle(handle: string): Promise<t.UserProfileRaw | null> {
-  const userDetails = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.handle, handle)).limit(1)
+async function getRawByHandle(handle: string): Promise<t.UserProfileRaw | null> {
+  const userProfilesRaw = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.handle, handle)).limit(1)
 
-  return userDetails.length ? userDetails[0] : null
+  return userProfilesRaw.length ? userProfilesRaw[0] : null
 }
 
 /**
@@ -35,26 +35,26 @@ async function getByHandle(handle: string): Promise<t.UserProfileRaw | null> {
  * await userProfileModel.create({ id: data.user.id })
  * ```
  */
-async function create(userProfileRawData: t.InsertUserProfileRaw): Promise<t.UserProfileRaw> {
-  const userProfileRaw = await db.insert(schema.userProfiles).values(userProfileRawData).returning()
-  return userProfileRaw[0]
+async function createRaw(userProfileRawData: t.InsertUserProfileRaw): Promise<t.UserProfileRaw> {
+  const userProfilesRaw = await db.insert(schema.userProfiles).values(userProfileRawData).returning()
+  return userProfilesRaw[0]
 }
 
-async function update(id: string, userProfileRawData: t.SetUserProfileRaw): Promise<t.UserProfileRaw> {
+async function updateRaw(id: string, userProfileRawData: t.SetUserProfileRaw): Promise<t.UserProfileRaw> {
   if (userProfileRawData.handle) {
     userProfileRawData.handleUpdatedAt = new Date()
   }
   userProfileRawData.updatedAt = new Date()
 
-  const userProfileRaw = await db.update(schema.userProfiles).set(userProfileRawData).where(eq(schema.userProfiles.id, id)).returning()
+  const userProfilesRaw = await db.update(schema.userProfiles).set(userProfileRawData).where(eq(schema.userProfiles.id, id)).returning()
 
-  return userProfileRaw[0]
+  return userProfilesRaw[0]
 }
 
 /**
  * @returns true if the handle is available, false otherwise
  */
 async function isHandleAvailable(handle: string): Promise<boolean> {
-  const userProfiles = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.handle, handle))
-  return userProfiles.length === 0
+  const userProfilesRaw = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.handle, handle))
+  return userProfilesRaw.length === 0
 }
