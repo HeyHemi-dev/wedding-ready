@@ -24,7 +24,7 @@ async function signUp({
   userSignFormData: UserSignupForm
   supabaseClient: SupabaseClient
   origin: string
-}): Promise<t.UserDetailRaw> {
+}): Promise<t.UserProfileRaw> {
   const { email, password, handle, displayName } = userSignFormData
 
   const isAvailable = await UserDetailModel.isHandleAvailable({ handle })

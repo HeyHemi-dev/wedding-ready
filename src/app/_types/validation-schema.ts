@@ -64,7 +64,7 @@ export const userUpdateFormSchema = userOmitAuth.extend({
   instagramUrl: z.string().trim().url('Must be a valid Instagram URL').or(z.literal('')),
   tiktokUrl: z.string().trim().url('Must be a valid TikTok URL').or(z.literal('')),
   websiteUrl: z.string().trim().url('Must be a valid website URL').or(z.literal('')),
-}) satisfies z.ZodType<t.SetUserDetailRaw>
+}) satisfies z.ZodType<t.SetUserProfileRaw>
 export type UserUpdateForm = z.infer<typeof userUpdateFormSchema>
 
 // SUPPLIER VALIDATION

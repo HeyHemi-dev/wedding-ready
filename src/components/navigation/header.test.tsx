@@ -11,7 +11,7 @@ vi.mock('@/app/_actions/get-current-user', () => ({
   getCurrentUser: vi.fn(),
 }))
 
-const TEST_USER: t.UserDetailRaw = {
+const TEST_USER: t.UserProfileRaw = {
   id: 'test-user-id',
   handle: 'testuser',
   displayName: 'Test User',
