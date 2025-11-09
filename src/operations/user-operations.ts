@@ -41,13 +41,13 @@ async function getById(id: string): Promise<User> {
   }
 }
 
-async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<t.UserDetailRaw> {
+async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<t.UserProfileRaw> {
   const user = await UserDetailModel.getById(data.id)
   if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
   if (user.id !== authUserId) throw OPERATION_ERROR.FORBIDDEN()
 
-  const setUserDetailData: t.SetUserDetailRaw = emptyStringToNullIfAllowed({
+  const setUserDetailData: t.SetUserProfileRaw = emptyStringToNullIfAllowed({
     displayName: data.displayName,
     bio: data.bio,
     avatarUrl: data.avatarUrl,
