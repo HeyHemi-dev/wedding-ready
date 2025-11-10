@@ -13,17 +13,16 @@ alwaysApply: true
 - Use kebab case for files and directories. e.g. `components/directory-name/file-name.tsx`
 
 ## Type Safety
-- Always specify the return type.
+- Always specify the return type (exception allowed for React components that only return JSX)
 - Types always start with a capital letter
 - Model type naming: 
-   - `[model]` e.g. `Tile` shape of data with the most common fields needed for the presentation layer. Usually constructured from several table joins. Must only be used server-side
-   - `[model]Safe` e.g. `TileSafe` shape of data with only the fields that are safe to send to the client.
-   - `[model]Raw` e.g. `TileRaw` shape of data directly from a row in a table.
+   - `[model]Raw` e.g. `TileRaw` shape of data directly from a row in a table. Must only be used in operations layer and below.
    - `Insert[model]Raw` e.g. `InsertTileRaw` shape of data for creating a row in a table.
-   - `SetModelRaw` e.g. `SetTileRaw` shape of data for updating a row in a table. Removes fields that should not be updated (e.g. 'id', createdAt etc.)
+   - `Set[model]Raw` e.g. `SetTileRaw` shape of data for updating a row in a table. Removes fields that should not be updated (e.g. 'id', createdAt etc.)
 - API type naming: 
    - `[endpoint]RequestBody` e.g. `createTileRequestBody`
    - `[endpoint]ResponseBody` e.g. `createTileResponseBody`
+- Frontend types:
 
 ## Server/Client Separation
 - Use server components where possible for reduced client-side JavaScript
