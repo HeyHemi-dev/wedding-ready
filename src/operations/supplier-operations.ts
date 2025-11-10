@@ -23,15 +23,19 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
   const supplier = await supplierModel.getByHandle(handle)
   if (!supplier) return null
 
+  const supplierUsers = await supplierUsersModel.getForSupplierId(supplier.id)
+  const supplierLocations = await supplierLocationsModel.getRawForSupplierId(supplier.id)
+  const supplierServices = await supplierServicesModel.getRawForSupplierId(supplier.id)
+
   return {
     id: supplier.id,
     name: supplier.name,
     handle: supplier.handle,
     websiteUrl: supplier.websiteUrl,
     description: supplier.description,
-    services: supplier.services,
-    locations: supplier.locations,
-    users: supplier.users.map((user) => ({ id: user.userId, role: user.role })),
+    services: supplierServices.map((s) => s.service!),
+    locations: supplierLocations.map((l) => l.location),
+    users: supplierUsers.map((u) => ({ id: u.userId, role: u.role })),
   }
 }
 
