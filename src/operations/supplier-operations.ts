@@ -20,8 +20,14 @@ export const supplierOperations = {
 }
 
 async function getByHandle(handle: Handle): Promise<Supplier | null> {
-  const supplier = await supplierModel.getByHandle(handle)
+  const supplier = await supplierModel.getRawByHandle(handle)
   if (!supplier) return null
+
+  const [supplierUsers, supplierLocations, supplierServices] = await Promise.all([
+    supplierUsersModel.getForSupplierId(supplier.id),
+    supplierLocationsModel.getRawForSupplierId(supplier.id),
+    supplierServicesModel.getRawForSupplierId(supplier.id),
+  ])
 
   return {
     id: supplier.id,
@@ -29,9 +35,9 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
     handle: supplier.handle,
     websiteUrl: supplier.websiteUrl,
     description: supplier.description,
-    services: supplier.services,
-    locations: supplier.locations,
-    users: supplier.users.map((user) => ({ id: user.userId, role: user.role })),
+    services: supplierServices.map((s) => s.service!),
+    locations: supplierLocations.map((l) => l.location),
+    users: supplierUsers.map((u) => ({ id: u.userId, role: u.role })),
   }
 }
 
@@ -88,7 +94,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
     description,
     websiteUrl,
   }
-  const supplier = await supplierModel.create(insertSupplierData)
+  const supplier = await supplierModel.createRaw(insertSupplierData)
 
   const [supplierLocations, supplierServices, supplierUsers] = await Promise.all([
     supplierLocationsModel.createForSupplierId({ supplierId: supplier.id, locations }),
@@ -123,7 +129,7 @@ async function updateProfile(supplierId: string, data: SupplierUpdateForm, authU
     description: data.description,
   })
 
-  const updatedSupplier = await supplierModel.update(supplierId, setSupplierData)
+  const updatedSupplier = await supplierModel.updateRaw(supplierId, setSupplierData)
   return {
     name: updatedSupplier.name,
     websiteUrl: updatedSupplier.websiteUrl ?? undefined,

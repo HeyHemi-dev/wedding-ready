@@ -7,21 +7,25 @@ import * as t from '@/models/types'
 
 export const supplierModel = {
   getRawById,
+  getRawByHandle,
   getAllRawForLocation,
   getAllRawForService,
-  getByHandle,
-  create,
-  update,
+  createRaw,
+  updateRaw,
   isHandleAvailable,
   search,
 }
 
 async function getRawById(id: string): Promise<t.SupplierRaw | null> {
-  const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.id, id))
+  const suppliersRaw = await db.select().from(schema.suppliers).where(eq(schema.suppliers.id, id))
+  if (suppliersRaw.length === 0) return null
+  return suppliersRaw[0]
+}
 
-  if (suppliers === null || suppliers.length === 0) return null
-
-  return suppliers[0]
+async function getRawByHandle(handle: string): Promise<t.SupplierRaw | null> {
+  const suppliersRaw = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
+  if (suppliersRaw.length === 0) return null
+  return suppliersRaw[0]
 }
 
 async function getAllRawForLocation(location: Location): Promise<t.SupplierRaw[]> {
@@ -44,90 +48,28 @@ async function getAllRawForService(service: Service): Promise<t.SupplierRaw[]> {
     .where(eq(schema.supplierServices.service, service))
 }
 
-async function getByHandle(handle: string): Promise<t.SupplierWithUsers | null> {
-  const result = await supplierBaseQuery.where(eq(schema.suppliers.handle, handle))
-
-  if (result.length === 0) {
-    return null
-  }
-
-  const suppliers = aggregateSupplierQueryResults(result)
-
-  // There should only be one supplier with this handle because of db constraints.
-  const supplier = suppliers[0]
-  const supplierUsers = await db.select().from(schema.supplierUsers).where(eq(schema.supplierUsers.supplierId, supplier.id))
-
-  return {
-    ...supplier,
-    users: supplierUsers,
-  }
+async function createRaw(insertSupplierData: t.InsertSupplierRaw): Promise<t.SupplierRaw> {
+  const suppliersRaw = await db.insert(schema.suppliers).values(insertSupplierData).returning()
+  return suppliersRaw[0]
 }
 
-async function create(insertSupplierData: t.InsertSupplierRaw): Promise<t.SupplierRaw> {
-  const suppliers = await db.insert(schema.suppliers).values(insertSupplierData).returning()
-  return suppliers[0]
-}
-
-async function update(supplierId: string, setSupplierData: t.SetSupplierRaw): Promise<t.SupplierRaw> {
+async function updateRaw(supplierId: string, setSupplierData: t.SetSupplierRaw): Promise<t.SupplierRaw> {
   setSupplierData.updatedAt = new Date()
-  const suppliers = await db.update(schema.suppliers).set(setSupplierData).where(eq(schema.suppliers.id, supplierId)).returning()
-  return suppliers[0]
+  const suppliersRaw = await db.update(schema.suppliers).set(setSupplierData).where(eq(schema.suppliers.id, supplierId)).returning()
+  return suppliersRaw[0]
 }
 
 async function isHandleAvailable(handle: string): Promise<boolean> {
-  const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
-  return suppliers.length === 0
+  const suppliersRaw = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
+  return suppliersRaw.length === 0
 }
 
 async function search(query: string): Promise<t.SupplierRaw[]> {
-  const suppliers = await db
+  const suppliersRaw = await db
     .select()
     .from(schema.suppliers)
     .where(or(ilike(schema.suppliers.name, `%${query}%`), ilike(schema.suppliers.handle, `%${query}%`)))
     .limit(10)
 
-  return suppliers
-}
-
-const supplierBaseQuery = db
-  .select({
-    ...schema.supplierColumns,
-    service: schema.supplierServices.service,
-    location: schema.supplierLocations.location,
-  })
-  .from(schema.suppliers)
-  .leftJoin(schema.supplierServices, eq(schema.suppliers.id, schema.supplierServices.supplierId))
-  .leftJoin(schema.supplierLocations, eq(schema.suppliers.id, schema.supplierLocations.supplierId))
-
-interface SupplierBaseQueryResult extends t.SupplierRaw {
-  service: Service | null
-  location: Location | null
-}
-
-function aggregateSupplierQueryResults(result: SupplierBaseQueryResult[]): t.Supplier[] {
-  // Create a map that we can iterate through, constructing a  Supplier for each supplier
-  const supplierMap = new Map<string, t.Supplier>()
-
-  for (const row of result) {
-    const supplierId = row.id
-    if (!supplierMap.has(supplierId)) {
-      supplierMap.set(supplierId, {
-        ...row,
-        services: [],
-        locations: [],
-      })
-    }
-
-    // We can assert the supplierId is in the map, because we just created it if it didn't already exist
-    const supplierWithDetail = supplierMap.get(supplierId)!
-
-    if (row.service && !supplierWithDetail.services.includes(row.service)) {
-      supplierWithDetail.services.push(row.service)
-    }
-    if (row.location && !supplierWithDetail.locations.includes(row.location)) {
-      supplierWithDetail.locations.push(row.location)
-    }
-  }
-
-  return Array.from(supplierMap.values())
+  return suppliersRaw
 }

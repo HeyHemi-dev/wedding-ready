@@ -117,7 +117,7 @@ async function withoutUser({ handle = TEST_USER.handle, supabaseClient }: Partia
 }
 
 async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {
-  const supplier = await supplierModel.getByHandle(handle)
+  const supplier = await supplierModel.getRawByHandle(handle)
   if (!supplier) return
   await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
 }
