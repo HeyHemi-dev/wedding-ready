@@ -67,20 +67,9 @@ async function createRaw(tileRawData: t.InsertTileRaw): Promise<t.TileRaw> {
  * @returns The updated tile
  */
 async function updateRaw(id: string, tileRawData: t.SetTileRaw): Promise<t.TileRaw> {
-  const tilesRaw = await db.update(s.tiles).set(tileUpdateSafe(tileRawData)).where(eq(s.tiles.id, id)).returning()
+  tileRawData.updatedAt = new Date()
+  const tilesRaw = await db.update(s.tiles).set(tileRawData).where(eq(s.tiles.id, id)).returning()
   return tilesRaw[0]
-}
-
-/**
- * @returns A safe update object with the updatedAt field set to the current date
- */
-function tileUpdateSafe(tileRawData: t.SetTileRaw): t.SetTileRaw {
-  return {
-    updatedAt: new Date(),
-    description: tileRawData.description,
-    title: tileRawData.title,
-    location: tileRawData.location,
-  }
 }
 
 async function deleteById(id: string): Promise<void> {
