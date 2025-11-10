@@ -4,13 +4,15 @@ import { supplierOperations } from '@/operations/supplier-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import UpdateSupplierForm from './update-supplier-form'
+import { handleSchema } from '@/app/_types/validation-schema'
 
 export default async function SupplierEditPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
+  const { success, error: parseError } = handleSchema.safeParse(handle)
+  if (!success || parseError) return notFound()
+
   const supplier = await supplierOperations.getByHandle(handle)
-  if (!supplier) {
-    notFound()
-  }
+  if (!supplier) return notFound()
 
   const authUserId = await getAuthUserId()
   const authUserRole = supplier?.users.find((u) => u.id === authUserId)?.role

@@ -16,14 +16,15 @@ import { supplierOperations } from '@/operations/supplier-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import { SupplierTiles } from './supplier-tiles'
+import { handleSchema } from '@/app/_types/validation-schema'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const supplier = await supplierOperations.getByHandle(handle)
+  const { success, error: parseError } = handleSchema.safeParse(handle)
+  if (!success || parseError) return notFound()
 
-  if (!supplier) {
-    notFound()
-  }
+  const supplier = await supplierOperations.getByHandle(handle)
+  if (!supplier) return notFound()
 
   // Check if the user is the owner of the supplier to enable edit features
   const authUserId = await getAuthUserId()

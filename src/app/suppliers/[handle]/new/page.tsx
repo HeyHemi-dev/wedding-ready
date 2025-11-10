@@ -10,14 +10,15 @@ import { getAuthUserId } from '@/utils/auth'
 
 import { UploadProvider } from './upload-context'
 import { UploadDropzone } from './upload-dropzone'
+import { handleSchema } from '@/app/_types/validation-schema'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const supplier = await supplierOperations.getByHandle(handle)
+  const { success, error: parseError } = handleSchema.safeParse(handle)
+  if (!success || parseError) return notFound()
 
-  if (!supplier) {
-    notFound()
-  }
+  const supplier = await supplierOperations.getByHandle(handle)
+  if (!supplier) return notFound()
 
   // Check if the user is the owner of the supplier to allow creating tiles
   const authUserId = await getAuthUserId()
