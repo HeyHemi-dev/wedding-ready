@@ -6,10 +6,9 @@ import type * as t from '@/models/types'
 
 export const tileModel = {
   getRawById,
-  getById,
-  getManyBySupplierId,
+  getManyRawBySupplierId,
   getManyRawBySupplierHandle,
-  getManyByUserId,
+  getManyRawByUserId,
   createRaw,
   updateRaw,
   deleteById,
@@ -17,26 +16,12 @@ export const tileModel = {
 }
 
 async function getRawById(id: string): Promise<t.TileRaw | null> {
-  const tiles = await db.select().from(s.tiles).where(eq(s.tiles.id, id))
-
-  if (tiles === null || tiles.length === 0) return null
-
-  return tiles[0]
+  const tilesRaw = await db.select().from(s.tiles).where(eq(s.tiles.id, id))
+  if (tilesRaw.length === 0) return null
+  return tilesRaw[0]
 }
 
-async function getById(id: string): Promise<t.TileRawWithImage | null> {
-  // Since we're filtering for non-null imagePath in the query, we can safely cast the type
-  const tiles = (await db
-    .select()
-    .from(s.tiles)
-    .where(and(eq(s.tiles.id, id), isNotNull(s.tiles.imagePath)))) as t.TileRawWithImage[]
-
-  if (tiles === null || tiles.length === 0) return null
-
-  return tiles[0]
-}
-
-async function getManyBySupplierId(supplierId: string, { limit, offset = 0 }: { limit?: number; offset?: number } = {}): Promise<t.TileRaw[]> {
+async function getManyRawBySupplierId(supplierId: string, { limit, offset = 0 }: { limit?: number; offset?: number } = {}): Promise<t.TileRaw[]> {
   const tilesQuery = db
     .select(s.tileColumns)
     .from(s.tiles)
@@ -51,25 +36,22 @@ async function getManyBySupplierId(supplierId: string, { limit, offset = 0 }: { 
 }
 
 async function getManyRawBySupplierHandle(supplierHandle: string): Promise<t.TileRaw[]> {
-  const tiles = await db
+  return await db
     .select(s.tileColumns)
     .from(s.tiles)
     .innerJoin(s.tileSuppliers, eq(s.tiles.id, s.tileSuppliers.tileId))
     .innerJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
     .where(and(eq(s.suppliers.handle, supplierHandle)))
-  return tiles
+    .orderBy(desc(s.tiles.createdAt))
 }
 
-async function getManyByUserId(userId: string): Promise<t.TileRawWithImage[]> {
-  // Since we filter for non-null imagePath in the DB query, we can safely cast the type
-  const tiles = (await db
+async function getManyRawByUserId(userId: string): Promise<t.TileRaw[]> {
+  return await db
     .select(s.tileColumns)
     .from(s.tiles)
     .innerJoin(s.savedTiles, eq(s.tiles.id, s.savedTiles.tileId))
-    .where(and(eq(s.savedTiles.userId, userId), isNotNull(s.tiles.imagePath), eq(s.savedTiles.isSaved, true)))
-    .orderBy(desc(s.tiles.createdAt))) as t.TileRawWithImage[]
-
-  return tiles
+    .where(and(eq(s.savedTiles.userId, userId), eq(s.savedTiles.isSaved, true)))
+    .orderBy(desc(s.tiles.createdAt))
 }
 
 async function createRaw(tileRawData: t.InsertTileRaw): Promise<t.TileRaw> {
@@ -84,18 +66,9 @@ async function createRaw(tileRawData: t.InsertTileRaw): Promise<t.TileRaw> {
  * @requires tileRawData.imagePath - The path to the tile image
  * @returns The updated tile
  */
-async function updateRaw(tileRawData: t.TileRaw): Promise<t.TileRawWithImage> {
-  if (!tileRawData.imagePath) {
-    throw new Error('imagePath is required')
-  }
-
+async function updateRaw(tileRawData: t.TileRaw): Promise<t.TileRaw> {
   const tilesRaw = await db.update(s.tiles).set(tileUpdateSafe(tileRawData)).where(eq(s.tiles.id, tileRawData.id)).returning()
-  const tileRaw = tilesRaw[0]
-
-  return {
-    ...tileRaw,
-    imagePath: tileRaw.imagePath!, // We can assert that imagePath exists because we already threw an error if it was missing.
-  }
+  return tilesRaw[0]
 }
 
 /**
