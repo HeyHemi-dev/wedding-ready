@@ -8,7 +8,7 @@ import * as t from '@/models/types'
 export const supplierUsersModel = {
   getRawForSupplierId,
   getRawForUserId,
-  createRawForSupplierId,
+  createManyRawForSupplierId,
 }
 
 async function getRawForSupplierId(supplierId: string): Promise<t.SupplierUserRaw[]> {
@@ -19,7 +19,7 @@ async function getRawForUserId(userId: string): Promise<t.SupplierUserRaw[]> {
   return await db.select().from(s.supplierUsers).where(eq(s.supplierUsers.userId, userId))
 }
 
-async function createRawForSupplierId(supplierId: string, users: { id: string; role: SupplierRole }[]): Promise<t.SupplierUserRaw[]> {
+async function createManyRawForSupplierId(supplierId: string, users: { id: string; role: SupplierRole }[]): Promise<t.SupplierUserRaw[]> {
   const insertSupplierUserData: t.InsertSupplierUserRaw[] = users.map((user) => ({
     supplierId,
     userId: user.id,

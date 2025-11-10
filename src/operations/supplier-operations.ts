@@ -24,7 +24,7 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
   if (!supplier) return null
 
   const [supplierUsers, supplierLocations, supplierServices] = await Promise.all([
-    supplierUsersModel.getForSupplierId(supplier.id),
+    supplierUsersModel.getRawForSupplierId(supplier.id),
     supplierLocationsModel.getRawForSupplierId(supplier.id),
     supplierServicesModel.getRawForSupplierId(supplier.id),
   ])
@@ -97,10 +97,10 @@ async function register({ name, handle, websiteUrl, description, services, locat
   const supplier = await supplierModel.createRaw(insertSupplierData)
 
   const [supplierLocations, supplierServices, supplierUsers] = await Promise.all([
-    supplierLocationsModel.createForSupplierId({ supplierId: supplier.id, locations }),
-    supplierServicesModel.createForSupplierId({ supplierId: supplier.id, services }),
+    supplierLocationsModel.createManyRawForSupplierId(supplier.id, locations),
+    supplierServicesModel.createManyRawForSupplierId(supplier.id, services),
     // The user who creates the supplier is an admin by default
-    supplierUsersModel.createForSupplierId(supplier.id, [{ id: user.id, role: SUPPLIER_ROLES.ADMIN }]),
+    supplierUsersModel.createManyRawForSupplierId(supplier.id, [{ id: user.id, role: SUPPLIER_ROLES.ADMIN }]),
   ])
 
   return {
@@ -119,7 +119,7 @@ async function updateProfile(supplierId: string, data: SupplierUpdateForm, authU
   const supplier = await supplierModel.getRawById(supplierId)
   if (!supplier) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
-  const supplierUsers = await supplierUsersModel.getForSupplierId(supplierId)
+  const supplierUsers = await supplierUsersModel.getRawForSupplierId(supplierId)
   const authUserRole = supplierUsers.find((su) => su.userId === authUserId)?.role
   if (authUserRole !== SUPPLIER_ROLES.ADMIN && authUserRole !== SUPPLIER_ROLES.STANDARD) throw OPERATION_ERROR.FORBIDDEN()
 
