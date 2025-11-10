@@ -49,8 +49,18 @@ describe('userOperations', () => {
 
       // Assert
       expect(user).toBeDefined()
-      expect(user.id).toBe(testUser.id)
-      expect(user.displayName).toBe(TEST_USER_OPERATIONS.displayName)
+      expect(user?.id).toBe(testUser.id)
+      expect(user?.displayName).toBe(TEST_USER_OPERATIONS.displayName)
+    })
+    it('should return null if the user is not found', async () => {
+      // Arrange
+      await scene.withoutUser({ handle: 'nonexistent' })
+
+      // Act
+      const user = await userOperations.getByHandle('nonexistent')
+
+      // Assert
+      expect(user).toBeNull()
     })
   })
 
