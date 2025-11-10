@@ -10,18 +10,16 @@ export const supplierModel = {
   getRawByHandle,
   getAllRawForLocation,
   getAllRawForService,
-  create,
-  update,
+  createRaw,
+  updateRaw,
   isHandleAvailable,
   search,
 }
 
 async function getRawById(id: string): Promise<t.SupplierRaw | null> {
-  const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.id, id))
-
-  if (suppliers === null || suppliers.length === 0) return null
-
-  return suppliers[0]
+  const suppliersRaw = await db.select().from(schema.suppliers).where(eq(schema.suppliers.id, id))
+  if (suppliersRaw.length === 0) return null
+  return suppliersRaw[0]
 }
 
 async function getRawByHandle(handle: string): Promise<t.SupplierRaw | null> {
@@ -50,28 +48,28 @@ async function getAllRawForService(service: Service): Promise<t.SupplierRaw[]> {
     .where(eq(schema.supplierServices.service, service))
 }
 
-async function create(insertSupplierData: t.InsertSupplierRaw): Promise<t.SupplierRaw> {
-  const suppliers = await db.insert(schema.suppliers).values(insertSupplierData).returning()
-  return suppliers[0]
+async function createRaw(insertSupplierData: t.InsertSupplierRaw): Promise<t.SupplierRaw> {
+  const suppliersRaw = await db.insert(schema.suppliers).values(insertSupplierData).returning()
+  return suppliersRaw[0]
 }
 
-async function update(supplierId: string, setSupplierData: t.SetSupplierRaw): Promise<t.SupplierRaw> {
+async function updateRaw(supplierId: string, setSupplierData: t.SetSupplierRaw): Promise<t.SupplierRaw> {
   setSupplierData.updatedAt = new Date()
-  const suppliers = await db.update(schema.suppliers).set(setSupplierData).where(eq(schema.suppliers.id, supplierId)).returning()
-  return suppliers[0]
+  const suppliersRaw = await db.update(schema.suppliers).set(setSupplierData).where(eq(schema.suppliers.id, supplierId)).returning()
+  return suppliersRaw[0]
 }
 
 async function isHandleAvailable(handle: string): Promise<boolean> {
-  const suppliers = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
-  return suppliers.length === 0
+  const suppliersRaw = await db.select().from(schema.suppliers).where(eq(schema.suppliers.handle, handle))
+  return suppliersRaw.length === 0
 }
 
 async function search(query: string): Promise<t.SupplierRaw[]> {
-  const suppliers = await db
+  const suppliersRaw = await db
     .select()
     .from(schema.suppliers)
     .where(or(ilike(schema.suppliers.name, `%${query}%`), ilike(schema.suppliers.handle, `%${query}%`)))
     .limit(10)
 
-  return suppliers
+  return suppliersRaw
 }
