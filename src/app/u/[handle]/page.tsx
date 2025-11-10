@@ -13,10 +13,13 @@ import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import { UserTiles } from './user-tiles'
-
+import { handleSchema } from '@/app/_types/validation-schema'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
+  const { success, error: parseError } = handleSchema.safeParse(handle)
+  if (!success || parseError) return notFound()
+
   const user = await userOperations.getByHandle(handle)
   if (!user) return notFound()
 

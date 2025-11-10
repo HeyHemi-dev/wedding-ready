@@ -7,7 +7,7 @@ const emailSchema = z.string().trim().email('Invalid email')
 
 const passwordSchema = z.string().min(8, 'Password must be at least 8 characters')
 
-const handleSchema = z
+export const handleSchema = z
   .string()
   .trim()
   .min(3, 'Handle must be at least 3 characters')
