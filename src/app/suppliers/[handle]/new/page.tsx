@@ -4,13 +4,13 @@ import { ArrowLeftIcon } from 'lucide-react'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
+import { handleSchema } from '@/app/_types/validation-schema'
 import { Section } from '@/components/ui/section'
 import { supplierOperations } from '@/operations/supplier-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import { UploadProvider } from './upload-context'
 import { UploadDropzone } from './upload-dropzone'
-import { handleSchema } from '@/app/_types/validation-schema'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { Supplier } from '@/app/_types/suppliers'
+import { handleSchema } from '@/app/_types/validation-schema'
 import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
@@ -16,7 +17,6 @@ import { supplierOperations } from '@/operations/supplier-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import { SupplierTiles } from './supplier-tiles'
-import { handleSchema } from '@/app/_types/validation-schema'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

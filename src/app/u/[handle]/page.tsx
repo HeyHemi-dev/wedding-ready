@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
+import { handleSchema } from '@/app/_types/validation-schema'
 import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles, TileListSkeleton } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
@@ -13,7 +14,6 @@ import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import { UserTiles } from './user-tiles'
-import { handleSchema } from '@/app/_types/validation-schema'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
