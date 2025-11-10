@@ -1,5 +1,6 @@
 import { eq, and, desc, inArray } from 'drizzle-orm'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
 import type * as t from '@/models/types'
@@ -73,6 +74,7 @@ async function createRaw(tileRawData: t.InsertTileRaw): Promise<t.TileRaw> {
 async function updateRaw(id: string, tileRawData: t.SetTileRaw): Promise<t.TileRaw> {
   tileRawData.updatedAt = new Date()
   const tilesRaw = await db.update(s.tiles).set(tileRawData).where(eq(s.tiles.id, id)).returning()
+  if (tilesRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
   return tilesRaw[0]
 }
 

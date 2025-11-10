@@ -1,5 +1,6 @@
 import { eq, and, inArray } from 'drizzle-orm'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
 import * as t from '@/models/types'
@@ -43,5 +44,6 @@ async function upsertSavedTileRaw(savedTileData: t.InsertSavedTileRaw): Promise<
       },
     })
     .returning()
+  if (savedTilesRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
   return savedTilesRaw[0]
 }

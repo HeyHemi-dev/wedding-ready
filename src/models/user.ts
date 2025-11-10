@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
 import * as schema from '@/db/schema'
 import * as t from '@/models/types'
@@ -44,6 +45,7 @@ async function updateRaw(id: string, userProfileRawData: t.SetUserProfileRaw): P
     userProfileRawData.handleUpdatedAt = new Date()
   }
   const userProfilesRaw = await db.update(schema.userProfiles).set(userProfileRawData).where(eq(schema.userProfiles.id, id)).returning()
+  if (userProfilesRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
   return userProfilesRaw[0]
 }
 

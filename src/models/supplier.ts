@@ -1,5 +1,6 @@
 import { eq, or, ilike } from 'drizzle-orm'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
 import { Service, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
@@ -59,6 +60,7 @@ async function updateRaw(supplierId: string, setSupplierData: t.SetSupplierRaw):
     setSupplierData.handleUpdatedAt = new Date()
   }
   const suppliersRaw = await db.update(schema.suppliers).set(setSupplierData).where(eq(schema.suppliers.id, supplierId)).returning()
+  if (suppliersRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
   return suppliersRaw[0]
 }
 
