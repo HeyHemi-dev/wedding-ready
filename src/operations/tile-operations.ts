@@ -17,7 +17,7 @@ export const tileOperations = {
 }
 
 async function getById(id: string, authUserId?: string): Promise<Tile> {
-  const [tile, tileCredits] = await Promise.all([tileModel.getById(id), tileSupplierModel.getCreditsByTileId(id)])
+  const [tile, tileCredits] = await Promise.all([tileModel.getRawById(id), tileSupplierModel.getCreditsByTileId(id)])
 
   if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
@@ -43,7 +43,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
 }
 
 async function getListForSupplier(supplierId: string, authUserId?: string): Promise<TileListItem[]> {
-  const tiles = await tileModel.getManyBySupplierId(supplierId)
+  const tiles = await tileModel.getManyRawBySupplierId(supplierId)
 
   const savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
   if (authUserId) {
@@ -62,7 +62,7 @@ async function getListForSupplier(supplierId: string, authUserId?: string): Prom
 }
 
 async function getListForUser(userId: string, authUserId?: string): Promise<TileListItem[]> {
-  const tiles = await tileModel.getManyByUserId(userId)
+  const tiles = await tileModel.getManyRawByUserId(userId)
 
   const savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
   if (authUserId) {

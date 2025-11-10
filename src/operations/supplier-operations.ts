@@ -54,7 +54,7 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
   const [tilesForSuppliers, locationsMap, servicesMap] = await Promise.all([
     Promise.all(
       supplierIds.map(async (supplierId) => {
-        const tiles = await tileModel.getManyBySupplierId(supplierId, { limit: 3 })
+        const tiles = await tileModel.getManyRawBySupplierId(supplierId, { limit: 3 })
         return { supplierId, tiles }
       })
     ),
