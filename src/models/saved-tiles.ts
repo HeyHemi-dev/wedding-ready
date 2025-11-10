@@ -11,20 +11,21 @@ export const savedTilesModel = {
 }
 
 async function getSavedTileRaw(tileId: string, userId: string): Promise<t.SavedTileRaw | null> {
-  const savedTiles = await db
+  const savedTilesRaw = await db
     .select()
     .from(s.savedTiles)
     .where(and(eq(s.savedTiles.tileId, tileId), eq(s.savedTiles.userId, userId)))
     .limit(1)
-  return savedTiles.length ? savedTiles[0] : null
+  if (savedTilesRaw.length === 0) return null
+  return savedTilesRaw[0]
 }
 
 async function getSavedTilesRaw(tileIds: string[], userId: string): Promise<t.SavedTileRaw[]> {
-  const savedTiles = await db
+  const savedTilesRaw = await db
     .select()
     .from(s.savedTiles)
     .where(and(eq(s.savedTiles.userId, userId), inArray(s.savedTiles.tileId, tileIds)))
-  return savedTiles
+  return savedTilesRaw
 }
 
 /**
@@ -32,7 +33,7 @@ async function getSavedTilesRaw(tileIds: string[], userId: string): Promise<t.Sa
  * @returns The updated saved status of the tile
  */
 async function upsertSavedTileRaw(savedTileData: t.InsertSavedTileRaw): Promise<t.SavedTileRaw> {
-  const savedTiles = await db
+  const savedTilesRaw = await db
     .insert(s.savedTiles)
     .values(savedTileData)
     .onConflictDoUpdate({
@@ -42,5 +43,5 @@ async function upsertSavedTileRaw(savedTileData: t.InsertSavedTileRaw): Promise<
       },
     })
     .returning()
-  return savedTiles[0]
+  return savedTilesRaw[0]
 }
