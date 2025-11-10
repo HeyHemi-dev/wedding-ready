@@ -66,21 +66,20 @@ async function createRaw(tileRawData: t.InsertTileRaw): Promise<t.TileRaw> {
  * @requires tileRawData.imagePath - The path to the tile image
  * @returns The updated tile
  */
-async function updateRaw(tileRawData: t.TileRaw): Promise<t.TileRaw> {
-  const tilesRaw = await db.update(s.tiles).set(tileUpdateSafe(tileRawData)).where(eq(s.tiles.id, tileRawData.id)).returning()
+async function updateRaw(id: string, tileRawData: t.SetTileRaw): Promise<t.TileRaw> {
+  const tilesRaw = await db.update(s.tiles).set(tileUpdateSafe(tileRawData)).where(eq(s.tiles.id, id)).returning()
   return tilesRaw[0]
 }
 
 /**
- * Removes fields that should not be updated from a TileRaw
  * @returns A safe update object with the updatedAt field set to the current date
  */
-function tileUpdateSafe(tile: t.TileRaw | t.Tile): t.SetTileRaw {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id, createdAt, createdByUserId, updatedAt, isPrivate, ...rest } = tile
+function tileUpdateSafe(tileRawData: t.SetTileRaw): t.SetTileRaw {
   return {
-    ...rest,
     updatedAt: new Date(),
+    description: tileRawData.description,
+    title: tileRawData.title,
+    location: tileRawData.location,
   }
 }
 
