@@ -1,8 +1,8 @@
 'use client'
 
 import { useUserTiles } from '@/app/_hooks/use-user-tiles'
-import { noTiles, TileList } from '@/components/tiles/tile-list'
 import { User } from '@/app/_types/users'
+import { noTiles, TileList } from '@/components/tiles/tile-list'
 
 export function UserTiles({ user, authUserId }: { user: User; authUserId: string | null }) {
   const { data: tiles } = useUserTiles(user.id, authUserId)

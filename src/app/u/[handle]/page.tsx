@@ -9,11 +9,11 @@ import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles, TileListSkeleton } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-
+import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import { UserTiles } from './user-tiles'
-import { userOperations } from '@/operations/user-operations'
+
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
