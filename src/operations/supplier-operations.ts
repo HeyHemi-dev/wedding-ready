@@ -23,9 +23,11 @@ async function getByHandle(handle: Handle): Promise<Supplier | null> {
   const supplier = await supplierModel.getRawByHandle(handle)
   if (!supplier) return null
 
-  const supplierUsers = await supplierUsersModel.getForSupplierId(supplier.id)
-  const supplierLocations = await supplierLocationsModel.getRawForSupplierId(supplier.id)
-  const supplierServices = await supplierServicesModel.getRawForSupplierId(supplier.id)
+  const [supplierUsers, supplierLocations, supplierServices] = await Promise.all([
+    supplierUsersModel.getForSupplierId(supplier.id),
+    supplierLocationsModel.getRawForSupplierId(supplier.id),
+    supplierServicesModel.getRawForSupplierId(supplier.id),
+  ])
 
   return {
     id: supplier.id,
