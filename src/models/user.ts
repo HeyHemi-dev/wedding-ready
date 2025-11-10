@@ -41,13 +41,11 @@ async function createRaw(userProfileRawData: t.InsertUserProfileRaw): Promise<t.
 }
 
 async function updateRaw(id: string, userProfileRawData: t.SetUserProfileRaw): Promise<t.UserProfileRaw> {
+  userProfileRawData.updatedAt = new Date()
   if (userProfileRawData.handle) {
     userProfileRawData.handleUpdatedAt = new Date()
   }
-  userProfileRawData.updatedAt = new Date()
-
   const userProfilesRaw = await db.update(schema.userProfiles).set(userProfileRawData).where(eq(schema.userProfiles.id, id)).returning()
-
   return userProfilesRaw[0]
 }
 
