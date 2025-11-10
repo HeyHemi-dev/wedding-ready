@@ -6,9 +6,14 @@ import * as s from '@/db/schema'
 import * as t from '@/models/types'
 
 export const supplierServicesModel = {
+  getRawForSupplierId,
   getAllWithSupplierCount,
   getMapBySupplierIds,
   createForSupplierId,
+}
+
+async function getRawForSupplierId(supplierId: string): Promise<t.SupplierServiceRaw[]> {
+  return await db.select().from(s.supplierServices).where(eq(s.supplierServices.supplierId, supplierId))
 }
 
 async function getAllWithSupplierCount(): Promise<{ service: Service; supplierCount: number }[]> {
