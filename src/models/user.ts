@@ -25,14 +25,12 @@ async function getRawByHandle(handle: string): Promise<t.UserProfileRaw | null> 
 }
 
 /**
- * Creates a new user_details record.
- * Use when a new user signs up.
+ * Creates a new user profile record. Use when a new user signs up.
  * @requires id - must match the id of the Supabase Auth user
- * @param userProfileRawData - profile data to insert into the user_profiles table.
  * @example
  * ```ts
  * const { data } = await supabase.auth.signUp(credentials)
- * await userProfileModel.create({ id: data.user.id })
+ * await userProfileModel.createRaw({ id: data.user.id })
  * ```
  */
 async function createRaw(userProfileRawData: t.InsertUserProfileRaw): Promise<t.UserProfileRaw> {
