@@ -20,7 +20,7 @@ export const supplierOperations = {
 }
 
 async function getByHandle(handle: Handle): Promise<Supplier | null> {
-  const supplier = await supplierModel.getByHandle(handle)
+  const supplier = await supplierModel.getRawByHandle(handle)
   if (!supplier) return null
 
   const supplierUsers = await supplierUsersModel.getForSupplierId(supplier.id)
