@@ -55,6 +55,9 @@ async function createRaw(insertSupplierData: t.InsertSupplierRaw): Promise<t.Sup
 
 async function updateRaw(supplierId: string, setSupplierData: t.SetSupplierRaw): Promise<t.SupplierRaw> {
   setSupplierData.updatedAt = new Date()
+  if (setSupplierData.handle) {
+    setSupplierData.handleUpdatedAt = new Date()
+  }
   const suppliersRaw = await db.update(schema.suppliers).set(setSupplierData).where(eq(schema.suppliers.id, supplierId)).returning()
   return suppliersRaw[0]
 }
