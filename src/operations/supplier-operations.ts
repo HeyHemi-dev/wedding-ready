@@ -94,7 +94,7 @@ async function register({ name, handle, websiteUrl, description, services, locat
     description,
     websiteUrl,
   }
-  const supplier = await supplierModel.create(insertSupplierData)
+  const supplier = await supplierModel.createRaw(insertSupplierData)
 
   const [supplierLocations, supplierServices, supplierUsers] = await Promise.all([
     supplierLocationsModel.createForSupplierId({ supplierId: supplier.id, locations }),
@@ -129,7 +129,7 @@ async function updateProfile(supplierId: string, data: SupplierUpdateForm, authU
     description: data.description,
   })
 
-  const updatedSupplier = await supplierModel.update(supplierId, setSupplierData)
+  const updatedSupplier = await supplierModel.updateRaw(supplierId, setSupplierData)
   return {
     name: updatedSupplier.name,
     websiteUrl: updatedSupplier.websiteUrl ?? undefined,
