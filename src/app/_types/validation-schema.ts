@@ -12,7 +12,7 @@ export const handleSchema = z
   .trim()
   .min(3, 'Handle must be at least 3 characters')
   .max(30, "Handle can't exceed 30 characters")
-  .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores')
+  .regex(/^[a-z0-9_]+$/, 'Handle may only contain lowercase letters, numbers, and underscores')
 export type Handle = z.infer<typeof handleSchema>
 
 // USER VALIDATION
