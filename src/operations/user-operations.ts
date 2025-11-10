@@ -43,6 +43,7 @@ async function getById(id: string): Promise<User> {
 }
 
 async function getByHandle(handle: string): Promise<User | null> {
+  // Getting by handle provides a more graceful fallback if the user is not found to support searching and other user input.
   const user = await userProfileModel.getRawByHandle(handle)
   if (!user) return null
 
