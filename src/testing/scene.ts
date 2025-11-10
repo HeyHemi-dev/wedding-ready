@@ -101,7 +101,7 @@ async function hasTile({
     isPrivate,
     credits,
   })
-  const tile = await tileModel.getById(newTile.id)
+  const tile = await tileModel.getRawById(newTile.id)
   if (!tile) throw new Error('Failed to create tile')
   return tile
 }

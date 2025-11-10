@@ -9,7 +9,7 @@ export const supplierServicesModel = {
   getRawForSupplierId,
   getAllWithSupplierCount,
   getMapBySupplierIds,
-  createForSupplierId,
+  createManyRawForSupplierId,
 }
 
 async function getRawForSupplierId(supplierId: string): Promise<t.SupplierServiceRaw[]> {
@@ -35,7 +35,7 @@ async function getMapBySupplierIds(supplierIds: string[]): Promise<SupplierServi
   return mapServicesBySupplierId(result)
 }
 
-async function createForSupplierId({ supplierId, services }: { supplierId: string; services: Service[] }): Promise<t.SupplierServiceRaw[]> {
+async function createManyRawForSupplierId(supplierId: string, services: Service[]): Promise<t.SupplierServiceRaw[]> {
   const insertSupplierServiceData: t.InsertSupplierServiceRaw[] = services.map((service) => ({
     supplierId,
     service,

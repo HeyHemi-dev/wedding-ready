@@ -16,12 +16,12 @@ describe('userOperations', () => {
   const supabaseAdmin = createAdminClient()
 
   afterEach(async () => {
-    await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle })
+    await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle, supabaseClient: supabaseAdmin })
   })
 
   afterAll(async () => {
     await scene.resetTestData()
-    await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle })
+    await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle, supabaseClient: supabaseAdmin })
   })
 
   describe('getById', () => {

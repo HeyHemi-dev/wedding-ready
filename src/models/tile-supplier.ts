@@ -23,11 +23,11 @@ async function getCreditsByTileId(tileId: string): Promise<t.TileCredit[]> {
 }
 
 async function createRaw(tileSupplierRawData: t.InsertTileSupplierRaw): Promise<t.TileSupplierRaw> {
-  const tileSuppliers = await db.insert(s.tileSuppliers).values(tileSupplierRawData).returning()
-  return tileSuppliers[0]
+  const tileSuppliersRaw = await db.insert(s.tileSuppliers).values(tileSupplierRawData).returning()
+  return tileSuppliersRaw[0]
 }
 
 async function createManyRaw(tileSupplierRawData: t.InsertTileSupplierRaw[]): Promise<t.TileSupplierRaw[]> {
-  const tileSuppliers = await db.insert(s.tileSuppliers).values(tileSupplierRawData).returning()
-  return tileSuppliers
+  const tileSuppliersRaw = await db.insert(s.tileSuppliers).values(tileSupplierRawData).returning()
+  return tileSuppliersRaw
 }

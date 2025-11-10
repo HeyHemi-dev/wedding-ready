@@ -17,7 +17,7 @@ async function getById(id: string): Promise<User> {
   const user = await userProfileModel.getRawById(id)
   if (!user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
-  const userSuppliers = await supplierUsersModel.getForUserId(user.id)
+  const userSuppliers = await supplierUsersModel.getRawForUserId(user.id)
   const suppliers = await Promise.all(userSuppliers.map((su) => supplierModel.getRawById(su.supplierId)))
   const userSuppliersMap = new Map(userSuppliers.map((su) => [su.supplierId, su]))
 
@@ -47,7 +47,7 @@ async function getByHandle(handle: string): Promise<User | null> {
   const user = await userProfileModel.getRawByHandle(handle)
   if (!user) return null
 
-  const userSuppliers = await supplierUsersModel.getForUserId(user.id)
+  const userSuppliers = await supplierUsersModel.getRawForUserId(user.id)
   const suppliers = await Promise.all(userSuppliers.map((su) => supplierModel.getRawById(su.supplierId)))
   const userSuppliersMap = new Map(userSuppliers.map((su) => [su.supplierId, su]))
 

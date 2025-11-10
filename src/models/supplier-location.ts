@@ -9,7 +9,7 @@ export const supplierLocationsModel = {
   getRawForSupplierId,
   getAllWithSupplierCount,
   getMapBySupplierIds,
-  createForSupplierId,
+  createManyRawForSupplierId,
 }
 
 async function getRawForSupplierId(supplierId: string): Promise<t.SupplierLocationRaw[]> {
@@ -35,7 +35,7 @@ async function getMapBySupplierIds(supplierIds: string[]): Promise<SupplierLocat
   return mapLocationsBySupplierId(result)
 }
 
-async function createForSupplierId({ supplierId, locations }: { supplierId: string; locations: Location[] }): Promise<t.SupplierLocationRaw[]> {
+async function createManyRawForSupplierId(supplierId: string, locations: Location[]): Promise<t.SupplierLocationRaw[]> {
   const insertSupplierLocationData: t.InsertSupplierLocationRaw[] = locations.map((location) => ({
     supplierId,
     location,
