@@ -1,10 +1,10 @@
 'use client'
 
 import { useUserTiles } from '@/app/_hooks/use-user-tiles'
+import { User } from '@/app/_types/users'
 import { noTiles, TileList } from '@/components/tiles/tile-list'
-import * as t from '@/models/types'
 
-export function UserTiles({ user, authUserId }: { user: t.User; authUserId: string | null }) {
+export function UserTiles({ user, authUserId }: { user: User; authUserId: string | null }) {
   const { data: tiles } = useUserTiles(user.id, authUserId)
 
   if (!tiles || tiles.length === 0) {

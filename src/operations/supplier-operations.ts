@@ -8,7 +8,7 @@ import { supplierServicesModel } from '@/models/supplier-service'
 import { supplierUsersModel } from '@/models/supplier-user'
 import { tileModel } from '@/models/tile'
 import * as t from '@/models/types'
-import { UserDetailModel } from '@/models/user'
+import { userProfileModel } from '@/models/user'
 import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export const supplierOperations = {
@@ -71,7 +71,7 @@ async function getListForSupplierGrid({ location, service }: { location?: Locati
 }
 
 async function register({ name, handle, websiteUrl, description, services, locations }: SupplierRegistrationForm, authUserId: string): Promise<Supplier> {
-  const user = await UserDetailModel.getById(authUserId)
+  const user = await userProfileModel.getRawById(authUserId)
   if (!user) {
     throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
   }

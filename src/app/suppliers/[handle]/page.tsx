@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { Supplier } from '@/app/_types/suppliers'
+import { handleSchema } from '@/app/_types/validation-schema'
 import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
@@ -19,11 +20,11 @@ import { SupplierTiles } from './supplier-tiles'
 
 export default async function SupplierPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const supplier = await supplierOperations.getByHandle(handle)
+  const { success, error: parseError } = handleSchema.safeParse(handle)
+  if (!success || parseError) return notFound()
 
-  if (!supplier) {
-    notFound()
-  }
+  const supplier = await supplierOperations.getByHandle(handle)
+  if (!supplier) return notFound()
 
   // Check if the user is the owner of the supplier to enable edit features
   const authUserId = await getAuthUserId()

@@ -7,12 +7,12 @@ const emailSchema = z.string().trim().email('Invalid email')
 
 const passwordSchema = z.string().min(8, 'Password must be at least 8 characters')
 
-const handleSchema = z
+export const handleSchema = z
   .string()
   .trim()
   .min(3, 'Handle must be at least 3 characters')
   .max(30, "Handle can't exceed 30 characters")
-  .regex(/^[a-z0-9_-]+$/, 'Handle may only contain lowercase letters, numbers, hyphens, and underscores')
+  .regex(/^[a-z0-9_]+$/, 'Handle may only contain lowercase letters, numbers, and underscores')
 export type Handle = z.infer<typeof handleSchema>
 
 // USER VALIDATION

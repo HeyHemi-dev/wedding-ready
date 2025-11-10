@@ -4,6 +4,7 @@ import { ArrowLeftIcon } from 'lucide-react'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
+import { handleSchema } from '@/app/_types/validation-schema'
 import { Section } from '@/components/ui/section'
 import { supplierOperations } from '@/operations/supplier-operations'
 import { getAuthUserId } from '@/utils/auth'
@@ -13,11 +14,11 @@ import { UploadDropzone } from './upload-dropzone'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
-  const supplier = await supplierOperations.getByHandle(handle)
+  const { success, error: parseError } = handleSchema.safeParse(handle)
+  if (!success || parseError) return notFound()
 
-  if (!supplier) {
-    notFound()
-  }
+  const supplier = await supplierOperations.getByHandle(handle)
+  if (!supplier) return notFound()
 
   // Check if the user is the owner of the supplier to allow creating tiles
   const authUserId = await getAuthUserId()

@@ -4,7 +4,7 @@ import { unstable_cache } from 'next/cache'
 
 import { tags } from '@/app/_types/tags'
 import { User, makeUser } from '@/models/types'
-import { UserDetailModel } from '@/models/user'
+import { userProfileModel } from '@/models/user'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
@@ -56,7 +56,7 @@ export async function getCurrentUser(): Promise<User | null> {
 
   const user = await unstable_cache(
     async () => {
-      const { data: userDetail, error } = await tryCatch(UserDetailModel.getById(userId))
+      const { data: userDetail, error } = await tryCatch(userProfileModel.getRawById(userId))
 
       if (error) {
         const databaseError: UserFetchError = {
