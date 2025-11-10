@@ -1,4 +1,4 @@
-import { eq, and, isNotNull, desc, inArray } from 'drizzle-orm'
+import { eq, and, desc, inArray } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
@@ -21,7 +21,11 @@ async function getRawById(id: string): Promise<t.TileRaw | null> {
   return tilesRaw[0]
 }
 
-async function getManyRawBySupplierId(supplierId: string, { limit, offset = 0 }: { limit?: number; offset?: number } = {}): Promise<t.TileRaw[]> {
+type GetManyRawBySupplierIdOptions = {
+  limit?: number
+  offset?: number
+}
+async function getManyRawBySupplierId(supplierId: string, { limit, offset = 0 }: GetManyRawBySupplierIdOptions = {}): Promise<t.TileRaw[]> {
   const tilesQuery = db
     .select(s.tileColumns)
     .from(s.tiles)
