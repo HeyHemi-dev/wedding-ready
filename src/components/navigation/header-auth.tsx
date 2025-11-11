@@ -1,6 +1,6 @@
 'use client'
 
-import { CreditCardIcon, MoreVerticalIcon, UserCircleIcon } from 'lucide-react'
+import { CreditCardIcon, LogOutIcon, MoreVerticalIcon, UserCircleIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import { useAuthUser } from '@/app/_hooks/use-auth-user'
@@ -83,7 +83,14 @@ function SignedIn({ user }: { user: User }) {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <SignOutForm />
+        <SignOutForm>
+          <DropdownMenuItem className="ui" asChild>
+            <Link href={`/sign-out`}>
+              <LogOutIcon />
+              Sign out
+            </Link>
+          </DropdownMenuItem>
+        </SignOutForm>
       </DropdownMenuContent>
     </DropdownMenu>
   )
