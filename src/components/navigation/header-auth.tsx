@@ -60,26 +60,22 @@ function SignedIn({ user }: { user: User }) {
           <MoreVerticalIcon className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded" align="end" sideOffset={4}>
-          <DropdownMenuLabel className="p-0 font-normal">
-            <div className="flex items-center gap-partner px-1 py-1.5">
-              <Avatar className="h-8 w-8 rounded-full">
-                <AvatarImage src={user.avatarUrl ?? ''} alt={user.displayName} />
-                <AvatarFallback className="ui-small rounded-full">{avatarFallback}</AvatarFallback>
-              </Avatar>
-              <div className="grid leading-tight">
-                <span className="ui-small-s1 truncate">{user.displayName}</span>
-                <span className="ui-small truncate text-muted-foreground">{`@${user.handle}`}</span>
-              </div>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem className="ui" asChild>
               <Link href={`/u/${user.handle}`}>
-                <UserCircleIcon />
-                Profile
+                <Avatar className="h-8 w-8 rounded-full">
+                  <AvatarImage src={user.avatarUrl ?? ''} alt={user.displayName} />
+                  <AvatarFallback className="ui-small rounded-full">{avatarFallback}</AvatarFallback>
+                </Avatar>
+                <div className="grid leading-tight">
+                  <span className="ui-small-s1 truncate">{user.displayName}</span>
+                  <span className="ui-small truncate text-muted-foreground">{`@${user.handle}`}</span>
+                </div>
               </Link>
             </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
             <DropdownMenuItem className="ui" asChild>
               <Link href={`/account`}>
                 <CreditCardIcon />
