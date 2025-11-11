@@ -1,0 +1,90 @@
+'use client'
+
+import { CreditCardIcon, MoreVerticalIcon, UserCircleIcon } from 'lucide-react'
+import Link from 'next/link'
+
+import { useAuthUser } from '@/app/_hooks/use-auth-user'
+import { User } from '@/app/_types/users'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+
+import { SignOutForm } from './signout-form'
+
+export default function HeaderAuth() {
+  const { data: authUser } = useAuthUser()
+
+  return authUser ? <SignedIn user={authUser} /> : <SignedOut />
+}
+
+function SignedOut() {
+  return (
+    <div className="flex gap-sibling">
+      <Button size="sm" variant="ghost" asChild>
+        <Link href="/sign-in" data-testid="sign-in">
+          Log in
+        </Link>
+      </Button>
+      <Button size="sm" variant="default" asChild>
+        <Link href="/sign-up" data-testid="sign-up">
+          Sign up
+        </Link>
+      </Button>
+    </div>
+  )
+}
+
+function SignedIn({ user }: { user: User }) {
+  const avatarFallback = user.handle.slice(0, 2).toUpperCase()
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex items-center gap-partner rounded-full bg-area p-contour pr-2 hover:bg-primary/80" data-testid="user-menu-trigger">
+        <Avatar className="h-8 w-8 rounded-full">
+          <AvatarImage src={user.avatarUrl ?? ''} alt={user.displayName} />
+          <AvatarFallback className="ui-small rounded-full bg-muted">{avatarFallback}</AvatarFallback>
+        </Avatar>
+        <MoreVerticalIcon className="ml-auto size-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded" align="end" sideOffset={4}>
+        <DropdownMenuLabel className="p-0 font-normal">
+          <div className="flex items-center gap-partner px-1 py-1.5">
+            <Avatar className="h-8 w-8 rounded-full">
+              <AvatarImage src={user.avatarUrl ?? ''} alt={user.displayName} />
+              <AvatarFallback className="ui-small rounded-full bg-muted">{avatarFallback}</AvatarFallback>
+            </Avatar>
+            <div className="grid leading-tight">
+              <span className="ui-small-s1 truncate">{user.displayName}</span>
+              <span className="ui-small truncate text-muted-foreground">{`@${user.handle}`}</span>
+            </div>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem className="ui" asChild>
+            <Link href={`/u/${user.handle}`}>
+              <UserCircleIcon />
+              Profile
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="ui" asChild>
+            <Link href={`/account`}>
+              <CreditCardIcon />
+              Account
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <SignOutForm />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
