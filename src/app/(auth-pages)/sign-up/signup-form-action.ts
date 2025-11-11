@@ -1,9 +1,7 @@
 'use server'
 
-import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 
-import { tags } from '@/app/_types/tags'
 import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
 import { authOperations } from '@/operations/auth-operations'
 import { createClient } from '@/utils/supabase/server'
@@ -25,9 +23,6 @@ export async function signUpFormAction({ data }: { data: UserSignupForm }): Prom
   if (signUpError) {
     throw new Error('Failed to sign up')
   }
-
-  // Revalidate the user cache for the new user
-  revalidateTag(tags.currentUser(user.id))
 
   return { handle: user.handle }
 }
