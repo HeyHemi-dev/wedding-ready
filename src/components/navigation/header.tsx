@@ -23,7 +23,7 @@ export default async function Header() {
     <header className="grid h-header grid-cols-siteLayout content-center">
       <div className="col-start-2 col-end-3 grid h-header-content grid-cols-[auto_1fr_auto] content-center gap-friend">
         <div className="-my-1 aspect-[12/7]">
-          <Link href={'/'} className="relative block h-full rounded-full p-contour hover:bg-primary/80" passHref>
+          <Link href={authUserId ? '/feed' : '/'} className="relative block h-full rounded-full p-contour hover:bg-primary/80" passHref>
             <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill sizes="300px" className="object-contain" priority />
           </Link>
         </div>
