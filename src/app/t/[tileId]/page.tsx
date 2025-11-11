@@ -45,7 +45,7 @@ export default async function TilePage({ params }: { params: Promise<{ tileId: s
           </div>
           <HydrationBoundary state={dehydrate(queryClient)}>
             <Suspense fallback={<CreditsListSkeleton />}>
-              <CreditsList tile={{ id: tile.id, createdByUserId: tile.createdByUserId }} authUserId={authUserId} />
+              <CreditsList tile={{ id: tile.id, createdByUserId: tile.createdByUserId }} />
             </Suspense>
           </HydrationBoundary>
 
