@@ -50,7 +50,7 @@ function SignedIn({ user }: { user: User }) {
       <Link href={`/u/${user.handle}`} className="rounded-l-full bg-muted p-contour hover:bg-primary">
         <Avatar className="h-full rounded-full">
           <AvatarImage src={user.avatarUrl ?? ''} alt={user.displayName} />
-          <AvatarFallback className="ui-small rounded-full bg-secondary text-secondary-foreground">{avatarFallback}</AvatarFallback>
+          <AvatarFallback className="ui-small rounded-full">{avatarFallback}</AvatarFallback>
         </Avatar>
       </Link>
       <DropdownMenu>
@@ -64,7 +64,7 @@ function SignedIn({ user }: { user: User }) {
             <div className="flex items-center gap-partner px-1 py-1.5">
               <Avatar className="h-8 w-8 rounded-full">
                 <AvatarImage src={user.avatarUrl ?? ''} alt={user.displayName} />
-                <AvatarFallback className="ui-small rounded-full bg-muted">{avatarFallback}</AvatarFallback>
+                <AvatarFallback className="ui-small rounded-full">{avatarFallback}</AvatarFallback>
               </Avatar>
               <div className="grid leading-tight">
                 <span className="ui-small-s1 truncate">{user.displayName}</span>
@@ -93,7 +93,7 @@ function SignedIn({ user }: { user: User }) {
               <DropdownMenuGroup>
                 <DropdownMenuLabel>My Suppliers</DropdownMenuLabel>
                 {user.suppliers.map((supplier) => (
-                  <DropdownMenuItem key={supplier.id} asChild>
+                  <DropdownMenuItem key={supplier.id} inset asChild>
                     <Link href={`/account/manage-suppliers/${supplier.handle}`}>{supplier.name}</Link>
                   </DropdownMenuItem>
                 ))}
