@@ -12,7 +12,7 @@ import { tryCatch } from '@/utils/try-catch'
 
 import { SignOutFormAction } from './signout-form-action'
 
-export function SignOutForm({ children }: { children: React.ReactNode }) {
+export function SignOutFormMenuItem({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
   const form = useForm({})

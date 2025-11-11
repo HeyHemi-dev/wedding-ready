@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { NavLink } from './nav-link'
-import { SignOutForm } from './signout-form'
+import { SignOutFormMenuItem } from './signout-form'
 
 export function HeaderAuth() {
   const { data: authUser } = useAuthUser()
@@ -89,10 +89,12 @@ function SignedIn({ user }: { user: User }) {
               <DropdownMenuSeparator />
             </>
           )}
-          <SignOutForm>
-            <LogOutIcon />
-            Sign out
-          </SignOutForm>
+          <DropdownMenuGroup>
+            <SignOutFormMenuItem>
+              <LogOutIcon />
+              Sign out
+            </SignOutFormMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
