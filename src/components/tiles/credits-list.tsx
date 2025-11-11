@@ -22,7 +22,7 @@ export function CreditsList({ tile }: CreditsListProps) {
   const { data: authUser } = useAuthUser()
 
   const isTileCreator = authUser?.id === tile.createdByUserId
-  const userSuppliers = userToSupplierSearchResults(authUser)
+  const userSuppliers = supplierSearchResultsForUser(authUser)
 
   return (
     <div className="flex flex-col gap-sibling">
@@ -51,7 +51,7 @@ export function CreditsList({ tile }: CreditsListProps) {
   )
 }
 
-function userToSupplierSearchResults(user: User | null): SupplierSearchResult[] | null {
+function supplierSearchResultsForUser(user: User | null): SupplierSearchResult[] | null {
   if (!user?.suppliers) return null
   if (user.suppliers.length === 0) return null
   return user.suppliers.map((s) => ({
