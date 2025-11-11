@@ -1,17 +1,16 @@
 import { Suspense } from 'react'
 
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import Link from 'next/link'
 
 import { Href } from '@/app/_types/generics'
-import { Skeleton } from '@/components/ui/skeleton'
-
-import HeaderAuth from './header-auth'
-import { ErrorBoundary } from 'react-error-boundary'
 import { userKeys } from '@/app/_types/queryKeys'
+import { Skeleton } from '@/components/ui/skeleton'
 import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
+
+import HeaderAuth from './header-auth'
 
 export default async function Header() {
   const authUserId = await getAuthUserId()

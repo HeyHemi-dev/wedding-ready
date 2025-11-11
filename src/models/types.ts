@@ -1,20 +1,11 @@
-import { User as UserRaw } from '@supabase/supabase-js'
 import { InferSelectModel, InferInsertModel } from 'drizzle-orm'
 
-import { Service, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
 
-export type AuthUser = UserRaw
-
 /**
- * A UserProfile (no 's') represents a single row in the user_profiles table and is used to extend the Supabase Auth user with additional fields.
+ * UserProfileRaw represents a single row in the user_profiles table and is used to extend the Supabase Auth user with additional fields.
  */
 export type UserProfileRaw = InferSelectModel<typeof schema.userProfiles>
-
-/**
- * UserProfile is used to extend the Supabase Auth user with additional fields.
- * @requires id - must match the id of the Supabase Auth user
- */
 export type InsertUserProfileRaw = InferInsertModel<typeof schema.userProfiles>
 export type SetUserProfileRaw = Partial<Omit<InsertUserProfileRaw, 'id' | 'createdAt'>>
 

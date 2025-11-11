@@ -1,14 +1,14 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
 
 import { useQueryClient } from '@tanstack/react-query'
 import { LogOutIcon } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-import { Form } from '@/components/ui/form'
 import { userKeys } from '@/app/_types/queryKeys'
+import { Form } from '@/components/ui/form'
 import { tryCatch } from '@/utils/try-catch'
 
 import { SignOutFormAction } from './signout-form-action'

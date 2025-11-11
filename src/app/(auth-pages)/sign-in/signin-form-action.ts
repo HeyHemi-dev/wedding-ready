@@ -17,7 +17,7 @@ export async function signInFormAction(formData: FormData) {
   }
 
   const supabase = await createClient()
-  const { data, error } = await tryCatch(authOperations.signIn({ userSigninFormData: { email, password }, supabaseClient: supabase }))
+  const { error } = await tryCatch(authOperations.signIn({ userSigninFormData: { email, password }, supabaseClient: supabase }))
 
   if (error) {
     return encodedRedirect('error', '/sign-in', 'Invalid email or password')
