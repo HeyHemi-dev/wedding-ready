@@ -88,8 +88,21 @@ function SignedIn({ user }: { user: User }) {
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
+          {user.suppliers.length > 0 && (
+            <>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>My Suppliers</DropdownMenuLabel>
+                {user.suppliers.map((supplier) => (
+                  <DropdownMenuItem key={supplier.id} asChild>
+                    <Link href={`/account/manage-suppliers/${supplier.handle}`}>{supplier.name}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+            </>
+          )}
           <SignOutForm>
-            <DropdownMenuItem className="ui" asChild>
+            <DropdownMenuItem className="ui">
               <LogOutIcon />
               Sign out
             </DropdownMenuItem>
