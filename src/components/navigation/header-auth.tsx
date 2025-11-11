@@ -39,7 +39,11 @@ function SignedIn({ user }: { user: User }) {
 
   return (
     <div className="flex gap-hairline">
-      <Link href={`/u/${user.handle}`} className="rounded-l-full bg-muted p-contour hover:bg-primary/80">
+      <Link
+        href={`/u/${user.handle}`}
+        className="rounded-l-full bg-muted p-contour hover:bg-primary/80"
+        data-testid="user-profile-link"
+        aria-label={`View profile for ${user.displayName}`}>
         <Avatar className="h-full rounded-full">
           <AvatarImage src={user.avatarUrl ?? ''} alt={user.displayName} />
           <AvatarFallback className="ui-small rounded-full">{avatarFallback}</AvatarFallback>
@@ -48,7 +52,8 @@ function SignedIn({ user }: { user: User }) {
       <DropdownMenu>
         <DropdownMenuTrigger
           className="grid aspect-[5/6] h-full place-items-center gap-partner rounded-r-full bg-muted p-contour hover:bg-primary/80"
-          data-testid="user-menu-trigger">
+          data-testid="user-menu-trigger"
+          aria-label="User menu">
           <MoreVerticalIcon className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded" align="end" sideOffset={4}>
