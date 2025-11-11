@@ -57,13 +57,3 @@ export type SetStackTileRaw = Partial<Omit<InsertStackTileRaw, 'stackId' | 'tile
 export interface TileCredit extends TileSupplierRaw {
   supplier: SupplierRaw
 }
-
-export interface LocationsForSupplierId {
-  supplierId: string
-  locations: Location[]
-}
-
-export interface ServicesForSupplierId {
-  supplierId: string
-  services: Service[]
-}
