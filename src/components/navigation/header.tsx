@@ -4,13 +4,12 @@ import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Href } from '@/app/_types/generics'
 import { userKeys } from '@/app/_types/queryKeys'
 import { Skeleton } from '@/components/ui/skeleton'
 import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
 
-import HeaderAuth from './header-auth'
+import { HeaderAuth } from './header-auth'
 import { NavLink } from './nav-link'
 
 export default async function Header() {

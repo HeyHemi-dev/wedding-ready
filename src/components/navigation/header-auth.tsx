@@ -19,7 +19,7 @@ import {
 
 import { SignOutForm } from './signout-form'
 
-export default function HeaderAuth() {
+export function HeaderAuth() {
   const { data: authUser } = useAuthUser()
 
   return authUser ? <SignedIn user={authUser} /> : <SignedOut />
