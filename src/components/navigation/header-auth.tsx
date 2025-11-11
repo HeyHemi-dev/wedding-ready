@@ -90,10 +90,8 @@ function SignedIn({ user }: { user: User }) {
             </>
           )}
           <SignOutForm>
-            <DropdownMenuItem className="ui">
-              <LogOutIcon />
-              Sign out
-            </DropdownMenuItem>
+            <LogOutIcon />
+            Sign out
           </SignOutForm>
         </DropdownMenuContent>
       </DropdownMenu>

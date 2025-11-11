@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { userKeys } from '@/app/_types/queryKeys'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { Form } from '@/components/ui/form'
 import { tryCatch } from '@/utils/try-catch'
 
@@ -35,10 +36,15 @@ export function SignOutForm({ children }: { children: React.ReactNode }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
-        <button type="submit" className="block">
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <DropdownMenuItem
+          className="ui"
+          onSelect={(event) => {
+            event.preventDefault()
+            form.handleSubmit(onSubmit)()
+          }}>
           {children}
-        </button>
+        </DropdownMenuItem>
       </form>
     </Form>
   )
