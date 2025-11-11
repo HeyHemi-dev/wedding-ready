@@ -54,30 +54,6 @@ export type StackTileRaw = InferSelectModel<typeof schema.stackTiles>
 export type InsertStackTileRaw = InferInsertModel<typeof schema.stackTiles>
 export type SetStackTileRaw = Partial<Omit<InsertStackTileRaw, 'stackId' | 'tileId'>>
 
-/**
- * SupplierWithDetail extends a Supplier with its services and locations.
- */
-export interface Supplier extends SupplierRaw {
-  services: Service[]
-  locations: Location[]
-}
-
-/**
- * SupplierWithUsers extends a Supplier with its services, locations, and users.
- */
-export interface SupplierWithUsers extends Supplier {
-  users: SupplierUserRaw[]
-}
-
-export interface Thumbnail {
-  id: string
-  imagePath: string
-}
-
-export interface SupplierWithThumbnails extends Supplier {
-  thumbnails: Thumbnail[]
-}
-
 export interface TileCredit extends TileSupplierRaw {
   supplier: SupplierRaw
 }
