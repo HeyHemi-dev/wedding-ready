@@ -11,6 +11,7 @@ import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import HeaderAuth from './header-auth'
+import { NavLink } from './nav-link'
 
 export default async function Header() {
   const authUserId = await getAuthUserId()
@@ -20,8 +21,8 @@ export default async function Header() {
   }
 
   return (
-    <header className="grid h-header grid-cols-siteLayout content-center">
-      <div className="col-start-2 col-end-3 grid h-header-content grid-cols-[auto_1fr_auto] content-center gap-friend">
+    <header className="grid h-header grid-cols-siteLayout grid-rows-[0_1fr_0] gap-y-area">
+      <div className="col-start-2 col-end-3 row-start-2 row-end-3 grid h-header-content grid-cols-[auto_1fr_auto] gap-friend">
         <div className="-my-1 aspect-[12/7]">
           <Link href={authUserId ? '/feed' : '/'} className="relative block h-full rounded-full p-contour hover:bg-primary/80" passHref>
             <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill sizes="300px" className="object-contain" priority />
@@ -39,13 +40,5 @@ export default async function Header() {
         </HydrationBoundary>
       </div>
     </header>
-  )
-}
-
-function NavLink({ link }: { link: Href }) {
-  return (
-    <Link href={link.href} className="ui-small-s1 rounded px-4 py-2 hover:bg-primary/80">
-      {link.label}
-    </Link>
   )
 }

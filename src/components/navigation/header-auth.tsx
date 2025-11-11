@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useAuthUser } from '@/app/_hooks/use-auth-user'
 import { User } from '@/app/_types/users'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { NavLink } from './nav-link'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,16 +28,8 @@ export default function HeaderAuth() {
 function SignedOut() {
   return (
     <div className="flex gap-sibling">
-      <Button size="sm" variant="ghost" asChild>
-        <Link href="/sign-in" data-testid="sign-in">
-          Log in
-        </Link>
-      </Button>
-      <Button size="sm" variant="default" asChild>
-        <Link href="/sign-up" data-testid="sign-up">
-          Sign up
-        </Link>
-      </Button>
+      <NavLink link={{ href: '/sign-in', label: 'Log in' }} />
+      <NavLink link={{ href: '/sign-up', label: 'Sign up' }} className="bg-primary" />
     </div>
   )
 }
