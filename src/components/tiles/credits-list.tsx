@@ -15,14 +15,13 @@ interface CreditsListProps {
     id: string
     createdByUserId: string
   }
-  authUserId: AuthUserId
 }
 
-export function CreditsList({ tile, authUserId }: CreditsListProps) {
+export function CreditsList({ tile }: CreditsListProps) {
   const { data: credits } = useTileCredit(tile.id)
-  const { data: authUser } = useAuthUser(authUserId)
+  const { data: authUser } = useAuthUser()
 
-  const isTileCreator = authUserId === tile.createdByUserId
+  const isTileCreator = authUser?.id === tile.createdByUserId
   const userSuppliers = userToSupplierSearchResults(authUser)
 
   return (
