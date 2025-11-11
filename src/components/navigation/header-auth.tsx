@@ -90,10 +90,8 @@ function SignedIn({ user }: { user: User }) {
           <DropdownMenuSeparator />
           <SignOutForm>
             <DropdownMenuItem className="ui" asChild>
-              <Link href={`/sign-out`}>
-                <LogOutIcon />
-                Sign out
-              </Link>
+              <LogOutIcon />
+              Sign out
             </DropdownMenuItem>
           </SignOutForm>
         </DropdownMenuContent>
