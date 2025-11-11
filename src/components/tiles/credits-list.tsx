@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useAuthUser } from '@/app/_hooks/use-auth-user'
 import { useTileCredit } from '@/app/_hooks/use-tile-credit'
 import { SupplierSearchResult } from '@/app/_types/suppliers'
-import { AuthUserId, User } from '@/app/_types/users'
+import { User } from '@/app/_types/users'
 import { AddCreditButton } from '@/components/tiles/add-credit-button'
 import { RequestCreditButton } from '@/components/tiles/request-credit-button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -15,15 +15,14 @@ interface CreditsListProps {
     id: string
     createdByUserId: string
   }
-  authUserId: AuthUserId
 }
 
-export function CreditsList({ tile, authUserId }: CreditsListProps) {
+export function CreditsList({ tile }: CreditsListProps) {
   const { data: credits } = useTileCredit(tile.id)
-  const { data: authUser } = useAuthUser(authUserId)
+  const { data: authUser } = useAuthUser()
 
-  const isTileCreator = authUserId === tile.createdByUserId
-  const userSuppliers = userToSupplierSearchResults(authUser)
+  const isTileCreator = authUser?.id === tile.createdByUserId
+  const userSuppliers = supplierSearchResultsForUser(authUser)
 
   return (
     <div className="flex flex-col gap-sibling">
@@ -52,7 +51,7 @@ export function CreditsList({ tile, authUserId }: CreditsListProps) {
   )
 }
 
-function userToSupplierSearchResults(user: User | null): SupplierSearchResult[] | null {
+function supplierSearchResultsForUser(user: User | null): SupplierSearchResult[] | null {
   if (!user?.suppliers) return null
   if (user.suppliers.length === 0) return null
   return user.suppliers.map((s) => ({

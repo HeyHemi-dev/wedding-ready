@@ -1,20 +1,11 @@
-import { User as UserRaw } from '@supabase/supabase-js'
 import { InferSelectModel, InferInsertModel } from 'drizzle-orm'
 
-import { Service, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
 
-export type AuthUser = UserRaw
-
 /**
- * A UserProfile (no 's') represents a single row in the user_profiles table and is used to extend the Supabase Auth user with additional fields.
+ * UserProfileRaw represents a single row in the user_profiles table and is used to extend the Supabase Auth user with additional fields.
  */
 export type UserProfileRaw = InferSelectModel<typeof schema.userProfiles>
-
-/**
- * UserProfile is used to extend the Supabase Auth user with additional fields.
- * @requires id - must match the id of the Supabase Auth user
- */
 export type InsertUserProfileRaw = InferInsertModel<typeof schema.userProfiles>
 export type SetUserProfileRaw = Partial<Omit<InsertUserProfileRaw, 'id' | 'createdAt'>>
 
@@ -54,49 +45,6 @@ export type StackTileRaw = InferSelectModel<typeof schema.stackTiles>
 export type InsertStackTileRaw = InferInsertModel<typeof schema.stackTiles>
 export type SetStackTileRaw = Partial<Omit<InsertStackTileRaw, 'stackId' | 'tileId'>>
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface User extends UserProfileRaw {}
-
-export function makeUser(userProfileRaw: UserProfileRaw): User {
-  return {
-    ...userProfileRaw,
-  } as User
-}
-
-/**
- * SupplierWithDetail extends a Supplier with its services and locations.
- */
-export interface Supplier extends SupplierRaw {
-  services: Service[]
-  locations: Location[]
-}
-
-/**
- * SupplierWithUsers extends a Supplier with its services, locations, and users.
- */
-export interface SupplierWithUsers extends Supplier {
-  users: SupplierUserRaw[]
-}
-
-export interface Thumbnail {
-  id: string
-  imagePath: string
-}
-
-export interface SupplierWithThumbnails extends Supplier {
-  thumbnails: Thumbnail[]
-}
-
 export interface TileCredit extends TileSupplierRaw {
   supplier: SupplierRaw
-}
-
-export interface LocationsForSupplierId {
-  supplierId: string
-  locations: Location[]
-}
-
-export interface ServicesForSupplierId {
-  supplierId: string
-  services: Service[]
 }

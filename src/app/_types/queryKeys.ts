@@ -12,7 +12,7 @@ export const supplierKeys = {
 }
 
 export const userKeys = {
-  authUser: (authUserId: string | null) => ['user', 'authUser', authUserId] as const,
+  authUser: () => ['user', 'authUser'] as const,
 }
 
 export const nextCacheKey = {

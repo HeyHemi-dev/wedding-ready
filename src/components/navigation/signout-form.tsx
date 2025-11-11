@@ -1,10 +1,13 @@
 'use client'
 
+
+import { useQueryClient } from '@tanstack/react-query'
 import { LogOutIcon } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
+import { userKeys } from '@/app/_types/queryKeys'
 import { Form } from '@/components/ui/form'
 import { tryCatch } from '@/utils/try-catch'
 
@@ -14,6 +17,7 @@ export function SignOutForm() {
   const pathname = usePathname()
   const router = useRouter()
   const form = useForm({})
+  const queryClient = useQueryClient()
 
   async function onSubmit() {
     const { data, error } = await tryCatch(SignOutFormAction({ pathname }))
@@ -21,6 +25,9 @@ export function SignOutForm() {
       toast.error(error.message)
       return
     }
+    queryClient.removeQueries({
+      queryKey: userKeys.authUser(),
+    })
     if (data.redirectTo !== pathname) {
       router.push(data.redirectTo)
     }
