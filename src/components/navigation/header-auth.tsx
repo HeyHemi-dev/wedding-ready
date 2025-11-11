@@ -1,12 +1,11 @@
 'use client'
 
-import { CreditCardIcon, LogOutIcon, MoreVerticalIcon, UserCircleIcon } from 'lucide-react'
+import { CreditCardIcon, LogOutIcon, MoreVerticalIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import { useAuthUser } from '@/app/_hooks/use-auth-user'
 import { User } from '@/app/_types/users'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { NavLink } from './nav-link'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+import { NavLink } from './nav-link'
 import { SignOutForm } from './signout-form'
 
 export function HeaderAuth() {

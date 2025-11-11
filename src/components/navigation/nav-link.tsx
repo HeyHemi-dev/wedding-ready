@@ -1,6 +1,7 @@
+import Link from 'next/link'
+
 import { Href } from '@/app/_types/generics'
 import { cn } from '@/utils/shadcn-utils'
-import Link from 'next/link'
 
 export function NavLink({ link, className }: { link: Href; className?: string }) {
   return (
