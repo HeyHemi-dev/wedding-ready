@@ -41,7 +41,7 @@ function SignedIn({ user }: { user: User }) {
     <div className="flex gap-hairline">
       <Link
         href={`/u/${user.handle}`}
-        className="rounded-l-full bg-muted p-contour hover:bg-primary/80"
+        className="aspect-square h-header-content rounded-l-full bg-muted p-contour hover:bg-primary/80"
         data-testid="user-profile-link"
         aria-label={`View profile for ${user.displayName}`}>
         <Avatar className="h-full rounded-full">
@@ -51,7 +51,7 @@ function SignedIn({ user }: { user: User }) {
       </Link>
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="grid aspect-[5/6] h-full place-items-center gap-partner rounded-r-full bg-muted p-contour hover:bg-primary/80"
+          className="grid aspect-[5/6] h-header-content place-items-center gap-partner rounded-r-full bg-muted p-contour hover:bg-primary/80"
           data-testid="user-menu-trigger"
           aria-label="User menu">
           <MoreVerticalIcon className="size-4" />

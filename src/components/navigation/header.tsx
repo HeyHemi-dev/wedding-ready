@@ -22,7 +22,7 @@ export default async function Header() {
   return (
     <header className="grid h-header grid-cols-siteLayout grid-rows-[0_1fr_0] gap-y-area">
       <div className="col-start-2 col-end-3 row-start-2 row-end-3 grid h-header-content grid-cols-[auto_1fr_auto] gap-friend">
-        <div className="-my-1 aspect-[12/7]">
+        <div className="logo-wrapper aspect-[12/7]">
           <Link href={authUserId ? '/feed' : '/'} className="relative block h-full rounded-full p-contour hover:bg-primary/80" passHref>
             <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill sizes="300px" className="object-contain" priority />
           </Link>
