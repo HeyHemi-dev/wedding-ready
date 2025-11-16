@@ -251,11 +251,17 @@
   /* form text */
   .ui-label {
     font-size: var(--text-size-xs);
-    font-weight: 500;
+    font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
   .ui-input {
     font-size: 16px;
+  }
+
+  .logo-wrapper {
+    height: calc(var(--height-header-content) + 1rem);
+    margin-top: -0.5rem;
+    margin-bottom: -0.5rem;
   }
 }
