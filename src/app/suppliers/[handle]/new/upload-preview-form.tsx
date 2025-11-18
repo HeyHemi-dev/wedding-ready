@@ -1,5 +1,3 @@
-'use client'
-
 import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,11 +16,8 @@ import { locationHelpers } from '@/utils/const-helpers'
 
 import { UploadItem, useUploadContext } from './upload-context'
 
-export function UploadPreviewForm({ file }: { file: UploadItem }) {
+export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; startUpload: (files: File[], data: TileUploadPreviewForm) => void }) {
   const { supplier, authUserId } = useUploadContext()
-  const { startUpload, status, uploadProgress } = useCreateTile({
-    uploadId: file.uploadId,
-  })
 
   const form = useForm<TileUploadPreviewForm>({
     resolver: zodResolver(tileUploadPreviewFormSchema),
@@ -50,95 +45,82 @@ export function UploadPreviewForm({ file }: { file: UploadItem }) {
 
   return (
     <Form {...form}>
-      {status === 'idle' ? (
-        <div className="grid grid-cols-[1fr_3fr] gap-friend">
-          <div className="aspect-square overflow-hidden rounded bg-muted">
-            {/* eslint-disable-next-line @next/next/no-img-element -- This is a client-side preview of a local file, so Next.js Image optimization isn't needed */}
-            <img src={file.fileObjectUrl} alt={file.file.name} className="h-full w-full object-contain" />
-          </div>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-friend">
-            <div className="grid gap-sibling">
-              <h3 className="ui-s1">Tile Details</h3>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-friend">
+        <div className="grid gap-sibling">
+          <h3 className="ui-s1">Tile Details</h3>
 
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormFieldItem label="Title">
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormFieldItem>
-                )}
-              />
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormFieldItem label="Title">
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormFieldItem label="Description">
-                    <FormControl>
-                      <Textarea {...field} rows={3} />
-                    </FormControl>
-                  </FormFieldItem>
-                )}
-              />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormFieldItem label="Description">
+                <FormControl>
+                  <Textarea {...field} rows={3} />
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
 
-              <FormField
-                control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormFieldItem label="Location">
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value || ''}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a location" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {locationHelpers.toPretty().map((location) => (
-                            <SelectItem key={location.value} value={location.value}>
-                              {location.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormFieldItem>
-                )}
-              />
-            </div>
-            <div className="grid auto-rows-max gap-sibling">
-              <h3 className="ui-s1">Suppliers</h3>
+          <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormFieldItem label="Location">
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value || ''}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {locationHelpers.toPretty().map((location) => (
+                        <SelectItem key={location.value} value={location.value}>
+                          {location.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+        </div>
+        <div className="grid auto-rows-max gap-sibling">
+          <h3 className="ui-s1">Suppliers</h3>
 
-              <FormField
-                control={form.control}
-                name="credits"
-                render={({ field }) => (
-                  <FormFieldItem label="Credit suppliers">
-                    <FormControl>
-                      <div className="text-sm text-muted-foreground">
-                        {field.value.map((credit) => (
-                          <div key={credit.supplierId}>
-                            {credit.supplierId} - {credit.service}
-                          </div>
-                        ))}
+          <FormField
+            control={form.control}
+            name="credits"
+            render={({ field }) => (
+              <FormFieldItem label="Credit suppliers">
+                <FormControl>
+                  <div className="text-sm text-muted-foreground">
+                    {field.value.map((credit) => (
+                      <div key={credit.supplierId}>
+                        {credit.supplierId} - {credit.service}
                       </div>
-                    </FormControl>
-                  </FormFieldItem>
-                )}
-              />
-            </div>
-            <div className="col-span-full">
-              <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
-            </div>
-          </form>
+                    ))}
+                  </div>
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
         </div>
-      ) : (
-        <div className="flex flex-col gap-spouse">
-          <p>{status}</p>
-          <Progress value={uploadProgress} />
+        <div className="col-span-full">
+          <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
         </div>
-      )}
+      </form>
     </Form>
   )
 }
