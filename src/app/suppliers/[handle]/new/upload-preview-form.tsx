@@ -17,7 +17,7 @@ import { UploadItem, useUploadContext } from './upload-context'
 
 export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; startUpload: (files: File[], data: TileUploadPreviewForm) => void }) {
   const { supplier, authUserId } = useUploadContext()
-  if (!supplier || !authUserId) throw OPERATION_ERROR.FORBIDDEN()
+  if (!supplier || !authUserId) throw OPERATION_ERROR.INVALID_STATE()
 
   const form = useForm<TileUploadPreviewForm>({
     resolver: zodResolver(tileUploadPreviewFormSchema),
