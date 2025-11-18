@@ -1,12 +1,11 @@
 import React from 'react'
 
+import { useCreateTile } from '@/app/_hooks/use-create-tile'
 import { Area } from '@/components/ui/area'
-import { Separator } from '@/components/ui/separator'
+import { Progress } from '@/components/ui/progress'
 
 import { UploadItem, useUploadContext } from './upload-context'
 import { UploadPreviewForm } from './upload-preview-form'
-import { useCreateTile } from '@/app/_hooks/use-create-tile'
-import { Progress } from '@/components/ui/progress'
 
 export function UploadPreviewList() {
   const { files } = useUploadContext()

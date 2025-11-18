@@ -1,8 +1,8 @@
 'use client'
 
 import { useUploadContext } from './upload-context'
-import { UploadPreviewList } from './upload-preview'
 import { UploadDropzone } from './upload-dropzone'
+import { UploadPreviewList } from './upload-preview'
 
 export function UploadLayout() {
   const { files } = useUploadContext()
