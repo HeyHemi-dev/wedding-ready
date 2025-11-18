@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient, useQuery, QueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { queryKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/keys'
 import { TileListItem } from '@/app/_types/tiles'
 import { SaveTilePostRequestBody, SaveTilePostResponseBody } from '@/app/api/users/[id]/tiles/[tileId]/route'
 import { tryCatchFetch } from '@/utils/try-catch'

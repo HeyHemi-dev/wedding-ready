@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
-import { queryKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/keys'
 import { User } from '@/app/_types/users'
 import { AuthMeResponseBody } from '@/app/api/auth/current/route'
 import { AUTH_STALE_TIME } from '@/utils/constants'

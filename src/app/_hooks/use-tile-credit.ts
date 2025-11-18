@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
-import { queryKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/keys'
 import { TileCreditForm } from '@/app/_types/validation-schema'
 import { TileCreditGetResponseBody, TileCreditPostRequestBody, TileCreditPostResponseBody } from '@/app/api/tiles/[tileId]/credits/route'
 import { tryCatchFetch } from '@/utils/try-catch'

@@ -5,7 +5,7 @@ import { Heart } from 'lucide-react'
 import Form from 'next/form'
 
 import { useTileSaveState } from '@/app/_hooks/use-tile-saved-state'
-import { queryKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/keys'
 import * as t from '@/models/types'
 import { cn } from '@/utils/shadcn-utils'
 

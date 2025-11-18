@@ -10,7 +10,7 @@ import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
 
 import { useDebounce } from './use-debounce'
-import { queryKeys } from '../_types/queryKeys'
+import { queryKeys } from '../_types/keys'
 import { SupplierSearchResult } from '../_types/suppliers'
 
 export function useSupplierSearch() {
