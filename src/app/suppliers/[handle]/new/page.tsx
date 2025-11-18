@@ -10,7 +10,7 @@ import { supplierOperations } from '@/operations/supplier-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import { UploadProvider } from './upload-context'
-import { UploadDropzone } from './upload-dropzone'
+import { UploadLayout } from './upload-layout'
 
 export default async function NewSupplierTilePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -35,8 +35,8 @@ export default async function NewSupplierTilePage({ params }: { params: Promise<
       </Link>
       <h1 className="text-2xl font-semibold">Create new tiles for {supplier.name}</h1>
 
-      <UploadProvider>
-        <UploadDropzone supplier={supplier} userId={authUserId} />
+      <UploadProvider supplier={supplier} authUserId={authUserId}>
+        <UploadLayout />
       </UploadProvider>
     </Section>
   )

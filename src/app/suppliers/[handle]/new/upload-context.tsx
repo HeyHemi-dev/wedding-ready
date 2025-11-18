@@ -2,6 +2,8 @@
 
 import * as React from 'react'
 
+import { Supplier } from '@/app/_types/suppliers'
+
 export type UploadItem = {
   uploadId: string
   file: File
@@ -13,11 +15,13 @@ type UploadContextType = {
   addFiles: (files: File[]) => void
   removeFile: (uploadId: string) => void
   clearFiles: () => void
+  supplier: Supplier
+  authUserId: string
 }
 
 const UploadContext = React.createContext<UploadContextType | undefined>(undefined)
 
-export function UploadProvider({ children }: { children: React.ReactNode }) {
+export function UploadProvider({ children, supplier, authUserId }: { children: React.ReactNode; supplier: Supplier; authUserId: string }) {
   const [files, setFiles] = React.useState<UploadItem[]>([])
 
   const addFiles = React.useCallback((files: File[]) => {
@@ -59,8 +63,10 @@ export function UploadProvider({ children }: { children: React.ReactNode }) {
       addFiles,
       removeFile,
       clearFiles,
+      supplier,
+      authUserId,
     }),
-    [files, addFiles, removeFile, clearFiles]
+    [files, addFiles, removeFile, clearFiles, supplier, authUserId]
   )
 
   return <UploadContext.Provider value={value}>{children}</UploadContext.Provider>
