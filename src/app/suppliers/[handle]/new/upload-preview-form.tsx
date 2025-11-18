@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
-import { TileUploadPreviewForm, tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
+import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
@@ -21,18 +21,16 @@ const formSteps = ['Add Details', 'Credit Suppliers'] as const
 
 type FormStep = (typeof formSteps)[number]
 
-export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: TileUploadPreviewForm) => void; onDelete: () => void }) {
-  const { supplier, authUserId } = useUploadContext()
-  if (!supplier || !authUserId) throw OPERATION_ERROR.INVALID_STATE()
+export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: TileUploadForm) => void; onDelete: () => void }) {
+  const { supplier } = useUploadContext()
+  if (!supplier) throw OPERATION_ERROR.INVALID_STATE()
 
-  const form = useForm<TileUploadPreviewForm>({
-    resolver: zodResolver(tileUploadPreviewFormSchema),
+  const form = useForm<TileUploadForm>({
+    resolver: zodResolver(tileUploadFormSchema),
     defaultValues: {
       title: undefined,
       description: undefined,
       location: undefined,
-      createdByUserId: authUserId,
-      isPrivate: false,
       credits: [
         {
           supplierId: supplier.id,

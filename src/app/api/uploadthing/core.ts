@@ -1,7 +1,7 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
-import { tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
+import { tileUploadSchema } from '@/app/_types/validation-schema'
 import { supplierModel } from '@/models/supplier'
 import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
@@ -16,12 +16,12 @@ export const uploadthingRouter = {
       maxFileCount: 1,
     },
   })
-    .input(tileUploadPreviewFormSchema)
+    .input(tileUploadSchema)
     // Middleware runs on the server before upload
     // Whatever is returned is accessible in onUploadComplete as `metadata`
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .middleware(async ({ req, input }) => {
-      const { success, data: validatedInput } = tileUploadPreviewFormSchema.safeParse(input)
+      const { success, data: validatedInput } = tileUploadSchema.safeParse(input)
       if (!success) throw OPERATION_ERROR.VALIDATION_ERROR()
       if (validatedInput.isPrivate === true) throw OPERATION_ERROR.FORBIDDEN()
 

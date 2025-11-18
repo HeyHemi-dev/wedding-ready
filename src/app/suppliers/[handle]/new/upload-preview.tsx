@@ -8,7 +8,8 @@ import { Progress } from '@/components/ui/progress'
 
 import { UploadItem, useUploadContext } from './upload-context'
 import { UploadPreviewForm } from './upload-preview-form'
-import { TileUploadPreviewForm } from '@/app/_types/validation-schema'
+import { TileUpload, TileUploadForm } from '@/app/_types/validation-schema'
+import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export function UploadPreviewList() {
   const { files } = useUploadContext()
@@ -27,14 +28,22 @@ export function UploadPreviewList() {
 }
 
 function UploadPreviewItem({ file }: { file: UploadItem }) {
-  const { removeFile } = useUploadContext()
+  const { removeFile, authUserId } = useUploadContext()
+  if (!authUserId) throw OPERATION_ERROR.INVALID_STATE()
+
   const { startUpload, status, uploadProgress } = useCreateTile({
     uploadId: file.uploadId,
   })
 
-  async function handleUpload(data: TileUploadPreviewForm) {
+  async function handleUpload(data: TileUploadForm) {
+    const input: TileUpload = {
+      ...data,
+      createdByUserId: authUserId,
+      isPrivate: false,
+    }
+
     // startUpload catches and handles errors
-    startUpload([file.file], data)
+    startUpload([file.file], input)
   }
 
   function handleDelete() {
