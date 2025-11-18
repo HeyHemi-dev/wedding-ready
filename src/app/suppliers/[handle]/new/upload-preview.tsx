@@ -12,10 +12,10 @@ export function UploadPreviewList({ files, supplier, userId }: { files: UploadIt
     <>
       <Separator />
       <div className="grid grid-cols-1 gap-acquaintance">
-        {files.map((file, index) => (
-          <React.Fragment key={file.fileObjectUrl}>
+        {files.map((file) => (
+          <React.Fragment key={file.uploadId}>
             <Area>
-              <UploadPreviewForm file={file} supplier={supplier} userId={userId} fileIndex={index} />
+              <UploadPreviewForm file={file} supplier={supplier} userId={userId} />
             </Area>
           </React.Fragment>
         ))}
