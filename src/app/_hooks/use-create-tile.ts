@@ -22,7 +22,7 @@ type CreateTileStatus = (typeof CREATE_TILE_STATUS)[keyof typeof CREATE_TILE_STA
  * Creates a tile in the database, and then uploads the image to UploadThing
  * Updating the tile with the image url is handled in the Uploadthing Endpoint
  */
-export function useCreateTile(options: { signal?: AbortSignal; fileKey: number }) {
+export function useCreateTile(options: { signal?: AbortSignal; uploadId: string }) {
   const { removeFile } = useUploadContext()
   const [status, setStatus] = React.useState<CreateTileStatus>(CREATE_TILE_STATUS.IDLE)
   const [uploadProgress, setUploadProgress] = React.useState(0)
@@ -39,7 +39,7 @@ export function useCreateTile(options: { signal?: AbortSignal; fileKey: number }
     onClientUploadComplete: () => {
       setStatus(CREATE_TILE_STATUS.COMPLETE)
       toast('Tile uploaded')
-      removeFile(options.fileKey)
+      removeFile(options.uploadId)
     },
     onUploadError: () => {
       setStatus(CREATE_TILE_STATUS.ERROR)

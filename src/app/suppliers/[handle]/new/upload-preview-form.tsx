@@ -17,11 +17,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { locationHelpers } from '@/utils/const-helpers'
 
-import { FileWithMetadata } from './upload-context'
+import { UploadItem } from './upload-context'
 
-export function UploadPreviewForm({ file, supplier, userId, fileIndex }: { file: FileWithMetadata; supplier: Supplier; userId: string; fileIndex: number }) {
+export function UploadPreviewForm({ file, supplier, userId }: { file: UploadItem; supplier: Supplier; userId: string }) {
   const { startUpload, status, uploadProgress } = useCreateTile({
-    fileKey: fileIndex,
+    uploadId: file.uploadId,
   })
 
   const form = useForm<TileUploadPreviewForm>({
