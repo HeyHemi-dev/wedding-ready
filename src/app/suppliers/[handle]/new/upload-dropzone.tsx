@@ -6,16 +6,14 @@ import { toast } from 'sonner'
 import { generateClientDropzoneAccept, generatePermittedFileTypes, isValidFileSize } from 'uploadthing/client'
 import { ExpandedRouteConfig } from 'uploadthing/types'
 
-import { Supplier } from '@/app/_types/suppliers'
 import { Button } from '@/components/ui/button'
 import { MAX_UPLOAD_FILE_SIZE } from '@/utils/constants'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { useUploadContext } from './upload-context'
-import { UploadPreviewList } from './upload-preview'
 
-export function UploadDropzone({ supplier, userId }: { supplier: Supplier; userId: string }) {
-  const { files, addFiles } = useUploadContext()
+export function UploadDropzone() {
+  const { addFiles } = useUploadContext()
   const { routeConfig } = useUploadThing('tileUploader')
 
   const onDrop = React.useCallback(
@@ -34,22 +32,6 @@ export function UploadDropzone({ supplier, userId }: { supplier: Supplier; userI
     accept: generateClientDropzoneAccept(generatePermittedFileTypes(routeConfig).fileTypes),
   })
 
-  return (
-    <>
-      {files.length === 0 && <Dropzone getRootProps={getRootProps} getInputProps={getInputProps} />}
-
-      {files.length > 0 && <UploadPreviewList files={files} supplier={supplier} userId={userId} />}
-    </>
-  )
-}
-
-function Dropzone({
-  getRootProps,
-  getInputProps,
-}: {
-  getRootProps: ReturnType<typeof useDropzone>['getRootProps']
-  getInputProps: ReturnType<typeof useDropzone>['getInputProps']
-}) {
   return (
     <div
       {...getRootProps()}
