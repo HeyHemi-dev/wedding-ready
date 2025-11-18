@@ -2,13 +2,13 @@
 
 import * as React from 'react'
 
-export type FileWithMetadata = {
+export type UploadItem = {
   file: File
   fileObjectUrl: string
 }
 
 type UploadContextType = {
-  files: FileWithMetadata[]
+  files: UploadItem[]
   addFiles: (files: File[]) => void
   removeFile: (fileIndex: number) => void
   clearFiles: () => void
@@ -17,10 +17,10 @@ type UploadContextType = {
 const UploadContext = React.createContext<UploadContextType | undefined>(undefined)
 
 export function UploadProvider({ children }: { children: React.ReactNode }) {
-  const [files, setFiles] = React.useState<FileWithMetadata[]>([])
+  const [files, setFiles] = React.useState<UploadItem[]>([])
 
   const addFiles = React.useCallback((files: File[]) => {
-    const filesWithMetadata: FileWithMetadata[] = files.map((file) => ({
+    const filesWithMetadata: UploadItem[] = files.map((file) => ({
       file,
       fileObjectUrl: URL.createObjectURL(file),
     }))

@@ -4,10 +4,10 @@ import { Supplier } from '@/app/_types/suppliers'
 import { Area } from '@/components/ui/area'
 import { Separator } from '@/components/ui/separator'
 
-import { FileWithMetadata } from './upload-context'
+import { UploadItem } from './upload-context'
 import { UploadPreviewForm } from './upload-preview-form'
 
-export function UploadPreviewList({ files, supplier, userId }: { files: FileWithMetadata[]; supplier: Supplier; userId: string }) {
+export function UploadPreviewList({ files, supplier, userId }: { files: UploadItem[]; supplier: Supplier; userId: string }) {
   return (
     <>
       <Separator />
