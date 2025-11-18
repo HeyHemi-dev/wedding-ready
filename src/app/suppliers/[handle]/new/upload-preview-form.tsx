@@ -15,6 +15,7 @@ import { locationHelpers } from '@/utils/const-helpers'
 
 import { UploadItem, useUploadContext } from './upload-context'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/utils/shadcn-utils'
 
 const formSteps = ['Add Details', 'Credit Suppliers'] as const
 
@@ -53,11 +54,8 @@ export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; sta
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-rows-[auto_1fr] gap-friend">
         {formStep === formSteps[0] && (
-          <div data-test-id={`form-step-1`} className="grid grid-cols-2 gap-sibling">
-            <div data-test-id="form-header" className="flex gap-spouse">
-              <p className="ui text-muted-foreground">1/{formSteps.length}</p>
-              <h3 className="ui-s1 col-span-full">{formSteps[0]}</h3>
-            </div>
+          <div className="grid grid-cols-2 gap-sibling">
+            <FormHeader step={formSteps[0]} className="col-span-full" />
 
             <FormField
               control={form.control}
@@ -110,8 +108,8 @@ export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; sta
           </div>
         )}
         {formStep === formSteps[1] && (
-          <div className="grid auto-rows-max gap-sibling">
-            <h3 className="ui-s1">Suppliers</h3>
+          <div className="grid gap-sibling">
+            <FormHeader step={formSteps[1]} />
 
             <FormField
               control={form.control}
@@ -151,5 +149,17 @@ export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; sta
         </div>
       </form>
     </Form>
+  )
+}
+
+function FormHeader({ step, className }: { step: FormStep; className?: string }) {
+  const index = formSteps.indexOf(step)
+  return (
+    <div className={cn('flex gap-spouse', className)}>
+      <p className="ui text-muted-foreground">
+        {index + 1}/{formSteps.length}
+      </p>
+      <h3 className="ui-s1">{step}</h3>
+    </div>
   )
 }
