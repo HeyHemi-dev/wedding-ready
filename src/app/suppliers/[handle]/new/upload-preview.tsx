@@ -8,6 +8,7 @@ import { Progress } from '@/components/ui/progress'
 
 import { UploadItem, useUploadContext } from './upload-context'
 import { UploadPreviewForm } from './upload-preview-form'
+import { TileUploadPreviewForm } from '@/app/_types/validation-schema'
 
 export function UploadPreviewList() {
   const { files } = useUploadContext()
@@ -26,9 +27,19 @@ export function UploadPreviewList() {
 }
 
 function UploadPreviewItem({ file }: { file: UploadItem }) {
+  const { removeFile } = useUploadContext()
   const { startUpload, status, uploadProgress } = useCreateTile({
     uploadId: file.uploadId,
   })
+
+  async function handleUpload(data: TileUploadPreviewForm) {
+    // startUpload catches and handles errors
+    startUpload([file.file], data)
+  }
+
+  function handleDelete() {
+    removeFile(file.uploadId)
+  }
 
   return (
     <>
@@ -40,7 +51,7 @@ function UploadPreviewItem({ file }: { file: UploadItem }) {
           </Area>
 
           <Area className="col-span-2">
-            <UploadPreviewForm file={file} startUpload={startUpload} />
+            <UploadPreviewForm onSubmit={handleUpload} onDelete={handleDelete} />
           </Area>
         </div>
       ) : (

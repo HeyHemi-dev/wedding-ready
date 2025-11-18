@@ -21,7 +21,7 @@ const formSteps = ['Add Details', 'Credit Suppliers'] as const
 
 type FormStep = (typeof formSteps)[number]
 
-export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; startUpload: (files: File[], data: TileUploadPreviewForm) => void }) {
+export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: TileUploadPreviewForm) => void; onDelete: () => void }) {
   const { supplier, authUserId } = useUploadContext()
   if (!supplier || !authUserId) throw OPERATION_ERROR.INVALID_STATE()
 
@@ -52,13 +52,8 @@ export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; sta
     }
   }
 
-  async function handleBack() {
+  function handleBack() {
     setFormStep(formSteps[0])
-  }
-
-  async function onSubmit(data: TileUploadPreviewForm) {
-    // startUpload catches and handles errors
-    startUpload([file.file], data)
   }
 
   return (
@@ -147,8 +142,8 @@ export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; sta
               Back
             </Button>
           )}
-          <Button variant="ghost" type="button">
-            Cancel
+          <Button variant="ghost" type="button" onClick={onDelete}>
+            Delete
           </Button>
           {formStep === formSteps[0] ? (
             <Button variant="default" type="button" onClick={handleNext}>
