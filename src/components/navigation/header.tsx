@@ -4,7 +4,7 @@ import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { userKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/queryKeys'
 import { Skeleton } from '@/components/ui/skeleton'
 import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
@@ -16,7 +16,7 @@ export default async function Header() {
   const authUserId = await getAuthUserId()
   const queryClient = new QueryClient()
   if (authUserId) {
-    await queryClient.prefetchQuery({ queryKey: userKeys.authUser(), queryFn: () => userOperations.getById(authUserId) })
+    await queryClient.prefetchQuery({ queryKey: queryKeys.authUser(), queryFn: () => userOperations.getById(authUserId) })
   }
 
   return (

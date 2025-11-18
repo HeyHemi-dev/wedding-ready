@@ -1,18 +1,12 @@
 import { Location, Service } from '@/db/constants'
 
-export const tileKeys = {
-  saveState: (tileId: string, authUserId: string) => ['tile', 'saveState', tileId, authUserId] as const,
-  supplierTiles: (supplierId: string) => ['tiles', 'supplier', supplierId] as const,
-  userTiles: (userId: string) => ['tiles', 'user', userId] as const,
-  credits: (tileId: string) => ['tile', 'credits', tileId] as const,
-}
-
-export const supplierKeys = {
-  search: (query: string) => ['suppliers', 'search', query] as const,
-}
-
-export const userKeys = {
-  authUser: () => ['user', 'authUser'] as const,
+export const queryKeys = {
+  authUser: () => ['authUser', 'current'] as const,
+  supplierSearch: (query: string) => ['supplierSearch', query] as const,
+  tileSaveState: (tileId: string, authUserId: string) => ['tileSaveState', tileId, authUserId] as const,
+  supplierTiles: (supplierId: string) => ['supplierTiles', supplierId] as const,
+  userTiles: (userId: string) => ['userTiles', userId] as const,
+  tileCredits: (tileId: string) => ['tileCredits', tileId] as const,
 }
 
 export const nextCacheKey = {

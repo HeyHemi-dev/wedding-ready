@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
-import { tileKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/queryKeys'
 import { TileCreditForm } from '@/app/_types/validation-schema'
 import { TileCreditGetResponseBody, TileCreditPostRequestBody, TileCreditPostResponseBody } from '@/app/api/tiles/[tileId]/credits/route'
 import { tryCatchFetch } from '@/utils/try-catch'
@@ -13,9 +13,9 @@ export function useTileCredit(tileId: string) {
   const queryClient = useQueryClient()
 
   const creditsQuery = useSuspenseQuery({
-    queryKey: tileKeys.credits(tileId),
+    queryKey: queryKeys.tileCredits(tileId),
     queryFn: () => fetchCredits(tileId),
-    initialData: () => queryClient.getQueryData(tileKeys.credits(tileId)),
+    initialData: () => queryClient.getQueryData(queryKeys.tileCredits(tileId)),
     staleTime: Infinity,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -25,7 +25,7 @@ export function useTileCredit(tileId: string) {
   const add = useMutation({
     mutationFn: (tileCreditForm: TileCreditForm) => postCredit(tileId, tileCreditForm),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: tileKeys.credits(tileId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.tileCredits(tileId) })
     },
   })
 

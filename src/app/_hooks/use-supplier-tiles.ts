@@ -3,7 +3,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
-import { tileKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/queryKeys'
 import { SupplierTilesGetRequestParams, SupplierTilesGetResponseBody } from '@/app/api/suppliers/[id]/tiles/route'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
@@ -15,7 +15,7 @@ export function useSupplierTiles({ supplierId, authUserId }: { supplierId: strin
   const queryClient = useQueryClient()
 
   const supplierTilesQuery = useQuery({
-    queryKey: tileKeys.supplierTiles(supplierId),
+    queryKey: queryKeys.supplierTiles(supplierId),
     queryFn: async () => {
       const data = await fetchTilesForSupplier(supplierId, authUserId ?? undefined)
 
