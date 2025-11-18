@@ -1,12 +1,13 @@
 import React from 'react'
 
+import { ErrorBoundary } from 'react-error-boundary'
+
 import { useCreateTile } from '@/app/_hooks/use-create-tile'
 import { Area } from '@/components/ui/area'
 import { Progress } from '@/components/ui/progress'
 
 import { UploadItem, useUploadContext } from './upload-context'
 import { UploadPreviewForm } from './upload-preview-form'
-import { ErrorBoundary } from 'react-error-boundary'
 
 export function UploadPreviewList() {
   const { files } = useUploadContext()
@@ -14,9 +15,11 @@ export function UploadPreviewList() {
   return (
     <div className="grid grid-cols-1 gap-acquaintance">
       {files.map((file) => (
-        <ErrorBoundary fallback={<div>Error creating tile</div>}>
-          <UploadPreviewItem file={file} key={file.uploadId} />
-        </ErrorBoundary>
+        <React.Fragment key={file.uploadId}>
+          <ErrorBoundary fallback={<div>Error creating tile</div>}>
+            <UploadPreviewItem file={file} />
+          </ErrorBoundary>
+        </React.Fragment>
       ))}
     </div>
   )

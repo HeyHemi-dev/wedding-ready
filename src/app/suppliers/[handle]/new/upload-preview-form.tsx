@@ -3,6 +3,7 @@ import * as React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { TileUploadPreviewForm, tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
@@ -13,7 +14,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { locationHelpers } from '@/utils/const-helpers'
 
 import { UploadItem, useUploadContext } from './upload-context'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; startUpload: (files: File[], data: TileUploadPreviewForm) => void }) {
   const { supplier, authUserId } = useUploadContext()
