@@ -3,6 +3,7 @@
 import * as React from 'react'
 
 export type UploadItem = {
+  uploadId: string
   file: File
   fileObjectUrl: string
 }
@@ -10,7 +11,7 @@ export type UploadItem = {
 type UploadContextType = {
   files: UploadItem[]
   addFiles: (files: File[]) => void
-  removeFile: (fileIndex: number) => void
+  removeFile: (uploadId: string) => void
   clearFiles: () => void
 }
 
@@ -20,18 +21,21 @@ export function UploadProvider({ children }: { children: React.ReactNode }) {
   const [files, setFiles] = React.useState<UploadItem[]>([])
 
   const addFiles = React.useCallback((files: File[]) => {
-    const filesWithMetadata: UploadItem[] = files.map((file) => ({
+    const uploadItem: UploadItem[] = files.map((file) => ({
+      uploadId: crypto.randomUUID(),
       file,
       fileObjectUrl: URL.createObjectURL(file),
     }))
-    setFiles((prev) => [...prev, ...filesWithMetadata])
+    setFiles((prev) => [...prev, ...uploadItem])
   }, [])
 
-  const removeFile = React.useCallback((fileIndex: number) => {
+  const removeFile = React.useCallback((uploadId: string) => {
     setFiles((prev) => {
-      const fileToRemove = prev[fileIndex]
-      URL.revokeObjectURL(fileToRemove.fileObjectUrl)
-      return prev.filter((_, i) => i !== fileIndex)
+      const fileToRemove = prev.find((file) => file.uploadId === uploadId)
+      if (fileToRemove) {
+        URL.revokeObjectURL(fileToRemove.fileObjectUrl)
+      }
+      return prev.filter((file) => file.uploadId !== uploadId)
     })
   }, [])
 
