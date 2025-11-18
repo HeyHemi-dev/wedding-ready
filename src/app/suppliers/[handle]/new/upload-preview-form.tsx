@@ -45,6 +45,17 @@ export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; sta
   })
   const [formStep, setFormStep] = React.useState<FormStep>(formSteps[0])
 
+  const locationFieldState = form.getFieldState('location')
+  const locationValue = form.watch('location')
+  const isStep1Valid = Boolean(locationValue) && !locationFieldState.invalid
+
+  async function handleNext() {
+    const isValid = await form.trigger(['location'])
+    if (isValid) {
+      setFormStep(formSteps[1])
+    }
+  }
+
   async function onSubmit(data: TileUploadPreviewForm) {
     // startUpload catches and handles errors
     startUpload([file.file], data)
@@ -140,7 +151,7 @@ export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; sta
             Cancel
           </Button>
           {formStep === formSteps[0] ? (
-            <Button variant="default" type="button" onClick={() => setFormStep(formSteps[1])}>
+            <Button variant="default" type="button" onClick={handleNext} disabled={!isStep1Valid}>
               Next
             </Button>
           ) : (
