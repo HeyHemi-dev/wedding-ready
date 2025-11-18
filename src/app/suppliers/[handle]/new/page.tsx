@@ -35,8 +35,8 @@ export default async function NewSupplierTilePage({ params }: { params: Promise<
       </Link>
       <h1 className="text-2xl font-semibold">Create new tiles for {supplier.name}</h1>
 
-      <UploadProvider>
-        <UploadLayout supplier={supplier} userId={authUserId} />
+      <UploadProvider supplier={supplier} authUserId={authUserId}>
+        <UploadLayout />
       </UploadProvider>
     </Section>
   )
