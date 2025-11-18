@@ -12,14 +12,11 @@ export function UploadPreviewList() {
   const { files } = useUploadContext()
 
   return (
-    <>
-      <Separator />
-      <div className="grid grid-cols-1 gap-acquaintance">
-        {files.map((file) => (
-          <UploadPreviewItem file={file} key={file.uploadId} />
-        ))}
-      </div>
-    </>
+    <div className="grid grid-cols-1 gap-acquaintance">
+      {files.map((file) => (
+        <UploadPreviewItem file={file} key={file.uploadId} />
+      ))}
+    </div>
   )
 }
 
@@ -32,10 +29,11 @@ function UploadPreviewItem({ file }: { file: UploadItem }) {
     <>
       {status === 'idle' ? (
         <div className="grid grid-cols-3 gap-area">
-          <Area className="aspect-square overflow-hidden rounded bg-muted">
+          <Area className="relative overflow-clip rounded-area">
             {/* eslint-disable-next-line @next/next/no-img-element -- This is a client-side preview of a local file, so Next.js Image optimization isn't needed */}
-            <img src={file.fileObjectUrl} alt={file.file.name} className="h-full w-full object-contain" />
+            <img src={file.fileObjectUrl} alt={file.file.name} className="absolute inset-0 h-full w-full object-contain" />
           </Area>
+
           <Area className="col-span-2">
             <UploadPreviewForm file={file} startUpload={startUpload} />
           </Area>
