@@ -13,9 +13,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { locationHelpers } from '@/utils/const-helpers'
 
 import { UploadItem, useUploadContext } from './upload-context'
+import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; startUpload: (files: File[], data: TileUploadPreviewForm) => void }) {
   const { supplier, authUserId } = useUploadContext()
+  if (!supplier || !authUserId) throw OPERATION_ERROR.FORBIDDEN()
 
   const form = useForm<TileUploadPreviewForm>({
     resolver: zodResolver(tileUploadPreviewFormSchema),

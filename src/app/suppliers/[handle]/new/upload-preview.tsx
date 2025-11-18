@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress'
 
 import { UploadItem, useUploadContext } from './upload-context'
 import { UploadPreviewForm } from './upload-preview-form'
+import { ErrorBoundary } from 'react-error-boundary'
 
 export function UploadPreviewList() {
   const { files } = useUploadContext()
@@ -13,7 +14,9 @@ export function UploadPreviewList() {
   return (
     <div className="grid grid-cols-1 gap-acquaintance">
       {files.map((file) => (
-        <UploadPreviewItem file={file} key={file.uploadId} />
+        <ErrorBoundary fallback={<div>Error creating tile</div>}>
+          <UploadPreviewItem file={file} key={file.uploadId} />
+        </ErrorBoundary>
       ))}
     </div>
   )
