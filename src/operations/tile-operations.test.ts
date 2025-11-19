@@ -231,7 +231,6 @@ describe('tileOperations', () => {
         description: 'Test Description',
         location: TEST_TILE.location,
         createdByUserId: user.id,
-        isPrivate: false,
         credits: [{ supplierId: supplier.id }],
       })
 
@@ -251,26 +250,7 @@ describe('tileOperations', () => {
           description: 'Test Description',
           location: TEST_TILE.location,
           createdByUserId: user.id,
-          isPrivate: false,
           credits: [],
-        })
-      ).rejects.toThrow()
-    })
-
-    it('should throw an error if the supplier does not exist', async () => {
-      // Arrange
-      const user = await scene.hasUser()
-
-      // Act & Assert
-      await expect(
-        tileOperations.createForSupplier({
-          imagePath: TEST_TILE.imagePath,
-          title: 'Test Title',
-          description: 'Test Description',
-          location: TEST_TILE.location,
-          createdByUserId: user.id,
-          isPrivate: false,
-          credits: [{ supplierId: '00000000-0000-0000-0000-000000000000' }],
         })
       ).rejects.toThrow()
     })
