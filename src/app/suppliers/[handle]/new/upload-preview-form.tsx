@@ -7,15 +7,15 @@ import { OPERATION_ERROR } from '@/app/_types/errors'
 import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
+import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { locationHelpers } from '@/utils/const-helpers'
-
-import { UploadItem, useUploadContext } from './upload-context'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
+
+import { useUploadContext } from './upload-context'
 
 const formSteps = ['Add Details', 'Credit Suppliers'] as const
 

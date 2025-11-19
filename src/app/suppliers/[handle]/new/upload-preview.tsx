@@ -3,13 +3,13 @@ import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { useCreateTile } from '@/app/_hooks/use-create-tile'
+import { OPERATION_ERROR } from '@/app/_types/errors'
+import { TileUpload, TileUploadForm } from '@/app/_types/validation-schema'
 import { Area } from '@/components/ui/area'
 import { Progress } from '@/components/ui/progress'
 
 import { UploadItem, useUploadContext } from './upload-context'
 import { UploadPreviewForm } from './upload-preview-form'
-import { TileUpload, TileUploadForm } from '@/app/_types/validation-schema'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export function UploadPreviewList() {
   const { files } = useUploadContext()

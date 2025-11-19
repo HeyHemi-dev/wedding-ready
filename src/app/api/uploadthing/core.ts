@@ -42,14 +42,14 @@ export const uploadthingRouter = {
 
     // OnUploadComplete runs on the server after upload
     // Whatever is returned is sent to the clientside `onClientUploadComplete` callback
-    .onUploadComplete(async ({ metadata: { formData, authUserId, supplierId }, file }) => {
+    .onUploadComplete(async ({ metadata, file }) => {
       return tileOperations.createForSupplier({
         imagePath: file.ufsUrl,
-        title: formData.title,
-        description: formData.description,
-        location: formData.location,
-        createdByUserId: authUserId,
-        credits: formData.credits,
+        title: metadata.formData.title,
+        description: metadata.formData.description,
+        location: metadata.formData.location,
+        createdByUserId: metadata.authUserId,
+        credits: metadata.formData.credits,
       })
     }),
 } satisfies FileRouter
