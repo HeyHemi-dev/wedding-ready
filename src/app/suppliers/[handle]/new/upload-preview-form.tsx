@@ -132,21 +132,27 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
           </div>
         )}
         <div data-test-id="form-footer" className="grid grid-cols-[1fr_auto_auto] gap-sibling">
-          {formStep === formSteps[1] && (
-            <Button variant="default" type="button" onClick={handleBack}>
-              Back
+          <div>
+            {formStep === formSteps[1] && (
+              <Button variant="default" type="button" onClick={handleBack}>
+                Back
+              </Button>
+            )}
+          </div>
+          <div>
+            <Button variant="ghost" type="button" onClick={onDelete}>
+              Delete
             </Button>
-          )}
-          <Button variant="ghost" type="button" onClick={onDelete}>
-            Delete
-          </Button>
-          {formStep === formSteps[0] ? (
-            <Button variant="default" type="button" onClick={handleNext}>
-              Next
-            </Button>
-          ) : (
-            <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
-          )}
+          </div>
+          <div>
+            {formStep === formSteps[0] ? (
+              <Button variant="default" type="button" onClick={handleNext}>
+                Next
+              </Button>
+            ) : (
+              <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
+            )}
+          </div>
         </div>
       </form>
     </Form>
@@ -156,7 +162,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
 function FormHeader({ step, className }: { step: FormStep; className?: string }) {
   const index = formSteps.indexOf(step)
   return (
-    <div className={cn('flex gap-spouse', className)}>
+    <div className={cn('flex gap-partner', className)}>
       <p className="ui text-muted-foreground">
         {index + 1}/{formSteps.length}
       </p>
