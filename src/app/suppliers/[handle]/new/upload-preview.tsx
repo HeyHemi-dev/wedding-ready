@@ -3,6 +3,8 @@ import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { useCreateTile } from '@/app/_hooks/use-create-tile'
+import { OPERATION_ERROR } from '@/app/_types/errors'
+import { TileUpload, TileUploadForm } from '@/app/_types/validation-schema'
 import { Area } from '@/components/ui/area'
 import { Progress } from '@/components/ui/progress'
 
@@ -26,9 +28,27 @@ export function UploadPreviewList() {
 }
 
 function UploadPreviewItem({ file }: { file: UploadItem }) {
+  const { removeFile, authUserId, supplier } = useUploadContext()
+  if (!authUserId || !supplier) throw OPERATION_ERROR.INVALID_STATE()
+
   const { startUpload, status, uploadProgress } = useCreateTile({
     uploadId: file.uploadId,
   })
+
+  async function handleUpload(data: TileUploadForm) {
+    const input: TileUpload = {
+      formData: data,
+      authUserId,
+      supplierId: supplier.id,
+    }
+
+    // startUpload catches and handles errors
+    startUpload([file.file], input)
+  }
+
+  function handleDelete() {
+    removeFile(file.uploadId)
+  }
 
   return (
     <>
@@ -40,7 +60,7 @@ function UploadPreviewItem({ file }: { file: UploadItem }) {
           </Area>
 
           <Area className="col-span-2">
-            <UploadPreviewForm file={file} startUpload={startUpload} />
+            <UploadPreviewForm onSubmit={handleUpload} onDelete={handleDelete} />
           </Area>
         </div>
       ) : (

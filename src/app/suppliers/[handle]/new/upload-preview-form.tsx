@@ -4,29 +4,33 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
-import { TileUploadPreviewForm, tileUploadPreviewFormSchema } from '@/app/_types/validation-schema'
+import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
+import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { locationHelpers } from '@/utils/const-helpers'
+import { cn } from '@/utils/shadcn-utils'
 
-import { UploadItem, useUploadContext } from './upload-context'
+import { useUploadContext } from './upload-context'
 
-export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; startUpload: (files: File[], data: TileUploadPreviewForm) => void }) {
-  const { supplier, authUserId } = useUploadContext()
-  if (!supplier || !authUserId) throw OPERATION_ERROR.FORBIDDEN()
+const formSteps = ['Add Details', 'Credit Suppliers'] as const
 
-  const form = useForm<TileUploadPreviewForm>({
-    resolver: zodResolver(tileUploadPreviewFormSchema),
+type FormStep = (typeof formSteps)[number]
+
+export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: TileUploadForm) => void; onDelete: () => void }) {
+  const { supplier } = useUploadContext()
+  if (!supplier) throw OPERATION_ERROR.INVALID_STATE()
+
+  const form = useForm<TileUploadForm>({
+    resolver: zodResolver(tileUploadFormSchema),
     defaultValues: {
       title: undefined,
       description: undefined,
       location: undefined,
-      createdByUserId: authUserId,
-      isPrivate: false,
       credits: [
         {
           supplierId: supplier.id,
@@ -37,90 +41,132 @@ export function UploadPreviewForm({ file, startUpload }: { file: UploadItem; sta
     },
     mode: 'onBlur',
   })
+  const [formStep, setFormStep] = React.useState<FormStep>(formSteps[0])
 
-  async function onSubmit(data: TileUploadPreviewForm) {
-    // startUpload catches and handles errors
-    startUpload([file.file], data)
+  async function handleNext() {
+    setFormStep(formSteps[1])
+  }
+
+  function handleBack() {
+    setFormStep(formSteps[0])
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-friend">
-        <div className="grid gap-sibling">
-          <h3 className="ui-s1">Tile Details</h3>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-rows-[auto_1fr] gap-friend">
+        {formStep === formSteps[0] && (
+          <div className="grid grid-cols-2 gap-sibling">
+            <FormHeader step={formSteps[0]} className="col-span-full" />
 
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormFieldItem label="Title">
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-              </FormFieldItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormFieldItem label="Title">
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                </FormFieldItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormFieldItem label="Description">
-                <FormControl>
-                  <Textarea {...field} rows={3} />
-                </FormControl>
-              </FormFieldItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormFieldItem label="Location">
+                  <FormControl>
+                    <Select onValueChange={field.onChange} value={field.value || ''}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a location" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {locationHelpers.toPretty().map((location) => (
+                          <SelectItem key={location.value} value={location.value}>
+                            {location.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                </FormFieldItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="location"
-            render={({ field }) => (
-              <FormFieldItem label="Location">
-                <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value || ''}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {locationHelpers.toPretty().map((location) => (
-                        <SelectItem key={location.value} value={location.value}>
-                          {location.label}
-                        </SelectItem>
+            <div className="col-span-full">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormFieldItem label="Description">
+                    <FormControl>
+                      <Textarea {...field} rows={3} />
+                    </FormControl>
+                  </FormFieldItem>
+                )}
+              />
+            </div>
+          </div>
+        )}
+        {formStep === formSteps[1] && (
+          <div className="grid gap-sibling">
+            <FormHeader step={formSteps[1]} />
+
+            <FormField
+              control={form.control}
+              name="credits"
+              render={({ field }) => (
+                <FormFieldItem label="Credit suppliers">
+                  <FormControl>
+                    <div className="text-sm text-muted-foreground">
+                      {field.value.map((credit) => (
+                        <div key={credit.supplierId}>
+                          {credit.supplierId} - {credit.service}
+                        </div>
                       ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-              </FormFieldItem>
+                    </div>
+                  </FormControl>
+                </FormFieldItem>
+              )}
+            />
+          </div>
+        )}
+        <div data-test-id="form-footer" className="grid grid-cols-[1fr_auto_auto] gap-sibling">
+          <div>
+            {formStep === formSteps[1] && (
+              <Button variant="default" type="button" onClick={handleBack}>
+                Back
+              </Button>
             )}
-          />
-        </div>
-        <div className="grid auto-rows-max gap-sibling">
-          <h3 className="ui-s1">Suppliers</h3>
-
-          <FormField
-            control={form.control}
-            name="credits"
-            render={({ field }) => (
-              <FormFieldItem label="Credit suppliers">
-                <FormControl>
-                  <div className="text-sm text-muted-foreground">
-                    {field.value.map((credit) => (
-                      <div key={credit.supplierId}>
-                        {credit.supplierId} - {credit.service}
-                      </div>
-                    ))}
-                  </div>
-                </FormControl>
-              </FormFieldItem>
+          </div>
+          <div>
+            <Button variant="ghost" type="button" onClick={onDelete}>
+              Delete
+            </Button>
+          </div>
+          <div>
+            {formStep === formSteps[0] ? (
+              <Button variant="default" type="button" onClick={handleNext}>
+                Next
+              </Button>
+            ) : (
+              <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
             )}
-          />
-        </div>
-        <div className="col-span-full">
-          <SubmitButton pendingChildren={'Please wait'}>Upload</SubmitButton>
+          </div>
         </div>
       </form>
     </Form>
+  )
+}
+
+function FormHeader({ step, className }: { step: FormStep; className?: string }) {
+  const index = formSteps.indexOf(step)
+  return (
+    <div className={cn('flex gap-partner', className)}>
+      <p className="ui text-muted-foreground">
+        {index + 1}/{formSteps.length}
+      </p>
+      <h3 className="ui-s1">{step}</h3>
+    </div>
   )
 }

@@ -5,7 +5,7 @@ import { Heart } from 'lucide-react'
 import Form from 'next/form'
 
 import { useTileSaveState } from '@/app/_hooks/use-tile-saved-state'
-import { tileKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/keys'
 import * as t from '@/models/types'
 import { cn } from '@/utils/shadcn-utils'
 
@@ -22,7 +22,7 @@ export function SaveTileButton({ tileId, authUserId, className }: SaveTileButton
   const saveState = useTileSaveState(tileId, authUserId)
 
   // Get the current saved state from the cache
-  const cachedData = queryClient.getQueryData<t.SavedTileRaw>(tileKeys.saveState(tileId, authUserId))
+  const cachedData = queryClient.getQueryData<t.SavedTileRaw>(queryKeys.tileSaveState(tileId, authUserId))
 
   const isSaved = cachedData?.isSaved ?? false
 

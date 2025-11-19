@@ -18,6 +18,7 @@ export const ERROR_MESSAGE = {
   // Business logic errors (400)
   BUSINESS_RULE_VIOLATION: 'Operation violates business rules',
   RESOURCE_CONFLICT: 'Resource conflict',
+  INVALID_STATE: 'Invalid state',
 
   // Resource errors (404)
   RESOURCE_NOT_FOUND: 'Resource not found',
@@ -43,6 +44,8 @@ export const OPERATION_ERROR = {
   BUSINESS_RULE_VIOLATION: (message?: string) => new Error(message ?? ERROR_MESSAGE.BUSINESS_RULE_VIOLATION),
 
   RESOURCE_CONFLICT: (message?: string) => new Error(message ?? ERROR_MESSAGE.RESOURCE_CONFLICT),
+
+  INVALID_STATE: (message?: string) => new Error(message ?? ERROR_MESSAGE.INVALID_STATE),
 
   // Resource not found
   RESOURCE_NOT_FOUND: (message?: string) => new Error(message ?? ERROR_MESSAGE.RESOURCE_NOT_FOUND),

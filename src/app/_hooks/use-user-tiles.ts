@@ -3,7 +3,7 @@
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
 import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
-import { tileKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/keys'
 import { UserTilesGetRequestParams, UserTilesGetResponseBody } from '@/app/api/users/[id]/tiles/route'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
@@ -15,7 +15,7 @@ export function useUserTiles(userId: string, authUserId: string | null) {
   const queryClient = useQueryClient()
 
   const userTilesQuery = useSuspenseQuery({
-    queryKey: tileKeys.userTiles(userId),
+    queryKey: queryKeys.userTiles(userId),
     queryFn: async () => {
       const data = await fetchTilesForUser(userId, authUserId ?? undefined)
 

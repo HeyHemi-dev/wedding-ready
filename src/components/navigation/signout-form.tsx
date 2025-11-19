@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-import { userKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/keys'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { Form } from '@/components/ui/form'
 import { tryCatch } from '@/utils/try-catch'
@@ -25,7 +25,7 @@ export function SignOutFormMenuItem({ children }: { children: React.ReactNode })
       return
     }
     queryClient.removeQueries({
-      queryKey: userKeys.authUser(),
+      queryKey: queryKeys.authUser(),
     })
     if (data.redirectTo !== pathname) {
       router.push(data.redirectTo)

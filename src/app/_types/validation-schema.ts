@@ -102,17 +102,23 @@ export const tileUploaderInputSchema = z.object({
   tileId: z.string(),
 })
 
-export const tileUploadPreviewFormSchema = z.object({
+export const tileUploadFormSchema = z.object({
   title: z.string().trim().max(100, "Title can't exceed 100 characters").optional(),
   description: z.string().trim().optional(),
   location: z.nativeEnum(LOCATIONS).optional(),
-  createdByUserId: z.string(),
-  isPrivate: z.boolean(),
   credits: z.array(creditSchema),
 })
-export type TileUploadPreviewForm = z.infer<typeof tileUploadPreviewFormSchema>
+export type TileUploadForm = z.infer<typeof tileUploadFormSchema>
 
-export const tileCreateSchema = tileUploadPreviewFormSchema.extend({
+export const tileUploadSchema = z.object({
+  formData: tileUploadFormSchema,
+  authUserId: z.string(),
+  supplierId: z.string(),
+})
+export type TileUpload = z.infer<typeof tileUploadSchema>
+
+export const tileCreateSchema = tileUploadFormSchema.extend({
   imagePath: z.string().min(1, 'Image path is required'),
+  createdByUserId: z.string(),
 })
 export type TileCreate = z.infer<typeof tileCreateSchema>

@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
-import { userKeys } from '@/app/_types/queryKeys'
+import { queryKeys } from '@/app/_types/keys'
 import { User } from '@/app/_types/users'
 import { AuthMeResponseBody } from '@/app/api/auth/current/route'
 import { AUTH_STALE_TIME } from '@/utils/constants'
@@ -21,14 +21,14 @@ export function useAuthUser() {
   useEffect(() => {
     const { data: subscription } = browserSupabase.auth.onAuthStateChange(async () => {
       // Blow away the cached value so the next render suspends and refetches
-      queryClient.removeQueries({ queryKey: userKeys.authUser() })
+      queryClient.removeQueries({ queryKey: queryKeys.authUser() })
     })
 
     return () => subscription.subscription.unsubscribe()
   }, [queryClient])
 
   return useSuspenseQuery({
-    queryKey: userKeys.authUser(),
+    queryKey: queryKeys.authUser(),
     queryFn: fetchAuthUser,
     staleTime: AUTH_STALE_TIME,
     retry: false,
