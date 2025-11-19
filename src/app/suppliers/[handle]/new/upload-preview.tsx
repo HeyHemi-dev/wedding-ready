@@ -28,8 +28,8 @@ export function UploadPreviewList() {
 }
 
 function UploadPreviewItem({ file }: { file: UploadItem }) {
-  const { removeFile, authUserId } = useUploadContext()
-  if (!authUserId) throw OPERATION_ERROR.INVALID_STATE()
+  const { removeFile, authUserId, supplier } = useUploadContext()
+  if (!authUserId || !supplier) throw OPERATION_ERROR.INVALID_STATE()
 
   const { startUpload, status, uploadProgress } = useCreateTile({
     uploadId: file.uploadId,
@@ -37,9 +37,9 @@ function UploadPreviewItem({ file }: { file: UploadItem }) {
 
   async function handleUpload(data: TileUploadForm) {
     const input: TileUpload = {
-      ...data,
-      createdByUserId: authUserId,
-      isPrivate: false,
+      formData: data,
+      authUserId,
+      supplierId: supplier.id,
     }
 
     // startUpload catches and handles errors

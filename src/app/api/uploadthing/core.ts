@@ -23,31 +23,33 @@ export const uploadthingRouter = {
     .middleware(async ({ req, input }) => {
       const { success, data: validatedInput } = tileUploadSchema.safeParse(input)
       if (!success) throw OPERATION_ERROR.VALIDATION_ERROR()
-      if (validatedInput.isPrivate === true) throw OPERATION_ERROR.FORBIDDEN()
+
+      if (validatedInput.formData.credits.some((credit) => credit.supplierId !== validatedInput.supplierId)) {
+        throw OPERATION_ERROR.BUSINESS_RULE_VIOLATION()
+      }
 
       const authUserId = await getAuthUserId()
       if (!authUserId) throw OPERATION_ERROR.NOT_AUTHENTICATED()
-      if (authUserId !== validatedInput.createdByUserId) throw OPERATION_ERROR.FORBIDDEN()
+      if (authUserId !== validatedInput.authUserId) throw OPERATION_ERROR.FORBIDDEN()
 
-      for (const credit of validatedInput.credits) {
+      validatedInput.formData.credits.map(async (credit) => {
         const supplier = await supplierModel.getRawById(credit.supplierId)
         if (!supplier) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
-      }
+      })
 
       return validatedInput
     })
 
     // OnUploadComplete runs on the server after upload
     // Whatever is returned is sent to the clientside `onClientUploadComplete` callback
-    .onUploadComplete(async ({ metadata, file }) => {
+    .onUploadComplete(async ({ metadata: { formData, authUserId, supplierId }, file }) => {
       return tileOperations.createForSupplier({
         imagePath: file.ufsUrl,
-        title: metadata.title,
-        description: metadata.description,
-        location: metadata.location,
-        createdByUserId: metadata.createdByUserId,
-        isPrivate: metadata.isPrivate,
-        credits: metadata.credits,
+        title: formData.title,
+        description: formData.description,
+        location: formData.location,
+        createdByUserId: authUserId,
+        credits: formData.credits,
       })
     }),
 } satisfies FileRouter
