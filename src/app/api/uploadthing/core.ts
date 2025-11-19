@@ -32,10 +32,12 @@ export const uploadthingRouter = {
       if (!authUserId) throw OPERATION_ERROR.NOT_AUTHENTICATED()
       if (authUserId !== validatedInput.authUserId) throw OPERATION_ERROR.FORBIDDEN()
 
-      validatedInput.formData.credits.map(async (credit) => {
-        const supplier = await supplierModel.getRawById(credit.supplierId)
-        if (!supplier) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
-      })
+      await Promise.all(
+        validatedInput.formData.credits.map(async (credit) => {
+          const supplier = await supplierModel.getRawById(credit.supplierId)
+          if (!supplier) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
+        })
+      )
 
       return validatedInput
     })
