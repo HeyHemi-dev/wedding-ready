@@ -87,7 +87,6 @@ async function hasTile({
   imagePath = TEST_TILE.imagePath,
   location = TEST_TILE.location,
   createdByUserId,
-  isPrivate = false,
   credits,
 }: Partial<TileCreate> & Pick<TileCreate, 'createdByUserId' | 'credits'>): Promise<t.TileRaw> {
   const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, imagePath))
@@ -98,7 +97,6 @@ async function hasTile({
     imagePath,
     location,
     createdByUserId,
-    isPrivate,
     credits,
   })
   const tile = await tileModel.getRawById(newTile.id)
