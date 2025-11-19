@@ -44,10 +44,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
   const [formStep, setFormStep] = React.useState<FormStep>(formSteps[0])
 
   async function handleNext() {
-    const isValid = await form.trigger(['location'])
-    if (isValid) {
-      setFormStep(formSteps[1])
-    }
+    setFormStep(formSteps[1])
   }
 
   function handleBack() {
