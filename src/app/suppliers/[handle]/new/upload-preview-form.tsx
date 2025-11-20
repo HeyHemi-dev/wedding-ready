@@ -1,7 +1,8 @@
 import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, useFieldArray, Control } from 'react-hook-form'
+import { Control, useFieldArray, useForm } from 'react-hook-form'
+import { X } from 'lucide-react'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
@@ -12,14 +13,12 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-
+import { LOCATIONS, SERVICES } from '@/db/constants'
+import { locationPretty } from '@/db/location-descriptions'
+import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
 
 import { useUploadContext } from './upload-context'
-import { LOCATIONS, SERVICES } from '@/db/constants'
-import { servicePretty } from '@/db/service-descriptions'
-import { X } from 'lucide-react'
-import { locationPretty } from '@/db/location-descriptions'
 
 const formSteps = ['Add Details', 'Credit Suppliers'] as const
 
@@ -32,14 +31,14 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
   const form = useForm<TileUploadForm>({
     resolver: zodResolver(tileUploadFormSchema),
     defaultValues: {
-      title: undefined,
-      description: undefined,
-      location: undefined,
+      title: '',
+      description: '',
+      location: '',
       credits: [
         {
           supplierId: supplier.id,
           service: supplier.services[0],
-          serviceDescription: undefined,
+          serviceDescription: '',
         },
       ],
     },
@@ -80,7 +79,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
               render={({ field }) => (
                 <FormFieldItem label="Location">
                   <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value || ''}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a location" />
                       </SelectTrigger>
@@ -185,7 +184,7 @@ function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
             render={({ field }) => (
               <FormFieldItem label="Service">
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value || ''}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a service" />
                     </SelectTrigger>
@@ -216,8 +215,8 @@ function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
           onClick={() =>
             append({
               supplierId: '',
-              service: undefined,
-              serviceDescription: undefined,
+              service: SERVICES.VENUE,
+              serviceDescription: '',
             })
           }>
           Add Credit

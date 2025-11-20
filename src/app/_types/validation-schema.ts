@@ -90,8 +90,8 @@ export type SupplierUpdateForm = z.infer<typeof supplierUpdateFormSchema>
 
 const creditSchema = z.object({
   supplierId: z.string(),
-  service: z.nativeEnum(SERVICES).optional(),
-  serviceDescription: z.string().optional(),
+  service: z.nativeEnum(SERVICES),
+  serviceDescription: z.string().trim().max(160, "Service description can't exceed 160 characters").optional(),
 })
 
 export const tileCreditFormSchema = creditSchema
@@ -103,9 +103,9 @@ export const tileUploaderInputSchema = z.object({
 })
 
 export const tileUploadFormSchema = z.object({
-  title: z.string().trim().max(100, "Title can't exceed 100 characters").optional(),
-  description: z.string().trim().optional(),
-  location: z.nativeEnum(LOCATIONS).optional(),
+  title: z.string().trim().max(100, "Title can't exceed 100 characters"),
+  description: z.string().trim().max(240, "Description can't exceed 240 characters"),
+  location: z.nativeEnum(LOCATIONS).or(z.literal('')),
   credits: z.array(creditSchema),
 })
 export type TileUploadForm = z.infer<typeof tileUploadFormSchema>
