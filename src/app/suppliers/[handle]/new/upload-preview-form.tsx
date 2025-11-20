@@ -16,9 +16,10 @@ import { locationHelpers, serviceHelpers } from '@/utils/const-helpers'
 import { cn } from '@/utils/shadcn-utils'
 
 import { useUploadContext } from './upload-context'
-import { SERVICES } from '@/db/constants'
+import { LOCATIONS, SERVICES } from '@/db/constants'
 import { servicePretty } from '@/db/service-descriptions'
 import { X } from 'lucide-react'
+import { locationPretty } from '@/db/location-descriptions'
 
 const formSteps = ['Add Details', 'Credit Suppliers'] as const
 
@@ -84,9 +85,9 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
                         <SelectValue placeholder="Select a location" />
                       </SelectTrigger>
                       <SelectContent>
-                        {locationHelpers.toPretty().map((location) => (
-                          <SelectItem key={location.value} value={location.value}>
-                            {location.label}
+                        {Object.values(LOCATIONS).map((location) => (
+                          <SelectItem key={location} value={location}>
+                            {locationPretty[location].value}
                           </SelectItem>
                         ))}
                       </SelectContent>
