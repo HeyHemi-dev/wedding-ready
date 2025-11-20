@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { useForm, useFieldArray, Control } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
@@ -12,10 +12,13 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { locationHelpers } from '@/utils/const-helpers'
+import { locationHelpers, serviceHelpers } from '@/utils/const-helpers'
 import { cn } from '@/utils/shadcn-utils'
 
 import { useUploadContext } from './upload-context'
+import { SERVICES } from '@/db/constants'
+import { servicePretty } from '@/db/service-descriptions'
+import { X } from 'lucide-react'
 
 const formSteps = ['Add Details', 'Credit Suppliers'] as const
 
@@ -111,24 +114,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
         {formStep === formSteps[1] && (
           <div className="grid gap-sibling">
             <FormHeader step={formSteps[1]} />
-
-            <FormField
-              control={form.control}
-              name="credits"
-              render={({ field }) => (
-                <FormFieldItem label="Credit suppliers">
-                  <FormControl>
-                    <div className="text-sm text-muted-foreground">
-                      {field.value.map((credit) => (
-                        <div key={credit.supplierId}>
-                          {credit.supplierId} - {credit.service}
-                        </div>
-                      ))}
-                    </div>
-                  </FormControl>
-                </FormFieldItem>
-              )}
-            />
+            <CreditFieldArray control={form.control} />
           </div>
         )}
         <div data-test-id="form-footer" className="grid grid-cols-[1fr_auto_auto] gap-sibling">
@@ -168,5 +154,71 @@ function FormHeader({ step, className }: { step: FormStep; className?: string })
       </p>
       <h3 className="ui-s1">{step}</h3>
     </div>
+  )
+}
+
+function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'credits',
+  })
+
+  return (
+    <>
+      {fields.map((field, index) => (
+        <div key={field.id} className="grid grid-cols-[1fr_1fr_auto] items-end gap-sibling">
+          <FormField
+            control={control}
+            name={`credits.${index}.supplierId`}
+            render={({ field }) => (
+              <FormFieldItem label="Supplier ID">
+                <FormControl>
+                  <Input {...field} placeholder="Enter supplier ID" />
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name={`credits.${index}.service`}
+            render={({ field }) => (
+              <FormFieldItem label="Service">
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value || ''}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a service" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(SERVICES).map((service) => (
+                        <SelectItem key={service} value={service}>
+                          {servicePretty[service].value}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+          <Button type="button" variant="destructive" className="aspect-square min-w-0 p-0" onClick={() => remove(index)} disabled={fields.length === 1}>
+            <X className="size-4" />
+          </Button>
+        </div>
+      ))}
+      <div className="flex justify-start">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            append({
+              supplierId: '',
+              service: undefined,
+              serviceDescription: undefined,
+            })
+          }>
+          Add Credit
+        </Button>
+      </div>
+    </>
   )
 }
