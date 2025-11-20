@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, useFieldArray, Control } from 'react-hook-form'
+import { useForm, useFieldArray, Control, FieldArrayWithId } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
@@ -173,7 +173,7 @@ function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
             render={({ field }) => (
               <FormFieldItem label="Supplier ID">
                 <FormControl>
-                  <Input {...field} placeholder="Enter supplier ID" />
+                  <Input {...field} placeholder="Enter supplier ID" disabled={index === 0} />
                 </FormControl>
               </FormFieldItem>
             )}
@@ -200,15 +200,18 @@ function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
               </FormFieldItem>
             )}
           />
-          <Button type="button" variant="destructive" className="aspect-square min-w-0 p-0" onClick={() => remove(index)} disabled={fields.length === 1}>
-            <X className="size-4" />
-          </Button>
+          <div>
+            <Button type="button" variant="destructive" className="aspect-square min-w-0 p-0" onClick={() => remove(index)} disabled={index === 0}>
+              <X className="size-4" />
+            </Button>
+          </div>
         </div>
       ))}
+
       <div className="flex justify-start">
         <Button
           type="button"
-          variant="outline"
+          variant="ghost"
           onClick={() =>
             append({
               supplierId: '',
