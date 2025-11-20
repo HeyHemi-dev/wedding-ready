@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, useFieldArray, Control, FieldArrayWithId } from 'react-hook-form'
+import { useForm, useFieldArray, Control } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
@@ -12,7 +12,7 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { locationHelpers, serviceHelpers } from '@/utils/const-helpers'
+
 import { cn } from '@/utils/shadcn-utils'
 
 import { useUploadContext } from './upload-context'
@@ -127,7 +127,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
             )}
           </div>
           <div>
-            <Button variant="ghost" type="button" onClick={onDelete}>
+            <Button variant="destructive" type="button" onClick={onDelete}>
               Delete
             </Button>
           </div>
