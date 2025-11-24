@@ -34,3 +34,7 @@ type NullableEmptyStrings<T> = {
 export function emptyStringToNullIfAllowed<T extends Record<string, EmptyStringConvertible>>(object: T): NullableEmptyStrings<T> {
   return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, value === '' ? null : value])) as NullableEmptyStrings<T>
 }
+
+export function emptyStringToNull<T>(value: T): T | null {
+  return value === '' ? null : value
+}
