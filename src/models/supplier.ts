@@ -5,6 +5,7 @@ import { db } from '@/db/connection'
 import { Service, Location } from '@/db/constants'
 import * as schema from '@/db/schema'
 import * as t from '@/models/types'
+import { emptyStringToNull } from '@/utils/empty-strings'
 
 export const supplierModel = {
   getRawById,
@@ -50,16 +51,12 @@ async function getAllRawForService(service: Service): Promise<t.SupplierRaw[]> {
 }
 
 async function createRaw(insertSupplierData: t.InsertSupplierRaw): Promise<t.SupplierRaw> {
-  const suppliersRaw = await db.insert(schema.suppliers).values(insertSupplierData).returning()
+  const suppliersRaw = await db.insert(schema.suppliers).values(safeInsertSupplierRaw(insertSupplierData)).returning()
   return suppliersRaw[0]
 }
 
 async function updateRaw(supplierId: string, setSupplierData: t.SetSupplierRaw): Promise<t.SupplierRaw> {
-  setSupplierData.updatedAt = new Date()
-  if (setSupplierData.handle) {
-    setSupplierData.handleUpdatedAt = new Date()
-  }
-  const suppliersRaw = await db.update(schema.suppliers).set(setSupplierData).where(eq(schema.suppliers.id, supplierId)).returning()
+  const suppliersRaw = await db.update(schema.suppliers).set(safeSetSupplierRaw(setSupplierData)).where(eq(schema.suppliers.id, supplierId)).returning()
   if (suppliersRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
   return suppliersRaw[0]
 }
@@ -70,11 +67,45 @@ async function isHandleAvailable(handle: string): Promise<boolean> {
 }
 
 async function search(query: string): Promise<t.SupplierRaw[]> {
+  console.log({ query })
   const suppliersRaw = await db
     .select()
     .from(schema.suppliers)
     .where(or(ilike(schema.suppliers.name, `%${query}%`), ilike(schema.suppliers.handle, `%${query}%`)))
     .limit(10)
 
+  console.log(
+    suppliersRaw.map((s) => ({
+      name: s.name,
+      handle: s.handle,
+    }))
+  )
+
   return suppliersRaw
+}
+
+function safeInsertSupplierRaw(data: t.InsertSupplierRaw): t.InsertSupplierRaw {
+  const now = new Date()
+  return {
+    createdAt: now,
+    updatedAt: now,
+    name: data.name,
+    handle: data.handle,
+    handleUpdatedAt: now,
+    websiteUrl: emptyStringToNull(data.websiteUrl),
+    description: emptyStringToNull(data.description),
+    createdByUserId: data.createdByUserId,
+  } satisfies t.InsertSupplierRaw
+}
+
+function safeSetSupplierRaw(data: t.SetSupplierRaw): t.SetSupplierRaw {
+  const now = new Date()
+  return {
+    updatedAt: now,
+    name: data.name,
+    handle: data.handle,
+    handleUpdatedAt: data.handle ? now : undefined,
+    websiteUrl: emptyStringToNull(data.websiteUrl),
+    description: emptyStringToNull(data.description),
+  } satisfies t.SetSupplierRaw
 }

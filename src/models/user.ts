@@ -59,10 +59,14 @@ async function isHandleAvailable(handle: string): Promise<boolean> {
 }
 
 function safeInsertUserProfileRaw(data: t.InsertUserProfileRaw): t.InsertUserProfileRaw {
+  const now = new Date()
   return {
     id: data.id,
     handle: data.handle,
     displayName: data.displayName,
+    createdAt: now,
+    updatedAt: now,
+    handleUpdatedAt: now,
     bio: emptyStringToNull(data.bio),
     avatarUrl: emptyStringToNull(data.avatarUrl),
     instagramUrl: emptyStringToNull(data.instagramUrl),
@@ -72,15 +76,16 @@ function safeInsertUserProfileRaw(data: t.InsertUserProfileRaw): t.InsertUserPro
 }
 
 function safeSetUserProfileRaw(data: t.SetUserProfileRaw): t.SetUserProfileRaw {
+  const now = new Date()
   return {
+    updatedAt: now,
     handle: data.handle,
+    handleUpdatedAt: data.handle ? now : undefined,
     displayName: data.displayName,
     bio: emptyStringToNull(data.bio),
     avatarUrl: emptyStringToNull(data.avatarUrl),
     instagramUrl: emptyStringToNull(data.instagramUrl),
     tiktokUrl: emptyStringToNull(data.tiktokUrl),
     websiteUrl: emptyStringToNull(data.websiteUrl),
-    updatedAt: new Date(),
-    handleUpdatedAt: data.handle ? new Date() : undefined,
   } satisfies t.SetUserProfileRaw
 }

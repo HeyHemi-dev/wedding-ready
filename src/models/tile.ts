@@ -80,21 +80,25 @@ async function deleteManyByIds(ids: string[]): Promise<void> {
 }
 
 function safeInsertTileRaw(data: t.InsertTileRaw): t.InsertTileRaw {
+  const now = new Date()
   return {
-    imagePath: data.imagePath,
-    title: emptyStringToNull(data.title),
+    createdAt: now,
+    updatedAt: now,
     description: emptyStringToNull(data.description),
     createdByUserId: data.createdByUserId,
+    imagePath: data.imagePath,
+    title: emptyStringToNull(data.title),
     location: data.location,
     isPrivate: data.isPrivate,
   } satisfies t.InsertTileRaw
 }
 
 function safeSetTileRaw(data: t.SetTileRaw): t.SetTileRaw {
+  const now = new Date()
   return {
-    title: emptyStringToNull(data.title),
+    updatedAt: now,
     description: emptyStringToNull(data.description),
+    title: emptyStringToNull(data.title),
     location: data.location,
-    updatedAt: new Date(),
   } satisfies t.SetTileRaw
 }

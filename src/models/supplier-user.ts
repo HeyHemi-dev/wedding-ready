@@ -20,10 +20,31 @@ async function getRawForUserId(userId: string): Promise<t.SupplierUserRaw[]> {
 }
 
 async function createManyRawForSupplierId(supplierId: string, users: { id: string; role: SupplierRole }[]): Promise<t.SupplierUserRaw[]> {
-  const insertSupplierUserData: t.InsertSupplierUserRaw[] = users.map((user) => ({
-    supplierId,
-    userId: user.id,
-    role: user.role,
-  }))
+  const insertSupplierUserData: t.InsertSupplierUserRaw[] = users.map((user) =>
+    safeInsertSupplierUserRaw({
+      supplierId,
+      userId: user.id,
+      role: user.role,
+    })
+  )
   return await db.insert(s.supplierUsers).values(insertSupplierUserData).returning()
+}
+
+function safeInsertSupplierUserRaw(data: t.InsertSupplierUserRaw): t.InsertSupplierUserRaw {
+  const now = new Date()
+  return {
+    supplierId: data.supplierId,
+    userId: data.userId,
+    role: data.role,
+    createdAt: now,
+    updatedAt: now,
+  } satisfies t.InsertSupplierUserRaw
+}
+
+function safeSetSupplierUserRaw(data: t.SetSupplierUserRaw): t.SetSupplierUserRaw {
+  const now = new Date()
+  return {
+    role: data.role,
+    updatedAt: now,
+  } satisfies t.SetSupplierUserRaw
 }

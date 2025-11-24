@@ -36,11 +36,20 @@ async function getMapBySupplierIds(supplierIds: string[]): Promise<SupplierServi
 }
 
 async function createManyRawForSupplierId(supplierId: string, services: Service[]): Promise<t.SupplierServiceRaw[]> {
-  const insertSupplierServiceData: t.InsertSupplierServiceRaw[] = services.map((service) => ({
-    supplierId,
-    service,
-  }))
+  const insertSupplierServiceData: t.InsertSupplierServiceRaw[] = services.map((service) =>
+    safeInsertSupplierServiceRaw({
+      supplierId,
+      service,
+    })
+  )
   return await db.insert(s.supplierServices).values(insertSupplierServiceData).returning()
+}
+
+function safeInsertSupplierServiceRaw(data: t.InsertSupplierServiceRaw): t.InsertSupplierServiceRaw {
+  return {
+    supplierId: data.supplierId,
+    service: data.service,
+  } satisfies t.InsertSupplierServiceRaw
 }
 
 function mapServicesBySupplierId(supplierServices: t.SupplierServiceRaw[]): SupplierServicesMap {
