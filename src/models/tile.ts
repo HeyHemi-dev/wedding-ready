@@ -4,6 +4,7 @@ import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
 import type * as t from '@/models/types'
+import { emptyStringToNull } from '@/utils/empty-strings'
 
 export const tileModel = {
   getRawById,
@@ -60,20 +61,12 @@ async function getManyRawByUserId(userId: string): Promise<t.TileRaw[]> {
 }
 
 async function createRaw(tileRawData: t.InsertTileRaw): Promise<t.TileRaw> {
-  const tilesRaw = await db.insert(s.tiles).values(tileRawData).returning()
+  const tilesRaw = await db.insert(s.tiles).values(safeInsertTileRaw(tileRawData)).returning()
   return tilesRaw[0]
 }
 
-/**
- * Update a tile and its relationships with suppliers
- * @param tileRawData - overwrites the existing tile data
- * @param suppliersRaw - optional. If passed it will overwrite the existing tileSupplier relationships. Will not update the suppliers themselves.
- * @requires tileRawData.imagePath - The path to the tile image
- * @returns The updated tile
- */
 async function updateRaw(id: string, tileRawData: t.SetTileRaw): Promise<t.TileRaw> {
-  tileRawData.updatedAt = new Date()
-  const tilesRaw = await db.update(s.tiles).set(tileRawData).where(eq(s.tiles.id, id)).returning()
+  const tilesRaw = await db.update(s.tiles).set(safeSetTileRaw(tileRawData)).where(eq(s.tiles.id, id)).returning()
   if (tilesRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
   return tilesRaw[0]
 }
@@ -84,4 +77,24 @@ async function deleteById(id: string): Promise<void> {
 
 async function deleteManyByIds(ids: string[]): Promise<void> {
   await db.delete(s.tiles).where(inArray(s.tiles.id, ids))
+}
+
+function safeInsertTileRaw(data: t.InsertTileRaw): t.InsertTileRaw {
+  return {
+    imagePath: data.imagePath,
+    title: emptyStringToNull(data.title),
+    description: emptyStringToNull(data.description),
+    createdByUserId: data.createdByUserId,
+    location: data.location,
+    isPrivate: data.isPrivate,
+  } satisfies t.InsertTileRaw
+}
+
+function safeSetTileRaw(data: t.SetTileRaw): t.SetTileRaw {
+  return {
+    title: emptyStringToNull(data.title),
+    description: emptyStringToNull(data.description),
+    location: data.location,
+    updatedAt: new Date(),
+  } satisfies t.SetTileRaw
 }
