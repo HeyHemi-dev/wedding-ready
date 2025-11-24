@@ -4,6 +4,7 @@ import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
 import * as schema from '@/db/schema'
 import * as t from '@/models/types'
+import { emptyStringToNull } from '@/utils/empty-strings'
 
 export const userProfileModel = {
   getRawById,
@@ -35,7 +36,7 @@ async function getRawByHandle(handle: string): Promise<t.UserProfileRaw | null> 
  * ```
  */
 async function createRaw(userProfileRawData: t.InsertUserProfileRaw): Promise<t.UserProfileRaw> {
-  const userProfilesRaw = await db.insert(schema.userProfiles).values(userProfileRawData).returning()
+  const userProfilesRaw = await db.insert(schema.userProfiles).values(safeInsertUserProfileRaw(userProfileRawData)).returning()
   return userProfilesRaw[0]
 }
 
@@ -44,7 +45,7 @@ async function updateRaw(id: string, userProfileRawData: t.SetUserProfileRaw): P
   if (userProfileRawData.handle) {
     userProfileRawData.handleUpdatedAt = new Date()
   }
-  const userProfilesRaw = await db.update(schema.userProfiles).set(userProfileRawData).where(eq(schema.userProfiles.id, id)).returning()
+  const userProfilesRaw = await db.update(schema.userProfiles).set(safeSetUserProfileRaw(userProfileRawData)).where(eq(schema.userProfiles.id, id)).returning()
   if (userProfilesRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
   return userProfilesRaw[0]
 }
@@ -55,4 +56,31 @@ async function updateRaw(id: string, userProfileRawData: t.SetUserProfileRaw): P
 async function isHandleAvailable(handle: string): Promise<boolean> {
   const userProfilesRaw = await db.select().from(schema.userProfiles).where(eq(schema.userProfiles.handle, handle))
   return userProfilesRaw.length === 0
+}
+
+function safeInsertUserProfileRaw(data: t.InsertUserProfileRaw): t.InsertUserProfileRaw {
+  return {
+    id: data.id,
+    handle: data.handle,
+    displayName: data.displayName,
+    bio: emptyStringToNull(data.bio),
+    avatarUrl: emptyStringToNull(data.avatarUrl),
+    instagramUrl: emptyStringToNull(data.instagramUrl),
+    tiktokUrl: emptyStringToNull(data.tiktokUrl),
+    websiteUrl: emptyStringToNull(data.websiteUrl),
+  } satisfies t.InsertUserProfileRaw
+}
+
+function safeSetUserProfileRaw(data: t.SetUserProfileRaw): t.SetUserProfileRaw {
+  return {
+    handle: data.handle,
+    displayName: data.displayName,
+    bio: emptyStringToNull(data.bio),
+    avatarUrl: emptyStringToNull(data.avatarUrl),
+    instagramUrl: emptyStringToNull(data.instagramUrl),
+    tiktokUrl: emptyStringToNull(data.tiktokUrl),
+    websiteUrl: emptyStringToNull(data.websiteUrl),
+    updatedAt: new Date(),
+    handleUpdatedAt: data.handle ? new Date() : undefined,
+  } satisfies t.SetUserProfileRaw
 }
