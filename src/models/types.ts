@@ -10,20 +10,20 @@ export type InsertUserProfileRaw = InferInsertModel<typeof schema.userProfiles>
 export type SetUserProfileRaw = Partial<Omit<InsertUserProfileRaw, 'id' | 'createdAt'>>
 
 export type SupplierRaw = InferSelectModel<typeof schema.suppliers>
-export type InsertSupplierRaw = InferInsertModel<typeof schema.suppliers>
-export type SetSupplierRaw = Partial<Omit<InsertSupplierRaw, 'id' | 'createdAt' | 'createdByUserId'>>
+export type InsertSupplierRaw = Omit<InferInsertModel<typeof schema.suppliers>, 'id'>
+export type SetSupplierRaw = Partial<Omit<InsertSupplierRaw, 'createdAt' | 'createdByUserId'>>
 
 export type TileRaw = InferSelectModel<typeof schema.tiles>
-export type InsertTileRaw = InferInsertModel<typeof schema.tiles>
-export type SetTileRaw = Partial<Omit<InsertTileRaw, 'id' | 'createdAt' | 'createdByUserId' | 'isPrivate'>>
+export type InsertTileRaw = Omit<InferInsertModel<typeof schema.tiles>, 'id'>
+export type SetTileRaw = Partial<Omit<InsertTileRaw, 'imagePath' | 'createdAt' | 'createdByUserId' | 'isPrivate'>>
 
 export type StackRaw = InferSelectModel<typeof schema.stacks>
-export type InsertStackRaw = InferInsertModel<typeof schema.stacks>
-export type SetStackRaw = Partial<Omit<InsertStackRaw, 'id' | 'createdAt' | 'ownedByUserId'>>
+export type InsertStackRaw = Omit<InferInsertModel<typeof schema.stacks>, 'id'>
+export type SetStackRaw = Partial<Omit<InsertStackRaw, 'createdAt' | 'ownedByUserId'>>
 
 export type SupplierUserRaw = InferSelectModel<typeof schema.supplierUsers>
 export type InsertSupplierUserRaw = InferInsertModel<typeof schema.supplierUsers>
-export type SetSupplierUserRaw = Partial<Omit<InsertSupplierUserRaw, 'supplierId' | 'userId'>>
+export type SetSupplierUserRaw = Partial<Omit<InsertSupplierUserRaw, 'supplierId' | 'userId' | 'createdAt'>>
 
 export type SupplierServiceRaw = InferSelectModel<typeof schema.supplierServices>
 export type InsertSupplierServiceRaw = InferInsertModel<typeof schema.supplierServices>
