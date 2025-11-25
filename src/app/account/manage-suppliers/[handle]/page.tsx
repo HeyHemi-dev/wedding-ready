@@ -5,6 +5,7 @@ import { supplierOperations } from '@/operations/supplier-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import UpdateSupplierForm from './update-supplier-form'
+import { nullToEmptyString } from '@/utils/empty-strings'
 
 export default async function SupplierEditPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -32,8 +33,8 @@ export default async function SupplierEditPage({ params }: { params: Promise<{ h
         <UpdateSupplierForm
           defaultValues={{
             name: supplier.name,
-            websiteUrl: supplier.websiteUrl ?? undefined,
-            description: supplier.description ?? undefined,
+            websiteUrl: nullToEmptyString(supplier.websiteUrl),
+            description: nullToEmptyString(supplier.description),
           }}
           supplierId={supplier.id}
           authUserId={authUserId}
