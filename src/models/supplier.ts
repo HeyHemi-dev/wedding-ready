@@ -67,19 +67,11 @@ async function isHandleAvailable(handle: string): Promise<boolean> {
 }
 
 async function search(query: string): Promise<t.SupplierRaw[]> {
-  console.log({ query })
   const suppliersRaw = await db
     .select()
     .from(schema.suppliers)
     .where(or(ilike(schema.suppliers.name, `%${query}%`), ilike(schema.suppliers.handle, `%${query}%`)))
     .limit(10)
-
-  console.log(
-    suppliersRaw.map((s) => ({
-      name: s.name,
-      handle: s.handle,
-    }))
-  )
 
   return suppliersRaw
 }
