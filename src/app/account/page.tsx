@@ -4,6 +4,7 @@ import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
 
 import UpdateProfileForm from './update-profile-form'
+import { nullToEmptyString } from '@/utils/empty-strings'
 
 export default async function AccountPage() {
   const authUserId = await getAuthUserId()
@@ -21,11 +22,11 @@ export default async function AccountPage() {
         defaultValues={{
           id: user.id,
           displayName: user.displayName,
-          bio: user.bio ?? '',
-          avatarUrl: user.avatarUrl ?? '',
-          instagramUrl: user.instagramUrl ?? '',
-          tiktokUrl: user.tiktokUrl ?? '',
-          websiteUrl: user.websiteUrl ?? '',
+          bio: nullToEmptyString(user.bio),
+          avatarUrl: nullToEmptyString(user.avatarUrl),
+          instagramUrl: nullToEmptyString(user.instagramUrl),
+          tiktokUrl: nullToEmptyString(user.tiktokUrl),
+          websiteUrl: nullToEmptyString(user.websiteUrl),
         }}
         className="max-w-lg"
       />
