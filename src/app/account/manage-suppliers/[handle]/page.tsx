@@ -3,9 +3,9 @@ import { notFound, redirect } from 'next/navigation'
 import { handleSchema } from '@/app/_types/validation-schema'
 import { supplierOperations } from '@/operations/supplier-operations'
 import { getAuthUserId } from '@/utils/auth'
+import { nullToEmptyString } from '@/utils/empty-strings'
 
 import UpdateSupplierForm from './update-supplier-form'
-import { nullToEmptyString } from '@/utils/empty-strings'
 
 export default async function SupplierEditPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params

@@ -1,8 +1,8 @@
 import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Control, useFieldArray, useForm } from 'react-hook-form'
 import { X } from 'lucide-react'
+import { Control, useFieldArray, useForm } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
@@ -13,11 +13,10 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { LOCATIONS, SERVICES } from '@/db/constants'
+import { LOCATIONS, SERVICES , Location } from '@/db/constants'
 import { locationPretty } from '@/db/location-descriptions'
 import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
-import { Location } from '@/db/constants'
 
 import { useUploadContext } from './upload-context'
 

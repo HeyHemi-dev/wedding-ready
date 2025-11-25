@@ -41,10 +41,3 @@ function safeInsertTileSupplierRaw(data: t.InsertTileSupplierRaw): t.InsertTileS
     serviceDescription: emptyStringToNull(data.serviceDescription),
   } satisfies t.InsertTileSupplierRaw
 }
-
-function safeSetTileSupplierRaw(data: t.SetTileSupplierRaw): t.SetTileSupplierRaw {
-  return {
-    service: data.service,
-    serviceDescription: emptyStringToNull(data.serviceDescription),
-  } satisfies t.SetTileSupplierRaw
-}

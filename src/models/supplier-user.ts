@@ -40,11 +40,3 @@ function safeInsertSupplierUserRaw(data: t.InsertSupplierUserRaw): t.InsertSuppl
     updatedAt: now,
   } satisfies t.InsertSupplierUserRaw
 }
-
-function safeSetSupplierUserRaw(data: t.SetSupplierUserRaw): t.SetSupplierUserRaw {
-  const now = new Date()
-  return {
-    role: data.role,
-    updatedAt: now,
-  } satisfies t.SetSupplierUserRaw
-}
