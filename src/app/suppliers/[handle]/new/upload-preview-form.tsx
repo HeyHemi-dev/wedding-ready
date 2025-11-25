@@ -17,6 +17,7 @@ import { LOCATIONS, SERVICES } from '@/db/constants'
 import { locationPretty } from '@/db/location-descriptions'
 import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
+import { Location } from '@/db/constants'
 
 import { useUploadContext } from './upload-context'
 
@@ -33,7 +34,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
     defaultValues: {
       title: '',
       description: '',
-      location: '',
+      location: '' as Location,
       credits: [
         {
           supplierId: supplier.id,

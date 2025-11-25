@@ -105,7 +105,7 @@ export const tileUploaderInputSchema = z.object({
 export const tileUploadFormSchema = z.object({
   title: z.string().trim().max(100, "Title can't exceed 100 characters"),
   description: z.string().trim().max(240, "Description can't exceed 240 characters"),
-  location: z.nativeEnum(LOCATIONS).or(z.literal('')),
+  location: z.nativeEnum(LOCATIONS),
   credits: z.array(creditSchema),
 })
 export type TileUploadForm = z.infer<typeof tileUploadFormSchema>
