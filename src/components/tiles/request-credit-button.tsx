@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { SERVICES } from '@/db/constants'
+import { Service, SERVICES } from '@/db/constants'
 import { servicePretty } from '@/db/service-descriptions'
 import { tryCatch } from '@/utils/try-catch'
 
@@ -54,9 +54,9 @@ function RequestCreditForm({ tileId, suppliers, setDialogOpen }: RequestCreditFo
   const form = useForm<FormValues>({
     resolver: zodResolver(tileCreditFormSchema),
     defaultValues: {
-      supplierId: undefined,
-      service: undefined,
-      serviceDescription: undefined,
+      supplierId: '',
+      service: '' as Service,
+      serviceDescription: '',
     },
     mode: 'onBlur',
   })

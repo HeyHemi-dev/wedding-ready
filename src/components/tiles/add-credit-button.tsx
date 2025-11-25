@@ -18,7 +18,7 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { SERVICES } from '@/db/constants'
+import { Service, SERVICES } from '@/db/constants'
 import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
 import { tryCatch } from '@/utils/try-catch'
@@ -48,9 +48,9 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
   const form = useForm<FormValues>({
     resolver: zodResolver(tileCreditFormSchema),
     defaultValues: {
-      supplierId: undefined,
-      service: undefined,
-      serviceDescription: undefined,
+      supplierId: '',
+      service: '' as Service,
+      serviceDescription: '',
     },
     mode: 'onBlur',
   })

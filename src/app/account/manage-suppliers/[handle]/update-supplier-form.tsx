@@ -27,9 +27,8 @@ export default function UpdateSupplierForm({
 }) {
   const form = useForm<SupplierUpdateForm>({
     resolver: zodResolver(supplierUpdateFormSchema),
-    defaultValues: {
-      ...defaultValues,
-    },
+    defaultValues,
+    mode: 'onBlur',
   })
 
   async function onSubmit(data: SupplierUpdateForm) {
