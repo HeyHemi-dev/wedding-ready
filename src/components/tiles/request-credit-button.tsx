@@ -55,7 +55,7 @@ function RequestCreditForm({ tileId, suppliers, setDialogOpen }: RequestCreditFo
     resolver: zodResolver(tileCreditFormSchema),
     defaultValues: {
       supplierId: '',
-      service: '' as Service,
+      service: '' as Service, //service is required so it is safe to cast a default empty string as default, because we know it will be validated before submission
       serviceDescription: '',
     },
     mode: 'onBlur',
