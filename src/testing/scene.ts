@@ -85,6 +85,8 @@ async function hasSupplier({
 
 async function hasTile({
   imagePath = TEST_TILE.imagePath,
+  title = '',
+  description = '',
   location = TEST_TILE.location,
   createdByUserId,
   credits,
@@ -95,6 +97,8 @@ async function hasTile({
 
   const newTile = await tileOperations.createForSupplier({
     imagePath,
+    title,
+    description,
     location,
     createdByUserId,
     credits,
