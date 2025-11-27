@@ -36,6 +36,8 @@ export type TestSupplier = typeof TEST_SUPPLIER
 
 export const TEST_TILE = {
   imagePath: 'https://example.com/fake-image.jpg',
+  title: '',
+  description: '',
   location: LOCATIONS.WELLINGTON,
 }
 export type TestTile = typeof TEST_TILE
@@ -85,8 +87,8 @@ async function hasSupplier({
 
 async function hasTile({
   imagePath = TEST_TILE.imagePath,
-  title = '',
-  description = '',
+  title = TEST_TILE.title,
+  description = TEST_TILE.description,
   location = TEST_TILE.location,
   createdByUserId,
   credits,
