@@ -9,6 +9,7 @@ import { supplierUsersModel } from '@/models/supplier-user'
 import { tileModel } from '@/models/tile'
 import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
+import { nullToEmptyString } from '@/utils/empty-strings'
 
 export const supplierOperations = {
   getByHandle,
@@ -131,8 +132,8 @@ async function updateProfile(supplierId: string, data: SupplierUpdateForm, authU
   const updatedSupplier = await supplierModel.updateRaw(supplierId, setSupplierData)
   return {
     name: updatedSupplier.name,
-    websiteUrl: updatedSupplier.websiteUrl ?? undefined,
-    description: updatedSupplier.description ?? undefined,
+    websiteUrl: nullToEmptyString(updatedSupplier.websiteUrl),
+    description: nullToEmptyString(updatedSupplier.description),
   }
 }
 
