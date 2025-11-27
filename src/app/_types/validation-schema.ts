@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { LOCATIONS, SERVICES } from '@/db/constants'
 import * as t from '@/models/types'
-import { allowEmptyString } from '@/utils/empty-strings'
+import { optionalField } from '@/utils/empty-strings'
 
 const emailSchema = z.string().trim().email('Invalid email')
 
@@ -60,11 +60,11 @@ const userOmitAuth = userSignupFormSchema.omit({
 
 export const userUpdateFormSchema = userOmitAuth.extend({
   id: z.string().uuid(),
-  bio: allowEmptyString(z.string().min(1).max(160, "Bio can't exceed 160 characters")),
-  avatarUrl: allowEmptyString(z.string().trim().min(1)),
-  instagramUrl: allowEmptyString(z.string().trim().url('Must be a valid Instagram URL')),
-  tiktokUrl: allowEmptyString(z.string().trim().url('Must be a valid TikTok URL')),
-  websiteUrl: allowEmptyString(z.string().trim().url('Must be a valid website URL')),
+  bio: optionalField(z.string().min(1).max(160, "Bio can't exceed 160 characters")),
+  avatarUrl: optionalField(z.string().trim().min(1)),
+  instagramUrl: optionalField(z.string().trim().url('Must be a valid Instagram URL')),
+  tiktokUrl: optionalField(z.string().trim().url('Must be a valid TikTok URL')),
+  websiteUrl: optionalField(z.string().trim().url('Must be a valid website URL')),
 }) satisfies z.ZodType<t.SetUserProfileRaw>
 export type UserUpdateForm = z.infer<typeof userUpdateFormSchema>
 
@@ -73,8 +73,8 @@ export type UserUpdateForm = z.infer<typeof userUpdateFormSchema>
 export const supplierRegistrationFormSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(50, "Name can't exceed 50 characters"),
   handle: handleSchema,
-  websiteUrl: allowEmptyString(z.string().trim().url('Must be a valid website URL')),
-  description: allowEmptyString(z.string().trim().min(1)),
+  websiteUrl: optionalField(z.string().trim().url('Must be a valid website URL')),
+  description: optionalField(z.string().trim().min(1)),
   locations: z.array(z.nativeEnum(LOCATIONS)).min(1, 'At least one location required'),
   services: z.array(z.nativeEnum(SERVICES)).min(1, 'At least one service required'),
 })
@@ -94,7 +94,7 @@ const creditSchema = z.object({
   service: z.nativeEnum(SERVICES, {
     errorMap: () => ({ message: 'Service is required' }),
   }),
-  serviceDescription: allowEmptyString(z.string().trim().min(1).max(160, "Service description can't exceed 160 characters")),
+  serviceDescription: optionalField(z.string().trim().min(1).max(160, "Service description can't exceed 160 characters")),
 })
 
 export const tileCreditFormSchema = creditSchema
@@ -106,8 +106,8 @@ export const tileUploaderInputSchema = z.object({
 })
 
 export const tileUploadFormSchema = z.object({
-  title: allowEmptyString(z.string().trim().min(1).max(100, "Title can't exceed 100 characters")),
-  description: allowEmptyString(z.string().trim().min(1).max(240, "Description can't exceed 240 characters")),
+  title: optionalField(z.string().trim().min(1).max(100, "Title can't exceed 100 characters")),
+  description: optionalField(z.string().trim().min(1).max(240, "Description can't exceed 240 characters")),
   location: z.nativeEnum(LOCATIONS, {
     errorMap: () => ({ message: 'Location is required' }),
   }),

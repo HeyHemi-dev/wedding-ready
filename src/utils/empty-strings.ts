@@ -5,10 +5,9 @@ import { z } from 'zod'
  * Useful for optional fields that use empty strings as "null" values (converted to null before DB).
  *
  * @example
- * z.string().trim().min(1).orEmptyString()
- * z.string().trim().url().orEmptyString()
+ * optionalField(z.string().trim().min(1)) // 'abc' or ''
  */
-export function allowEmptyString<T extends z.ZodString>(schema: T): z.ZodUnion<[T, z.ZodLiteral<''>]> {
+export function optionalField<T extends z.ZodString>(schema: T): z.ZodUnion<[T, z.ZodLiteral<''>]> {
   return schema.or(z.literal(''))
 }
 
