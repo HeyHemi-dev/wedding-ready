@@ -7,7 +7,7 @@ import { z } from 'zod'
  * @example
  * optionalField(z.string().trim().min(1)) // 'abc' or ''
  */
-export function optionalField<T extends z.ZodString>(schema: T): z.ZodUnion<[T, z.ZodLiteral<''>]> {
+export function optionalField<T extends z.ZodString | z.ZodEffects<z.ZodString, string, string>>(schema: T) {
   return schema.or(z.literal(''))
 }
 
