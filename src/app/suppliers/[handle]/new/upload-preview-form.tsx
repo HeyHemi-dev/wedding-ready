@@ -203,8 +203,14 @@ function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
             )}
           />
           <div>
-            <Button type="button" variant="destructive" className="aspect-square min-w-0 p-0" onClick={() => remove(index)} disabled={index === 0}>
-              <X className="size-4" />
+            <Button
+              type="button"
+              variant="destructive"
+              className="aspect-square min-w-0 p-0"
+              onClick={() => remove(index)}
+              disabled={index === 0}
+              aria-label="Remove credit">
+              <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
         </div>
