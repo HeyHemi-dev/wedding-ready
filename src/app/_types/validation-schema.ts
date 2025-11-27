@@ -91,8 +91,7 @@ export type SupplierUpdateForm = z.infer<typeof supplierUpdateFormSchema>
 const creditSchema = z.object({
   supplierId: z.string(),
   service: z.nativeEnum(SERVICES, {
-    required_error: 'Service is required',
-    invalid_type_error: 'Invalid service option',
+    errorMap: () => ({ message: 'Service is required' }),
   }),
   serviceDescription: z.string().trim().max(160, "Service description can't exceed 160 characters").optional(),
 })
@@ -109,8 +108,7 @@ export const tileUploadFormSchema = z.object({
   title: z.string().trim().max(100, "Title can't exceed 100 characters").optional(),
   description: z.string().trim().max(240, "Description can't exceed 240 characters").optional(),
   location: z.nativeEnum(LOCATIONS, {
-    required_error: 'Location is required',
-    invalid_type_error: 'Invalid location option',
+    errorMap: () => ({ message: 'Location is required' }),
   }),
   credits: z.array(creditSchema),
 })
