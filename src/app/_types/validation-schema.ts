@@ -59,8 +59,8 @@ const userOmitAuth = userSignupFormSchema.omit({
 
 export const userUpdateFormSchema = userOmitAuth.extend({
   id: z.string().uuid(),
-  bio: z.string().max(160, "Bio can't exceed 160 characters").or(z.literal('')),
-  avatarUrl: z.string().trim().or(z.literal('')),
+  bio: z.string().min(1).max(160, "Bio can't exceed 160 characters").or(z.literal('')),
+  avatarUrl: z.string().trim().min(1).or(z.literal('')),
   instagramUrl: z.string().trim().url('Must be a valid Instagram URL').or(z.literal('')),
   tiktokUrl: z.string().trim().url('Must be a valid TikTok URL').or(z.literal('')),
   websiteUrl: z.string().trim().url('Must be a valid website URL').or(z.literal('')),
@@ -72,8 +72,8 @@ export type UserUpdateForm = z.infer<typeof userUpdateFormSchema>
 export const supplierRegistrationFormSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(50, "Name can't exceed 50 characters"),
   handle: handleSchema,
-  websiteUrl: z.string().trim().optional(),
-  description: z.string().optional(),
+  websiteUrl: z.string().trim().url('Must be a valid website URL').or(z.literal('')),
+  description: z.string().trim().min(1).or(z.literal('')),
   locations: z.array(z.nativeEnum(LOCATIONS)).min(1, 'At least one location required'),
   services: z.array(z.nativeEnum(SERVICES)).min(1, 'At least one service required'),
 })
@@ -93,7 +93,12 @@ const creditSchema = z.object({
   service: z.nativeEnum(SERVICES, {
     errorMap: () => ({ message: 'Service is required' }),
   }),
-  serviceDescription: z.string().trim().max(160, "Service description can't exceed 160 characters").optional(),
+  serviceDescription: z
+    .string()
+    .trim()
+    .min(1, 'Service description must not be empty')
+    .max(160, "Service description can't exceed 160 characters")
+    .or(z.literal('')),
 })
 
 export const tileCreditFormSchema = creditSchema
@@ -105,8 +110,8 @@ export const tileUploaderInputSchema = z.object({
 })
 
 export const tileUploadFormSchema = z.object({
-  title: z.string().trim().max(100, "Title can't exceed 100 characters").optional(),
-  description: z.string().trim().max(240, "Description can't exceed 240 characters").optional(),
+  title: z.string().trim().min(1).max(100, "Title can't exceed 100 characters").or(z.literal('')),
+  description: z.string().trim().min(1).max(240, "Description can't exceed 240 characters").or(z.literal('')),
   location: z.nativeEnum(LOCATIONS, {
     errorMap: () => ({ message: 'Location is required' }),
   }),
@@ -122,7 +127,7 @@ export const tileUploadSchema = z.object({
 export type TileUpload = z.infer<typeof tileUploadSchema>
 
 export const tileCreateSchema = tileUploadFormSchema.extend({
-  imagePath: z.string().min(1, 'Image path is required'),
+  imagePath: z.string().min(1),
   createdByUserId: z.string(),
 })
 export type TileCreate = z.infer<typeof tileCreateSchema>
