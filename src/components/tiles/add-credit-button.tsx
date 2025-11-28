@@ -53,9 +53,6 @@ function AddCreditForm({ tileId, setIsOpen }: { tileId: string; setIsOpen: (open
   })
 
   async function onSubmit(data: FormValues): Promise<void> {
-    const isValid = await form.trigger()
-    if (!isValid) return
-
     const { error } = await tryCatch(addCredit(data))
 
     if (error) {
