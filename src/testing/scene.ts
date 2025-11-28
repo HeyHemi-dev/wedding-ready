@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 
 import { Supplier } from '@/app/_types/suppliers'
-import { SupplierRegistrationForm, TileCreate, UserSignupForm } from '@/app/_types/validation-schema'
+import { SupplierRegistrationForm, SupplierUpdateForm, TileCreate, TileCreditForm, UserSignupForm } from '@/app/_types/validation-schema'
 import { db } from '@/db/connection'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 import * as s from '@/db/schema'
@@ -136,4 +136,28 @@ async function resetTestData(): Promise<void> {
   await withoutTilesForSupplier({ supplierHandle: TEST_SUPPLIER.handle })
   await withoutSupplier({ handle: TEST_SUPPLIER.handle })
   // Don't clean up the test user. All tests assume a user exists.
+}
+
+export function createTileCreditForm({
+  supplierId,
+  service = SERVICES.PHOTOGRAPHER,
+  serviceDescription = '',
+}: Partial<TileCreditForm> & Pick<TileCreditForm, 'supplierId'>): TileCreditForm {
+  return {
+    supplierId,
+    service,
+    serviceDescription,
+  }
+}
+
+export function createSupplierUpdateForm({
+  name,
+  websiteUrl = TEST_SUPPLIER.websiteUrl,
+  description = TEST_SUPPLIER.description,
+}: Partial<SupplierUpdateForm> & Pick<SupplierUpdateForm, 'name'>): SupplierUpdateForm {
+  return {
+    name,
+    websiteUrl,
+    description,
+  }
 }
