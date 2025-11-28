@@ -20,6 +20,7 @@ import { cn } from '@/utils/shadcn-utils'
 
 import { useUploadContext } from './upload-context'
 import { SupplierSearchInput } from '@/components/tiles/supplier-search-input'
+import { Supplier } from '@/app/_types/suppliers'
 
 const formSteps = ['Add Details', 'Credit Suppliers'] as const
 
@@ -117,7 +118,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
         {formStep === formSteps[1] && (
           <div className="grid gap-sibling">
             <FormHeader step={formSteps[1]} />
-            <CreditFieldArray control={form.control} />
+            <CreditFieldArray control={form.control} supplier={supplier} />
           </div>
         )}
         <div data-test-id="form-footer" className="grid grid-cols-[1fr_auto_auto] gap-sibling">
@@ -160,7 +161,7 @@ function FormHeader({ step, className }: { step: FormStep; className?: string })
   )
 }
 
-function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
+function CreditFieldArray({ control, supplier }: { control: Control<TileUploadForm>; supplier: Supplier }) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'credits',
@@ -173,13 +174,25 @@ function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
           <FormField
             control={control}
             name={`credits.${index}.supplierId`}
-            render={({ field }) => (
-              <FormFieldItem label="Supplier">
-                <FormControl>
-                  <SupplierSearchInput field={field} disabled={index === 0} />
-                </FormControl>
-              </FormFieldItem>
-            )}
+            render={({ field }) => {
+              if (index === 0) {
+                // first credit (tile creator). field.value is supplierId (set via defaultValues) - this is what gets sent to the backend. We display @supplier.handle for better UX.
+                return (
+                  <FormFieldItem label="Tile creator">
+                    <FormControl>
+                      <Input {...field} value={`@${supplier.handle}`} disabled />
+                    </FormControl>
+                  </FormFieldItem>
+                )
+              }
+              return (
+                <FormFieldItem label="Supplier">
+                  <FormControl>
+                    <SupplierSearchInput field={field} />
+                  </FormControl>
+                </FormFieldItem>
+              )
+            }}
           />
           <FormField
             control={control}
