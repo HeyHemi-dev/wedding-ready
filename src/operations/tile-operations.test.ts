@@ -252,10 +252,7 @@ describe('tileOperations', () => {
 
       // Act
       const result = await tileOperations.createForSupplier({
-        imagePath: TEST_TILE.imagePath,
-        title: 'Test Title',
-        description: 'Test Description',
-        location: TEST_TILE.location,
+        ...TEST_TILE,
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
       })
@@ -271,10 +268,7 @@ describe('tileOperations', () => {
       // Act & Assert
       await expect(
         tileOperations.createForSupplier({
-          imagePath: TEST_TILE.imagePath,
-          title: 'Test Title',
-          description: 'Test Description',
-          location: TEST_TILE.location,
+          ...TEST_TILE,
           createdByUserId: user.id,
           credits: [],
         })
@@ -288,10 +282,9 @@ describe('tileOperations', () => {
 
       // Act
       const result = await tileOperations.createForSupplier({
-        imagePath: 'test-empty-strings.jpg',
+        ...TEST_TILE,
         title: '',
         description: '',
-        location: TEST_TILE.location,
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
       })
@@ -310,10 +303,9 @@ describe('tileOperations', () => {
 
       // Act
       const result = await tileOperations.createForSupplier({
-        imagePath: 'test-empty-service-description.jpg',
+        ...TEST_TILE,
         title: 'Test Title',
         description: 'Test Description',
-        location: TEST_TILE.location,
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id, serviceDescription: '' })],
       })
@@ -331,10 +323,9 @@ describe('tileOperations', () => {
 
       // Act
       const result = await tileOperations.createForSupplier({
-        imagePath: 'test-mixed-empty.jpg',
+        ...TEST_TILE,
         title: 'Test Title',
         description: '',
-        location: TEST_TILE.location,
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id, serviceDescription: 'Some description' })],
       })
@@ -347,6 +338,38 @@ describe('tileOperations', () => {
 
       const credits = await tileSupplierModel.getCreditsByTileId(result.id)
       expect(credits[0].serviceDescription).toBe('Some description')
+    })
+
+    it('should handle multiple credits for different suppliers', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier1 = await scene.hasSupplier({ createdByUserId: user.id })
+      const supplier2 = await scene.hasSupplier({ handle: 'testsupplier2', createdByUserId: user.id })
+
+      // Act
+      const result = await tileOperations.createForSupplier({
+        ...TEST_TILE,
+        createdByUserId: user.id,
+        credits: [
+          createTileCreditForm({ supplierId: supplier1.id, serviceDescription: 'First supplier description' }),
+          createTileCreditForm({ supplierId: supplier2.id, serviceDescription: 'Second supplier description' }),
+        ],
+      })
+
+      // Assert - Check that both credits were created
+      const credits = await tileSupplierModel.getCreditsByTileId(result.id)
+      expect(credits.length).toBe(2)
+
+      const credit1 = credits.find((c) => c.supplierId === supplier1.id)
+      const credit2 = credits.find((c) => c.supplierId === supplier2.id)
+
+      expect(credit1).toBeDefined()
+      expect(credit1?.supplier.handle).toBe(supplier1.handle)
+      expect(credit1?.serviceDescription).toBe('First supplier description')
+
+      expect(credit2).toBeDefined()
+      expect(credit2?.supplier.handle).toBe(supplier2.handle)
+      expect(credit2?.serviceDescription).toBe('Second supplier description')
     })
   })
   describe('getCreditsForTile', () => {
