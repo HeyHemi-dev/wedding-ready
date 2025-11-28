@@ -1,30 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Check, ChevronDown } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-import { useSupplierSearch } from '@/app/_hooks/use-supplier-search'
 import { useTileCredit } from '@/app/_hooks/use-tile-credit'
 import { TileCreditForm as FormValues, tileCreditFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
+import { SupplierSearchInput } from '@/components/tiles/supplier-search-input'
 import { Button } from '@/components/ui/button'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Form, FormControl, FormField } from '@/components/ui/form'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Service, SERVICES } from '@/db/constants'
 import { servicePretty } from '@/db/service-descriptions'
-import { cn } from '@/utils/shadcn-utils'
 import { tryCatch } from '@/utils/try-catch'
 
 export function AddCreditButton({ tileId }: { tileId: string }) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -36,13 +33,13 @@ export function AddCreditButton({ tileId }: { tileId: string }) {
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Add credit</DialogTitle>
-        <AddCreditForm tileId={tileId} setDialogOpen={setIsOpen} />
+        <AddCreditForm tileId={tileId} setIsOpen={setIsOpen} />
       </DialogContent>
     </Dialog>
   )
 }
 
-function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpen: (open: boolean) => void }) {
+function AddCreditForm({ tileId, setIsOpen }: { tileId: string; setIsOpen: (open: boolean) => void }) {
   const { addCredit } = useTileCredit(tileId)
 
   const form = useForm<FormValues>({
@@ -56,9 +53,6 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
   })
 
   async function onSubmit(data: FormValues): Promise<void> {
-    const isValid = await form.trigger()
-    if (!isValid) return
-
     const { error } = await tryCatch(addCredit(data))
 
     if (error) {
@@ -68,7 +62,7 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
 
     toast.success('Credit added')
     form.reset()
-    setDialogOpen(false)
+    setIsOpen(false)
   }
 
   return (
@@ -81,12 +75,7 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
             render={({ field }) => (
               <FormFieldItem label="Supplier">
                 <FormControl>
-                  <SupplierSearchCombobox
-                    value={field.value}
-                    onValueSelect={(supplierId) => {
-                      field.onChange(supplierId)
-                    }}
-                  />
+                  <SupplierSearchInput field={field} />
                 </FormControl>
               </FormFieldItem>
             )}
@@ -132,50 +121,5 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
         </div>
       </form>
     </Form>
-  )
-}
-
-type SupplierSearchComboboxProps = {
-  value: string | undefined
-  onValueSelect: (supplierId: string | undefined) => void
-}
-
-function SupplierSearchCombobox({ value, onValueSelect }: SupplierSearchComboboxProps) {
-  const { setSearchQuery, data: suppliers } = useSupplierSearch()
-  const selectedSupplier = suppliers?.find((s) => s.id === value)
-
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button size="sm" variant="input" role="combobox" className="w-full justify-between" data-placeholder={!value ? true : null}>
-          {selectedSupplier ? `${selectedSupplier.name} @${selectedSupplier.handle}` : 'Select supplier'}
-          <ChevronDown className="h-4 w-4 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="p-0" align="start">
-        <Command shouldFilter={false}>
-          <CommandInput placeholder="Search suppliers..." onValueChange={setSearchQuery} required />
-          <CommandList>
-            <CommandEmpty>No suppliers found.</CommandEmpty>
-            <CommandGroup>
-              {suppliers?.map((supplier) => (
-                <CommandItem
-                  key={supplier.handle}
-                  value={supplier.handle}
-                  onSelect={() => {
-                    onValueSelect(supplier.id)
-                  }}>
-                  <Check className={cn('mr-2 h-4 w-4', value === supplier.id ? 'opacity-100' : 'opacity-0')} />
-                  <div className="flex flex-col">
-                    <span className="ui-small-s1">{supplier.name}</span>
-                    <span className="ui-small opacity-80">@{supplier.handle}</span>
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
   )
 }

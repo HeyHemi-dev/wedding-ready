@@ -5,15 +5,17 @@ import { X } from 'lucide-react'
 import { Control, useFieldArray, useForm } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
+import { Supplier } from '@/app/_types/suppliers'
 import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
+import { SupplierSearchInput } from '@/components/tiles/supplier-search-input'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { LOCATIONS, SERVICES, Location } from '@/db/constants'
+import { LOCATIONS, SERVICES, Location, Service } from '@/db/constants'
 import { locationPretty } from '@/db/location-descriptions'
 import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
@@ -21,7 +23,6 @@ import { cn } from '@/utils/shadcn-utils'
 import { useUploadContext } from './upload-context'
 
 const formSteps = ['Add Details', 'Credit Suppliers'] as const
-
 type FormStep = (typeof formSteps)[number]
 
 export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: TileUploadForm) => void; onDelete: () => void }) {
@@ -37,7 +38,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
       credits: [
         {
           supplierId: supplier.id,
-          service: supplier.services[0],
+          service: supplier.services[0] ?? ('' as Service), //service is required so it is safe to cast a default empty string as default, because we know it will be validated before submission
           serviceDescription: '',
         },
       ],
@@ -116,7 +117,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
         {formStep === formSteps[1] && (
           <div className="grid gap-sibling">
             <FormHeader step={formSteps[1]} />
-            <CreditFieldArray control={form.control} />
+            <CreditFieldArray control={form.control} supplier={supplier} />
           </div>
         )}
         <div data-test-id="form-footer" className="grid grid-cols-[1fr_auto_auto] gap-sibling">
@@ -159,7 +160,7 @@ function FormHeader({ step, className }: { step: FormStep; className?: string })
   )
 }
 
-function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
+function CreditFieldArray({ control, supplier }: { control: Control<TileUploadForm>; supplier: Supplier }) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'credits',
@@ -172,13 +173,22 @@ function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
           <FormField
             control={control}
             name={`credits.${index}.supplierId`}
-            render={({ field }) => (
-              <FormFieldItem label="Supplier ID">
-                <FormControl>
-                  <Input {...field} placeholder="Enter supplier ID" disabled={index === 0} />
-                </FormControl>
-              </FormFieldItem>
-            )}
+            render={({ field }) =>
+              // first credit is the tile creator. field.value is supplierId (set via defaultValues) - this is what gets sent to the backend. We display @supplier.handle for better UX.
+              index === 0 ? (
+                <FormFieldItem label="Tile creator">
+                  <FormControl>
+                    <Input {...field} value={`@${supplier.handle}`} disabled />
+                  </FormControl>
+                </FormFieldItem>
+              ) : (
+                <FormFieldItem label="Supplier">
+                  <FormControl>
+                    <SupplierSearchInput field={field} />
+                  </FormControl>
+                </FormFieldItem>
+              )
+            }
           />
           <FormField
             control={control}
