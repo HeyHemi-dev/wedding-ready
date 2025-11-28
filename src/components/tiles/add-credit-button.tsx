@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { useTileCredit } from '@/app/_hooks/use-tile-credit'
 import { TileCreditForm as FormValues, tileCreditFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
+import { SupplierSearchInput } from '@/components/tiles/supplier-search-input'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Form, FormControl, FormField } from '@/components/ui/form'
@@ -18,7 +19,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Service, SERVICES } from '@/db/constants'
 import { servicePretty } from '@/db/service-descriptions'
 import { tryCatch } from '@/utils/try-catch'
-import { SupplierSearchInput } from '@/components/tiles/supplier-search-input'
 
 export function AddCreditButton({ tileId }: { tileId: string }) {
   const [isOpen, setIsOpen] = React.useState(false)

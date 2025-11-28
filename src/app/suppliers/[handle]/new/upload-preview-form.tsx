@@ -2,12 +2,14 @@ import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { X } from 'lucide-react'
-import { Control, useFieldArray, useForm, useFormContext } from 'react-hook-form'
+import { Control, useFieldArray, useForm } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
+import { Supplier } from '@/app/_types/suppliers'
 import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
+import { SupplierSearchInput } from '@/components/tiles/supplier-search-input'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -19,11 +21,8 @@ import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
 
 import { useUploadContext } from './upload-context'
-import { SupplierSearchInput } from '@/components/tiles/supplier-search-input'
-import { Supplier } from '@/app/_types/suppliers'
 
 const formSteps = ['Add Details', 'Credit Suppliers'] as const
-
 type FormStep = (typeof formSteps)[number]
 
 export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: TileUploadForm) => void; onDelete: () => void }) {
