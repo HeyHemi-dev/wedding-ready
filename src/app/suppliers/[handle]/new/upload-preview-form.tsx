@@ -15,7 +15,7 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { LOCATIONS, SERVICES, Location } from '@/db/constants'
+import { LOCATIONS, SERVICES, Location, Service } from '@/db/constants'
 import { locationPretty } from '@/db/location-descriptions'
 import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
@@ -38,7 +38,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
       credits: [
         {
           supplierId: supplier.id,
-          service: supplier.services[0],
+          service: supplier.services[0] ?? ('' as Service), //service is required so it is safe to cast a default empty string as default, because we know it will be validated before submission
           serviceDescription: '',
         },
       ],
