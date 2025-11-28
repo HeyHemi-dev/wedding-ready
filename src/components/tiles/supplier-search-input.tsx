@@ -24,7 +24,7 @@ export function SupplierSearchInput({ field, disabled = false }: SupplierSearchI
     <Popover>
       <PopoverTrigger asChild>
         <Button size="sm" variant="input" role="combobox" className="w-full justify-between" data-placeholder={!field.value ? true : null} disabled={disabled}>
-          {selectedSupplier ? `${selectedSupplier.name} @${selectedSupplier.handle}` : 'Select supplier'}
+          {selectedSupplier ? `@${selectedSupplier.handle}` : 'Select supplier'}
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
