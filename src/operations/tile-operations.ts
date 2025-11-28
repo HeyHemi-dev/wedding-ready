@@ -93,14 +93,14 @@ async function createForSupplier({ imagePath, title, description, location, crea
 
   // We check if the supplier exists in uploadthing middleware
   await Promise.all(
-    credits.map((credit) => {
+    credits.map((credit) =>
       tileSupplierModel.createRaw({
         tileId: tileRaw.id,
         supplierId: credit.supplierId,
         service: credit.service,
         serviceDescription: credit.serviceDescription,
       })
-    })
+    )
   )
 
   return {
