@@ -33,13 +33,13 @@ export function AddCreditButton({ tileId }: { tileId: string }) {
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Add credit</DialogTitle>
-        <AddCreditForm tileId={tileId} setDialogOpen={setIsOpen} />
+        <AddCreditForm tileId={tileId} setIsOpen={setIsOpen} />
       </DialogContent>
     </Dialog>
   )
 }
 
-function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpen: (open: boolean) => void }) {
+function AddCreditForm({ tileId, setIsOpen }: { tileId: string; setIsOpen: (open: boolean) => void }) {
   const { addCredit } = useTileCredit(tileId)
 
   const form = useForm<FormValues>({
@@ -65,7 +65,7 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
 
     toast.success('Credit added')
     form.reset()
-    setDialogOpen(false)
+    setIsOpen(false)
   }
 
   return (
