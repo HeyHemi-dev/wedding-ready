@@ -18,7 +18,7 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { SERVICES } from '@/db/constants'
+import { Service, SERVICES } from '@/db/constants'
 import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
 import { tryCatch } from '@/utils/try-catch'
@@ -48,14 +48,17 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
   const form = useForm<FormValues>({
     resolver: zodResolver(tileCreditFormSchema),
     defaultValues: {
-      supplierId: undefined,
-      service: undefined,
-      serviceDescription: undefined,
+      supplierId: '',
+      service: '' as Service, //service is required so it is safe to cast a default empty string as default, because we know it will be validated before submission
+      serviceDescription: '',
     },
     mode: 'onBlur',
   })
 
   async function onSubmit(data: FormValues): Promise<void> {
+    const isValid = await form.trigger()
+    if (!isValid) return
+
     const { error } = await tryCatch(addCredit(data))
 
     if (error) {
@@ -94,7 +97,7 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
             render={({ field }) => (
               <FormFieldItem label="Service">
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value} required>
                     <SelectTrigger>
                       <SelectValue placeholder="Select service contribution" />
                     </SelectTrigger>
@@ -123,7 +126,7 @@ function AddCreditForm({ tileId, setDialogOpen }: { tileId: string; setDialogOpe
           />
         </div>
         <div className="flex justify-end">
-          <Button type="submit" className="self-end">
+          <Button type="submit" className="self-end" disabled={form.formState.isSubmitting || !form.formState.isValid}>
             {form.formState.isSubmitting ? 'Adding...' : 'Add credit'}
           </Button>
         </div>
@@ -150,8 +153,8 @@ function SupplierSearchCombobox({ value, onValueSelect }: SupplierSearchCombobox
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0" align="start">
-        <Command>
-          <CommandInput placeholder="Search suppliers..." onValueChange={setSearchQuery} />
+        <Command shouldFilter={false}>
+          <CommandInput placeholder="Search suppliers..." onValueChange={setSearchQuery} required />
           <CommandList>
             <CommandEmpty>No suppliers found.</CommandEmpty>
             <CommandGroup>

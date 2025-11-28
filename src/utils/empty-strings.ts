@@ -1,36 +1,39 @@
-/**
- * Type for values that can be converted to/from empty strings
- */
-type EmptyStringConvertible = string | number | boolean | Date | null | undefined
+import { z } from 'zod'
 
 /**
- * Type for the result of converting nullish values to empty strings
+ * Allows a string schema to accept either a valid string (per the schema) or an empty string.
+ * Useful for optional fields that use empty strings as "null" values (converted to null before DB).
+ *
+ * @example
+ * optionalField(z.string().trim().min(1)) // 'abc' or ''
  */
-type NullishToEmptyStringResult<T> = { [K in keyof T]: Exclude<T[K], null | undefined> | '' }
-
-/**
- * Convert null or undefined values to an empty string
- * @param object - The object to convert
- * @returns A new object with null or undefined values converted to an empty string
- */
-export function nullishToEmptyString<T extends Record<string, EmptyStringConvertible>>(object: T): NullishToEmptyStringResult<T> {
-  return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, value == null ? '' : value])) as NullishToEmptyStringResult<T>
+export function optionalField<T extends z.ZodString | z.ZodEffects<z.ZodString, string, string>>(schema: T) {
+  return schema.or(z.literal(''))
 }
 
 /**
- * A helper mapped type that only "transforms" properties that allow null
+ * Converts an empty string to null.
+ * Useful for converting empty strings to null before DB.
+ *
+ * @example
+ * emptyStringToNull('') // null
+ * emptyStringToNull('hello') // 'hello'
  */
-type NullableEmptyStrings<T> = {
-  [K in keyof T]: null extends T[K] // does this property allow null?
-    ? Exclude<T[K], ''> | null // if so, map "" → null
-    : T[K] // otherwise leave it alone
+export function emptyStringToNull<T>(value: T): T | null {
+  return value === '' ? null : value
 }
 
+type NullToEmpty<T> = T extends null ? '' : T
+
 /**
- * Convert empty strings that are allowed to be null to null
- * @param object - The object to convert
- * @returns A new object with empty strings converted to null
+ * Converts a null value to an empty string.
+ * Useful for converting null values to empty strings before DB.
+ *
+ * @example
+ * nullToEmptyString(null) // ''
+ * nullToEmptyString('hello') // 'hello'
  */
-export function emptyStringToNullIfAllowed<T extends Record<string, EmptyStringConvertible>>(object: T): NullableEmptyStrings<T> {
-  return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, value === '' ? null : value])) as NullableEmptyStrings<T>
+export function nullToEmptyString<T>(value: T): NullToEmpty<T> {
+  // we can safely cast because we know that null is the only value that can be converted to an empty string
+  return (value === null ? '' : value) as NullToEmpty<T>
 }

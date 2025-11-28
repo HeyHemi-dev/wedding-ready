@@ -44,7 +44,7 @@ async function seedDatabase() {
     UPLOADTHING_IMAGES.map(async (image: UploadThingImage) => {
       await scene.hasTile({
         createdByUserId: user.id,
-        credits: [{ supplierId: supplier.id, service: supplier.services[0] }],
+        credits: [{ supplierId: supplier.id, service: supplier.services[0], serviceDescription: '' }],
         imagePath: image.url,
         location: LOCATIONS.WELLINGTON,
       })

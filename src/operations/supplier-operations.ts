@@ -9,7 +9,7 @@ import { supplierUsersModel } from '@/models/supplier-user'
 import { tileModel } from '@/models/tile'
 import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
-import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
+import { nullToEmptyString } from '@/utils/empty-strings'
 
 export const supplierOperations = {
   getByHandle,
@@ -123,17 +123,17 @@ async function updateProfile(supplierId: string, data: SupplierUpdateForm, authU
   const authUserRole = supplierUsers.find((su) => su.userId === authUserId)?.role
   if (authUserRole !== SUPPLIER_ROLES.ADMIN && authUserRole !== SUPPLIER_ROLES.STANDARD) throw OPERATION_ERROR.FORBIDDEN()
 
-  const setSupplierData: t.SetSupplierRaw = emptyStringToNullIfAllowed({
+  const setSupplierData: t.SetSupplierRaw = {
     name: data.name,
     websiteUrl: data.websiteUrl,
     description: data.description,
-  })
+  }
 
   const updatedSupplier = await supplierModel.updateRaw(supplierId, setSupplierData)
   return {
     name: updatedSupplier.name,
-    websiteUrl: updatedSupplier.websiteUrl ?? undefined,
-    description: updatedSupplier.description ?? undefined,
+    websiteUrl: nullToEmptyString(updatedSupplier.websiteUrl),
+    description: nullToEmptyString(updatedSupplier.description),
   }
 }
 

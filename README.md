@@ -1,6 +1,6 @@
-# WeddingReady
+# Wedding Ready
 
-WeddingReady is a platform that transforms wedding inspiration into real purchases by directly connecting engaged couples with local vendors.
+Wedding Ready is a web app that converts wedding inspiration into real purchases by directly connecting engaged couples with local suppliers.
 
 ## Documentation
 
@@ -12,6 +12,8 @@ WeddingReady is a platform that transforms wedding inspiration into real purchas
 - [Overused hooks and substitutes](docs/substitutes.md)
 
 ## Getting Started
+
+First install: Pnpm, Docker, Supabase local.
 
 1. Install dependencies:
 
@@ -25,11 +27,12 @@ WeddingReady is a platform that transforms wedding inspiration into real purchas
    pnpm vercel env pull
    ```
 
-3. Run database migrations:
+3. Run database migrations/seed file:
    You may need to replace the first empty migration, with the contents of the file in `@/db/baseline`
 
    ```bash
    pnpm db:migrate
+   pnpm db:seed
    ```
 
 4. Start the development server:
@@ -49,23 +52,27 @@ The project uses Next.js's ESLint configuration with TypeScript support. See `.e
 
 1. Create a feature branch from `main`
 2. Follow existing development patterns
-3. Include types for all new code
-4. Add tests for new features
+3. Lean into type safety
+4. Add integration tests for all new operations
 5. Run tests and lint checks
 6. Submit a pull request
 
 ### Database Migrations
 
 - Use Drizzle for database schema management
-- Generate migrations with `pnpm db:generate`. Check migration files before applying.
+- Generate migrations with `pnpm db:generate`. Check generated SQL before applying migration files.
 - Apply migrations with `pnpm db:migrate`
+- Seed database with `pnpm db:seed`
+- Reset local database with `pnpm db:reset`
 <!-- - Bypass migration pattern with `pnpm db:push` (for initial setup only) -->
 
-### Code Quality
+### Linting/Formatting
 
-- TypeScript for type safety
-- ESLint for code quality
+- ESLint for code quality `pnpm lint`
 - Prettier for code formatting
+- Tailwind prettier plugin: `prettier-plugin-tailwindcss`
+- Tailwind CSS IntelliSense extension: `bradlc.vscode-tailwindcss`
+
 
 ## Additional Resources
 

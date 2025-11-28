@@ -1,7 +1,8 @@
 import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { X } from 'lucide-react'
+import { Control, useFieldArray, useForm } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
@@ -12,7 +13,9 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { locationHelpers } from '@/utils/const-helpers'
+import { LOCATIONS, SERVICES, Location } from '@/db/constants'
+import { locationPretty } from '@/db/location-descriptions'
+import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
 
 import { useUploadContext } from './upload-context'
@@ -28,14 +31,14 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
   const form = useForm<TileUploadForm>({
     resolver: zodResolver(tileUploadFormSchema),
     defaultValues: {
-      title: undefined,
-      description: undefined,
-      location: undefined,
+      title: '',
+      description: '',
+      location: '' as Location, //location is required so it is safe to cast a default empty string as default, because we know it will be validated before submission
       credits: [
         {
           supplierId: supplier.id,
           service: supplier.services[0],
-          serviceDescription: undefined,
+          serviceDescription: '',
         },
       ],
     },
@@ -44,6 +47,8 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
   const [formStep, setFormStep] = React.useState<FormStep>(formSteps[0])
 
   async function handleNext() {
+    const isValid = await form.trigger(['location'])
+    if (!isValid) return
     setFormStep(formSteps[1])
   }
 
@@ -76,14 +81,14 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
               render={({ field }) => (
                 <FormFieldItem label="Location">
                   <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value || ''}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a location" />
                       </SelectTrigger>
                       <SelectContent>
-                        {locationHelpers.toPretty().map((location) => (
-                          <SelectItem key={location.value} value={location.value}>
-                            {location.label}
+                        {Object.values(LOCATIONS).map((location) => (
+                          <SelectItem key={location} value={location}>
+                            {locationPretty[location].value}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -111,24 +116,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
         {formStep === formSteps[1] && (
           <div className="grid gap-sibling">
             <FormHeader step={formSteps[1]} />
-
-            <FormField
-              control={form.control}
-              name="credits"
-              render={({ field }) => (
-                <FormFieldItem label="Credit suppliers">
-                  <FormControl>
-                    <div className="text-sm text-muted-foreground">
-                      {field.value.map((credit) => (
-                        <div key={credit.supplierId}>
-                          {credit.supplierId} - {credit.service}
-                        </div>
-                      ))}
-                    </div>
-                  </FormControl>
-                </FormFieldItem>
-              )}
-            />
+            <CreditFieldArray control={form.control} />
           </div>
         )}
         <div data-test-id="form-footer" className="grid grid-cols-[1fr_auto_auto] gap-sibling">
@@ -140,7 +128,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
             )}
           </div>
           <div>
-            <Button variant="ghost" type="button" onClick={onDelete}>
+            <Button variant="destructive" type="button" onClick={onDelete}>
               Delete
             </Button>
           </div>
@@ -168,5 +156,80 @@ function FormHeader({ step, className }: { step: FormStep; className?: string })
       </p>
       <h3 className="ui-s1">{step}</h3>
     </div>
+  )
+}
+
+function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'credits',
+  })
+
+  return (
+    <>
+      {fields.map((field, index) => (
+        <div key={field.id} className="grid grid-cols-[1fr_1fr_auto] items-end gap-sibling">
+          <FormField
+            control={control}
+            name={`credits.${index}.supplierId`}
+            render={({ field }) => (
+              <FormFieldItem label="Supplier ID">
+                <FormControl>
+                  <Input {...field} placeholder="Enter supplier ID" disabled={index === 0} />
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name={`credits.${index}.service`}
+            render={({ field }) => (
+              <FormFieldItem label="Service">
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a service" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(SERVICES).map((service) => (
+                        <SelectItem key={service} value={service}>
+                          {servicePretty[service].value}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+              </FormFieldItem>
+            )}
+          />
+          <div>
+            <Button
+              type="button"
+              variant="destructive"
+              className="aspect-square min-w-0 p-0"
+              onClick={() => remove(index)}
+              disabled={index === 0}
+              aria-label="Remove credit">
+              <X className="size-4" aria-hidden="true" />
+            </Button>
+          </div>
+        </div>
+      ))}
+
+      <div className="flex justify-start">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() =>
+            append({
+              supplierId: '',
+              service: SERVICES.VENUE,
+              serviceDescription: '',
+            })
+          }>
+          Add Credit
+        </Button>
+      </div>
+    </>
   )
 }

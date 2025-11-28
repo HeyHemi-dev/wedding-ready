@@ -5,7 +5,6 @@ import { supplierModel } from '@/models/supplier'
 import { supplierUsersModel } from '@/models/supplier-user'
 import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
-import { emptyStringToNullIfAllowed } from '@/utils/empty-strings'
 
 export const userOperations = {
   getById,
@@ -78,14 +77,14 @@ async function updateProfile(data: UserUpdateForm, authUserId: string): Promise<
 
   if (user.id !== authUserId) throw OPERATION_ERROR.FORBIDDEN()
 
-  const setUserDetailData: t.SetUserProfileRaw = emptyStringToNullIfAllowed({
+  const setUserDetailData: t.SetUserProfileRaw = {
     displayName: data.displayName,
     bio: data.bio,
     avatarUrl: data.avatarUrl,
     instagramUrl: data.instagramUrl,
     tiktokUrl: data.tiktokUrl,
     websiteUrl: data.websiteUrl,
-  })
+  }
 
   return userProfileModel.updateRaw(user.id, setUserDetailData)
 }

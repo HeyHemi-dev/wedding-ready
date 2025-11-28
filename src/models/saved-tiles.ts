@@ -36,14 +36,28 @@ async function getSavedTilesRaw(tileIds: string[], userId: string): Promise<t.Sa
 async function upsertSavedTileRaw(savedTileData: t.InsertSavedTileRaw): Promise<t.SavedTileRaw> {
   const savedTilesRaw = await db
     .insert(s.savedTiles)
-    .values(savedTileData)
+    .values(safeInsertSavedTileRaw(savedTileData))
     .onConflictDoUpdate({
       target: [s.savedTiles.tileId, s.savedTiles.userId],
-      set: {
+      set: safeSetSavedTileRaw({
         isSaved: savedTileData.isSaved,
-      },
+      }),
     })
     .returning()
   if (savedTilesRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
   return savedTilesRaw[0]
+}
+
+function safeInsertSavedTileRaw(data: t.InsertSavedTileRaw): t.InsertSavedTileRaw {
+  return {
+    userId: data.userId,
+    tileId: data.tileId,
+    isSaved: data.isSaved,
+  } satisfies t.InsertSavedTileRaw
+}
+
+function safeSetSavedTileRaw(data: t.SetSavedTileRaw): t.SetSavedTileRaw {
+  return {
+    isSaved: data.isSaved,
+  } satisfies t.SetSavedTileRaw
 }

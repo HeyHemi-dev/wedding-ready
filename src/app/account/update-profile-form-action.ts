@@ -6,7 +6,7 @@ import { tags } from '@/app/_types/tags'
 import { UserUpdateForm, userUpdateFormSchema } from '@/app/_types/validation-schema'
 import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
-import { nullishToEmptyString } from '@/utils/empty-strings'
+import { nullToEmptyString } from '@/utils/empty-strings'
 
 import { OPERATION_ERROR } from '../_types/errors'
 
@@ -25,13 +25,13 @@ export async function updateProfileFormAction(data: UserUpdateForm): Promise<Use
 
   revalidateTag(tags.currentUser(user.id))
 
-  return nullishToEmptyString({
+  return {
     id: user.id,
     displayName: user.displayName,
-    bio: user.bio,
-    avatarUrl: user.avatarUrl,
-    instagramUrl: user.instagramUrl,
-    tiktokUrl: user.tiktokUrl,
-    websiteUrl: user.websiteUrl,
-  })
+    bio: nullToEmptyString(user.bio),
+    avatarUrl: nullToEmptyString(user.avatarUrl),
+    instagramUrl: nullToEmptyString(user.instagramUrl),
+    tiktokUrl: nullToEmptyString(user.tiktokUrl),
+    websiteUrl: nullToEmptyString(user.websiteUrl),
+  }
 }

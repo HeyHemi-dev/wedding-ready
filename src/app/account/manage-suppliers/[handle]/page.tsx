@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { handleSchema } from '@/app/_types/validation-schema'
 import { supplierOperations } from '@/operations/supplier-operations'
 import { getAuthUserId } from '@/utils/auth'
+import { nullToEmptyString } from '@/utils/empty-strings'
 
 import UpdateSupplierForm from './update-supplier-form'
 
@@ -32,8 +33,8 @@ export default async function SupplierEditPage({ params }: { params: Promise<{ h
         <UpdateSupplierForm
           defaultValues={{
             name: supplier.name,
-            websiteUrl: supplier.websiteUrl ?? undefined,
-            description: supplier.description ?? undefined,
+            websiteUrl: nullToEmptyString(supplier.websiteUrl),
+            description: nullToEmptyString(supplier.description),
           }}
           supplierId={supplier.id}
           authUserId={authUserId}

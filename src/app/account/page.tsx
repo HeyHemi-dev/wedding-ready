@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 
 import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
+import { nullToEmptyString } from '@/utils/empty-strings'
 
 import UpdateProfileForm from './update-profile-form'
 
@@ -21,11 +22,11 @@ export default async function AccountPage() {
         defaultValues={{
           id: user.id,
           displayName: user.displayName,
-          bio: user.bio ?? '',
-          avatarUrl: user.avatarUrl ?? '',
-          instagramUrl: user.instagramUrl ?? '',
-          tiktokUrl: user.tiktokUrl ?? '',
-          websiteUrl: user.websiteUrl ?? '',
+          bio: nullToEmptyString(user.bio),
+          avatarUrl: nullToEmptyString(user.avatarUrl),
+          instagramUrl: nullToEmptyString(user.instagramUrl),
+          tiktokUrl: nullToEmptyString(user.tiktokUrl),
+          websiteUrl: nullToEmptyString(user.websiteUrl),
         }}
         className="max-w-lg"
       />

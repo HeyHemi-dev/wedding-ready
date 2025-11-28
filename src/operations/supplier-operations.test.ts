@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach, afterAll } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
-import { scene, TEST_SUPPLIER } from '@/testing/scene'
+import { createTileCreditForm, createSupplierUpdateForm, scene, TEST_SUPPLIER } from '@/testing/scene'
 
 import { supplierOperations } from './supplier-operations'
 
@@ -47,7 +47,7 @@ describe('supplierOperations', () => {
       // Arrange
       const user = await scene.hasUser()
       const supplier = await scene.hasSupplier({ createdByUserId: user.id, locations: [LOCATIONS.OTAGO] })
-      const tile = await scene.hasTile({ createdByUserId: user.id, credits: [{ supplierId: supplier.id }] })
+      const tile = await scene.hasTile({ createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
 
       // Act
       const result = await supplierOperations.getListForSupplierGrid({ location: LOCATIONS.OTAGO })
@@ -88,6 +88,48 @@ describe('supplierOperations', () => {
       // Arrange, Act & Assert
       await expect(supplierOperations.register(TEST_SUPPLIER, '00000000-0000-0000-0000-000000000000')).rejects.toThrow()
     })
+
+    it('should convert empty strings to null for optional fields (websiteUrl, description)', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+
+      // Act
+      const result = await supplierOperations.register(
+        {
+          ...TEST_SUPPLIER,
+          websiteUrl: '',
+          description: '',
+        },
+        user.id
+      )
+
+      // Assert - Check that empty strings were converted to null in the DB
+      const supplier = await supplierModel.getRawById(result.id)
+      expect(supplier).toBeDefined()
+      expect(supplier?.websiteUrl).toBeNull()
+      expect(supplier?.description).toBeNull()
+    })
+
+    it('should handle mixed empty and non-empty optional fields', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+
+      // Act
+      const result = await supplierOperations.register(
+        {
+          ...TEST_SUPPLIER,
+          websiteUrl: 'https://example.com',
+          description: '',
+        },
+        user.id
+      )
+
+      // Assert
+      const supplier = await supplierModel.getRawById(result.id)
+      expect(supplier).toBeDefined()
+      expect(supplier?.websiteUrl).toBe('https://example.com')
+      expect(supplier?.description).toBeNull()
+    })
   })
 
   describe('updateProfile', () => {
@@ -96,7 +138,7 @@ describe('supplierOperations', () => {
       const user = await scene.hasUser()
       const supplier = await scene.hasSupplier({ createdByUserId: user.id, name: 'Test Supplier' })
 
-      const updatedSupplier = await supplierOperations.updateProfile(supplier.id, { name: 'Updated Supplier' }, user.id)
+      const updatedSupplier = await supplierOperations.updateProfile(supplier.id, createSupplierUpdateForm({ name: 'Updated Supplier' }), user.id)
 
       // Assert
       expect(updatedSupplier).toBeDefined()
@@ -109,7 +151,9 @@ describe('supplierOperations', () => {
       const user = await scene.hasUser()
 
       // Act & Assert
-      await expect(supplierOperations.updateProfile('00000000-0000-0000-0000-000000000000', { name: 'Updated Supplier' }, user.id)).rejects.toThrow()
+      await expect(
+        supplierOperations.updateProfile('00000000-0000-0000-0000-000000000000', createSupplierUpdateForm({ name: 'Updated Supplier' }), user.id)
+      ).rejects.toThrow()
     })
 
     it('should throw error when user does not have the correct role', async () => {
@@ -117,22 +161,60 @@ describe('supplierOperations', () => {
       const user = await scene.hasUser()
       const supplier = await scene.hasSupplier({ createdByUserId: user.id })
 
-      await expect(supplierOperations.updateProfile(supplier.id, { name: 'Updated Supplier' }, '00000000-0000-0000-0000-000000000000')).rejects.toThrow()
+      await expect(
+        supplierOperations.updateProfile(supplier.id, createSupplierUpdateForm({ name: 'Updated Supplier' }), '00000000-0000-0000-0000-000000000000')
+      ).rejects.toThrow()
     })
 
-    it('should handle empty strings', async () => {
+    it('should convert empty strings to null for optional fields (websiteUrl, description)', async () => {
       // Arrange
       const user = await scene.hasUser()
       const supplier = await scene.hasSupplier({ createdByUserId: user.id })
 
       // Act
-      await supplierOperations.updateProfile(supplier.id, { name: 'Updated Supplier', websiteUrl: '', description: '' }, user.id)
+      await supplierOperations.updateProfile(supplier.id, createSupplierUpdateForm({ name: 'Updated Supplier', websiteUrl: '', description: '' }), user.id)
 
       // Assert
       const updatedSupplier = await supplierModel.getRawById(supplier.id)
       expect(updatedSupplier?.name).toBe('Updated Supplier')
       expect(updatedSupplier?.websiteUrl).toBeNull()
       expect(updatedSupplier?.description).toBeNull()
+    })
+
+    it('should handle mixed empty and non-empty optional fields', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+
+      // Act
+      await supplierOperations.updateProfile(
+        supplier.id,
+        createSupplierUpdateForm({ name: 'Updated Supplier', websiteUrl: 'https://example.com', description: '' }),
+        user.id
+      )
+
+      // Assert
+      const updatedSupplier = await supplierModel.getRawById(supplier.id)
+      expect(updatedSupplier?.name).toBe('Updated Supplier')
+      expect(updatedSupplier?.websiteUrl).toBe('https://example.com')
+      expect(updatedSupplier?.description).toBeNull()
+    })
+
+    it('should preserve non-empty optional fields', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const websiteUrl = 'https://new-example.com'
+      const description = 'New description'
+
+      // Act
+      await supplierOperations.updateProfile(supplier.id, createSupplierUpdateForm({ name: 'Updated Supplier', websiteUrl, description }), user.id)
+
+      // Assert
+      const updatedSupplier = await supplierModel.getRawById(supplier.id)
+      expect(updatedSupplier?.name).toBe('Updated Supplier')
+      expect(updatedSupplier?.websiteUrl).toBe(websiteUrl)
+      expect(updatedSupplier?.description).toBe(description)
     })
   })
 
