@@ -1,6 +1,8 @@
 import { afterAll, afterEach, describe, expect, it } from 'vitest'
 
 import { savedTilesModel } from '@/models/saved-tiles'
+import { tileModel } from '@/models/tile'
+import { tileSupplierModel } from '@/models/tile-supplier'
 import { createTileCreditForm, scene, TEST_TILE } from '@/testing/scene'
 
 import { tileOperations } from './tile-operations'
@@ -278,6 +280,74 @@ describe('tileOperations', () => {
         })
       ).rejects.toThrow()
     })
+
+    it('should convert empty strings to null for optional fields (title, description)', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+
+      // Act
+      const result = await tileOperations.createForSupplier({
+        imagePath: 'test-empty-strings.jpg',
+        title: '',
+        description: '',
+        location: TEST_TILE.location,
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Assert - Check that empty strings were converted to null in the DB
+      const tile = await tileModel.getRawById(result.id)
+      expect(tile).toBeDefined()
+      expect(tile?.title).toBeNull()
+      expect(tile?.description).toBeNull()
+    })
+
+    it('should convert empty strings to null for optional serviceDescription in credits', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+
+      // Act
+      const result = await tileOperations.createForSupplier({
+        imagePath: 'test-empty-service-description.jpg',
+        title: 'Test Title',
+        description: 'Test Description',
+        location: TEST_TILE.location,
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id, serviceDescription: '' })],
+      })
+
+      // Assert - Check that empty string in serviceDescription was converted to null
+      const credits = await tileSupplierModel.getCreditsByTileId(result.id)
+      expect(credits.length).toBeGreaterThan(0)
+      expect(credits[0].serviceDescription).toBeNull()
+    })
+
+    it('should handle mixed empty and non-empty optional fields', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+
+      // Act
+      const result = await tileOperations.createForSupplier({
+        imagePath: 'test-mixed-empty.jpg',
+        title: 'Test Title',
+        description: '',
+        location: TEST_TILE.location,
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id, serviceDescription: 'Some description' })],
+      })
+
+      // Assert
+      const tile = await tileModel.getRawById(result.id)
+      expect(tile).toBeDefined()
+      expect(tile?.title).toBe('Test Title')
+      expect(tile?.description).toBeNull()
+
+      const credits = await tileSupplierModel.getCreditsByTileId(result.id)
+      expect(credits[0].serviceDescription).toBe('Some description')
+    })
   })
   describe('getCreditsForTile', () => {
     it('should get the credits for a tile', async () => {
@@ -381,6 +451,63 @@ describe('tileOperations', () => {
           authUserId: '00000000-0000-0000-0000-000000000000',
         })
       ).rejects.toThrow()
+    })
+
+    it('should convert empty string to null for optional serviceDescription', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const tile = await scene.hasTile({
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      const supplier2 = await scene.hasSupplier({ handle: 'testsupplier2', createdByUserId: user.id })
+
+      // Act
+      const result = await tileOperations.createCreditForTile({
+        tileId: tile.id,
+        credit: createTileCreditForm({ supplierId: supplier2.id, serviceDescription: '' }),
+        authUserId: user.id,
+      })
+
+      // Assert - Check that empty string in serviceDescription was converted to null
+      const creditWithEmptyDescription = result.find((c) => c.supplierId === supplier2.id)
+      expect(creditWithEmptyDescription).toBeDefined()
+
+      const credits = await tileSupplierModel.getCreditsByTileId(tile.id)
+      const dbCredit = credits.find((c) => c.supplierId === supplier2.id)
+      expect(dbCredit).toBeDefined()
+      expect(dbCredit?.serviceDescription).toBeNull()
+    })
+
+    it('should preserve non-empty serviceDescription', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const tile = await scene.hasTile({
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      const supplier2 = await scene.hasSupplier({ handle: 'testsupplier2', createdByUserId: user.id })
+      const serviceDescription = 'Test service description'
+
+      // Act
+      const result = await tileOperations.createCreditForTile({
+        tileId: tile.id,
+        credit: createTileCreditForm({ supplierId: supplier2.id, serviceDescription }),
+        authUserId: user.id,
+      })
+
+      // Assert
+      const credit = result.find((c) => c.supplierId === supplier2.id)
+      expect(credit).toBeDefined()
+      expect(credit?.serviceDescription).toBe(serviceDescription)
+
+      const credits = await tileSupplierModel.getCreditsByTileId(tile.id)
+      const dbCredit = credits.find((c) => c.supplierId === supplier2.id)
+      expect(dbCredit?.serviceDescription).toBe(serviceDescription)
     })
   })
 })
