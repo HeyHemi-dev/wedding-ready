@@ -1,27 +1,29 @@
 'use client'
 
 import { Check, ChevronDown } from 'lucide-react'
-import { ControllerRenderProps } from 'react-hook-form'
 
 import { useSupplierSearch } from '@/app/_hooks/use-supplier-search'
-import { TileCreditForm as FormValues } from '@/app/_types/validation-schema'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/utils/shadcn-utils'
 
 type SupplierSearchInputProps = {
-  field: ControllerRenderProps<FormValues, 'supplierId'>
+  field: {
+    value: string | undefined
+    onChange: (value: string) => void
+  }
+  disabled?: boolean
 }
 
-export function SupplierSearchInput({ field }: SupplierSearchInputProps) {
+export function SupplierSearchInput({ field, disabled = false }: SupplierSearchInputProps) {
   const { setSearchQuery, data: suppliers } = useSupplierSearch()
   const selectedSupplier = suppliers?.find((s) => s.id === field.value)
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="sm" variant="input" role="combobox" className="w-full justify-between" data-placeholder={!field.value ? true : null}>
+        <Button size="sm" variant="input" role="combobox" className="w-full justify-between" data-placeholder={!field.value ? true : null} disabled={disabled}>
           {selectedSupplier ? `${selectedSupplier.name} @${selectedSupplier.handle}` : 'Select supplier'}
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>

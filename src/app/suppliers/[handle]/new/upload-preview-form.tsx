@@ -19,6 +19,7 @@ import { servicePretty } from '@/db/service-descriptions'
 import { cn } from '@/utils/shadcn-utils'
 
 import { useUploadContext } from './upload-context'
+import { SupplierSearchInput } from '@/components/tiles/supplier-search-input'
 
 const formSteps = ['Add Details', 'Credit Suppliers'] as const
 
@@ -173,9 +174,9 @@ function CreditFieldArray({ control }: { control: Control<TileUploadForm> }) {
             control={control}
             name={`credits.${index}.supplierId`}
             render={({ field }) => (
-              <FormFieldItem label="Supplier ID">
+              <FormFieldItem label="Supplier">
                 <FormControl>
-                  <Input {...field} placeholder="Enter supplier ID" disabled={index === 0} />
+                  <SupplierSearchInput field={field} disabled={index === 0} />
                 </FormControl>
               </FormFieldItem>
             )}
