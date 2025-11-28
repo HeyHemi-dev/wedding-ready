@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { X } from 'lucide-react'
-import { Control, useFieldArray, useForm } from 'react-hook-form'
+import { Control, useFieldArray, useForm, useFormContext } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { TileUploadForm, tileUploadFormSchema } from '@/app/_types/validation-schema'
@@ -174,25 +174,22 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
           <FormField
             control={control}
             name={`credits.${index}.supplierId`}
-            render={({ field }) => {
-              if (index === 0) {
-                // first credit (tile creator). field.value is supplierId (set via defaultValues) - this is what gets sent to the backend. We display @supplier.handle for better UX.
-                return (
-                  <FormFieldItem label="Tile creator">
-                    <FormControl>
-                      <Input {...field} value={`@${supplier.handle}`} disabled />
-                    </FormControl>
-                  </FormFieldItem>
-                )
-              }
-              return (
+            render={({ field }) =>
+              // first credit is the tile creator. field.value is supplierId (set via defaultValues) - this is what gets sent to the backend. We display @supplier.handle for better UX.
+              index === 0 ? (
+                <FormFieldItem label="Tile creator">
+                  <FormControl>
+                    <Input {...field} value={`@${supplier.handle}`} disabled />
+                  </FormControl>
+                </FormFieldItem>
+              ) : (
                 <FormFieldItem label="Supplier">
                   <FormControl>
                     <SupplierSearchInput field={field} />
                   </FormControl>
                 </FormFieldItem>
               )
-            }}
+            }
           />
           <FormField
             control={control}
