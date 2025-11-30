@@ -4,6 +4,7 @@ import * as React from 'react'
 
 import { toast } from 'sonner'
 
+import { TILE_ERROR_MESSAGE } from '@/app/_types/errors'
 import { useUploadThing } from '@/utils/uploadthing'
 
 import { useUploadContext } from '../suppliers/[handle]/new/upload-context'
@@ -41,9 +42,11 @@ export function useCreateTile(options: { signal?: AbortSignal; uploadId: string 
       toast('Tile uploaded')
       removeFile(options.uploadId)
     },
-    onUploadError: () => {
+    onUploadError: (error: Error) => {
       setStatus(CREATE_TILE_STATUS.ERROR)
-      toast.error('Tile upload failed')
+      // Use the error message directly from the server, or fallback to generic message
+      const errorMessage = error.message || TILE_ERROR_MESSAGE.CREATE_FAILED
+      toast.error(errorMessage)
     },
   })
 

@@ -3,7 +3,7 @@ import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { useCreateTile } from '@/app/_hooks/use-create-tile'
-import { OPERATION_ERROR } from '@/app/_types/errors'
+import { OPERATION_ERROR, TILE_ERROR_MESSAGE } from '@/app/_types/errors'
 import { TileUpload, TileUploadForm } from '@/app/_types/validation-schema'
 import { Area } from '@/components/ui/area'
 import { Progress } from '@/components/ui/progress'
@@ -18,7 +18,7 @@ export function UploadPreviewList() {
     <div className="grid grid-cols-1 gap-acquaintance">
       {files.map((file) => (
         <React.Fragment key={file.uploadId}>
-          <ErrorBoundary fallback={<div>Error creating tile</div>}>
+          <ErrorBoundary fallback={<div>{TILE_ERROR_MESSAGE.CREATE_FAILED}</div>}>
             <UploadPreviewItem file={file} />
           </ErrorBoundary>
         </React.Fragment>

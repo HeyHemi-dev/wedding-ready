@@ -6,13 +6,13 @@ import { NextResponse } from 'next/server'
 
 export const ERROR_MESSAGE = {
   // Authentication errors (401)
-  NOT_AUTHENTICATED: 'Authentication required',
+  NOT_AUTHENTICATED: 'Authentication required. Please sign in and try again.',
 
   // Authorization errors (403)
-  FORBIDDEN: 'Insufficient permissions',
+  FORBIDDEN: 'Insufficient permissions. You do not have permission to perform this action.',
 
   // Validation errors (400)
-  VALIDATION_ERROR: 'Invalid data',
+  VALIDATION_ERROR: 'Invalid data.',
   INVALID_INPUT: 'Invalid input',
 
   // Business logic errors (400)
@@ -21,14 +21,26 @@ export const ERROR_MESSAGE = {
   INVALID_STATE: 'Invalid state',
 
   // Resource errors (404)
-  RESOURCE_NOT_FOUND: 'Resource not found',
+  RESOURCE_NOT_FOUND: 'Resource not found. Please refresh and try again.',
 
   // Server errors (500)
   INTERNAL_SERVER_ERROR: 'Internal server error',
   DATABASE_ERROR: 'Database operation failed',
+  NETWORK_ERROR: 'Network error. Please check your connection and try again.',
+  UNKNOWN_ERROR: 'An unexpected error occurred. Please try again.',
 } as const
 
 export type ErrorMessage = (typeof ERROR_MESSAGE)[keyof typeof ERROR_MESSAGE]
+
+// ============================================================================
+// TILE ERROR MESSAGES - Specific error messages for tile operations
+// ============================================================================
+
+export const TILE_ERROR_MESSAGE = {
+  CREATE_FAILED: 'Failed to create tile',
+} as const
+
+export type TileErrorMessage = (typeof TILE_ERROR_MESSAGE)[keyof typeof TILE_ERROR_MESSAGE]
 
 // ============================================================================
 // OPERATION ERRORS - For use in business logic/operations layer
