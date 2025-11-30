@@ -10,11 +10,11 @@ import { useUploadThing } from '@/utils/uploadthing'
 import { useUploadContext } from '../suppliers/[handle]/new/upload-context'
 
 const CREATE_TILE_STATUS = {
-  IDLE: 'idle',
-  CREATING: 'creating',
-  UPLOADING: 'uploading',
-  COMPLETE: 'complete',
-  ERROR: 'error',
+  IDLE: 'Ready',
+  CREATING: 'Creating tile',
+  UPLOADING: 'Uploading image',
+  COMPLETE: 'Tile created',
+  ERROR: 'Tile creation failed',
 } as const
 
 type CreateTileStatus = (typeof CREATE_TILE_STATUS)[keyof typeof CREATE_TILE_STATUS]
@@ -32,9 +32,10 @@ export function useCreateTile(options: { signal?: AbortSignal; uploadId: string 
     headers: {},
     signal: options.signal,
     onUploadBegin: () => {
-      setStatus(CREATE_TILE_STATUS.UPLOADING)
+      setStatus(CREATE_TILE_STATUS.CREATING)
     },
     onUploadProgress: (progress) => {
+      setStatus(CREATE_TILE_STATUS.UPLOADING)
       setUploadProgress(progress)
     },
     onClientUploadComplete: () => {
