@@ -51,22 +51,18 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
     const isValid = await form.trigger(['location'])
     if (!isValid) return
     setFormStep(formSteps[1])
+    // setTimeout ensures the DOM updates after state update before focusing
+    setTimeout(() => {
+      form.setFocus('credits.0.service')
+    }, 0)
   }
 
   function handleBack() {
     setFormStep(formSteps[0])
-  }
-
-  // Focus first field when navigating between steps
-  React.useEffect(() => {
-    if (formStep === formSteps[0]) {
-      // Focus title input (first field in step 1)
+    setTimeout(() => {
       form.setFocus('title')
-    } else if (formStep === formSteps[1]) {
-      // Focus first credit's service field (first interactive field in step 2, skip disabled tile creator)
-      form.setFocus('credits.0.service')
-    }
-  }, [formStep, form])
+    }, 0)
+  }
 
   return (
     <Form {...form}>
@@ -176,6 +172,23 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
     control,
     name: 'credits',
   })
+  const addCreditButtonRef = React.useRef<HTMLButtonElement>(null)
+
+  function handleAppendCredit() {
+    append({
+      supplierId: '',
+      service: SERVICES.VENUE,
+      serviceDescription: '',
+    })
+  }
+
+  function handleRemoveCredit(index: number) {
+    remove(index)
+    // setTimeout ensures the DOM updates after state update before focusing
+    setTimeout(() => {
+      addCreditButtonRef.current?.focus()
+    }, 0)
+  }
 
   return (
     <>
@@ -228,7 +241,7 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
               type="button"
               variant="destructive"
               className="aspect-square min-w-0 p-0"
-              onClick={() => remove(index)}
+              onClick={() => handleRemoveCredit(index)}
               disabled={index === 0}
               aria-label="Remove credit">
               <X className="size-4" aria-hidden="true" />
@@ -238,16 +251,7 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
       ))}
 
       <div className="flex justify-start">
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() =>
-            append({
-              supplierId: '',
-              service: SERVICES.VENUE,
-              serviceDescription: '',
-            })
-          }>
+        <Button type="button" variant="ghost" onClick={handleAppendCredit} ref={addCreditButtonRef}>
           Add Credit
         </Button>
       </div>
