@@ -57,6 +57,17 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
     setFormStep(formSteps[0])
   }
 
+  // Focus first field when navigating between steps
+  React.useEffect(() => {
+    if (formStep === formSteps[0]) {
+      // Focus title input (first field in step 1)
+      form.setFocus('title')
+    } else if (formStep === formSteps[1]) {
+      // Focus first credit's service field (first interactive field in step 2, skip disabled tile creator)
+      form.setFocus('credits.0.service')
+    }
+  }, [formStep, form])
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-rows-[auto_1fr] gap-friend">
