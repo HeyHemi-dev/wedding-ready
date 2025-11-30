@@ -61,7 +61,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-rows-[auto_1fr] gap-friend">
         {formStep === formSteps[0] && (
-          <div className="grid grid-cols-2 gap-sibling">
+          <fieldset className="grid grid-cols-2 gap-sibling">
             <FormHeader step={formSteps[0]} className="col-span-full" />
 
             <FormField
@@ -112,13 +112,13 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
                 )}
               />
             </div>
-          </div>
+          </fieldset>
         )}
         {formStep === formSteps[1] && (
-          <div className="grid gap-sibling">
+          <fieldset className="grid gap-sibling">
             <FormHeader step={formSteps[1]} />
             <CreditFieldArray control={form.control} supplier={supplier} />
-          </div>
+          </fieldset>
         )}
         <div data-test-id="form-footer" className="grid grid-cols-[1fr_auto_auto] gap-sibling">
           <div>
@@ -151,12 +151,12 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
 function FormHeader({ step, className }: { step: FormStep; className?: string }) {
   const index = formSteps.indexOf(step)
   return (
-    <div className={cn('flex gap-partner', className)}>
-      <p className="ui text-muted-foreground">
+    <legend className={cn('flex gap-partner', className)}>
+      <span className="ui text-muted-foreground" aria-label={`Step ${index + 1} of ${formSteps.length}`}>
         {index + 1}/{formSteps.length}
-      </p>
+      </span>
       <h3 className="ui-s1">{step}</h3>
-    </div>
+    </legend>
   )
 }
 
@@ -169,7 +169,7 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
   return (
     <>
       {fields.map((field, index) => (
-        <div key={field.id} className="grid grid-cols-[1fr_1fr_auto] items-end gap-sibling">
+        <fieldset key={field.id} className="grid grid-cols-[1fr_1fr_auto] items-end gap-sibling">
           <FormField
             control={control}
             name={`credits.${index}.supplierId`}
@@ -178,7 +178,7 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
               index === 0 ? (
                 <FormFieldItem label="Tile creator">
                   <FormControl>
-                    <Input {...field} value={`@${supplier.handle}`} disabled />
+                    <Input {...field} value={`@${supplier.handle}`} disabled aria-label={`Tile creator: ${supplier.handle}. This cannot be changed.`} />
                   </FormControl>
                 </FormFieldItem>
               ) : (
@@ -223,7 +223,7 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
-        </div>
+        </fieldset>
       ))}
 
       <div className="flex justify-start">
