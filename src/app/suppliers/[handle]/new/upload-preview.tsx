@@ -2,7 +2,7 @@ import React from 'react'
 
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { useCreateTile } from '@/app/_hooks/use-create-tile'
+import { CREATE_TILE_STATUS, useCreateTile } from '@/app/_hooks/use-create-tile'
 import { OPERATION_ERROR, TILE_ERROR_MESSAGE } from '@/app/_types/errors'
 import { TileUpload, TileUploadForm } from '@/app/_types/validation-schema'
 import { Area } from '@/components/ui/area'
@@ -52,7 +52,7 @@ function UploadPreviewItem({ file }: { file: UploadItem }) {
 
   return (
     <>
-      {status === 'idle' ? (
+      {status === CREATE_TILE_STATUS.IDLE ? (
         <div className="grid grid-cols-3 gap-area">
           <Area className="relative overflow-clip rounded-area">
             {/* eslint-disable-next-line @next/next/no-img-element -- This is a client-side preview of a local file, so Next.js Image optimization isn't needed */}

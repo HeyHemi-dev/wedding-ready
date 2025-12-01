@@ -9,7 +9,7 @@ import { useUploadThing } from '@/utils/uploadthing'
 
 import { useUploadContext } from '../suppliers/[handle]/new/upload-context'
 
-const CREATE_TILE_STATUS = {
+export const CREATE_TILE_STATUS = {
   IDLE: 'Ready',
   CREATING: 'Creating tile',
   UPLOADING: 'Uploading image',
@@ -17,7 +17,7 @@ const CREATE_TILE_STATUS = {
   ERROR: 'Tile creation failed',
 } as const
 
-type CreateTileStatus = (typeof CREATE_TILE_STATUS)[keyof typeof CREATE_TILE_STATUS]
+export type CreateTileStatus = (typeof CREATE_TILE_STATUS)[keyof typeof CREATE_TILE_STATUS]
 
 /**
  * Creates a tile in the database, and then uploads the image to UploadThing
