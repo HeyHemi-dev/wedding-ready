@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { X } from 'lucide-react'
-import { Control, useFieldArray, useForm, useFormContext } from 'react-hook-form'
+import { Control, useFieldArray, useForm } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Supplier } from '@/app/_types/suppliers'
