@@ -24,7 +24,7 @@ export type TileStatus = (typeof TILE_STATUS)[keyof typeof TILE_STATUS]
  * Creates a tile in the database, and then uploads the image to UploadThing
  * Updating the tile with the image url is handled in the Uploadthing Endpoint
  */
-export function useCreateTile(options: { signal?: AbortSignal; uploadId: string }) {
+export function useTileCreate(options: { signal?: AbortSignal; uploadId: string }) {
   const { removeFile } = useUploadContext()
   const router = useRouter()
   const [status, setStatus] = React.useState<TileStatus>(TILE_STATUS.IDLE)

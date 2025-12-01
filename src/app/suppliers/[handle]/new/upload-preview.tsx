@@ -2,7 +2,7 @@ import React from 'react'
 
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { TILE_STATUS, useCreateTile } from '@/app/_hooks/use-create-tile'
+import { TILE_STATUS, useTileCreate } from '@/app/_hooks/use-tile-create'
 import { OPERATION_ERROR, TILE_ERROR_MESSAGE } from '@/app/_types/errors'
 import { TileUpload, TileUploadForm } from '@/app/_types/validation-schema'
 import { Area } from '@/components/ui/area'
@@ -31,7 +31,7 @@ function UploadPreviewItem({ file }: { file: UploadItem }) {
   const { removeFile, authUserId, supplier } = useUploadContext()
   if (!authUserId || !supplier) throw OPERATION_ERROR.INVALID_STATE()
 
-  const { startUpload, status, uploadProgress } = useCreateTile({
+  const { startUpload, status, uploadProgress } = useTileCreate({
     uploadId: file.uploadId,
   })
 
