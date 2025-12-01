@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { TILE_ERROR_MESSAGE } from '@/app/_types/errors'
@@ -25,6 +26,7 @@ export type TileStatus = (typeof TILE_STATUS)[keyof typeof TILE_STATUS]
  */
 export function useCreateTile(options: { signal?: AbortSignal; uploadId: string }) {
   const { removeFile } = useUploadContext()
+  const router = useRouter()
   const [status, setStatus] = React.useState<TileStatus>(TILE_STATUS.IDLE)
   const [uploadProgress, setUploadProgress] = React.useState(0)
 
@@ -35,12 +37,17 @@ export function useCreateTile(options: { signal?: AbortSignal; uploadId: string 
       setStatus(TILE_STATUS.CREATING)
     },
     onUploadProgress: (progress) => {
-      setStatus(TILE_STATUS.UPLOADING)
       setUploadProgress(progress)
     },
-    onClientUploadComplete: () => {
+    onClientUploadComplete: (res) => {
       setStatus(TILE_STATUS.COMPLETE)
-      toast('Tile uploaded')
+      const tileId = res[0].serverData.id
+      toast.success('Tile uploaded', {
+        action: {
+          label: 'View tile',
+          onClick: () => router.push(`/t/${tileId}`),
+        },
+      })
       removeFile(options.uploadId)
     },
     onUploadError: (error: Error) => {
