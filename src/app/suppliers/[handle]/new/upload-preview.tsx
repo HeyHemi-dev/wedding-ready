@@ -54,7 +54,7 @@ function UploadPreviewItem({ file }: { file: UploadItem }) {
     <>
       {status === TILE_STATUS.IDLE ? (
         <div className="grid grid-cols-3 gap-area">
-          <Area className="relative overflow-clip rounded-area">
+          <Area className="relative aspect-square overflow-clip rounded-area">
             {/* eslint-disable-next-line @next/next/no-img-element -- This is a client-side preview of a local file, so Next.js Image optimization isn't needed */}
             <img src={file.fileObjectUrl} alt={file.file.name} className="absolute inset-0 h-full w-full object-contain" />
           </Area>
