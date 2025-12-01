@@ -73,6 +73,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-rows-[auto_1fr] gap-friend">
         {formStep === formSteps[0] && (
           <fieldset className="grid grid-cols-2 gap-sibling">
+            <legend className="sr-only">{formSteps[0]}</legend>
             <FormHeader step={formSteps[0]} className="col-span-full" />
 
             <FormField
@@ -127,6 +128,7 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
         )}
         {formStep === formSteps[1] && (
           <fieldset className="grid gap-sibling">
+            <legend className="sr-only">{formSteps[1]}</legend>
             <FormHeader step={formSteps[1]} />
             <CreditFieldArray control={form.control} supplier={supplier} />
           </fieldset>
@@ -162,12 +164,12 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
 function FormHeader({ step, className }: { step: FormStep; className?: string }) {
   const index = formSteps.indexOf(step)
   return (
-    <legend className={cn('flex gap-partner', className)}>
+    <div className={cn('flex gap-partner', className)}>
       <span className="ui text-muted-foreground" aria-label={`Step ${index + 1} of ${formSteps.length}`}>
         {index + 1}/{formSteps.length}
       </span>
       <h3 className="ui-s1">{step}</h3>
-    </legend>
+    </div>
   )
 }
 
@@ -198,6 +200,7 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
     <>
       {fields.map((field, index) => (
         <fieldset key={field.id} className="grid grid-cols-[1fr_1fr_auto] items-end gap-sibling">
+          <legend className="sr-only">Credit {index + 1}</legend>
           <FormField
             control={control}
             name={`credits.${index}.supplierId`}
@@ -247,7 +250,7 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
               className="aspect-square min-w-0 p-0"
               onClick={() => handleRemoveCredit(index)}
               disabled={index === 0}
-              aria-label="Remove credit">
+              aria-label={`Remove credit ${index + 1}`}>
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
