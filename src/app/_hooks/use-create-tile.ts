@@ -41,6 +41,8 @@ export function useCreateTile(options: { signal?: AbortSignal; uploadId: string 
     },
     onClientUploadComplete: (res) => {
       setStatus(TILE_STATUS.COMPLETE)
+      removeFile(options.uploadId)
+
       const tileId = res[0].serverData.id
       toast.success('Tile uploaded', {
         action: {
@@ -48,7 +50,6 @@ export function useCreateTile(options: { signal?: AbortSignal; uploadId: string 
           onClick: () => router.push(`/t/${tileId}`),
         },
       })
-      removeFile(options.uploadId)
     },
     onUploadError: (error: Error) => {
       setStatus(TILE_STATUS.ERROR)
