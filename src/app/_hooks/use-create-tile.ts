@@ -41,6 +41,7 @@ export function useCreateTile(options: { signal?: AbortSignal; uploadId: string 
     },
     onClientUploadComplete: (res) => {
       setStatus(TILE_STATUS.COMPLETE)
+      // Remove the file from the upload context before toast so that handleBeforeUnload isn't called if there are no more tiles to upload.
       removeFile(options.uploadId)
 
       const tileId = res[0].serverData.id
