@@ -9,7 +9,7 @@ import { useUploadThing } from '@/utils/uploadthing'
 
 import { useUploadContext } from '../suppliers/[handle]/new/upload-context'
 
-export const CREATE_TILE_STATUS = {
+export const TILE_STATUS = {
   IDLE: 'Ready',
   CREATING: 'Creating tile',
   UPLOADING: 'Uploading image',
@@ -17,7 +17,7 @@ export const CREATE_TILE_STATUS = {
   ERROR: 'Tile creation failed',
 } as const
 
-export type CreateTileStatus = (typeof CREATE_TILE_STATUS)[keyof typeof CREATE_TILE_STATUS]
+export type TileStatus = (typeof TILE_STATUS)[keyof typeof TILE_STATUS]
 
 /**
  * Creates a tile in the database, and then uploads the image to UploadThing
@@ -25,26 +25,26 @@ export type CreateTileStatus = (typeof CREATE_TILE_STATUS)[keyof typeof CREATE_T
  */
 export function useCreateTile(options: { signal?: AbortSignal; uploadId: string }) {
   const { removeFile } = useUploadContext()
-  const [status, setStatus] = React.useState<CreateTileStatus>(CREATE_TILE_STATUS.IDLE)
+  const [status, setStatus] = React.useState<TileStatus>(TILE_STATUS.IDLE)
   const [uploadProgress, setUploadProgress] = React.useState(0)
 
   const { startUpload } = useUploadThing('tileUploader', {
     headers: {},
     signal: options.signal,
     onUploadBegin: () => {
-      setStatus(CREATE_TILE_STATUS.CREATING)
+      setStatus(TILE_STATUS.CREATING)
     },
     onUploadProgress: (progress) => {
-      setStatus(CREATE_TILE_STATUS.UPLOADING)
+      setStatus(TILE_STATUS.UPLOADING)
       setUploadProgress(progress)
     },
     onClientUploadComplete: () => {
-      setStatus(CREATE_TILE_STATUS.COMPLETE)
+      setStatus(TILE_STATUS.COMPLETE)
       toast('Tile uploaded')
       removeFile(options.uploadId)
     },
     onUploadError: (error: Error) => {
-      setStatus(CREATE_TILE_STATUS.ERROR)
+      setStatus(TILE_STATUS.ERROR)
       // Use the error message directly from the server, or fallback to generic message
       const errorMessage = error.message || TILE_ERROR_MESSAGE.CREATE_FAILED
       toast.error(errorMessage)
