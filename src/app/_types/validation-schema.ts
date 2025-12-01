@@ -106,7 +106,7 @@ export type SupplierUpdateForm = z.infer<typeof supplierUpdateFormSchema>
 // TILE VALIDATION
 
 const creditSchema = z.object({
-  supplierId: z.string(),
+  supplierId: z.string().min(1, 'Supplier is required'),
   service: z.nativeEnum(SERVICES, {
     errorMap: () => ({ message: 'Service is required' }),
   }),

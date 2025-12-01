@@ -57,11 +57,23 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
     setFormStep(formSteps[0])
   }
 
+  React.useEffect(() => {
+    switch (formStep) {
+      case formSteps[0]:
+        form.setFocus('title')
+        break
+      case formSteps[1]:
+        form.setFocus('credits.0.service')
+        break
+    }
+  }, [formStep, form])
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-rows-[auto_1fr] gap-friend">
         {formStep === formSteps[0] && (
-          <div className="grid grid-cols-2 gap-sibling">
+          <fieldset className="grid grid-cols-2 gap-sibling">
+            <legend className="sr-only">{formSteps[0]}</legend>
             <FormHeader step={formSteps[0]} className="col-span-full" />
 
             <FormField
@@ -112,13 +124,14 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
                 )}
               />
             </div>
-          </div>
+          </fieldset>
         )}
         {formStep === formSteps[1] && (
-          <div className="grid gap-sibling">
+          <fieldset className="grid gap-sibling">
+            <legend className="sr-only">{formSteps[1]}</legend>
             <FormHeader step={formSteps[1]} />
             <CreditFieldArray control={form.control} supplier={supplier} />
-          </div>
+          </fieldset>
         )}
         <div data-test-id="form-footer" className="grid grid-cols-[1fr_auto_auto] gap-sibling">
           <div>
@@ -152,9 +165,9 @@ function FormHeader({ step, className }: { step: FormStep; className?: string })
   const index = formSteps.indexOf(step)
   return (
     <div className={cn('flex gap-partner', className)}>
-      <p className="ui text-muted-foreground">
+      <span className="ui text-muted-foreground" aria-label={`Step ${index + 1} of ${formSteps.length}`}>
         {index + 1}/{formSteps.length}
-      </p>
+      </span>
       <h3 className="ui-s1">{step}</h3>
     </div>
   )
@@ -165,11 +178,29 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
     control,
     name: 'credits',
   })
+  const addCreditButtonRef = React.useRef<HTMLButtonElement>(null)
+
+  function handleAppendCredit() {
+    append({
+      supplierId: '',
+      service: SERVICES.VENUE,
+      serviceDescription: '',
+    })
+  }
+
+  function handleRemoveCredit(index: number) {
+    remove(index)
+    // setTimeout ensures the DOM updates after state update before focusing
+    setTimeout(() => {
+      addCreditButtonRef.current?.focus()
+    }, 0)
+  }
 
   return (
     <>
       {fields.map((field, index) => (
-        <div key={field.id} className="grid grid-cols-[1fr_1fr_auto] items-end gap-sibling">
+        <fieldset key={field.id} className="grid grid-cols-[1fr_1fr_auto] items-end gap-sibling">
+          <legend className="sr-only">Credit {index + 1}</legend>
           <FormField
             control={control}
             name={`credits.${index}.supplierId`}
@@ -178,7 +209,7 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
               index === 0 ? (
                 <FormFieldItem label="Tile creator">
                   <FormControl>
-                    <Input {...field} value={`@${supplier.handle}`} disabled />
+                    <Input {...field} value={`@${supplier.handle}`} disabled aria-label={`Tile creator: ${supplier.handle}. This cannot be changed.`} />
                   </FormControl>
                 </FormFieldItem>
               ) : (
@@ -217,26 +248,17 @@ function CreditFieldArray({ control, supplier }: { control: Control<TileUploadFo
               type="button"
               variant="destructive"
               className="aspect-square min-w-0 p-0"
-              onClick={() => remove(index)}
+              onClick={() => handleRemoveCredit(index)}
               disabled={index === 0}
-              aria-label="Remove credit">
+              aria-label={`Remove credit ${index + 1}`}>
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
-        </div>
+        </fieldset>
       ))}
 
       <div className="flex justify-start">
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() =>
-            append({
-              supplierId: '',
-              service: SERVICES.VENUE,
-              serviceDescription: '',
-            })
-          }>
+        <Button type="button" variant="ghost" onClick={handleAppendCredit} ref={addCreditButtonRef}>
           Add Credit
         </Button>
       </div>

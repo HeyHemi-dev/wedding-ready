@@ -34,7 +34,7 @@
 
 ### Forms
 
-- Follow the form validation pattern in [patterns-form.md](./patterns-form.md)
+- Follow the form validation pattern in [form-patterns.md](./form-patterns.md)
 - Use Zod schemas for type-safe validation
 - Use react-hook-forms and onSubmit to trigger server actions
 - Use Shadcn form components with our custom `FormFieldItem`

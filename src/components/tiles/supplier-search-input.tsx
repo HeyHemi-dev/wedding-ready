@@ -3,9 +3,11 @@
 import { Check, ChevronDown } from 'lucide-react'
 
 import { useSupplierSearch } from '@/app/_hooks/use-supplier-search'
+import { ERROR_MESSAGE } from '@/app/_types/errors'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/utils/shadcn-utils'
 
 type SupplierSearchInputProps = {
@@ -17,7 +19,9 @@ type SupplierSearchInputProps = {
 }
 
 export function SupplierSearchInput({ field, disabled = false }: SupplierSearchInputProps) {
-  const { setSearchQuery, data: suppliers } = useSupplierSearch()
+  const { searchQuery, setSearchQuery, data: suppliers, isLoading, isError } = useSupplierSearch()
+  const hasSearchQuery = searchQuery.trim().length > 0
+  const hasResults = suppliers && suppliers.length > 0
   const selectedSupplier = suppliers?.find((s) => s.id === field.value)
 
   return (
@@ -32,23 +36,44 @@ export function SupplierSearchInput({ field, disabled = false }: SupplierSearchI
         <Command shouldFilter={false}>
           <CommandInput placeholder="Search suppliers..." onValueChange={setSearchQuery} required />
           <CommandList>
-            <CommandEmpty>No suppliers found.</CommandEmpty>
-            <CommandGroup>
-              {suppliers?.map((supplier) => (
-                <CommandItem
-                  key={supplier.handle}
-                  value={supplier.handle}
-                  onSelect={() => {
-                    field.onChange(supplier.id)
-                  }}>
-                  <Check className={cn('mr-2 h-4 w-4', field.value === supplier.id ? 'opacity-100' : 'opacity-0')} />
-                  <div className="flex flex-col">
-                    <span className="ui-small-s1">{supplier.name}</span>
-                    <span className="ui-small opacity-80">@{supplier.handle}</span>
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            {!hasSearchQuery ? (
+              <CommandEmpty>Start typing to search for suppliers.</CommandEmpty>
+            ) : isLoading ? (
+              <div className="p-2">
+                <div className="space-y-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-4 rounded" />
+                      <div className="flex flex-1 flex-col gap-1">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-24" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : isError ? (
+              <CommandEmpty>{ERROR_MESSAGE.NETWORK_ERROR}</CommandEmpty>
+            ) : !hasResults ? (
+              <CommandEmpty>No suppliers found.</CommandEmpty>
+            ) : (
+              <CommandGroup>
+                {suppliers?.map((supplier) => (
+                  <CommandItem
+                    key={supplier.handle}
+                    value={supplier.handle}
+                    onSelect={() => {
+                      field.onChange(supplier.id)
+                    }}>
+                    <Check className={cn('mr-2 h-4 w-4', field.value === supplier.id ? 'opacity-100' : 'opacity-0')} />
+                    <div className="flex flex-col">
+                      <span className="ui-small-s1">{supplier.name}</span>
+                      <span className="ui-small opacity-80">@{supplier.handle}</span>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>

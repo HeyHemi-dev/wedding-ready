@@ -17,7 +17,7 @@ export function useSupplierSearch() {
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedSearchQuery = useDebounce(searchQuery, 500)
 
-  const { data } = useQuery({
+  const query = useQuery({
     queryKey: queryKeys.supplierSearch(debouncedSearchQuery),
     queryFn: async () => {
       if (!debouncedSearchQuery.trim()) return []
@@ -30,7 +30,7 @@ export function useSupplierSearch() {
   return {
     searchQuery,
     setSearchQuery,
-    data,
+    ...query,
   }
 }
 

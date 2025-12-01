@@ -2,8 +2,8 @@ import React from 'react'
 
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { useCreateTile } from '@/app/_hooks/use-create-tile'
-import { OPERATION_ERROR } from '@/app/_types/errors'
+import { TILE_STATUS, useTileCreate } from '@/app/_hooks/use-tile-create'
+import { OPERATION_ERROR, TILE_ERROR_MESSAGE } from '@/app/_types/errors'
 import { TileUpload, TileUploadForm } from '@/app/_types/validation-schema'
 import { Area } from '@/components/ui/area'
 import { Progress } from '@/components/ui/progress'
@@ -18,7 +18,7 @@ export function UploadPreviewList() {
     <div className="grid grid-cols-1 gap-acquaintance">
       {files.map((file) => (
         <React.Fragment key={file.uploadId}>
-          <ErrorBoundary fallback={<div>Error creating tile</div>}>
+          <ErrorBoundary fallback={<div>{TILE_ERROR_MESSAGE.CREATE_FAILED}</div>}>
             <UploadPreviewItem file={file} />
           </ErrorBoundary>
         </React.Fragment>
@@ -31,7 +31,7 @@ function UploadPreviewItem({ file }: { file: UploadItem }) {
   const { removeFile, authUserId, supplier } = useUploadContext()
   if (!authUserId || !supplier) throw OPERATION_ERROR.INVALID_STATE()
 
-  const { startUpload, status, uploadProgress } = useCreateTile({
+  const { startUpload, status, uploadProgress } = useTileCreate({
     uploadId: file.uploadId,
   })
 
@@ -52,9 +52,9 @@ function UploadPreviewItem({ file }: { file: UploadItem }) {
 
   return (
     <>
-      {status === 'idle' ? (
+      {status === TILE_STATUS.IDLE ? (
         <div className="grid grid-cols-3 gap-area">
-          <Area className="relative overflow-clip rounded-area">
+          <Area className="relative aspect-square overflow-clip rounded-area">
             {/* eslint-disable-next-line @next/next/no-img-element -- This is a client-side preview of a local file, so Next.js Image optimization isn't needed */}
             <img src={file.fileObjectUrl} alt={file.file.name} className="absolute inset-0 h-full w-full object-contain" />
           </Area>
