@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { X } from 'lucide-react'
-import { Control, useFieldArray, useForm } from 'react-hook-form'
+import { Control, useFieldArray, useForm, useFormContext } from 'react-hook-form'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Supplier } from '@/app/_types/suppliers'
@@ -51,18 +51,22 @@ export function UploadPreviewForm({ onSubmit, onDelete }: { onSubmit: (data: Til
     const isValid = await form.trigger(['location'])
     if (!isValid) return
     setFormStep(formSteps[1])
-    // setTimeout ensures the DOM updates after state update before focusing
-    setTimeout(() => {
-      form.setFocus('credits.0.service')
-    }, 0)
   }
 
   function handleBack() {
     setFormStep(formSteps[0])
-    setTimeout(() => {
-      form.setFocus('title')
-    }, 0)
   }
+
+  React.useEffect(() => {
+    switch (formStep) {
+      case formSteps[0]:
+        form.setFocus('title')
+        break
+      case formSteps[1]:
+        form.setFocus('credits.0.service')
+        break
+    }
+  }, [formStep, form])
 
   return (
     <Form {...form}>
