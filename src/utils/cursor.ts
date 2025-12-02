@@ -19,7 +19,10 @@ export function encodeCursor(score: number, createdAt: Date, tileId: string): st
 
 /**
  * Decodes a cursor string back into its components (score, createdAt, tileId).
- * @param cursor - The Base64-encoded cursor string.
+ *
+ * Note: This function should only be called when a cursor is provided (not null/undefined).
+ *
+ * @param cursor - The Base64-encoded cursor string. Must be a non-null string.
  * @returns An object containing score, createdAt (as Date), and tileId.
  * @throws Error if the cursor format is invalid.
  */
