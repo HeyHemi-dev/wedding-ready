@@ -44,6 +44,47 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
   }
 }
 
+async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): Promise<FeedQueryResult> {
+  // Decode cursor if provided
+  let cursorData: CursorData | null = null
+  if (cursor) {
+    cursorData = decodeCursor(cursor)
+  }
+
+  const feedTiles = await tileModel.getFeed({ cursorData, limit })
+
+  // Determine if there's a next page
+  const hasNextPage = feedTiles.length > limit
+  const tilesToReturn = hasNextPage ? feedTiles.slice(0, limit) : feedTiles
+
+  // Get the current auth user's saved status for each tile
+  const savedStatesMap = await getSavedStatesMap(
+    tilesToReturn.map((t) => t.id),
+    authUserId
+  )
+
+  const tiles: TileListItem[] = tilesToReturn.map((tile) => ({
+    id: tile.id,
+    imagePath: tile.imagePath,
+    title: tile.title,
+    description: tile.description,
+    isSaved: savedStatesMap.get(tile.id),
+  }))
+
+  // Generate next cursor from the last tile
+  let nextCursor: string | null = null
+  if (hasNextPage && tilesToReturn.length > 0) {
+    const lastTile = tilesToReturn[tilesToReturn.length - 1]
+    nextCursor = encodeCursor({ score: lastTile.score, createdAt: lastTile.createdAt, tileId: lastTile.id })
+  }
+
+  return {
+    tiles,
+    nextCursor,
+    hasNextPage,
+  }
+}
+
 async function getListForSupplier(supplierId: string, authUserId?: string): Promise<TileListItem[]> {
   const tiles = await tileModel.getManyRawBySupplierId(supplierId)
 
@@ -152,46 +193,4 @@ async function getSavedStatesMap(tileIds: string[], authUserId: string | undefin
     savedTiles.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
   }
   return savedStatesMap
-}
-
-async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): Promise<FeedQueryResult> {
-  // Decode cursor if provided
-  let cursorData: CursorData | null = null
-  if (cursor) {
-    cursorData = decodeCursor(cursor)
-  }
-
-  // Fetch tiles with scores from model
-  const results = await tileModel.getFeed({ cursorData, limit })
-
-  // Determine if there's a next page
-  const hasNextPage = results.length > limit
-  const tilesToReturn = hasNextPage ? results.slice(0, limit) : results
-
-  // Get the current auth user's saved status for each tile
-  const savedStatesMap = await getSavedStatesMap(
-    tilesToReturn.map((t) => t.id),
-    authUserId
-  )
-
-  const tiles: TileListItem[] = tilesToReturn.map((tile) => ({
-    id: tile.id,
-    imagePath: tile.imagePath,
-    title: tile.title,
-    description: tile.description,
-    isSaved: savedStatesMap.get(tile.id),
-  }))
-
-  // Generate next cursor from the last tile
-  let nextCursor: string | null = null
-  if (hasNextPage && tilesToReturn.length > 0) {
-    const lastTile = tilesToReturn[tilesToReturn.length - 1]
-    nextCursor = encodeCursor({ score: lastTile.score, createdAt: lastTile.createdAt, tileId: lastTile.id })
-  }
-
-  return {
-    tiles,
-    nextCursor,
-    hasNextPage,
-  }
 }
