@@ -89,7 +89,7 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
   - Resolves `authUserId` from session (optional).
   - Calls `tileOperations.getFeed`.
   - Returns JSON: `{ tiles, nextCursor, hasNextPage }`.
-  - Exports TypeScript types: `FeedGetResponseBody`, `FeedGetQueryParams`.
+  - Exports TypeScript types: `FeedGetResponseBody`, `FeedGetRequestParams`.
 - Follows existing API route patterns (error handling, tryCatch wrapper).
 
 **`page.tsx` (`app/feed/page.tsx`)**
@@ -192,7 +192,7 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
   - Resolve `authUserId` from session (optional).
   - Call `tileOperations.getFeed`.
   - Return JSON response with proper types.
-  - Add TypeScript exports: `FeedGetResponseBody`, `FeedGetQueryParams`.
+  - Add TypeScript exports: `FeedGetResponseBody`, `FeedGetRequestParams`.
 - Add `feed` query key to `src/app/_types/keys.ts`.
 - Unit tests for `tileOperations.getFeed`:
   - Score calculation correctness.
