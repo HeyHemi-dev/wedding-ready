@@ -149,8 +149,12 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 ## Implementation Considerations
 
 ### Database Performance
-- **Save counts**: Initially computed on-the-fly via SQL aggregation (acceptable for MVP).
-- **Future optimization**: If performance degrades, add `save_count` column to `tiles` table with periodic cron job updates.
+- **Current implementation**: Credit counts and save counts are calculated for ALL tiles on every query execution, even though only a small subset (e.g., 20 tiles) is returned.
+- **Performance threshold**: Re-evaluate query performance when reaching ~10K tiles or if query time exceeds 200ms.
+- **Optimization ideas**:
+  - **Denormalized score**: Add `composite_score` column to `tiles` table, updated via periodic cron job or triggers.
+  - **Index optimization**: Add index on `saved_tiles(tile_id, is_saved)` to improve save count aggregation performance.
+  - **Materialized views**: Consider materialized views for pre-computed credit/save counts if real-time accuracy isn't critical.
 - **Query optimization**: Use indexed columns (`createdAt`, `isPrivate`) and efficient JOINs.
 
 ### Masonry Layout
