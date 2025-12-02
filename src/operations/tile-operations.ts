@@ -165,21 +165,20 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
   }
 
   // Fetch tiles with scores from model
-  const results = await tileModel.getFeedRaw({ cursorData, limit })
+  const results = await tileModel.getFeed({ cursorData, limit })
 
   // Determine if there's a next page
   const hasNextPage = results.length > limit
   const tilesToReturn = hasNextPage ? results.slice(0, limit) : results
 
-  // Get tile IDs for saved state lookup
-  const tileIds: string[] = tilesToReturn.map((t) => t.id)
-  const savedStatesMap = new Map<string, boolean | undefined>(tileIds.map((id) => [id, undefined]))
-  if (authUserId && tileIds.length > 0) {
+  const savedStatesMap = new Map<string, boolean | undefined>(tilesToReturn.map((t) => [t.id, undefined]))
+  if (authUserId) {
+    // Get the current auth user's saved status for each tile
+    const tileIds = tilesToReturn.map((t) => t.id)
     const savedStates = await getSavedStates(tileIds, authUserId)
     savedStates.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
   }
 
-  // Build TileListItem array
   const tiles: TileListItem[] = tilesToReturn.map((tile) => ({
     id: tile.id,
     imagePath: tile.imagePath,
