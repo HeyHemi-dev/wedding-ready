@@ -27,3 +27,9 @@ export type TileListItem = {
   description: string | null
   isSaved: boolean | undefined
 }
+
+export type FeedQueryResult = {
+  tiles: TileListItem[]
+  nextCursor: string | null
+  hasNextPage: boolean
+}
