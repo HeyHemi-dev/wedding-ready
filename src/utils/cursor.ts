@@ -1,5 +1,11 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 
+export type CursorData = {
+  score: number
+  createdAt: Date
+  tileId: string
+}
+
 /**
  * Encodes a cursor tuple (score, createdAt, tileId) into a URL-safe string.
  * @param score - The composite score of the tile.
@@ -7,12 +13,7 @@ import { OPERATION_ERROR } from '@/app/_types/errors'
  * @param tileId - The unique identifier of the tile.
  * @returns A Base64-encoded string representing the cursor.
  */
-export function encodeCursor(score: number, createdAt: Date, tileId: string): string {
-  const cursorData = {
-    score,
-    createdAt: createdAt.toISOString(),
-    tileId,
-  }
+export function encodeCursor(cursorData: CursorData): string {
   const json = JSON.stringify(cursorData)
   return Buffer.from(json).toString('base64url')
 }
@@ -26,10 +27,10 @@ export function encodeCursor(score: number, createdAt: Date, tileId: string): st
  * @returns An object containing score, createdAt (as Date), and tileId.
  * @throws Error if the cursor format is invalid.
  */
-export function decodeCursor(cursor: string): { score: number; createdAt: Date; tileId: string } {
+export function decodeCursor(cursor: string): CursorData {
   try {
     const json = Buffer.from(cursor, 'base64url').toString('utf-8')
-    const parsed = JSON.parse(json) as { score: number; createdAt: string; tileId: string }
+    const parsed = JSON.parse(json) as CursorData
 
     if (typeof parsed.score !== 'number' || typeof parsed.createdAt !== 'string' || typeof parsed.tileId !== 'string') {
       throw OPERATION_ERROR.VALIDATION_ERROR('Invalid cursor format: missing required fields')
