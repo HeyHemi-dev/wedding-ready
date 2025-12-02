@@ -52,12 +52,9 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
   }
 
   const feedTiles = await tileModel.getFeed({ cursorData, limit })
-
-  // Determine if there's a next page
   const hasNextPage = feedTiles.length > limit
   const tilesToReturn = hasNextPage ? feedTiles.slice(0, limit) : feedTiles
 
-  // Get the current auth user's saved status for each tile
   const savedStatesMap = await getSavedStatesMap(
     tilesToReturn.map((t) => t.id),
     authUserId
