@@ -10,12 +10,12 @@ import { decodeCursor, encodeCursor, CursorData } from '@/utils/cursor'
 
 export const tileOperations = {
   getById,
+  getFeed,
   getListForSupplier,
   getListForUser,
   createForSupplier,
   getCreditsForTile,
   createCreditForTile,
-  getFeed,
 }
 
 async function getById(id: string, authUserId?: string): Promise<Tile> {
@@ -47,12 +47,10 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
 async function getListForSupplier(supplierId: string, authUserId?: string): Promise<TileListItem[]> {
   const tiles = await tileModel.getManyRawBySupplierId(supplierId)
 
-  const savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
-  if (authUserId) {
-    const tileIds = tiles.map((t) => t.id)
-    const savedStates = await getSavedStates(tileIds, authUserId)
-    savedStates.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
-  }
+  const savedStatesMap = await getSavedStatesMap(
+    tiles.map((t) => t.id),
+    authUserId
+  )
 
   return tiles.map((tile) => ({
     id: tile.id,
@@ -66,14 +64,12 @@ async function getListForSupplier(supplierId: string, authUserId?: string): Prom
 async function getListForUser(userId: string, authUserId?: string): Promise<TileListItem[]> {
   const tiles = await tileModel.getManyRawByUserId(userId)
 
-  const savedStatesMap = new Map<string, boolean | undefined>(tiles.map((t) => [t.id, undefined]))
-  if (authUserId) {
-    // Get the current auth user's saved status for each tile
-    // Note: the authUser can be different from the user we're getting tiles for.
-    const tileIds = tiles.map((t) => t.id)
-    const savedStates = await getSavedStates(tileIds, authUserId)
-    savedStates.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
-  }
+  // Get the current auth user's saved status for each tile
+  // Note: the authUser can be different from the user we're getting tiles for.
+  const savedStatesMap = await getSavedStatesMap(
+    tiles.map((t) => t.id),
+    authUserId
+  )
 
   return tiles.map((tile) => ({
     id: tile.id,
@@ -149,12 +145,13 @@ async function getSavedState(tileId: string, authUserId: string): Promise<boolea
   return savedTile?.isSaved ?? false
 }
 
-async function getSavedStates(tileIds: string[], authUserId: string): Promise<{ tileId: string; isSaved: boolean }[]> {
-  const savedTiles = await savedTilesModel.getSavedTilesRaw(tileIds, authUserId)
-  return tileIds.map((tileId) => ({
-    tileId,
-    isSaved: savedTiles.find((st) => st.tileId === tileId)?.isSaved ?? false,
-  }))
+async function getSavedStatesMap(tileIds: string[], authUserId: string | undefined): Promise<Map<string, boolean | undefined>> {
+  const savedStatesMap = new Map<string, boolean | undefined>(tileIds.map((id) => [id, undefined]))
+  if (authUserId) {
+    const savedTiles = await savedTilesModel.getSavedTilesRaw(tileIds, authUserId)
+    savedTiles.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
+  }
+  return savedStatesMap
 }
 
 async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): Promise<FeedQueryResult> {
@@ -171,13 +168,11 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
   const hasNextPage = results.length > limit
   const tilesToReturn = hasNextPage ? results.slice(0, limit) : results
 
-  const savedStatesMap = new Map<string, boolean | undefined>(tilesToReturn.map((t) => [t.id, undefined]))
-  if (authUserId) {
-    // Get the current auth user's saved status for each tile
-    const tileIds = tilesToReturn.map((t) => t.id)
-    const savedStates = await getSavedStates(tileIds, authUserId)
-    savedStates.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
-  }
+  // Get the current auth user's saved status for each tile
+  const savedStatesMap = await getSavedStatesMap(
+    tilesToReturn.map((t) => t.id),
+    authUserId
+  )
 
   const tiles: TileListItem[] = tilesToReturn.map((tile) => ({
     id: tile.id,
