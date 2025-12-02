@@ -8,7 +8,7 @@ Implement the backend feed functionality with scoring algorithm and cursor-based
 ### 1. Add Feed Query Key & Types
 - Add `feed` query key function to `src/app/_types/keys.ts`: `feed: (authUserId: string | null) => ['feed', authUserId]`.
 - Create TypeScript types in `src/app/api/feed/route.ts`:
-  - `FeedGetQueryParams` (Zod schema for `cursor?: string`, `limit?: number`).
+  - `FeedGetRequestParams` (Zod schema for `cursor?: string`, `limit?: number`).
   - `FeedGetResponseBody` (`{ tiles: TileListItem[], nextCursor: string | null, hasNextPage: boolean }`).
 - Export types for use in hooks.
 
@@ -49,7 +49,7 @@ Implement the backend feed functionality with scoring algorithm and cursor-based
     - Calls `tileOperations.getFeed({ authUserId, cursor, limit })`.
     - Returns JSON response: `{ tiles, nextCursor, hasNextPage }`.
     - Handles errors with `tryCatch` wrapper, returns appropriate status codes.
-  - Export types: `FeedGetQueryParams`, `FeedGetResponseBody`.
+  - Export types: `FeedGetRequestParams`, `FeedGetResponseBody`.
 - Follow existing API route patterns (error handling, type exports).
 
 ### 5. Add Unit Tests for Feed Operations
