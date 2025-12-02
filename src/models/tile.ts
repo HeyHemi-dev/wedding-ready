@@ -11,7 +11,7 @@ export const tileModel = {
   getManyRawBySupplierId,
   getManyRawBySupplierHandle,
   getManyRawByUserId,
-  getFeedRaw,
+  getFeed,
   createRaw,
   updateRaw,
   deleteById,
@@ -25,7 +25,7 @@ type GetFeedRawOptions = {
   limit: number
 }
 
-async function getFeedRaw({ cursorData, limit }: GetFeedRawOptions): Promise<Feed[]> {
+async function getFeed({ cursorData, limit }: GetFeedRawOptions): Promise<Feed[]> {
   // Build cursor filter SQL conditionally (applied after score calculation)
   let cursorFilter = ''
   if (cursorData) {
@@ -40,6 +40,12 @@ async function getFeedRaw({ cursorData, limit }: GetFeedRawOptions): Promise<Fee
       )
     `
   }
+
+  const WEIGHTS = {
+    recency: 0.4,
+    quality: 0.3,
+    social: 0.3,
+  } as const
 
   // Raw SQL query with CTE for scoring
   const queryString = `
@@ -66,13 +72,13 @@ async function getFeedRaw({ cursorData, limit }: GetFeedRawOptions): Promise<Fee
         t.location,
         t.is_private AS "isPrivate",
         (
-          0.4 * (1.0 / (EXTRACT(EPOCH FROM (NOW() - t.created_at)) / 86400.0 + 1.0)) +
-          0.3 * (
+          ${WEIGHTS.recency} * (1.0 / (EXTRACT(EPOCH FROM (NOW() - t.created_at)) / 86400.0 + 1.0)) +
+          ${WEIGHTS.quality} * (
             CASE WHEN t.title IS NOT NULL THEN 1 ELSE 0 END +
             CASE WHEN t.description IS NOT NULL THEN 1 ELSE 0 END +
             CASE WHEN COALESCE(cc.credit_count, 0) > 0 THEN 1 ELSE 0 END
           ) +
-          0.3 * LN(GREATEST(COALESCE(sc.save_count, 0), 0) + 1.0)
+          ${WEIGHTS.social} * LN(GREATEST(COALESCE(sc.save_count, 0), 0) + 1.0)
         ) AS score
       FROM tiles t
       LEFT JOIN credit_counts cc ON t.id = cc.tile_id
