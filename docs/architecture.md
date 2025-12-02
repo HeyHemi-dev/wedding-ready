@@ -7,9 +7,9 @@
 | Layer | Responsibility | Implementation |
 |-------|---------------|----------------|
 | Presentation/UI | - UI layout | - 'Dumb' components |
-| Presentation/Client-side Logic | - Animations<br>- State<br>- Data formatting<br> | - Motion<br>- React (state, effects etc.)<br>- Pages |
+| Presentation/Client-side Logic | - Animations<br>- State<br>- Data formatting<br> | - Motion<br>- React (state, effects etc.)<br>- 'use client' |
 | Presentation/Client-side Boundary | - UX<br>- Error handling<br>- Form field validation<br> | - Fetch (inside custom hooks)<br>- Forms |
-| Presentation/Server-side Boundary | - Authentication<br>- Headers/cookies<br>- Zod parsing | - SSR (pages)<br>- API endpoints (routes)<br>- Form actions<br>- Front-end types |
+| Presentation/Server-side Boundary | - Authentication<br>- Headers/cookies<br>- Zod parsing | - SSR (pages)<br>- API endpoints (routes)<br>- Form actions<br>- 'use server'<br>- Front-end types |
 | Operations | - Authorization<br>- Data integrity (e.g relations exist, convert empty strings etc.)<br>- Type conversion<br>- Business logic | - Operation Objects (e.g. authOperations, supplierOperations) |
 | Data/Access | - CRUD operations<br>- Set dates (e.g. updatedAt) | - Models (e.g. supplierModel) |
 | Data/Definition | - Data shape definition | - Schema<br>- Constants (e.g. SUPPLIER_ROLES)<br>- Types (e.g. SupplierRaw)<br>- Migrations |
