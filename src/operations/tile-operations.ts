@@ -1,11 +1,12 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
-import { Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
-import { TileCreditForm, TileCreate } from '@/app/_types/validation-schema'
+import { FeedQueryResult, Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
+import { TileCreditForm, TileCreate, FeedQuery } from '@/app/_types/validation-schema'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
+import { decodeCursor, encodeCursor, CursorData } from '@/utils/cursor'
 
 export const tileOperations = {
   getById,
@@ -14,6 +15,7 @@ export const tileOperations = {
   createForSupplier,
   getCreditsForTile,
   createCreditForTile,
+  getFeed,
 }
 
 async function getById(id: string, authUserId?: string): Promise<Tile> {
@@ -153,4 +155,49 @@ async function getSavedStates(tileIds: string[], authUserId: string): Promise<{ 
     tileId,
     isSaved: savedTiles.find((st) => st.tileId === tileId)?.isSaved ?? false,
   }))
+}
+
+async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): Promise<FeedQueryResult> {
+  // Decode cursor if provided
+  let cursorData: CursorData | null = null
+  if (cursor) {
+    cursorData = decodeCursor(cursor)
+  }
+
+  // Fetch tiles with scores from model
+  const results = await tileModel.getFeedRaw({ cursorData, limit })
+
+  // Determine if there's a next page
+  const hasNextPage = results.length > limit
+  const tilesToReturn = hasNextPage ? results.slice(0, limit) : results
+
+  // Get tile IDs for saved state lookup
+  const tileIds: string[] = tilesToReturn.map((t) => t.id)
+  const savedStatesMap = new Map<string, boolean | undefined>(tileIds.map((id) => [id, undefined]))
+  if (authUserId && tileIds.length > 0) {
+    const savedStates = await getSavedStates(tileIds, authUserId)
+    savedStates.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
+  }
+
+  // Build TileListItem array
+  const tiles: TileListItem[] = tilesToReturn.map((tile) => ({
+    id: tile.id,
+    imagePath: tile.imagePath,
+    title: tile.title,
+    description: tile.description,
+    isSaved: savedStatesMap.get(tile.id),
+  }))
+
+  // Generate next cursor from the last tile
+  let nextCursor: string | null = null
+  if (hasNextPage && tilesToReturn.length > 0) {
+    const lastTile = tilesToReturn[tilesToReturn.length - 1]
+    nextCursor = encodeCursor({ score: lastTile.score, createdAt: lastTile.createdAt, tileId: lastTile.id })
+  }
+
+  return {
+    tiles,
+    nextCursor,
+    hasNextPage,
+  }
 }
