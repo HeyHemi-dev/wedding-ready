@@ -50,7 +50,7 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 - Prefetch next page for seamless scrolling.
 
 ### Scoring Algorithm
-- **Recency**: Weighted by time since creation (newer = higher score) with log decay.
+- **Recency**: Weighted by time since creation (newer = higher score) with hyperbolic decay (`1.0 / (daysSinceCreation + 1.0)`).
 - **Quality**: Based on presence of title, description, and multi-credits (complete tiles score higher).
 - **Social Proof**: Based on save count (more saves = higher score).
 - Composite score calculated in SQL.
@@ -149,7 +149,6 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 ## Implementation Considerations
 
 ### Database Performance
-- **Current implementation**: Credit counts and save counts are calculated for ALL tiles on every query execution, even though only a small subset (e.g., 20 tiles) is returned.
 - **Performance threshold**: Re-evaluate query performance when reaching ~10K tiles or if query time exceeds 200ms.
 - **Optimization ideas**:
   - **Denormalized score**: Add `composite_score` column to `tiles` table, updated via periodic cron job or triggers.
