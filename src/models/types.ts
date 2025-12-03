@@ -48,3 +48,5 @@ export type SetStackTileRaw = Partial<Omit<InsertStackTileRaw, 'stackId' | 'tile
 export interface TileCredit extends TileSupplierRaw {
   supplier: SupplierRaw
 }
+
+export type TileWithScore = TileRaw & { score: number }
