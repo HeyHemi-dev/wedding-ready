@@ -1,12 +1,12 @@
 import { NextResponse, NextRequest } from 'next/server'
 
+import { HTTP_ERROR } from '@/app/_types/errors'
 import { FeedQueryResult } from '@/app/_types/tiles'
 import { feedQuerySchema, FeedQuery } from '@/app/_types/validation-schema'
 import { tileOperations } from '@/operations/tile-operations'
 import { parseQueryParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
-import { HTTP_ERROR } from '@/app/_types/errors'
 
 export type FeedGetRequestParams = FeedQuery
 export type FeedGetResponseBody = FeedQueryResult

@@ -1,4 +1,5 @@
 import * as t from '@/models/types'
+
 import { CursorData } from './cursor'
 
 const WEIGHTS = {

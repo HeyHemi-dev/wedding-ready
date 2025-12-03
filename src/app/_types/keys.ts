@@ -1,5 +1,5 @@
-import { Location, Service } from '@/db/constants'
 import { AuthUserId } from '@/app/_types/users'
+import { Location, Service } from '@/db/constants'
 
 export const queryKeys = {
   authUser: () => ['authUser', 'current'] as const,
