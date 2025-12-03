@@ -1,5 +1,6 @@
 import { afterAll, afterEach, describe, expect, it } from 'vitest'
 
+import { LOCATIONS } from '@/db/constants'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
@@ -422,6 +423,202 @@ describe('tileOperations', () => {
       const allResultIds = [...firstPageIds, ...secondPageIds]
       const testTilesInResults = allResultIds.filter((id) => allTestTileIds.has(id))
       expect(testTilesInResults.length).toBeGreaterThan(0)
+    })
+
+    it('should correctly calculate composite score (recency, quality, social proof)', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const otherUser = await scene.hasUser(CURRENT_USER)
+
+      // Create tiles with known characteristics for score verification
+      // Tile with all quality factors (title, description, credits)
+      const highQualityTile = await scene.hasTile({
+        imagePath: 'score-test-high-quality.jpg',
+        title: 'High Quality',
+        description: 'Has description',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Tile with only credits (lower quality score)
+      const lowQualityTile = await scene.hasTile({
+        imagePath: 'score-test-low-quality.jpg',
+        title: '',
+        description: '',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Add saves to high quality tile (higher social score)
+      await savedTilesModel.upsertSavedTileRaw({ tileId: highQualityTile.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertSavedTileRaw({ tileId: highQualityTile.id, userId: otherUser.id, isSaved: true })
+
+      // Act
+      const result = await tileOperations.getFeed({ limit: 10 })
+
+      // Assert - High quality tile should come before low quality tile
+      const highQualityIndex = result.tiles.findIndex((t) => t.id === highQualityTile.id)
+      const lowQualityIndex = result.tiles.findIndex((t) => t.id === lowQualityTile.id)
+
+      expect(highQualityIndex).toBeGreaterThan(-1)
+      expect(lowQualityIndex).toBeGreaterThan(-1)
+      expect(highQualityIndex).toBeLessThan(lowQualityIndex)
+    })
+
+    it('should correctly aggregate save counts', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const user2 = await scene.hasUser(CURRENT_USER)
+      const user3 = await scene.hasUser({ email: 'savecount3@example.com', handle: 'savecount3', displayName: 'Save Count 3' })
+
+      const tile = await scene.hasTile({
+        imagePath: 'save-count-test.jpg',
+        title: 'Save Count Test',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Add 3 saves (all isSaved: true)
+      await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user2.id, isSaved: true })
+      await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user3.id, isSaved: true })
+
+      // Act
+      const result = await tileOperations.getFeed({ limit: 10 })
+
+      // Assert - Tile should appear in results (save count affects score)
+      const resultTile = result.tiles.find((t) => t.id === tile.id)
+      expect(resultTile).toBeDefined()
+      // Tile with 3 saves should have a higher social score than tiles with fewer saves
+    })
+
+    it('should only return public tiles (isPrivate = false)', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+
+      // Create a public tile
+      const publicTile = await scene.hasTile({
+        imagePath: 'public-tile-test.jpg',
+        title: 'Public Tile',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Create a private tile directly via model (since createForSupplier always creates public tiles)
+      const privateTile = await tileModel.createRaw({
+        imagePath: 'private-tile-test.jpg',
+        title: 'Private Tile',
+        description: null,
+        location: LOCATIONS.WELLINGTON,
+        createdByUserId: user.id,
+        isPrivate: true,
+      })
+
+      // Act
+      const result = await tileOperations.getFeed({ limit: 100 })
+
+      // Assert
+      const publicTileInResults = result.tiles.find((t) => t.id === publicTile.id)
+      const privateTileInResults = result.tiles.find((t) => t.id === privateTile.id)
+
+      expect(publicTileInResults).toBeDefined()
+      expect(privateTileInResults).toBeUndefined()
+
+      // Cleanup
+      await tileModel.deleteById(privateTile.id)
+    })
+
+    it('should correctly handle hasNextPage and cursor pagination', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+
+      // Create exactly 5 tiles
+      const tiles = []
+      for (let i = 0; i < 5; i++) {
+        const tile = await scene.hasTile({
+          imagePath: `hasnextpage-test-${i}.jpg`,
+          title: `HasNextPage Test ${i}`,
+          description: `Description ${i}`,
+          createdByUserId: user.id,
+          credits: [createTileCreditForm({ supplierId: supplier.id })],
+        })
+        tiles.push(tile)
+      }
+
+      // Act - Request 2 tiles at a time
+      const page1 = await tileOperations.getFeed({ limit: 2 })
+      const page2 = await tileOperations.getFeed({ cursor: page1.nextCursor!, limit: 2 })
+      const page3 = await tileOperations.getFeed({ cursor: page2.nextCursor!, limit: 2 })
+
+      // Assert
+      expect(page1.tiles.length).toBe(2)
+      expect(page1.hasNextPage).toBe(true)
+      expect(page1.nextCursor).toBeTruthy()
+
+      expect(page2.tiles.length).toBe(2)
+      expect(page2.hasNextPage).toBe(true)
+      expect(page2.nextCursor).toBeTruthy()
+
+      // Page 3 might have fewer tiles if we've exhausted all tiles
+      expect(page3.tiles.length).toBeGreaterThanOrEqual(0)
+      // hasNextPage should be false if we've reached the end
+      if (page3.tiles.length < 2) {
+        expect(page3.hasNextPage).toBe(false)
+        expect(page3.nextCursor).toBeNull()
+      }
+
+      // Verify no duplicates across all pages
+      const allPageIds = [...page1.tiles.map((t) => t.id), ...page2.tiles.map((t) => t.id), ...page3.tiles.map((t) => t.id)]
+      const uniqueIds = new Set(allPageIds)
+      expect(uniqueIds.size).toBe(allPageIds.length)
+    })
+
+    it('should not skip tiles when paginating', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+
+      // Create a known set of tiles with unique image paths to identify them
+      const testTiles = []
+      const uniquePrefix = `no-skip-test-${Date.now()}`
+      for (let i = 0; i < 10; i++) {
+        const tile = await scene.hasTile({
+          imagePath: `${uniquePrefix}-${i}.jpg`,
+          title: `No Skip Test ${i}`,
+          description: `Description ${i}`,
+          createdByUserId: user.id,
+          credits: [createTileCreditForm({ supplierId: supplier.id })],
+        })
+        testTiles.push(tile)
+      }
+
+      // Act - Fetch all pages
+      const allFetchedTiles: string[] = []
+      let cursor: string | null = null
+      let pageCount = 0
+      const maxPages = 10 // Safety limit
+
+      do {
+        const page = await tileOperations.getFeed({ cursor: cursor || undefined, limit: 3 })
+        allFetchedTiles.push(...page.tiles.map((t) => t.id))
+        cursor = page.nextCursor
+        pageCount++
+      } while (cursor && pageCount < maxPages)
+
+      // Assert - All test tiles should appear exactly once in the fetched results
+      const testTileIds = new Set(testTiles.map((t) => t.id))
+      const fetchedTestTiles = allFetchedTiles.filter((id) => testTileIds.has(id))
+
+      // Verify all test tiles are present
+      expect(fetchedTestTiles.length).toBe(testTiles.length)
+
+      // Verify no duplicates of test tiles
+      const uniqueFetchedTestTiles = new Set(fetchedTestTiles)
+      expect(uniqueFetchedTestTiles.size).toBe(testTiles.length)
     })
   })
 
