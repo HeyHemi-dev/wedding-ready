@@ -38,8 +38,7 @@ describe('tileOperations', () => {
   describe('getById', () => {
     it('should get a tile by id', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -63,8 +62,7 @@ describe('tileOperations', () => {
 
     it('Should return isSaved as undefined when no authUserId provided', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -80,8 +78,7 @@ describe('tileOperations', () => {
 
     it('Should return isSaved as true when authUserId provided', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -97,8 +94,7 @@ describe('tileOperations', () => {
 
     it('Should return isSaved as false when authUserId provided but tile is not saved', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -115,8 +111,7 @@ describe('tileOperations', () => {
   describe('getListForSupplier', () => {
     it('should get a list of tiles for a supplier', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -132,8 +127,7 @@ describe('tileOperations', () => {
 
     it('should return empty array when supplier has no tiles', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       await scene.withoutTilesForSupplier({ supplierHandle: supplier.handle })
 
       // Act
@@ -145,8 +139,7 @@ describe('tileOperations', () => {
 
     it('should return isSaved as undefined for all tiles when no authUserId provided', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
       await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
 
@@ -162,8 +155,7 @@ describe('tileOperations', () => {
 
     it('should return correct isSaved status for each tile when authUserId provided', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
       const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
       await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
@@ -182,8 +174,7 @@ describe('tileOperations', () => {
   describe('getListForUser', () => {
     it('should get a list of tiles saved by a user', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -200,8 +191,7 @@ describe('tileOperations', () => {
 
     it('should return empty array when user has no saved tiles', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -216,8 +206,7 @@ describe('tileOperations', () => {
 
     it('should return isSaved as undefined for all tiles when no authUserId provided', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -234,8 +223,7 @@ describe('tileOperations', () => {
 
     it('should return correct isSaved status for each tile when authUserId provided', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
       const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
       await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
@@ -625,8 +613,7 @@ describe('tileOperations', () => {
   describe('createForSupplier', () => {
     it('should create a tile for a supplier', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Act
       const result = await tileOperations.createForSupplier({
@@ -655,8 +642,7 @@ describe('tileOperations', () => {
 
     it('should convert empty strings to null for optional fields (title, description)', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Act
       const result = await tileOperations.createForSupplier({
@@ -676,8 +662,7 @@ describe('tileOperations', () => {
 
     it('should convert empty strings to null for optional serviceDescription in credits', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Act
       const result = await tileOperations.createForSupplier({
@@ -696,8 +681,7 @@ describe('tileOperations', () => {
 
     it('should handle mixed empty and non-empty optional fields', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Act
       const result = await tileOperations.createForSupplier({
@@ -753,8 +737,7 @@ describe('tileOperations', () => {
   describe('getCreditsForTile', () => {
     it('should get the credits for a tile', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -779,8 +762,7 @@ describe('tileOperations', () => {
   describe('createCreditForTile', () => {
     it('should create a credit for a tile', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -803,8 +785,7 @@ describe('tileOperations', () => {
 
     it('should throw an error if the tile does not exist', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Act & Assert
       await expect(
@@ -818,8 +799,7 @@ describe('tileOperations', () => {
 
     it('should throw an error if the supplier does not exist', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -837,8 +817,7 @@ describe('tileOperations', () => {
 
     it('should throw an error if the authUserId is not the creator of the tile', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -856,8 +835,7 @@ describe('tileOperations', () => {
 
     it('should convert empty string to null for optional serviceDescription', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
@@ -884,8 +862,7 @@ describe('tileOperations', () => {
 
     it('should preserve non-empty serviceDescription', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
