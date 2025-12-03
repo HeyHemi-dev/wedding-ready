@@ -7,7 +7,7 @@ import { savedTilesModel } from '@/models/saved-tiles'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import type * as t from '@/models/types'
 import { emptyStringToNull } from '@/utils/empty-strings'
-import { CursorData } from '@/utils/cursor'
+import { CursorData } from '@/operations/feed/cursor'
 
 export const tileModel = {
   getRawById,

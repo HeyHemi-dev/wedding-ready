@@ -6,7 +6,7 @@ import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
-import { decodeCursor, encodeCursor, CursorData } from '@/utils/cursor'
+import { decodeCursor, encodeCursor, CursorData } from '@/operations/feed/cursor'
 
 export const tileOperations = {
   getById,
