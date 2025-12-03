@@ -52,7 +52,7 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
     cursorData = decodeCursor(cursor)
   }
 
-  // Fetch data
+  // Fetch
   const BATCH_SIZE = Math.max(limit * 10, 1000)
   const tilesRaw = await tileModel.getManyRaw({ limit: BATCH_SIZE })
   const tileIds = tilesRaw.map((t) => t.id)
@@ -61,7 +61,7 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
     savedTilesModel.getSaveCountsByTileIds(tileIds),
   ])
 
-  // Calculate scores and create Feed array
+  // Calculate scores
   const tilesWithScore: t.TileWithScore[] = tilesRaw.map((tile) => {
     const creditCount = creditCountsMap.get(tile.id) ?? 0
     const saveCount = saveCountsMap.get(tile.id) ?? 0
@@ -69,10 +69,10 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
     return { ...tile, score }
   })
 
-  // Sort by score (and tiebreakers)
+  // Sort (and handle ties)
   tilesWithScore.sort(compareTiles)
 
-  // Filter tiles
+  // Filter
   let tilesToReturn = filterTiles(tilesWithScore, { cursorData })
   const hasNextPage = tilesToReturn.length > limit
   tilesToReturn = hasNextPage ? tilesToReturn.slice(0, limit) : tilesToReturn
