@@ -779,7 +779,7 @@ describe('tileOperations', () => {
 
     it('should throw an error if the authUserId is not the creator of the tile', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { supplier, tile } = await scene.hasUserSupplierAndTile()
 
       // Act & Assert
       await expect(
