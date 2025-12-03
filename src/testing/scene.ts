@@ -64,15 +64,12 @@ async function hasUser({
   password = TEST_USER.password,
   displayName = TEST_USER.displayName,
   handle = TEST_USER.handle,
-  supabaseClient,
+  supabaseClient = testClient,
 }: Partial<UserSignupForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserProfileRaw> {
   const user = await userProfileModel.getRawByHandle(handle)
   if (user) return user
 
-  // Use provided client or fall back to shared test client
-  const client = supabaseClient || testClient
-
-  return await authOperations.signUp({ userSignFormData: { email, password, displayName, handle }, supabaseClient: client, origin: TEST_ORIGIN })
+  return await authOperations.signUp({ userSignFormData: { email, password, displayName, handle }, supabaseClient, origin: TEST_ORIGIN })
 }
 
 async function hasSupplier({
@@ -128,14 +125,14 @@ async function hasUserSupplierAndTile(): Promise<{ user: t.UserProfileRaw; suppl
   return { user, supplier, tile }
 }
 
-async function withoutUser({ handle = TEST_USER.handle, supabaseClient }: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
+async function withoutUser({
+  handle = TEST_USER.handle,
+  supabaseClient = testClient,
+}: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
   const user = await userProfileModel.getRawByHandle(handle)
   if (!user) return
 
-  // Use provided client or fall back to shared test client
-  const client = supabaseClient || testClient
-
-  await client.auth.admin.deleteUser(user.id)
+  await supabaseClient.auth.admin.deleteUser(user.id)
 }
 
 async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {
