@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { count, eq, inArray } from 'drizzle-orm'
 
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
@@ -7,6 +7,7 @@ import { emptyStringToNull } from '@/utils/empty-strings'
 
 export const tileSupplierModel = {
   getCreditsByTileId,
+  getCreditCountsByTileIds,
   createRaw,
   createManyRaw,
 }
@@ -21,6 +22,19 @@ async function getCreditsByTileId(tileId: string): Promise<t.TileCredit[]> {
     .innerJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
     .where(eq(s.tileSuppliers.tileId, tileId))
   return tileCredits
+}
+
+async function getCreditCountsByTileIds(tileIds: string[]): Promise<Map<string, number>> {
+  if (tileIds.length === 0) return new Map()
+  const results = await db
+    .select({
+      tileId: s.tileSuppliers.tileId,
+      creditCount: count(s.tileSuppliers.tileId),
+    })
+    .from(s.tileSuppliers)
+    .where(inArray(s.tileSuppliers.tileId, tileIds))
+    .groupBy(s.tileSuppliers.tileId)
+  return new Map(results.map((r) => [r.tileId, Number(r.creditCount)]))
 }
 
 async function createRaw(tileSupplierRawData: t.InsertTileSupplierRaw): Promise<t.TileSupplierRaw> {
