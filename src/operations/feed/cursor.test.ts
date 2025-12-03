@@ -9,7 +9,7 @@ describe('cursor encoding/decoding', () => {
       const createdAt = new Date('2024-01-15T10:30:00Z')
       const tileId = 'test-tileId-123'
 
-      const encoded = encodeCursor(score, createdAt, tileId)
+      const encoded = encodeCursor({ score, createdAt, tileId })
 
       expect(encoded).toBeDefined()
       expect(typeof encoded).toBe('string')
@@ -23,8 +23,8 @@ describe('cursor encoding/decoding', () => {
       const date1 = new Date('2024-01-15T10:30:00Z')
       const date2 = new Date('2024-01-16T10:30:00Z')
 
-      const encoded1 = encodeCursor(0.85, date1, 'tileId-1')
-      const encoded2 = encodeCursor(0.85, date2, 'tileId-2')
+      const encoded1 = encodeCursor({ score: 0.85, createdAt: date1, tileId: 'tileId-1' })
+      const encoded2 = encodeCursor({ score: 0.85, createdAt: date2, tileId: 'tileId-2' })
 
       expect(encoded1).not.toBe(encoded2)
     })
@@ -36,7 +36,7 @@ describe('cursor encoding/decoding', () => {
       const createdAt = new Date('2024-01-15T10:30:00Z')
       const tileId = 'test-tileId-123'
 
-      const encoded = encodeCursor(score, createdAt, tileId)
+      const encoded = encodeCursor({ score, createdAt, tileId })
       const decoded = decodeCursor(encoded)
 
       expect(decoded.score).toBe(score)
@@ -51,7 +51,7 @@ describe('cursor encoding/decoding', () => {
         tileId: '00000000-0000-0000-0000-000000000000',
       }
 
-      const encoded = encodeCursor(original.score, original.createdAt, original.tileId)
+      const encoded = encodeCursor({ score: original.score, createdAt: original.createdAt, tileId: original.tileId })
       const decoded = decodeCursor(encoded)
 
       expect(decoded.score).toBe(original.score)
@@ -91,7 +91,7 @@ describe('cursor encoding/decoding', () => {
       ]
 
       edgeCases.forEach(({ score, createdAt, tileId }) => {
-        const encoded = encodeCursor(score, createdAt, tileId)
+        const encoded = encodeCursor({ score, createdAt, tileId })
         const decoded = decodeCursor(encoded)
         expect(decoded.score).toBe(score)
         expect(decoded.createdAt.getTime()).toBe(createdAt.getTime())
