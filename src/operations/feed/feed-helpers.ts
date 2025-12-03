@@ -36,6 +36,8 @@ export function compareTiles(a: t.TileWithScore, b: t.TileWithScore): number {
 export function filterTiles(tiles: t.TileWithScore[], { cursorData }: { cursorData: CursorData | null }): t.TileWithScore[] {
   if (cursorData) {
     return tiles.filter((tile) => {
+      // Explicitly exclude the cursor tile itself
+      if (tile.id === cursorData.tileId) return false
       // Lower score = comes after cursor in DESC sort
       if (tile.score < cursorData.score) return true
       // Higher score = comes before cursor, exclude
