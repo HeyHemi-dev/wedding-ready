@@ -49,6 +49,7 @@ export const scene = {
   hasSupplier,
   hasUserAndSupplier,
   hasTile,
+  hasUserSupplierAndTile,
   withoutUser,
   withoutSupplier,
   withoutTilesForSupplier,
@@ -115,6 +116,13 @@ async function hasTile({
   const tile = await tileModel.getRawById(newTile.id)
   if (!tile) throw new Error('Failed to create tile')
   return tile
+}
+
+async function hasUserSupplierAndTile(): Promise<{ user: t.UserProfileRaw; supplier: Supplier; tile: t.TileRaw }> {
+  const user = await hasUser()
+  const supplier = await hasSupplier({ createdByUserId: user.id })
+  const tile = await hasTile({ createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+  return { user, supplier, tile }
 }
 
 async function withoutUser({ handle = TEST_USER.handle, supabaseClient }: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
