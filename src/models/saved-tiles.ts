@@ -1,4 +1,4 @@
-import { eq, and, inArray } from 'drizzle-orm'
+import { count, eq, and, inArray } from 'drizzle-orm'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
@@ -8,6 +8,7 @@ import * as t from '@/models/types'
 export const savedTilesModel = {
   getSavedTileRaw,
   getSavedTilesRaw,
+  getSaveCountsByTileIds,
   upsertSavedTileRaw,
 }
 
@@ -27,6 +28,19 @@ async function getSavedTilesRaw(tileIds: string[], userId: string): Promise<t.Sa
     .from(s.savedTiles)
     .where(and(eq(s.savedTiles.userId, userId), inArray(s.savedTiles.tileId, tileIds)))
   return savedTilesRaw
+}
+
+async function getSaveCountsByTileIds(tileIds: string[]): Promise<Map<string, number>> {
+  if (tileIds.length === 0) return new Map()
+  const results = await db
+    .select({
+      tileId: s.savedTiles.tileId,
+      saveCount: count(s.savedTiles.tileId),
+    })
+    .from(s.savedTiles)
+    .where(and(eq(s.savedTiles.isSaved, true), inArray(s.savedTiles.tileId, tileIds)))
+    .groupBy(s.savedTiles.tileId)
+  return new Map(results.map((r) => [r.tileId, Number(r.saveCount)]))
 }
 
 /**
