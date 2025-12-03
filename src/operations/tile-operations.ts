@@ -51,9 +51,30 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
     cursorData = decodeCursor(cursor)
   }
 
-  const feedTiles = await tileModel.getFeed({ cursorData, limit })
-  const hasNextPage = feedTiles.length > limit
-  const tilesToReturn = hasNextPage ? feedTiles.slice(0, limit) : feedTiles
+  // Fetch data
+  const BATCH_SIZE = Math.max(limit * 10, 1000)
+  const tilesRaw = await tileModel.getManyRaw({ limit: BATCH_SIZE })
+  const tileIds = tilesRaw.map((t) => t.id)
+  const [creditCountsMap, saveCountsMap] = await Promise.all([
+    tileSupplierModel.getCreditCountsByTileIds(tileIds),
+    savedTilesModel.getSaveCountsByTileIds(tileIds),
+  ])
+
+  // Calculate scores and create Feed array
+  const tilesWithScore: t.TileWithScore[] = tilesRaw.map((tile) => {
+    const creditCount = creditCountsMap.get(tile.id) ?? 0
+    const saveCount = saveCountsMap.get(tile.id) ?? 0
+    const score = calculateScore(tile, creditCount, saveCount)
+    return { ...tile, score }
+  })
+
+  // Sort by score (and tiebreakers)
+  tilesWithScore.sort(compareTiles)
+
+  // Filter tiles
+  let tilesToReturn = filterTiles(tilesWithScore, { cursorData })
+  const hasNextPage = tilesToReturn.length > limit
+  tilesToReturn = hasNextPage ? tilesToReturn.slice(0, limit) : tilesToReturn
 
   const savedStatesMap = await getSavedStatesMap(
     tilesToReturn.map((t) => t.id),
@@ -190,4 +211,55 @@ async function getSavedStatesMap(tileIds: string[], authUserId: string | undefin
     savedTiles.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
   }
   return savedStatesMap
+}
+
+// Feed helper functions
+
+const WEIGHTS = {
+  recency: 0.4,
+  quality: 0.3,
+  social: 0.3,
+} as const
+
+function calculateScore(tile: t.TileRaw, creditCount: number, saveCount: number): number {
+  const now = Date.now()
+  const createdAt = tile.createdAt.getTime()
+  const daysSinceCreation = (now - createdAt) / (1000 * 60 * 60 * 24)
+  const recencyScore = 1.0 / (daysSinceCreation + 1.0)
+
+  const qualityScore = (tile.title ? 1 : 0) + (tile.description ? 1 : 0) + (creditCount > 0 ? 1 : 0)
+
+  const socialScore = Math.log(Math.max(saveCount, 0) + 1.0)
+
+  return WEIGHTS.recency * recencyScore + WEIGHTS.quality * qualityScore + WEIGHTS.social * socialScore
+}
+
+function compareTiles(a: t.TileWithScore, b: t.TileWithScore): number {
+  // Primary sort: score DESC
+  if (b.score !== a.score) {
+    return b.score - a.score
+  }
+  // Secondary sort: createdAt DESC
+  if (b.createdAt.getTime() !== a.createdAt.getTime()) {
+    return b.createdAt.getTime() - a.createdAt.getTime()
+  }
+  // Tertiary sort: id DESC (for deterministic ordering)
+  return b.id.localeCompare(a.id)
+}
+
+function filterTiles(tiles: t.TileWithScore[], { cursorData }: { cursorData: CursorData | null }): t.TileWithScore[] {
+  if (cursorData) {
+    return tiles.filter((tile) => {
+      // Lower score = comes after cursor in DESC sort
+      if (tile.score < cursorData.score) return true
+      // Higher score = comes before cursor, exclude
+      if (tile.score > cursorData.score) return false
+      // Same score: check createdAt (older = comes after in DESC sort)
+      if (tile.createdAt.getTime() < cursorData.createdAt.getTime()) return true
+      if (tile.createdAt.getTime() > cursorData.createdAt.getTime()) return false
+      // Same score and createdAt: check id (smaller = comes after in DESC sort)
+      return tile.id < cursorData.tileId
+    })
+  }
+  return tiles
 }
