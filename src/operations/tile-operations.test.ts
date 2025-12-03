@@ -22,6 +22,9 @@ describe('tileOperations', () => {
   afterAll(async () => {
     await scene.resetTestData()
     await scene.withoutUser({ handle: CURRENT_USER.handle })
+    // Clean up additional users created by getFeed tests
+    await scene.withoutUser({ handle: 'thirduser' })
+    await scene.withoutUser({ handle: 'savecount3' })
     await scene.withoutTilesForSupplier({ supplierHandle: 'testsupplier2' })
     await scene.withoutSupplier({ handle: 'testsupplier2' })
   })
