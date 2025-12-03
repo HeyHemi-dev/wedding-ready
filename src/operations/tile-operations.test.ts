@@ -16,7 +16,6 @@ const CURRENT_USER = {
   handle: 'currentUser',
 }
 
-// Test helpers for getFeed tests
 function findTileInResults(result: FeedQueryResult, tileId: string): TileListItem | undefined {
   return result.tiles.find((t) => t.id === tileId)
 }
@@ -58,7 +57,7 @@ describe('tileOperations', () => {
 
     it('Should return isSaved as undefined when no authUserId provided', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { user, tile } = await scene.hasUserSupplierAndTile()
 
       // Act
       await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
@@ -70,7 +69,7 @@ describe('tileOperations', () => {
 
     it('Should return isSaved as true when authUserId provided', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { user, tile } = await scene.hasUserSupplierAndTile()
 
       // Act
       await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
@@ -82,7 +81,7 @@ describe('tileOperations', () => {
 
     it('Should return isSaved as false when authUserId provided but tile is not saved', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { user, tile } = await scene.hasUserSupplierAndTile()
 
       await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
 
@@ -96,7 +95,7 @@ describe('tileOperations', () => {
   describe('getListForSupplier', () => {
     it('should get a list of tiles for a supplier', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { supplier, tile } = await scene.hasUserSupplierAndTile()
 
       // Act
       const result = await tileOperations.getListForSupplier(supplier.id)
@@ -108,7 +107,7 @@ describe('tileOperations', () => {
 
     it('should return empty array when supplier has no tiles', async () => {
       // Arrange
-      const { user, supplier } = await scene.hasUserAndSupplier()
+      const { supplier } = await scene.hasUserAndSupplier()
       await scene.withoutTilesForSupplier({ supplierHandle: supplier.handle })
 
       // Act
@@ -155,7 +154,7 @@ describe('tileOperations', () => {
   describe('getListForUser', () => {
     it('should get a list of tiles saved by a user', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { user, tile } = await scene.hasUserSupplierAndTile()
 
       await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
 
@@ -184,7 +183,7 @@ describe('tileOperations', () => {
 
     it('should return isSaved as undefined for all tiles when no authUserId provided', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { user, tile } = await scene.hasUserSupplierAndTile()
 
       await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
 
@@ -712,7 +711,7 @@ describe('tileOperations', () => {
   describe('getCreditsForTile', () => {
     it('should get the credits for a tile', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { supplier, tile } = await scene.hasUserSupplierAndTile()
 
       // Act
       const result = await tileOperations.getCreditsForTile(tile.id)
@@ -766,7 +765,7 @@ describe('tileOperations', () => {
 
     it('should throw an error if the supplier does not exist', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { user, tile } = await scene.hasUserSupplierAndTile()
 
       // Act & Assert
       await expect(
@@ -794,7 +793,7 @@ describe('tileOperations', () => {
 
     it('should convert empty string to null for optional serviceDescription', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { user, tile } = await scene.hasUserSupplierAndTile()
 
       const supplier2 = await scene.hasSupplier({ handle: 'testsupplier2', createdByUserId: user.id })
 
@@ -817,7 +816,7 @@ describe('tileOperations', () => {
 
     it('should preserve non-empty serviceDescription', async () => {
       // Arrange
-      const { user, supplier, tile } = await scene.hasUserSupplierAndTile()
+      const { user, tile } = await scene.hasUserSupplierAndTile()
 
       const supplier2 = await scene.hasSupplier({ handle: 'testsupplier2', createdByUserId: user.id })
       const serviceDescription = 'Test service description'
