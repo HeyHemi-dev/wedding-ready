@@ -244,6 +244,187 @@ describe('tileOperations', () => {
       expect(result.find((t) => t.id === tile2.id)?.isSaved).toBe(false)
     })
   })
+
+  describe('getFeed', () => {
+    it('should return tiles sorted by composite score with pagination', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const otherUser = await scene.hasUser(CURRENT_USER)
+
+      // Create tiles with different quality scores
+      // Tile 1: High quality (title + description + credits) - should score highest
+      const tile1 = await scene.hasTile({
+        imagePath: 'feed-tile-1.jpg',
+        title: 'High Quality Tile',
+        description: 'This tile has everything',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Tile 2: Medium quality (title only)
+      const tile2 = await scene.hasTile({
+        imagePath: 'feed-tile-2.jpg',
+        title: 'Medium Quality Tile',
+        description: '',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Tile 3: Low quality (no title, no description, but has credit for scoring)
+      const tile3 = await scene.hasTile({
+        imagePath: 'feed-tile-3.jpg',
+        title: '',
+        description: '',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Add save counts to test social proof scoring
+      // Tile 1 gets 3 saves (higher social score)
+      await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: otherUser.id, isSaved: true })
+      // Create another user for a third save
+      const thirdUser = await scene.hasUser({ email: 'third@example.com', handle: 'thirduser', displayName: 'Third User' })
+      await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: thirdUser.id, isSaved: true })
+
+      // Tile 2 gets 1 save
+      await savedTilesModel.upsertSavedTileRaw({ tileId: tile2.id, userId: user.id, isSaved: true })
+
+      // Tile 3 gets 0 saves
+
+      // Act
+      const result = await tileOperations.getFeed({ limit: 10 })
+
+      // Assert
+      expect(result.tiles.length).toBeGreaterThanOrEqual(3)
+      expect(result.tiles.some((t) => t.id === tile1.id)).toBe(true)
+      expect(result.tiles.some((t) => t.id === tile2.id)).toBe(true)
+      expect(result.tiles.some((t) => t.id === tile3.id)).toBe(true)
+
+      // Verify tiles are sorted by score (tile1 should come before tile2, tile2 before tile3)
+      const tile1Index = result.tiles.findIndex((t) => t.id === tile1.id)
+      const tile2Index = result.tiles.findIndex((t) => t.id === tile2.id)
+      const tile3Index = result.tiles.findIndex((t) => t.id === tile3.id)
+
+      expect(tile1Index).toBeLessThan(tile2Index)
+      expect(tile2Index).toBeLessThan(tile3Index)
+
+      // Verify response structure
+      expect(result).toHaveProperty('tiles')
+      expect(result).toHaveProperty('nextCursor')
+      expect(result).toHaveProperty('hasNextPage')
+      expect(Array.isArray(result.tiles)).toBe(true)
+
+      // Verify tile structure
+      result.tiles.forEach((tile) => {
+        expect(tile).toHaveProperty('id')
+        expect(tile).toHaveProperty('imagePath')
+        expect(tile).toHaveProperty('title')
+        expect(tile).toHaveProperty('description')
+        expect(tile).toHaveProperty('isSaved')
+      })
+    })
+
+    it('should include isSaved state when authUserId provided', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const currentUser = await scene.hasUser(CURRENT_USER)
+
+      const tile1 = await scene.hasTile({
+        imagePath: 'feed-saved-tile-1.jpg',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+      const tile2 = await scene.hasTile({
+        imagePath: 'feed-saved-tile-2.jpg',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Current user saves tile1
+      await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: currentUser.id, isSaved: true })
+      // Current user does not save tile2
+
+      // Act
+      const result = await tileOperations.getFeed({ limit: 10 }, currentUser.id)
+
+      // Assert
+      const resultTile1 = result.tiles.find((t) => t.id === tile1.id)
+      const resultTile2 = result.tiles.find((t) => t.id === tile2.id)
+
+      expect(resultTile1).toBeDefined()
+      expect(resultTile2).toBeDefined()
+      expect(resultTile1?.isSaved).toBe(true)
+      expect(resultTile2?.isSaved).toBe(false)
+    })
+
+    it('should return undefined isSaved when authUserId not provided', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const tile = await scene.hasTile({
+        imagePath: 'feed-unsaved-tile.jpg',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+      await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
+
+      // Act
+      const result = await tileOperations.getFeed({ limit: 10 })
+
+      // Assert
+      const resultTile = result.tiles.find((t) => t.id === tile.id)
+      expect(resultTile).toBeDefined()
+      expect(resultTile?.isSaved).toBeUndefined()
+    })
+
+    it('should support pagination with cursor', async () => {
+      // Arrange
+      const user = await scene.hasUser()
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+
+      // Create enough tiles to test pagination
+      const tiles = []
+      for (let i = 0; i < 5; i++) {
+        const tile = await scene.hasTile({
+          imagePath: `feed-pagination-tile-${i}.jpg`,
+          title: `Pagination Test Tile ${i}`,
+          description: `Description for tile ${i}`,
+          createdByUserId: user.id,
+          credits: [createTileCreditForm({ supplierId: supplier.id })],
+        })
+        tiles.push(tile)
+      }
+
+      // Act - First page
+      const firstPage = await tileOperations.getFeed({ limit: 2 })
+
+      // Assert - First page
+      expect(firstPage.tiles.length).toBe(2)
+      expect(firstPage.hasNextPage).toBe(true)
+      expect(firstPage.nextCursor).toBeTruthy()
+
+      // Act - Second page using cursor
+      const secondPage = await tileOperations.getFeed({ cursor: firstPage.nextCursor!, limit: 2 })
+
+      // Assert - Second page
+      expect(secondPage.tiles.length).toBeGreaterThan(0)
+      // Verify no duplicates between pages
+      const firstPageIds = new Set(firstPage.tiles.map((t) => t.id))
+      const secondPageIds = new Set(secondPage.tiles.map((t) => t.id))
+      const intersection = [...firstPageIds].filter((id) => secondPageIds.has(id))
+      expect(intersection.length).toBe(0)
+
+      // Verify that at least some of our test tiles appear in the results
+      const allTestTileIds = new Set(tiles.map((t) => t.id))
+      const allResultIds = [...firstPageIds, ...secondPageIds]
+      const testTilesInResults = allResultIds.filter((id) => allTestTileIds.has(id))
+      expect(testTilesInResults.length).toBeGreaterThan(0)
+    })
+  })
+
   describe('createForSupplier', () => {
     it('should create a tile for a supplier', async () => {
       // Arrange
