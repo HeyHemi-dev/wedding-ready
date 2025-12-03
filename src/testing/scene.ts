@@ -16,6 +16,9 @@ import { createAdminClient } from '@/utils/supabase/server'
 
 import type { SupabaseClient } from '@supabase/supabase-js'
 
+// Shared Supabase admin client for tests to avoid multiple instances
+export const testClient = createAdminClient()
+
 export const TEST_USER = {
   email: 'test.user@example.com',
   password: 'testpassword123',
@@ -66,8 +69,8 @@ async function hasUser({
   const user = await userProfileModel.getRawByHandle(handle)
   if (user) return user
 
-  // Create a client if none provided
-  const client = supabaseClient || createAdminClient()
+  // Use provided client or fall back to shared test client
+  const client = supabaseClient || testClient
 
   return await authOperations.signUp({ userSignFormData: { email, password, displayName, handle }, supabaseClient: client, origin: TEST_ORIGIN })
 }
@@ -129,8 +132,8 @@ async function withoutUser({ handle = TEST_USER.handle, supabaseClient }: Partia
   const user = await userProfileModel.getRawByHandle(handle)
   if (!user) return
 
-  // Create a client if none provided
-  const client = supabaseClient || createAdminClient()
+  // Use provided client or fall back to shared test client
+  const client = supabaseClient || testClient
 
   await client.auth.admin.deleteUser(user.id)
 }
