@@ -17,12 +17,6 @@ const CURRENT_USER = {
 }
 
 // Test helpers for getFeed tests
-async function setupUserAndSupplier() {
-  const user = await scene.hasUser()
-  const supplier = await scene.hasSupplier({ createdByUserId: user.id })
-  return { user, supplier }
-}
-
 function findTileInResults(result: FeedQueryResult, tileId: string): TileListItem | undefined {
   return result.tiles.find((t) => t.id === tileId)
 }
@@ -264,7 +258,7 @@ describe('tileOperations', () => {
   describe('getFeed', () => {
     it('should return tiles sorted by composite score with pagination', async () => {
       // Arrange
-      const { user, supplier } = await setupUserAndSupplier()
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const otherUser = await scene.hasUser(CURRENT_USER)
 
       // Create tiles with different quality scores
@@ -343,7 +337,7 @@ describe('tileOperations', () => {
 
     it('should include isSaved state when authUserId provided', async () => {
       // Arrange
-      const { user, supplier } = await setupUserAndSupplier()
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const currentUser = await scene.hasUser(CURRENT_USER)
 
       const tile1 = await scene.hasTile({
@@ -376,7 +370,7 @@ describe('tileOperations', () => {
 
     it('should return undefined isSaved when authUserId not provided', async () => {
       // Arrange
-      const { user, supplier } = await setupUserAndSupplier()
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const tile = await scene.hasTile({
         imagePath: 'feed-unsaved-tile.jpg',
         createdByUserId: user.id,
@@ -395,7 +389,7 @@ describe('tileOperations', () => {
 
     it('should support pagination with cursor', async () => {
       // Arrange
-      const { user, supplier } = await setupUserAndSupplier()
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Create enough tiles to test pagination
       const tiles = []
@@ -438,7 +432,7 @@ describe('tileOperations', () => {
 
     it('should correctly calculate composite score (recency, quality, social proof)', async () => {
       // Arrange
-      const { user, supplier } = await setupUserAndSupplier()
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const otherUser = await scene.hasUser(CURRENT_USER)
 
       // Create tiles with known characteristics for score verification
@@ -478,7 +472,7 @@ describe('tileOperations', () => {
 
     it('should correctly aggregate save counts', async () => {
       // Arrange
-      const { user, supplier } = await setupUserAndSupplier()
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const user2 = await scene.hasUser(CURRENT_USER)
       const user3 = await scene.hasUser({ email: 'savecount3@example.com', handle: 'savecount3', displayName: 'Save Count 3' })
 
@@ -505,7 +499,7 @@ describe('tileOperations', () => {
 
     it('should only return public tiles (isPrivate = false)', async () => {
       // Arrange
-      const { user, supplier } = await setupUserAndSupplier()
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Create a public tile
       const publicTile = await scene.hasTile({
@@ -541,7 +535,7 @@ describe('tileOperations', () => {
 
     it('should correctly handle hasNextPage and cursor pagination', async () => {
       // Arrange
-      const { user, supplier } = await setupUserAndSupplier()
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Create exactly 5 tiles
       const tiles = []
@@ -586,7 +580,7 @@ describe('tileOperations', () => {
 
     it('should not skip tiles when paginating', async () => {
       // Arrange
-      const { user, supplier } = await setupUserAndSupplier()
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Create a known set of tiles with unique image paths to identify them
       const testTiles = []

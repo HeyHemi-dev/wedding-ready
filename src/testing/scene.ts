@@ -47,6 +47,7 @@ export const TEST_ORIGIN = 'http://localhost:3000'
 export const scene = {
   hasUser,
   hasSupplier,
+  hasUserAndSupplier,
   hasTile,
   withoutUser,
   withoutSupplier,
@@ -83,6 +84,12 @@ async function hasSupplier({
   if (supplier) return supplier
 
   return await supplierOperations.register({ name, handle, websiteUrl, description, locations, services }, createdByUserId)
+}
+
+async function hasUserAndSupplier(): Promise<{ user: t.UserProfileRaw; supplier: Supplier }> {
+  const user = await hasUser()
+  const supplier = await hasSupplier({ createdByUserId: user.id })
+  return { user, supplier }
 }
 
 async function hasTile({
