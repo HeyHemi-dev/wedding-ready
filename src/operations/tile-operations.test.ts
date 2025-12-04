@@ -500,43 +500,67 @@ describe('tileOperations', () => {
     it('should not skip tiles when paginating', async () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
+      const otherUser = await scene.hasUser(CURRENT_USER)
 
-      // Create a known set of tiles with unique image paths to identify them
+      // Create a known set of tiles with HIGH scores to ensure they appear in feed results
+      // Even if there are thousands of other tiles in the DB, these should rank highly because:
+      // - They're very recent (just created)
+      // - They have titles and descriptions (high quality score)
+      // - They have save counts (high social proof score)
       const testTiles = []
       for (let i = 0; i < 10; i++) {
+        // Add slight delay to ensure different timestamps
+        if (i > 0) {
+          await new Promise((resolve) => setTimeout(resolve, 10))
+        }
         const tile = await scene.hasTile({
           imagePath: `no-skip-test-${i}.jpg`,
+          title: `High Score Test Tile ${i}`, // Title for quality score
+          description: `Description for tile ${i}`, // Description for quality score
           createdByUserId: user.id,
           credits: [createTileCreditForm({ supplierId: supplier.id })],
         })
         testTiles.push(tile)
+
+        // Add save counts to boost social proof score
+        // Each tile gets i+1 saves to create different scores
+        for (let j = 0; j <= i; j++) {
+          const saveUser = j === 0 ? user : otherUser
+          await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: saveUser.id, isSaved: true })
+        }
       }
 
-      // Act - Fetch all pages
-      const allFetchedTiles: string[] = []
+      // Act - Fetch all pages, tracking only our test tiles
+      const seenTestTileIds = new Set<string>()
       let cursor: string | null = null
       let pageCount = 0
-      const maxPages = 10 // Safety limit
+      const maxPages = 20 // Safety limit
 
       do {
         const page = await tileOperations.getFeed({ cursor: cursor || undefined, limit: 3 })
-        allFetchedTiles.push(...page.tiles.map((t) => t.id))
+        const testTileIds = new Set(testTiles.map((t) => t.id))
+
+        // Track which test tiles appear in this page
+        page.tiles.forEach((tile) => {
+          if (testTileIds.has(tile.id)) {
+            if (seenTestTileIds.has(tile.id)) {
+              throw new Error(`Duplicate tile found: ${tile.id} on page ${pageCount + 1}`)
+            }
+            seenTestTileIds.add(tile.id)
+          }
+        })
+
         cursor = page.nextCursor
         pageCount++
       } while (cursor && pageCount < maxPages)
 
-      // Assert - All test tiles should appear exactly once in the fetched results
-      const testTileIds = new Set(testTiles.map((t) => t.id))
-      const fetchedTestTiles = allFetchedTiles.filter((id) => testTileIds.has(id))
+      // Assert - All test tiles should appear exactly once
+      expect(seenTestTileIds.size).toBe(testTiles.length)
 
-      // Verify no duplicates of test tiles (this is the key assertion)
-
-      const uniqueFetchedTestTiles = new Set(fetchedTestTiles)
-      console.log({ uniqueFetchedTestTiles, fetchedTestTiles })
-      expect(uniqueFetchedTestTiles.size).toBe(fetchedTestTiles.length)
-
-      // Verify all test tiles are present (at least the ones we created)
-      expect(uniqueFetchedTestTiles.size).toBeGreaterThanOrEqual(testTiles.length)
+      // Verify each test tile was seen exactly once
+      testTiles.forEach((testTile) => {
+        expect(seenTestTileIds.has(testTile.id)).toBe(true)
+      })
     })
   })
 
