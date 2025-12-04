@@ -64,16 +64,16 @@ describe('cursor encoding/decoding', () => {
     })
 
     it('should throw an error for invalid UUID format', () => {
-      const invalidUUID = Buffer.from(JSON.stringify({ score: CURSOR_DATA.score, createdAt: CURSOR_DATA.createdAt, tileId: 'not-a-uuid' })).toString(
-        'base64url'
-      )
+      const invalidUUID = Buffer.from(
+        JSON.stringify({ score: CURSOR_DATA.score, createdAt: CURSOR_DATA.createdAt.toISOString(), tileId: 'not-a-uuid' })
+      ).toString('base64url')
       expect(() => decodeCursor(invalidUUID)).toThrow(ERROR_MESSAGE.VALIDATION_ERROR)
     })
 
     it('should throw an error for wrong field types', () => {
-      const wrongTypes = Buffer.from(JSON.stringify({ score: 'not-a-number', createdAt: CURSOR_DATA.createdAt, tileId: CURSOR_DATA.tileId })).toString(
-        'base64url'
-      )
+      const wrongTypes = Buffer.from(
+        JSON.stringify({ score: 'not-a-number', createdAt: CURSOR_DATA.createdAt.toISOString(), tileId: CURSOR_DATA.tileId })
+      ).toString('base64url')
       expect(() => decodeCursor(wrongTypes)).toThrow(ERROR_MESSAGE.VALIDATION_ERROR)
     })
 

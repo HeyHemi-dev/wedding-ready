@@ -4,7 +4,10 @@ import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export const cursorDataSchema = z.object({
   score: z.number(),
-  createdAt: z.date(),
+  createdAt: z
+    .string()
+    .datetime()
+    .transform((str) => new Date(str)),
   tileId: z.string().uuid(),
 })
 export type CursorData = z.infer<typeof cursorDataSchema>
@@ -33,8 +36,7 @@ export function encodeCursor(cursorData: CursorData): string {
 export function decodeCursor(cursor: string): CursorData {
   try {
     const json = Buffer.from(cursor, 'base64url').toString('utf-8')
-    const parsed = JSON.parse(json) as CursorData
-    parsed.createdAt = new Date(parsed.createdAt) // Try to convert string to Date
+    const parsed = JSON.parse(json)
 
     const validated = cursorDataSchema.parse(parsed)
     return validated
