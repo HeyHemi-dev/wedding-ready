@@ -9,12 +9,6 @@ export const cursorDataSchema = z.object({
 })
 export type CursorData = z.infer<typeof cursorDataSchema>
 
-// export type CursorData = {
-//   score: number
-//   createdAt: Date
-//   tileId: string
-// }
-
 /**
  * Encodes a cursor tuple (score, createdAt, tileId) into a URL-safe string.
  * @param score - The composite score of the tile.
