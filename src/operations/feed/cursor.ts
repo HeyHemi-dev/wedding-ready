@@ -1,4 +1,12 @@
+import { z } from 'zod'
+
 import { OPERATION_ERROR } from '@/app/_types/errors'
+
+export const cursorDataSchema = z.object({
+  score: z.number(),
+  createdAt: z.string().datetime(),
+  tileId: z.string().uuid(),
+})
 
 export type CursorData = {
   score: number
@@ -30,25 +38,29 @@ export function encodeCursor(cursorData: CursorData): string {
 export function decodeCursor(cursor: string): CursorData {
   try {
     const json = Buffer.from(cursor, 'base64url').toString('utf-8')
-    const parsed = JSON.parse(json) as CursorData
+    const parsed = JSON.parse(json)
 
-    if (typeof parsed.score !== 'number' || typeof parsed.createdAt !== 'string' || typeof parsed.tileId !== 'string') {
-      throw OPERATION_ERROR.VALIDATION_ERROR('Invalid cursor format: missing required fields')
-    }
+    // Validate using Zod schema
+    const validated = cursorDataSchema.parse(parsed)
 
-    const createdAt = new Date(parsed.createdAt)
+    // Convert createdAt string to Date
+    const createdAt = new Date(validated.createdAt)
     if (isNaN(createdAt.getTime())) {
       throw OPERATION_ERROR.VALIDATION_ERROR('Invalid cursor format: invalid date')
     }
 
     return {
-      score: parsed.score,
+      score: validated.score,
       createdAt,
-      tileId: parsed.tileId,
+      tileId: validated.tileId,
     }
   } catch (error) {
     if (error instanceof Error && error.message.includes('Invalid cursor format')) {
       throw error
+    }
+    // Handle Zod validation errors
+    if (error instanceof z.ZodError) {
+      throw OPERATION_ERROR.VALIDATION_ERROR(`Invalid cursor format: ${error.errors.map((e) => e.message).join(', ')}`)
     }
     throw OPERATION_ERROR.VALIDATION_ERROR('Invalid cursor format: unable to decode')
   }
