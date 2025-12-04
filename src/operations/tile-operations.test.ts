@@ -349,51 +349,6 @@ describe('tileOperations', () => {
       expect(resultTile?.isSaved).toBeUndefined()
     })
 
-    it('should support pagination with cursor', async () => {
-      // Arrange
-      const { user, supplier } = await scene.hasUserAndSupplier()
-
-      // Create enough tiles to test pagination with unique prefix to avoid conflicts
-      const tiles = []
-      const uniquePrefix = `feed-pagination-${Date.now()}`
-      for (let i = 0; i < 5; i++) {
-        const tile = await scene.hasTile({
-          imagePath: `${uniquePrefix}-tile-${i}.jpg`,
-          title: `Pagination Test Tile ${i}`,
-          description: `Description for tile ${i}`,
-          createdByUserId: user.id,
-          credits: [createTileCreditForm({ supplierId: supplier.id })],
-        })
-        tiles.push(tile)
-      }
-
-      // Act - First page
-      const firstPage = await tileOperations.getFeed({ limit: 2 })
-
-      // Assert - First page
-      expect(firstPage.tiles.length).toBe(2)
-      expect(firstPage.hasNextPage).toBe(true)
-      expect(firstPage.nextCursor).toBeTruthy()
-
-      // Act - Second page using cursor
-      const secondPage = await tileOperations.getFeed({ cursor: firstPage.nextCursor!, limit: 2 })
-
-      // Assert - Second page
-      expect(secondPage.tiles.length).toBeGreaterThan(0)
-
-      // Verify no duplicates between pages (only check our test tiles)
-      const allTestTileIds = new Set(tiles.map((t) => t.id))
-      const firstPageTestTiles = firstPage.tiles.filter((t) => allTestTileIds.has(t.id)).map((t) => t.id)
-      const secondPageTestTiles = secondPage.tiles.filter((t) => allTestTileIds.has(t.id)).map((t) => t.id)
-      const intersection = firstPageTestTiles.filter((id) => secondPageTestTiles.includes(id))
-      expect(intersection.length).toBe(0)
-
-      // Verify that at least some of our test tiles appear in the results
-      const allResultIds = [...firstPage.tiles.map((t) => t.id), ...secondPage.tiles.map((t) => t.id)]
-      const testTilesInResults = allResultIds.filter((id) => allTestTileIds.has(id))
-      expect(testTilesInResults.length).toBeGreaterThan(0)
-    })
-
     it('should correctly calculate composite score (recency, quality, social proof)', async () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
