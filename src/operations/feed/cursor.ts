@@ -4,15 +4,16 @@ import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export const cursorDataSchema = z.object({
   score: z.number(),
-  createdAt: z.string().datetime(),
+  createdAt: z.date(),
   tileId: z.string().uuid(),
 })
+export type CursorData = z.infer<typeof cursorDataSchema>
 
-export type CursorData = {
-  score: number
-  createdAt: Date
-  tileId: string
-}
+// export type CursorData = {
+//   score: number
+//   createdAt: Date
+//   tileId: string
+// }
 
 /**
  * Encodes a cursor tuple (score, createdAt, tileId) into a URL-safe string.
@@ -38,30 +39,12 @@ export function encodeCursor(cursorData: CursorData): string {
 export function decodeCursor(cursor: string): CursorData {
   try {
     const json = Buffer.from(cursor, 'base64url').toString('utf-8')
-    const parsed = JSON.parse(json)
+    const parsed = JSON.parse(json) as CursorData
+    parsed.createdAt = new Date(parsed.createdAt) // Try to convert string to Date
 
-    // Validate using Zod schema
     const validated = cursorDataSchema.parse(parsed)
-
-    // Convert createdAt string to Date
-    const createdAt = new Date(validated.createdAt)
-    if (isNaN(createdAt.getTime())) {
-      throw OPERATION_ERROR.VALIDATION_ERROR('Invalid cursor format: invalid date')
-    }
-
-    return {
-      score: validated.score,
-      createdAt,
-      tileId: validated.tileId,
-    }
+    return validated
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Invalid cursor format')) {
-      throw error
-    }
-    // Handle Zod validation errors
-    if (error instanceof z.ZodError) {
-      throw OPERATION_ERROR.VALIDATION_ERROR(`Invalid cursor format: ${error.errors.map((e) => e.message).join(', ')}`)
-    }
-    throw OPERATION_ERROR.VALIDATION_ERROR('Invalid cursor format: unable to decode')
+    throw OPERATION_ERROR.VALIDATION_ERROR()
   }
 }
