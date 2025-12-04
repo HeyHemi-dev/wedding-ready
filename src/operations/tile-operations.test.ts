@@ -5,7 +5,7 @@ import { LOCATIONS } from '@/db/constants'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
-import { createTileCreditForm, scene, TEST_TILE } from '@/testing/scene'
+import { createTileCreditForm, scene, TEST_TILE, TEST_ID_0 } from '@/testing/scene'
 
 import { tileOperations } from './tile-operations'
 
@@ -52,7 +52,7 @@ describe('tileOperations', () => {
 
     it('should throw an error if the tile does not exist', async () => {
       // Arrange & Act & Assert
-      await expect(tileOperations.getById('00000000-0000-0000-0000-000000000000')).rejects.toThrow()
+      await expect(tileOperations.getById(TEST_ID_0)).rejects.toThrow()
     })
 
     it('Should return isSaved as undefined when no authUserId provided', async () => {
@@ -86,7 +86,7 @@ describe('tileOperations', () => {
       await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
 
       // Act
-      const result = await tileOperations.getById(tile.id, '00000000-0000-0000-0000-000000000000')
+      const result = await tileOperations.getById(tile.id, TEST_ID_0)
 
       // Assert
       expect(result.isSaved).toBe(false)
@@ -461,8 +461,6 @@ describe('tileOperations', () => {
       for (let i = 0; i < 5; i++) {
         const tile = await scene.hasTile({
           imagePath: `hasnextpage-test-${i}.jpg`,
-          title: `HasNextPage Test ${i}`,
-          description: `Description ${i}`,
           createdByUserId: user.id,
           credits: [createTileCreditForm({ supplierId: supplier.id })],
         })
@@ -505,12 +503,9 @@ describe('tileOperations', () => {
 
       // Create a known set of tiles with unique image paths to identify them
       const testTiles = []
-      const uniquePrefix = `no-skip-test-${Date.now()}`
       for (let i = 0; i < 10; i++) {
         const tile = await scene.hasTile({
-          imagePath: `${uniquePrefix}-${i}.jpg`,
-          title: `No Skip Test ${i}`,
-          description: `Description ${i}`,
+          imagePath: `no-skip-test-${i}.jpg`,
           createdByUserId: user.id,
           credits: [createTileCreditForm({ supplierId: supplier.id })],
         })
@@ -535,7 +530,9 @@ describe('tileOperations', () => {
       const fetchedTestTiles = allFetchedTiles.filter((id) => testTileIds.has(id))
 
       // Verify no duplicates of test tiles (this is the key assertion)
+
       const uniqueFetchedTestTiles = new Set(fetchedTestTiles)
+      console.log({ uniqueFetchedTestTiles, fetchedTestTiles })
       expect(uniqueFetchedTestTiles.size).toBe(fetchedTestTiles.length)
 
       // Verify all test tiles are present (at least the ones we created)
@@ -682,7 +679,7 @@ describe('tileOperations', () => {
 
     it('should return empty array if the tile does not exist', async () => {
       // Act
-      const result = await tileOperations.getCreditsForTile('00000000-0000-0000-0000-000000000000')
+      const result = await tileOperations.getCreditsForTile(TEST_ID_0)
 
       // Assert
       expect(result.length).toBe(0)
@@ -715,7 +712,7 @@ describe('tileOperations', () => {
       // Act & Assert
       await expect(
         tileOperations.createCreditForTile({
-          tileId: '00000000-0000-0000-0000-000000000000',
+          tileId: TEST_ID_0,
           credit: createTileCreditForm({ supplierId: supplier.id }),
           authUserId: user.id,
         })
@@ -730,7 +727,7 @@ describe('tileOperations', () => {
       await expect(
         tileOperations.createCreditForTile({
           tileId: tile.id,
-          credit: createTileCreditForm({ supplierId: '00000000-0000-0000-0000-000000000000' }),
+          credit: createTileCreditForm({ supplierId: TEST_ID_0 }),
           authUserId: user.id,
         })
       ).rejects.toThrow()
@@ -745,7 +742,7 @@ describe('tileOperations', () => {
         tileOperations.createCreditForTile({
           tileId: tile.id,
           credit: createTileCreditForm({ supplierId: supplier.id }),
-          authUserId: '00000000-0000-0000-0000-000000000000',
+          authUserId: TEST_ID_0,
         })
       ).rejects.toThrow()
     })
