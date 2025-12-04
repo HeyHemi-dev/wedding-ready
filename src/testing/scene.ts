@@ -19,6 +19,9 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 // Shared Supabase admin client for tests to avoid multiple instances
 export const testClient = createAdminClient()
 
+export const TEST_ID = '00000000-0000-4000-8000-000000000000'
+export const TEST_TILE_ID = '123e4567-e89b-4123-a456-426614174000'
+
 export const TEST_USER = {
   email: 'test.user@example.com',
   password: 'testpassword123',
