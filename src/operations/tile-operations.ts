@@ -52,8 +52,8 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
     cursorData = decodeCursor(cursor)
   }
 
-  // Fetch - Cap BATCH_SIZE to prevent DoS attacks
-  const MAX_BATCH_SIZE = 1000
+  // Fetch -
+  const MAX_BATCH_SIZE = 10000 // Cap batch size to prevent DoS attacks
   const BATCH_SIZE = Math.min(Math.max(limit * 10, 1000), MAX_BATCH_SIZE)
   const tilesRaw = await tileModel.getManyRaw({ limit: BATCH_SIZE })
   const tileIds = tilesRaw.map((t) => t.id)
