@@ -146,8 +146,10 @@ export type TileCreate = z.infer<typeof tileCreateSchema>
 
 // FEED VALIDATION
 
+const MAX_FEED_LIMIT = 100
+
 export const feedQuerySchema = z.object({
   cursor: z.string().optional(),
-  limit: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().max(MAX_FEED_LIMIT).optional(),
 })
 export type FeedQuery = z.infer<typeof feedQuerySchema>
