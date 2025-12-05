@@ -148,6 +148,6 @@ export type TileCreate = z.infer<typeof tileCreateSchema>
 
 export const feedQuerySchema = z.object({
   cursor: z.string().optional(),
-  limit: z.coerce.number().int().positive().optional(),
+  pageSize: z.coerce.number().int().positive().optional(),
 })
 export type FeedQuery = z.infer<typeof feedQuerySchema>
