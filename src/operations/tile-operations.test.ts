@@ -220,7 +220,7 @@ describe('tileOperations', () => {
   describe('getFeed', () => {
     it('should not return duplicate tiles across pages', async () => {
       // Arrange - Paginate through multiple pages
-      const seenTileIds = new Set<string>()
+      const seensTileIds = new Map<string, { onPageCount: number; atPosition: number }>()
       let cursor: string | null = null
       let pageCount = 0
       const maxPages = 50 // Safety limit to prevent infinite loops
@@ -231,24 +231,31 @@ describe('tileOperations', () => {
         const page = await tileOperations.getFeed({ cursor: cursor || undefined, limit: pageSize })
 
         // Track all tiles seen across pages
-        page.tiles.forEach((tile) => {
-          if (seenTileIds.has(tile.id)) {
-            throw new Error(`Duplicate tile found: ${tile.id} on page ${pageCount + 1}`)
+        page.tiles.forEach((tile, index) => {
+          if (seensTileIds.has(tile.id)) {
+            const firstSeen = seensTileIds.get(tile.id)!
+            console.log({
+              tileId: tile.id,
+              firstSeen,
+              currentSeen: {
+                onPageCount: pageCount,
+                atPosition: index,
+              },
+            })
+            throw new Error('Duplicate tile found')
           }
-          seenTileIds.add(tile.id)
+          seensTileIds.set(tile.id, { onPageCount: pageCount, atPosition: index })
         })
 
         cursor = page.nextCursor
         pageCount++
 
         // Stop if we've reached the end
-        if (!page.hasNextPage || !cursor) {
-          break
-        }
+        if (!page.hasNextPage || !cursor) break
       } while (pageCount < maxPages)
 
       // Assert - No duplicates should have been found (error would have been thrown above)
-      expect(seenTileIds.size).toBeGreaterThan(0)
+      expect(seensTileIds.size).toBeGreaterThan(0)
     })
 
     it('should correctly indicate hasNextPage', async () => {
