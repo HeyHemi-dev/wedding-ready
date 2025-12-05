@@ -52,7 +52,7 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
     cursorData = decodeCursor(cursor)
   }
 
-  // Fetch -
+  // Fetch
   const MAX_BATCH_SIZE = 10000 // Cap batch size to prevent DoS attacks
   const BATCH_SIZE = Math.min(Math.max(limit * 10, 1000), MAX_BATCH_SIZE)
   const tilesRaw = await tileModel.getManyRaw({ limit: BATCH_SIZE })
@@ -75,6 +75,10 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
 
   // Filter
   let tilesToReturn = filterTiles(tilesWithScore, { cursorData })
+  console.log(
+    'tilesToReturn',
+    tilesWithScore.map((t) => [t.id.slice(0, 8), t.score, tilesToReturn.includes(t)])
+  )
   const hasNextPage = tilesToReturn.length > limit
   tilesToReturn = hasNextPage ? tilesToReturn.slice(0, limit) : tilesToReturn
 
@@ -92,10 +96,15 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
   }))
 
   // Generate next cursor from the last tile
+
   let nextCursor: string | null = null
   if (hasNextPage && tilesToReturn.length > 0) {
     const lastTile = tilesToReturn[tilesToReturn.length - 1]
-    nextCursor = encodeCursor({ score: lastTile.score, createdAt: lastTile.createdAt, tileId: lastTile.id })
+    nextCursor = encodeCursor({
+      score: lastTile.score,
+      createdAt: lastTile.createdAt,
+      tileId: lastTile.id,
+    })
   }
 
   return {
