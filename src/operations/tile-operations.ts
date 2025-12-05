@@ -96,13 +96,10 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
   }))
 
   // Generate next cursor from the last tile
-
   let nextCursor: string | null = null
   if (hasNextPage && tilesToReturn.length > 0) {
     const lastTile = tilesToReturn[tilesToReturn.length - 1]
     nextCursor = encodeCursor({
-      score: lastTile.score,
-      createdAt: lastTile.createdAt,
       tileId: lastTile.id,
     })
   }
