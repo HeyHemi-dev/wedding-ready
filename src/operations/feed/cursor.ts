@@ -3,20 +3,13 @@ import { z } from 'zod'
 import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export const cursorDataSchema = z.object({
-  score: z.number(),
-  createdAt: z
-    .string()
-    .datetime()
-    .transform((str) => new Date(str)),
   tileId: z.string().uuid(),
 })
 export type CursorData = z.infer<typeof cursorDataSchema>
 
 /**
- * Encodes a cursor tuple (score, createdAt, tileId) into a URL-safe string.
- * @param score - The composite score of the tile.
- * @param createdAt - The creation timestamp of the tile.
- * @param tileId - The unique identifier of the tile.
+ * Encodes a cursor (tileId) into a URL-safe string.
+ * @param tileId - The unique identifier of the last tile returned.
  * @returns A Base64-encoded string representing the cursor.
  */
 export function encodeCursor(cursorData: CursorData): string {
@@ -25,12 +18,12 @@ export function encodeCursor(cursorData: CursorData): string {
 }
 
 /**
- * Decodes a cursor string back into its components (score, createdAt, tileId).
+ * Decodes a cursor string back into its components (tileId).
  *
  * Note: This function should only be called when a cursor is provided (not null/undefined).
  *
  * @param cursor - The Base64-encoded cursor string. Must be a non-null string.
- * @returns An object containing score, createdAt (as Date), and tileId.
+ * @returns An object containing tileId.
  * @throws Error if the cursor format is invalid.
  */
 export function decodeCursor(cursor: string): CursorData {
