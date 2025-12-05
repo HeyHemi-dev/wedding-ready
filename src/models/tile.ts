@@ -20,17 +20,17 @@ export const tileModel = {
   deleteManyByIds,
 }
 
-type GetManyRawOptions = {
-  limit: number
-}
-async function getManyRaw({ limit }: GetManyRawOptions): Promise<t.TileRaw[]> {
-  return db.select(s.tileColumns).from(s.tiles).where(eq(s.tiles.isPrivate, false)).orderBy(desc(s.tiles.createdAt)).limit(limit)
-}
-
 async function getRawById(id: string): Promise<t.TileRaw | null> {
   const tilesRaw = await db.select().from(s.tiles).where(eq(s.tiles.id, id))
   if (tilesRaw.length === 0) return null
   return tilesRaw[0]
+}
+
+type GetManyRawOptions = {
+  limit: number
+}
+async function getManyRaw({ limit }: GetManyRawOptions): Promise<t.TileRaw[]> {
+  return db.select(s.tileColumns).from(s.tiles).where(eq(s.tiles.isPrivate, false)).orderBy(desc(s.tiles.score)).limit(limit)
 }
 
 type GetManyRawBySupplierIdOptions = {
