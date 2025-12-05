@@ -39,20 +39,12 @@ export function compareTiles(a: t.TileWithScore, b: t.TileWithScore): number {
  */
 
 export function filterTiles(tiles: t.TileWithScore[], { cursorData }: { cursorData: CursorData | null }): t.TileWithScore[] {
-  if (cursorData) {
-    // Find the cursor tile's position in the sorted list. Since tiles are already sorted, we can find where the cursor tile would be and return everything after it
-    const cursorIndex = tiles.findIndex((t) => t.id === cursorData.tileId)
-    if (cursorIndex >= 0) return tiles.slice(cursorIndex + 1)
+  if (!cursorData) return tiles
 
-    // Cursor tile not in batch - use immutable attributes (createdAt, id) for comparison and return everything after it
-    return tiles.filter((tile) => {
-      const tileTime = tile.createdAt.getTime()
-      const cursorTime = cursorData.createdAt.getTime()
+  // Find the cursor tile's position in the sorted list
+  // Since tiles are already sorted, we can find where the cursor tile is and return everything after it
+  const cursorIndex = tiles.findIndex((t) => t.id === cursorData.tileId)
+  if (cursorIndex >= 0) return tiles.slice(cursorIndex + 1)
 
-      if (tileTime < cursorTime) return true
-      if (tileTime === cursorTime) return tile.id < cursorData.tileId
-      return false
-    })
-  }
   return tiles
 }
