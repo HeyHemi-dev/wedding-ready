@@ -15,6 +15,7 @@ export const tileModel = {
 
   createRaw,
   updateRaw,
+  updateScore,
   deleteById,
   deleteManyByIds,
 }
@@ -23,7 +24,7 @@ type GetManyRawOptions = {
   limit: number
 }
 async function getManyRaw({ limit }: GetManyRawOptions): Promise<t.TileRaw[]> {
-  return await db.select(s.tileColumns).from(s.tiles).where(eq(s.tiles.isPrivate, false)).orderBy(desc(s.tiles.createdAt)).limit(limit)
+  return db.select(s.tileColumns).from(s.tiles).where(eq(s.tiles.isPrivate, false)).orderBy(desc(s.tiles.createdAt)).limit(limit)
 }
 
 async function getRawById(id: string): Promise<t.TileRaw | null> {
@@ -51,7 +52,7 @@ async function getManyRawBySupplierId(supplierId: string, { limit, offset = 0 }:
 }
 
 async function getManyRawBySupplierHandle(supplierHandle: string): Promise<t.TileRaw[]> {
-  return await db
+  return db
     .select(s.tileColumns)
     .from(s.tiles)
     .innerJoin(s.tileSuppliers, eq(s.tiles.id, s.tileSuppliers.tileId))
@@ -61,7 +62,7 @@ async function getManyRawBySupplierHandle(supplierHandle: string): Promise<t.Til
 }
 
 async function getManyRawByUserId(userId: string): Promise<t.TileRaw[]> {
-  return await db
+  return db
     .select(s.tileColumns)
     .from(s.tiles)
     .innerJoin(s.savedTiles, eq(s.tiles.id, s.savedTiles.tileId))
@@ -76,6 +77,12 @@ async function createRaw(tileRawData: t.InsertTileRaw): Promise<t.TileRaw> {
 
 async function updateRaw(id: string, tileRawData: t.SetTileRaw): Promise<t.TileRaw> {
   const tilesRaw = await db.update(s.tiles).set(safeSetTileRaw(tileRawData)).where(eq(s.tiles.id, id)).returning()
+  if (tilesRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
+  return tilesRaw[0]
+}
+
+async function updateScore(id: string, score: number): Promise<t.TileRaw> {
+  const tilesRaw = await db.update(s.tiles).set(safeSetScore({ score })).where(eq(s.tiles.id, id)).returning()
   if (tilesRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
   return tilesRaw[0]
 }
@@ -110,4 +117,12 @@ function safeSetTileRaw(data: t.SetTileRaw): t.SetTileRaw {
     title: emptyStringToNull(data.title),
     location: data.location,
   } satisfies t.SetTileRaw
+}
+
+function safeSetScore(data: t.SetScore): t.SetScore {
+  const now = new Date()
+  return {
+    score: data.score,
+    scoreUpdatedAt: now,
+  } satisfies t.SetScore
 }

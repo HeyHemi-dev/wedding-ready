@@ -7,6 +7,7 @@ import { emptyStringToNull } from '@/utils/empty-strings'
 
 export const tileSupplierModel = {
   getCreditsByTileId,
+  getCreditCountByTileId,
   getCreditCountsByTileIds,
   createRaw,
   createManyRaw,
@@ -22,6 +23,16 @@ async function getCreditsByTileId(tileId: string): Promise<t.TileCredit[]> {
     .innerJoin(s.suppliers, eq(s.tileSuppliers.supplierId, s.suppliers.id))
     .where(eq(s.tileSuppliers.tileId, tileId))
   return tileCredits
+}
+
+async function getCreditCountByTileId(tileId: string): Promise<number> {
+  const result = await db
+    .select({
+      creditCount: count(s.tileSuppliers.tileId),
+    })
+    .from(s.tileSuppliers)
+    .where(eq(s.tileSuppliers.tileId, tileId))
+  return result[0].creditCount
 }
 
 async function getCreditCountsByTileIds(tileIds: string[]): Promise<Map<string, number>> {

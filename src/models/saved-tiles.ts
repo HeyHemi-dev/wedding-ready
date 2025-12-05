@@ -8,6 +8,7 @@ import * as t from '@/models/types'
 export const savedTilesModel = {
   getSavedTileRaw,
   getSavedTilesRaw,
+  getSaveCountByTileId,
   getSaveCountsByTileIds,
   upsertSavedTileRaw,
 }
@@ -28,6 +29,16 @@ async function getSavedTilesRaw(tileIds: string[], userId: string): Promise<t.Sa
     .from(s.savedTiles)
     .where(and(eq(s.savedTiles.userId, userId), inArray(s.savedTiles.tileId, tileIds)))
   return savedTilesRaw
+}
+
+async function getSaveCountByTileId(tileId: string): Promise<number> {
+  const result = await db
+    .select({
+      saveCount: count(s.savedTiles.tileId),
+    })
+    .from(s.savedTiles)
+    .where(eq(s.savedTiles.tileId, tileId))
+  return result[0].saveCount
 }
 
 async function getSaveCountsByTileIds(tileIds: string[]): Promise<Map<string, number>> {
