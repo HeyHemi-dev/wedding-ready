@@ -13,6 +13,7 @@ export async function updateScore(tileId: string): Promise<void> {
     savedTilesModel.getSaveCountByTileId(tileId),
   ])
   if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
+  if (tile.isPrivate) return
   const score = calculateScore(tile, creditCount, saveCount)
   await tileModel.updateScore(tile.id, score)
 }
