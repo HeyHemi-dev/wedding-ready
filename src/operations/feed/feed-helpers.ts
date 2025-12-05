@@ -50,8 +50,11 @@ export function calculateScore(tile: t.TileRaw, creditCount: number, saveCount: 
   const SOCIAL_DECAY = 60
   const socialScore = 1 - Math.exp(-saveCount / SOCIAL_DECAY)
 
-  // round to 9 decimal places
-  return Math.round((WEIGHTS.recency * recencyScore + WEIGHTS.quality * qualityScore + WEIGHTS.social * socialScore) * 1e9) / 1e9
+  // return normalised score between 0 and 1, rounded to 9 decimal places
+  const weightedSum = WEIGHTS.recency * recencyScore + WEIGHTS.quality * qualityScore + WEIGHTS.social * socialScore
+  const totalWeight = WEIGHTS.recency + WEIGHTS.quality + WEIGHTS.social
+  const normalisedScore = weightedSum / totalWeight
+  return Math.round(normalisedScore * 1e9) / 1e9
 }
 
 export function compareTiles(a: t.TileWithScore, b: t.TileWithScore): number {
