@@ -45,49 +45,21 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
   }
 }
 
-async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): Promise<FeedQueryResult> {
+async function getFeed({ cursor, pageSize = 20 }: FeedQuery, authUserId?: string): Promise<FeedQueryResult> {
   // Decode cursor if provided
   let cursorData: CursorData | null = null
   if (cursor) {
     cursorData = decodeCursor(cursor)
   }
 
-  // Fetch
-  const MAX_BATCH_SIZE = 10000 // Cap batch size to prevent DoS attacks
-  const BATCH_SIZE = Math.min(Math.max(limit * 10, 1000), MAX_BATCH_SIZE)
-  const tilesRaw = await tileModel.getManyRaw({ limit: BATCH_SIZE })
-  const tileIds = tilesRaw.map((t) => t.id)
-  const [creditCountsMap, saveCountsMap] = await Promise.all([
-    tileSupplierModel.getCreditCountsByTileIds(tileIds),
-    savedTilesModel.getSaveCountsByTileIds(tileIds),
-  ])
-
-  // Calculate scores
-  const tilesWithScore: t.TileWithScore[] = tilesRaw.map((tile) => {
-    const creditCount = creditCountsMap.get(tile.id) ?? 0
-    const saveCount = saveCountsMap.get(tile.id) ?? 0
-    const score = calculateScore(tile, creditCount, saveCount)
-    return { ...tile, score }
-  })
-
-  // Sort (and handle ties)
-  tilesWithScore.sort(compareTiles)
-
-  // Filter
-  let tilesToReturn = filterTiles(tilesWithScore, { cursorData })
-  console.log(
-    'tilesToReturn',
-    tilesWithScore.map((t) => [t.id.slice(0, 8), t.score, tilesToReturn.includes(t)])
-  )
-  const hasNextPage = tilesToReturn.length > limit
-  tilesToReturn = hasNextPage ? tilesToReturn.slice(0, limit) : tilesToReturn
-
+  const MAX_PAGE_SIZE = Math.min(pageSize, 100) // Cap page size to prevent DoS attacks
+  const tilesRaw = await tileModel.getManyRaw({ limit: MAX_PAGE_SIZE })
   const savedStatesMap = await getSavedStatesMap(
-    tilesToReturn.map((t) => t.id),
+    tilesRaw.map((t) => t.id),
     authUserId
   )
 
-  const tiles: TileListItem[] = tilesToReturn.map((tile) => ({
+  const tiles: TileListItem[] = tilesRaw.map((tile) => ({
     id: tile.id,
     imagePath: tile.imagePath,
     title: tile.title,
@@ -97,11 +69,10 @@ async function getFeed({ cursor, limit = 20 }: FeedQuery, authUserId?: string): 
 
   // Generate next cursor from the last tile
   let nextCursor: string | null = null
-  if (hasNextPage && tilesToReturn.length > 0) {
-    const lastTile = tilesToReturn[tilesToReturn.length - 1]
-    nextCursor = encodeCursor({
-      tileId: lastTile.id,
-    })
+  const hasNextPage = tilesRaw.length > pageSize
+  if (hasNextPage) {
+    const lastTile = tilesRaw[tilesRaw.length - 1]
+    nextCursor = encodeCursor({ tileId: lastTile.id })
   }
 
   return {
