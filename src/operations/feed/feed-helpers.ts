@@ -34,20 +34,24 @@ export function compareTiles(a: t.TileWithScore, b: t.TileWithScore): number {
   return b.id.localeCompare(a.id)
 }
 
+/**
+ * Filters out previously returned tiles based on the cursor data. Tiles must be pre-sorted by score, createdAt, and id.
+ */
+
 export function filterTiles(tiles: t.TileWithScore[], { cursorData }: { cursorData: CursorData | null }): t.TileWithScore[] {
   if (cursorData) {
+    // Find the cursor tile's position in the sorted list. Since tiles are already sorted, we can find where the cursor tile would be and return everything after it
+    const cursorIndex = tiles.findIndex((t) => t.id === cursorData.tileId)
+    if (cursorIndex >= 0) return tiles.slice(cursorIndex + 1)
+
+    // Cursor tile not in batch - use immutable attributes (createdAt, id) for comparison and return everything after it
     return tiles.filter((tile) => {
-      // Explicitly exclude the cursor tile itself
-      if (tile.id === cursorData.tileId) return false
-      // Lower score = comes after cursor in DESC sort
-      if (tile.score < cursorData.score) return true
-      // Higher score = comes before cursor, exclude
-      if (tile.score > cursorData.score) return false
-      // Same score: check createdAt (older = comes after in DESC sort)
-      if (tile.createdAt.getTime() < cursorData.createdAt.getTime()) return true
-      if (tile.createdAt.getTime() > cursorData.createdAt.getTime()) return false
-      // Same score and createdAt: check id (smaller = comes after in DESC sort)
-      return tile.id < cursorData.tileId
+      const tileTime = tile.createdAt.getTime()
+      const cursorTime = cursorData.createdAt.getTime()
+
+      if (tileTime < cursorTime) return true
+      if (tileTime === cursorTime) return tile.id < cursorData.tileId
+      return false
     })
   }
   return tiles
