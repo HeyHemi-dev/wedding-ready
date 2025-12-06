@@ -1,9 +1,9 @@
-import * as t from '@/models/types'
-
+import { OPERATION_ERROR } from '@/app/_types/errors'
+import { savedTilesModel } from '@/models/saved-tiles'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
-import { savedTilesModel } from '@/models/saved-tiles'
-import { OPERATION_ERROR } from '@/app/_types/errors'
+import * as t from '@/models/types'
+
 
 export async function updateScore(tileId: string): Promise<void> {
   const [tile, creditCount, saveCount] = await Promise.all([

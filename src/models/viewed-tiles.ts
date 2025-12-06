@@ -1,7 +1,7 @@
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
 import * as s from '@/db/schema'
 import * as t from '@/models/types'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export const viewedTilesModel = {
   upsertRaw,
@@ -33,6 +33,7 @@ function safeInsertViewedTileRaw(data: t.InsertViewedTileRaw): t.InsertViewedTil
   } satisfies t.InsertViewedTileRaw
 }
 
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 function safeSetViewedTileRaw(data: t.SetViewedTileRaw): t.SetViewedTileRaw {
   const now = new Date()
   return {

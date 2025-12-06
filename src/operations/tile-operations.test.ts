@@ -1,6 +1,5 @@
 import { afterAll, afterEach, describe, expect, it } from 'vitest'
 
-import { FeedQueryResult, TileListItem } from '@/app/_types/tiles'
 import { LOCATIONS } from '@/db/constants'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { tileModel } from '@/models/tile'
@@ -14,10 +13,6 @@ const CURRENT_USER = {
   password: 'testpassword123',
   displayName: 'Current User',
   handle: 'currentUser',
-}
-
-function findTileInResults(result: FeedQueryResult, tileId: string): TileListItem | undefined {
-  return result.tiles.find((t) => t.id === tileId)
 }
 
 describe('tileOperations', () => {
@@ -314,19 +309,17 @@ describe('tileOperations', () => {
       const { user, supplier } = await scene.hasUserAndSupplier()
       const currentUser = await scene.hasUser(CURRENT_USER)
 
-      // Create tiles and set up save states
+      // Create tiles with different save states
       const tile1 = await scene.hasTile({
         imagePath: 'feed-saved-tile-1.jpg',
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
       })
-      const tile2 = await scene.hasTile({
+      await scene.hasTile({
         imagePath: 'feed-saved-tile-2.jpg',
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
       })
-
-      // Current user saves tile1, does not save tile2
       await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: currentUser.id, isSaved: true })
 
       // Act - Fetch feed with authUserId

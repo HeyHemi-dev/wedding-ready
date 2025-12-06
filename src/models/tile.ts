@@ -1,4 +1,4 @@
-import { eq, and, desc, inArray, not, lt, gte, isNull } from 'drizzle-orm'
+import { eq, and, desc, inArray, gte, isNull } from 'drizzle-orm'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'

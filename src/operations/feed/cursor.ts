@@ -34,6 +34,7 @@ export function decodeCursor(cursor: string): CursorData {
     const validated = cursorDataSchema.parse(parsed)
     return validated
   } catch (error) {
+    console.error(error)
     throw OPERATION_ERROR.VALIDATION_ERROR()
   }
 }

@@ -1,5 +1,5 @@
 import { getTableColumns } from 'drizzle-orm'
-import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum, integer, index, real } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum, index, real } from 'drizzle-orm/pg-core'
 import { authUsers as users } from 'drizzle-orm/supabase'
 
 import { SERVICES, SUPPLIER_ROLES, LOCATIONS } from '@/db/constants'

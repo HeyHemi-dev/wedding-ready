@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { TEST_ID, TEST_ID_0, TEST_ID_F } from '@/testing/scene'
+
 import { ERROR_MESSAGE } from '@/app/_types/errors'
+import { TEST_ID, TEST_ID_0, TEST_ID_F } from '@/testing/scene'
 
 import { decodeCursor, encodeCursor } from './cursor'
 
