@@ -27,7 +27,7 @@ describe('tileOperations', () => {
   afterAll(async () => {
     await scene.resetTestData()
     await scene.withoutUser({ handle: CURRENT_USER.handle })
-    // Clean up additional users created by getFeed tests
+    // Clean up additional users created by getFeedForUser tests
     await scene.withoutUser({ handle: 'thirduser' })
     await scene.withoutUser({ handle: 'savecount3' })
     await scene.withoutTilesForSupplier({ supplierHandle: 'testsupplier2' })
@@ -60,7 +60,7 @@ describe('tileOperations', () => {
       const { user, tile } = await scene.hasUserSupplierAndTile()
 
       // Act
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile.id, userId: user.id, isSaved: true })
       const result = await tileOperations.getById(tile.id)
 
       // Assert
@@ -72,7 +72,7 @@ describe('tileOperations', () => {
       const { user, tile } = await scene.hasUserSupplierAndTile()
 
       // Act
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile.id, userId: user.id, isSaved: true })
       const result = await tileOperations.getById(tile.id, user.id)
 
       // Assert
@@ -83,7 +83,7 @@ describe('tileOperations', () => {
       // Arrange
       const { user, tile } = await scene.hasUserSupplierAndTile()
 
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile.id, userId: user.id, isSaved: true })
 
       // Act
       const result = await tileOperations.getById(tile.id, TEST_ID_0)
@@ -123,7 +123,7 @@ describe('tileOperations', () => {
       const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
       await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
 
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
 
       // Act
       const result = await tileOperations.getListForSupplier(supplier.id)
@@ -138,8 +138,8 @@ describe('tileOperations', () => {
       const { user, supplier } = await scene.hasUserAndSupplier()
       const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
       const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile2.id, userId: user.id, isSaved: false })
+      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile2.id, userId: user.id, isSaved: false })
 
       // Act
       const result = await tileOperations.getListForSupplier(supplier.id, user.id)
@@ -156,7 +156,7 @@ describe('tileOperations', () => {
       // Arrange
       const { user, tile } = await scene.hasUserSupplierAndTile()
 
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile.id, userId: user.id, isSaved: true })
 
       // Act
       const result = await tileOperations.getListForUser(user.id)
@@ -185,7 +185,7 @@ describe('tileOperations', () => {
       // Arrange
       const { user, tile } = await scene.hasUserSupplierAndTile()
 
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile.id, userId: user.id, isSaved: true })
 
       // Act
       const result = await tileOperations.getListForUser(user.id)
@@ -200,11 +200,11 @@ describe('tileOperations', () => {
       const { user, supplier } = await scene.hasUserAndSupplier()
       const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
       const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile2.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile2.id, userId: user.id, isSaved: true })
 
       const currentUser = await scene.hasUser(CURRENT_USER)
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: currentUser.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: currentUser.id, isSaved: true })
 
       // Act
       const result = await tileOperations.getListForUser(user.id, currentUser.id)
@@ -217,9 +217,10 @@ describe('tileOperations', () => {
     })
   })
 
-  describe('getFeed', () => {
+  describe('getFeedForUser', () => {
     it('should not return duplicate tiles across pages', async () => {
       // Arrange - Paginate through multiple pages
+      const user = await scene.hasUser()
       const seensTileIds = new Map<string, { onPageCount: number; atPosition: number }>()
       let cursor: string | null = null
       let pageCount = 0
@@ -228,7 +229,7 @@ describe('tileOperations', () => {
 
       // Act - Fetch multiple pages
       do {
-        const page = await tileOperations.getFeed({ cursor: cursor || undefined, limit: pageSize })
+        const page = await tileOperations.getFeedForUser(user.id, { cursor: cursor || undefined, pageSize })
 
         // Track all tiles seen across pages
         page.tiles.forEach((tile, index) => {
@@ -260,10 +261,11 @@ describe('tileOperations', () => {
 
     it('should correctly indicate hasNextPage', async () => {
       // Arrange
+      const user = await scene.hasUser()
       const pageSize = 5
 
       // Act - Fetch first page
-      const page1 = await tileOperations.getFeed({ limit: pageSize })
+      const page1 = await tileOperations.getFeedForUser(user.id, { pageSize })
 
       // Assert - hasNextPage should be true if we got a full page, false otherwise
       if (page1.tiles.length === pageSize) {
@@ -271,7 +273,7 @@ describe('tileOperations', () => {
         expect(page1.nextCursor).toBeTruthy()
 
         // Fetch next page to verify cursor works
-        const page2 = await tileOperations.getFeed({ cursor: page1.nextCursor!, limit: pageSize })
+        const page2 = await tileOperations.getFeedForUser(user.id, { cursor: page1.nextCursor!, pageSize })
         expect(page2.tiles.length).toBeGreaterThanOrEqual(0)
 
         // If page2 has fewer tiles than pageSize, it should be the last page
@@ -288,7 +290,7 @@ describe('tileOperations', () => {
 
     it('should only return public tiles (isPrivate = false)', async () => {
       // Arrange - Create a private tile directly via model
-      const { user } = await scene.hasUserAndSupplier()
+      const user = await scene.hasUser()
       const privateTile = await tileModel.createRaw({
         imagePath: 'private-tile-test.jpg',
         title: 'Private Tile',
@@ -299,7 +301,7 @@ describe('tileOperations', () => {
       })
 
       // Act - Fetch feed and verify none of the returned tiles are private
-      const result = await tileOperations.getFeed({ limit: 100 })
+      const result = await tileOperations.getFeedForUser(user.id, { pageSize: 100 })
 
       // Assert - Verify none of the returned tiles are private by checking each one
       for (const tile of result.tiles) {
@@ -330,36 +332,17 @@ describe('tileOperations', () => {
       })
 
       // Current user saves tile1, does not save tile2
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile1.id, userId: currentUser.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: currentUser.id, isSaved: true })
 
       // Act - Fetch feed with authUserId
-      const result = await tileOperations.getFeed({ limit: 100 }, currentUser.id)
+      const result = await tileOperations.getFeedForUser(currentUser.id, { pageSize: 100 })
 
       // Assert - Verify isSaved states match actual save states
       for (const tile of result.tiles) {
-        const savedTile = await savedTilesModel.getSavedTileRaw(tile.id, currentUser.id)
+        const savedTile = await savedTilesModel.getRaw(tile.id, currentUser.id)
         const expectedIsSaved = savedTile?.isSaved ?? false
         expect(tile.isSaved).toBe(expectedIsSaved)
       }
-    })
-
-    it('should return undefined isSaved when authUserId not provided', async () => {
-      // Arrange
-      const { user, supplier } = await scene.hasUserAndSupplier()
-      const tile = await scene.hasTile({
-        imagePath: 'feed-unsaved-tile.jpg',
-        createdByUserId: user.id,
-        credits: [createTileCreditForm({ supplierId: supplier.id })],
-      })
-      await savedTilesModel.upsertSavedTileRaw({ tileId: tile.id, userId: user.id, isSaved: true })
-
-      // Act - Fetch feed without authUserId
-      const result = await tileOperations.getFeed({ limit: 100 })
-
-      // Assert - All tiles should have undefined isSaved
-      result.tiles.forEach((tile) => {
-        expect(tile.isSaved).toBeUndefined()
-      })
     })
   })
 
