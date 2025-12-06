@@ -130,6 +130,22 @@ export const savedTiles = pgTable(
 )
 export const savedTileColumns = getTableColumns(savedTiles)
 
+// Keep track of tiles that have been showed to the user in their feed
+export const viewedTiles = pgTable(
+  'viewed_tiles',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    tileId: uuid('tile_id')
+      .notNull()
+      .references(() => tiles.id, { onDelete: 'cascade' }),
+    viewedAt: timestamp('viewed_at').notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.tileId] })]
+)
+export const viewedTileColumns = getTableColumns(viewedTiles)
+
 export const tileSuppliers = pgTable(
   'tile_suppliers',
   {

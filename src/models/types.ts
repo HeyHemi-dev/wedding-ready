@@ -38,6 +38,10 @@ export type SavedTileRaw = InferSelectModel<typeof schema.savedTiles>
 export type InsertSavedTileRaw = InferInsertModel<typeof schema.savedTiles>
 export type SetSavedTileRaw = Partial<Omit<InsertSavedTileRaw, 'userId' | 'tileId'>>
 
+export type ViewedTileRaw = InferSelectModel<typeof schema.viewedTiles>
+export type InsertViewedTileRaw = InferInsertModel<typeof schema.viewedTiles>
+export type SetViewedTileRaw = Partial<Omit<InsertViewedTileRaw, 'userId' | 'tileId'>>
+
 export type TileSupplierRaw = InferSelectModel<typeof schema.tileSuppliers>
 export type InsertTileSupplierRaw = InferInsertModel<typeof schema.tileSuppliers>
 export type SetTileSupplierRaw = Partial<Omit<InsertTileSupplierRaw, 'tileId' | 'supplierId'>>
