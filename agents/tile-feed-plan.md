@@ -88,7 +88,7 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
   - Maps results to `TileListItem[]` with `isSaved: false` (saved tiles already filtered out).
   - Determines `hasNextPage` by checking if returned tiles count equals requested `pageSize`.
   - Returns `{ tiles: TileListItem[], hasNextPage: boolean }`.
-  - **Note**: No cursor needed - view tracking handles pagination automatically.
+  - **Note**: View tracking handles pagination automatically.
 
 **`updateScore(tileId)`** ✅ **IMPLEMENTED** (in `feed-helpers.ts`)
 - Function that:
@@ -121,7 +121,7 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 **`useFeed(authUserId)` (`app/_hooks/use-feed.ts`)**
 - Custom hook wrapping `useSuspenseInfiniteQuery`:
   - Query key: `['feed', authUserId]`.
-  - Fetches from `/api/feed` with `pageSize` parameter (no cursor needed).
+  - Fetches from `/api/feed` with `pageSize` parameter.
   - After fetching, calls `setTilesSaveStateCache(queryClient, tiles, authUserId)` to pre-populate save state cache for efficient `useTileSaveState` lookups (following pattern from `useSupplierTiles`).
   - Returns flattened tiles array, `fetchNextPage`, `hasNextPage`, `isFetchingNextPage`.
   - Configured with `staleTime: 60s` for fast back/forward navigation.
@@ -196,10 +196,10 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 - **Pagination logic**: 
   - Each request returns next batch of unviewed tiles (ordered by score).
   - `hasNextPage` is `true` if returned tiles count equals requested `pageSize`.
-  - No cursor needed - view tracking automatically handles pagination.
+  - View tracking automatically handles pagination.
 - **Benefits**:
   - Prevents duplicates across pages.
-  - Simple implementation (no cursor encoding/decoding).
+  - Simple implementation.
   - Natural "infinite scroll" behavior (each request gets next batch).
 - **Edge cases**: 
   - If user has viewed all available tiles, returns empty array with `hasNextPage: false`.
@@ -261,7 +261,7 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 **Tasks**:
 - Create `useFeed(authUserId)` hook (`app/_hooks/use-feed.ts`):
   - Wrap `useSuspenseInfiniteQuery` with proper query key.
-  - Fetch from `/api/feed` with `pageSize` parameter (no cursor needed).
+  - Fetch from `/api/feed` with `pageSize` parameter.
   - Call `setTilesSaveStateCache` after fetching (cache optimization).
   - Return flattened tiles array, `fetchNextPage`, `hasNextPage`, `isFetchingNextPage`.
   - Configure `staleTime: 60s`.
