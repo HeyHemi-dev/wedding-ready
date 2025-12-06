@@ -3,15 +3,15 @@ import * as s from '@/db/schema'
 import * as t from '@/models/types'
 import { OPERATION_ERROR } from '@/app/_types/errors'
 
-const viewedTilesModel = {
-  upsertViewedTileRaw,
+export const viewedTilesModel = {
+  upsertRaw,
 }
 
 /**
  * lets a user save/unsave a tile by upserting the saved tile relationship.
  * @returns The updated saved status of the tile
  */
-async function upsertViewedTileRaw(viewedTileData: t.InsertViewedTileRaw): Promise<t.ViewedTileRaw> {
+async function upsertRaw(viewedTileData: t.InsertViewedTileRaw): Promise<t.ViewedTileRaw> {
   const savedTilesRaw = await db
     .insert(s.viewedTiles)
     .values(safeInsertViewedTileRaw(viewedTileData))
