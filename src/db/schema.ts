@@ -1,5 +1,5 @@
 import { getTableColumns } from 'drizzle-orm'
-import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum, integer, index } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum, integer, index, real } from 'drizzle-orm/pg-core'
 import { authUsers as users } from 'drizzle-orm/supabase'
 
 import { SERVICES, SUPPLIER_ROLES, LOCATIONS } from '@/db/constants'
@@ -55,7 +55,7 @@ export const tiles = pgTable('tiles', {
     .references(() => users.id, { onDelete: 'no action' }),
   location: locations('location'),
   isPrivate: boolean('is_private').notNull().default(false),
-  score: integer('score').notNull().default(1),
+  score: real('score').notNull().default(1),
   scoreUpdatedAt: timestamp('score_updated_at').notNull().defaultNow(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
