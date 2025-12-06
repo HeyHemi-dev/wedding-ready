@@ -1,4 +1,4 @@
-import { eq, and, desc, inArray } from 'drizzle-orm'
+import { eq, and, desc, inArray, not, lt, gte, isNull } from 'drizzle-orm'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
@@ -8,7 +8,7 @@ import { emptyStringToNull } from '@/utils/empty-strings'
 
 export const tileModel = {
   getRawById,
-  getManyRaw,
+  getManyForFeed,
   getManyRawBySupplierId,
   getManyRawBySupplierHandle,
   getManyRawByUserId,
@@ -29,8 +29,35 @@ async function getRawById(id: string): Promise<t.TileRaw | null> {
 type GetManyRawOptions = {
   limit: number
 }
-async function getManyRaw({ limit }: GetManyRawOptions): Promise<t.TileRaw[]> {
-  return db.select(s.tileColumns).from(s.tiles).where(eq(s.tiles.isPrivate, false)).orderBy(desc(s.tiles.score)).limit(limit)
+/**
+ * Get public tiles, that have not been viewed by the user in the last 7 days, and are not saved by the user, sorted by score.
+ * @param authUserId
+ * @param {limit} limit - The maximum number of tiles to return.
+ * @returns
+ */
+async function getManyForFeed(authUserId: string, { limit }: GetManyRawOptions): Promise<t.TileRaw[]> {
+  const sevenDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7)
+  return (
+    db
+      .select(s.tileColumns)
+      .from(s.tiles)
+      // Join only "recent" views for this user (>= sevenDaysAgo)
+      .leftJoin(s.viewedTiles, and(eq(s.viewedTiles.tileId, s.tiles.id), eq(s.viewedTiles.userId, authUserId), gte(s.viewedTiles.viewedAt, sevenDaysAgo)))
+      // Join only *currently saved* rows for this user
+      .leftJoin(s.savedTiles, and(eq(s.savedTiles.tileId, s.tiles.id), eq(s.savedTiles.userId, authUserId), eq(s.savedTiles.isSaved, true)))
+      .where(
+        and(
+          // public tiles only
+          eq(s.tiles.isPrivate, false),
+          // no recent views by this user (never viewed or only older than 7 days)
+          isNull(s.viewedTiles.tileId),
+          // not currently saved by this user
+          isNull(s.savedTiles.tileId)
+        )
+      )
+      .orderBy(desc(s.tiles.score))
+      .limit(limit)
+  )
 }
 
 type GetManyRawBySupplierIdOptions = {
