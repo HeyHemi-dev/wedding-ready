@@ -15,7 +15,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const parsedQueryParams = parseQueryParams(req.nextUrl, feedQuerySchema)
   const authUserId = await getAuthUserId()
 
-  const { data, error } = await tryCatch(tileOperations.getFeed(parsedQueryParams, authUserId ?? undefined))
+  if (!authUserId) {
+    return HTTP_ERROR.UNAUTHORIZED()
+  }
+
+  const { data, error } = await tryCatch(tileOperations.getFeedForUser(authUserId, parsedQueryParams))
 
   if (error) {
     return HTTP_ERROR.INTERNAL_SERVER_ERROR()
