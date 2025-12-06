@@ -17,6 +17,7 @@ export const tileOperations = {
   createForSupplier,
   getCreditsForTile,
   createCreditForTile,
+  upsertSavedState,
 }
 
 async function getById(id: string, authUserId?: string): Promise<Tile> {
@@ -163,6 +164,15 @@ async function createCreditForTile({ tileId, credit, authUserId }: { tileId: str
     service: credit.service,
     serviceDescription: credit.serviceDescription,
   }))
+}
+
+async function upsertSavedState(tileId: string, authUserId: string, isSaved: boolean): Promise<t.SavedTileRaw> {
+  const savedTile = await savedTilesModel.upsertRaw({ tileId, userId: authUserId, isSaved })
+
+  const { error } = await tryCatch(updateScore(tileId))
+  if (error) console.error(error) // Don't fail the operation if the score update fails
+
+  return savedTile
 }
 
 async function getSavedState(tileId: string, authUserId: string): Promise<boolean> {
