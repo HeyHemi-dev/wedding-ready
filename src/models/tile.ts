@@ -26,25 +26,42 @@ async function getRawById(id: string): Promise<t.TileRaw | null> {
   return tilesRaw[0]
 }
 
-type GetManyRawOptions = {
+type GetFeedOptions = {
   limit: number
 }
 /**
- * Get public tiles, that have not been viewed by the user in the last 7 days, and are not saved by the user, sorted by score.
+ * Gets tiles, sorted by score, that:
+ * - have not been viewed by the user in the last 7 days
+ * - are not saved by the user
+ * - are not private
+ *
+ * Also marks the tiles as viewed by the user.
  * @param authUserId
  * @param {limit} limit - The maximum number of tiles to return.
  * @returns
  */
-async function getFeed(authUserId: string, { limit }: GetManyRawOptions): Promise<t.TileRaw[]> {
-  const sevenDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7)
-  return db
-    .select(s.tileColumns)
-    .from(s.tiles)
-    .leftJoin(s.viewedTiles, and(eq(s.viewedTiles.tileId, s.tiles.id), eq(s.viewedTiles.userId, authUserId), gte(s.viewedTiles.viewedAt, sevenDaysAgo)))
-    .leftJoin(s.savedTiles, and(eq(s.savedTiles.tileId, s.tiles.id), eq(s.savedTiles.userId, authUserId), eq(s.savedTiles.isSaved, true)))
-    .where(and(eq(s.tiles.isPrivate, false), isNull(s.viewedTiles.tileId), isNull(s.savedTiles.tileId)))
-    .orderBy(desc(s.tiles.score))
-    .limit(limit)
+async function getFeed(authUserId: string, { limit }: GetFeedOptions): Promise<t.TileRaw[]> {
+  const now = new Date()
+  const sevenDaysAgo = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 7)
+
+  return db.transaction(async (tx) => {
+    const tiles = await tx
+      .select(s.tileColumns)
+      .from(s.tiles)
+      .leftJoin(s.viewedTiles, and(eq(s.viewedTiles.tileId, s.tiles.id), eq(s.viewedTiles.userId, authUserId), gte(s.viewedTiles.viewedAt, sevenDaysAgo)))
+      .leftJoin(s.savedTiles, and(eq(s.savedTiles.tileId, s.tiles.id), eq(s.savedTiles.userId, authUserId), eq(s.savedTiles.isSaved, true)))
+      .where(and(eq(s.tiles.isPrivate, false), isNull(s.viewedTiles.tileId), isNull(s.savedTiles.tileId)))
+      .orderBy(desc(s.tiles.score))
+      .limit(limit)
+    await tx
+      .insert(s.viewedTiles)
+      .values(tiles.map((tile) => ({ userId: authUserId, tileId: tile.id })))
+      .onConflictDoUpdate({
+        target: [s.viewedTiles.userId, s.viewedTiles.tileId],
+        set: { viewedAt: now },
+      })
+    return tiles
+  })
 }
 
 type GetManyRawBySupplierIdOptions = {
