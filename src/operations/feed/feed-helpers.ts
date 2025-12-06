@@ -56,31 +56,3 @@ export function calculateScore(tile: t.TileRaw, creditCount: number, saveCount: 
   const normalisedScore = weightedSum / totalWeight
   return Math.round(normalisedScore * 1e9) / 1e9
 }
-
-export function compareTiles(a: t.TileWithScore, b: t.TileWithScore): number {
-  // Primary sort: score DESC
-  if (b.score !== a.score) {
-    return b.score - a.score
-  }
-  // Secondary sort: createdAt DESC
-  if (b.createdAt.getTime() !== a.createdAt.getTime()) {
-    return b.createdAt.getTime() - a.createdAt.getTime()
-  }
-  // Tertiary sort: id DESC (for deterministic ordering)
-  return b.id.localeCompare(a.id)
-}
-
-/**
- * Filters out previously returned tiles based on the cursor data. Tiles must be pre-sorted by score, createdAt, and id.
- */
-
-export function filterTiles(tiles: t.TileWithScore[], { cursorData }: { cursorData: CursorData | null }): t.TileWithScore[] {
-  if (!cursorData) return tiles
-
-  // Find the cursor tile's position in the sorted list
-  // Since tiles are already sorted, we can find where the cursor tile is and return everything after it
-  const cursorIndex = tiles.findIndex((t) => t.id === cursorData.tileId)
-  if (cursorIndex >= 0) return tiles.slice(cursorIndex + 1)
-
-  return tiles
-}
