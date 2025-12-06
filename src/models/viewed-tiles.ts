@@ -8,11 +8,11 @@ export const viewedTilesModel = {
 }
 
 /**
- * lets a user save/unsave a tile by upserting the saved tile relationship.
- * @returns The updated saved status of the tile
+ * Records that a user has viewed a tile in their feed by upserting the viewed tile relationship.
+ * @returns The updated viewed tile record
  */
 async function upsertRaw(viewedTileData: t.InsertViewedTileRaw): Promise<t.ViewedTileRaw> {
-  const savedTilesRaw = await db
+  const viewedTilesRaw = await db
     .insert(s.viewedTiles)
     .values(safeInsertViewedTileRaw(viewedTileData))
     .onConflictDoUpdate({
@@ -20,8 +20,8 @@ async function upsertRaw(viewedTileData: t.InsertViewedTileRaw): Promise<t.Viewe
       set: safeSetViewedTileRaw({}),
     })
     .returning()
-  if (savedTilesRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
-  return savedTilesRaw[0]
+  if (viewedTilesRaw.length === 0) throw OPERATION_ERROR.RESOURCE_CONFLICT()
+  return viewedTilesRaw[0]
 }
 
 function safeInsertViewedTileRaw(data: t.InsertViewedTileRaw): t.InsertViewedTileRaw {
