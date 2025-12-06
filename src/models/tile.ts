@@ -8,7 +8,7 @@ import { emptyStringToNull } from '@/utils/empty-strings'
 
 export const tileModel = {
   getRawById,
-  getManyForFeed,
+  getFeed,
   getManyRawBySupplierId,
   getManyRawBySupplierHandle,
   getManyRawByUserId,
@@ -35,7 +35,7 @@ type GetManyRawOptions = {
  * @param {limit} limit - The maximum number of tiles to return.
  * @returns
  */
-async function getManyForFeed(authUserId: string, { limit }: GetManyRawOptions): Promise<t.TileRaw[]> {
+async function getFeed(authUserId: string, { limit }: GetManyRawOptions): Promise<t.TileRaw[]> {
   const sevenDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7)
   return db
     .select(s.tileColumns)
