@@ -1,5 +1,5 @@
 import { getTableColumns } from 'drizzle-orm'
-import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum, integer } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum, integer, index } from 'drizzle-orm/pg-core'
 import { authUsers as users } from 'drizzle-orm/supabase'
 
 import { SERVICES, SUPPLIER_ROLES, LOCATIONS } from '@/db/constants'
@@ -126,7 +126,7 @@ export const savedTiles = pgTable(
       .references(() => tiles.id, { onDelete: 'cascade' }),
     isSaved: boolean('is_saved').notNull(),
   },
-  (table) => [primaryKey({ columns: [table.userId, table.tileId] })]
+  (table) => [primaryKey({ columns: [table.userId, table.tileId] }), index('saved_tiles_user_is_saved_idx').on(table.userId, table.isSaved)]
 )
 export const savedTileColumns = getTableColumns(savedTiles)
 
@@ -142,7 +142,7 @@ export const viewedTiles = pgTable(
       .references(() => tiles.id, { onDelete: 'cascade' }),
     viewedAt: timestamp('viewed_at').notNull().defaultNow(),
   },
-  (table) => [primaryKey({ columns: [table.userId, table.tileId] })]
+  (table) => [primaryKey({ columns: [table.userId, table.tileId] }), index('viewed_tiles_user_viewed_at_idx').on(table.userId, table.viewedAt.desc())]
 )
 export const viewedTileColumns = getTableColumns(viewedTiles)
 
