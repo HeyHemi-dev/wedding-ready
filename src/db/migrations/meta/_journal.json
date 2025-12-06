@@ -57,6 +57,27 @@
       "when": 1762723593349,
       "tag": "0007_dark_darkstar",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1764970806908,
+      "tag": "0008_fearless_eternals",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1764989445562,
+      "tag": "0009_demonic_mandarin",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1765003403222,
+      "tag": "0010_nifty_bug",
+      "breakpoints": true
     }
   ]
 }

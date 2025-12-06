@@ -15,7 +15,8 @@ export type SetSupplierRaw = Partial<Omit<InsertSupplierRaw, 'createdAt' | 'crea
 
 export type TileRaw = InferSelectModel<typeof schema.tiles>
 export type InsertTileRaw = Omit<InferInsertModel<typeof schema.tiles>, 'id'>
-export type SetTileRaw = Partial<Omit<InsertTileRaw, 'imagePath' | 'createdAt' | 'createdByUserId' | 'isPrivate'>>
+export type SetTileRaw = Partial<Omit<InsertTileRaw, 'imagePath' | 'createdAt' | 'createdByUserId' | 'isPrivate' | 'score' | 'scoreUpdatedAt'>>
+export type SetScore = Pick<InsertTileRaw, 'score' | 'scoreUpdatedAt'>
 
 export type StackRaw = InferSelectModel<typeof schema.stacks>
 export type InsertStackRaw = Omit<InferInsertModel<typeof schema.stacks>, 'id'>
@@ -37,6 +38,10 @@ export type SavedTileRaw = InferSelectModel<typeof schema.savedTiles>
 export type InsertSavedTileRaw = InferInsertModel<typeof schema.savedTiles>
 export type SetSavedTileRaw = Partial<Omit<InsertSavedTileRaw, 'userId' | 'tileId'>>
 
+export type ViewedTileRaw = InferSelectModel<typeof schema.viewedTiles>
+export type InsertViewedTileRaw = InferInsertModel<typeof schema.viewedTiles>
+export type SetViewedTileRaw = Partial<Omit<InsertViewedTileRaw, 'userId' | 'tileId'>>
+
 export type TileSupplierRaw = InferSelectModel<typeof schema.tileSuppliers>
 export type InsertTileSupplierRaw = InferInsertModel<typeof schema.tileSuppliers>
 export type SetTileSupplierRaw = Partial<Omit<InsertTileSupplierRaw, 'tileId' | 'supplierId'>>
@@ -48,3 +53,5 @@ export type SetStackTileRaw = Partial<Omit<InsertStackTileRaw, 'stackId' | 'tile
 export interface TileCredit extends TileSupplierRaw {
   supplier: SupplierRaw
 }
+
+export type TileWithScore = TileRaw & { score: number }

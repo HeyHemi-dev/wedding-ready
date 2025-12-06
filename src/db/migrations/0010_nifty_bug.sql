@@ -1,0 +1,1 @@
+ALTER TABLE "tiles" ALTER COLUMN "score" SET DATA TYPE real USING score::real;

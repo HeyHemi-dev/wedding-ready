@@ -1,5 +1,5 @@
 import { getTableColumns } from 'drizzle-orm'
-import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, boolean, primaryKey, pgEnum, index, real } from 'drizzle-orm/pg-core'
 import { authUsers as users } from 'drizzle-orm/supabase'
 
 import { SERVICES, SUPPLIER_ROLES, LOCATIONS } from '@/db/constants'
@@ -55,6 +55,8 @@ export const tiles = pgTable('tiles', {
     .references(() => users.id, { onDelete: 'no action' }),
   location: locations('location'),
   isPrivate: boolean('is_private').notNull().default(false),
+  score: real('score').notNull().default(1),
+  scoreUpdatedAt: timestamp('score_updated_at').notNull().defaultNow(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
@@ -124,9 +126,25 @@ export const savedTiles = pgTable(
       .references(() => tiles.id, { onDelete: 'cascade' }),
     isSaved: boolean('is_saved').notNull(),
   },
-  (table) => [primaryKey({ columns: [table.userId, table.tileId] })]
+  (table) => [primaryKey({ columns: [table.userId, table.tileId] }), index('saved_tiles_user_is_saved_idx').on(table.userId, table.isSaved)]
 )
 export const savedTileColumns = getTableColumns(savedTiles)
+
+// Keep track of tiles that have been showed to the user in their feed
+export const viewedTiles = pgTable(
+  'viewed_tiles',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    tileId: uuid('tile_id')
+      .notNull()
+      .references(() => tiles.id, { onDelete: 'cascade' }),
+    viewedAt: timestamp('viewed_at').notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.tileId] }), index('viewed_tiles_user_viewed_at_idx').on(table.userId, table.viewedAt.desc())]
+)
+export const viewedTileColumns = getTableColumns(viewedTiles)
 
 export const tileSuppliers = pgTable(
   'tile_suppliers',

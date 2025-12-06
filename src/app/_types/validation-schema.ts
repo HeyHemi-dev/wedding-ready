@@ -143,3 +143,10 @@ export const tileCreateSchema = tileUploadFormSchema.extend({
   createdByUserId: z.string(),
 })
 export type TileCreate = z.infer<typeof tileCreateSchema>
+
+// FEED VALIDATION
+
+export const feedQuerySchema = z.object({
+  pageSize: z.coerce.number().int().positive(),
+})
+export type FeedQuery = z.infer<typeof feedQuerySchema>

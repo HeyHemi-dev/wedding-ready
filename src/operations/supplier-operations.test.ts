@@ -18,8 +18,7 @@ describe('supplierOperations', () => {
   describe('getByHandle', () => {
     it('should return a supplier by handle', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { supplier } = await scene.hasUserAndSupplier()
 
       // Act
       const result = await supplierOperations.getByHandle(supplier.handle)
@@ -66,6 +65,7 @@ describe('supplierOperations', () => {
     it('should successfully register a new supplier', async () => {
       // Arrange
       const user = await scene.hasUser()
+      await scene.withoutSupplier({ handle: TEST_SUPPLIER.handle })
 
       // Act
       const result = await supplierOperations.register(TEST_SUPPLIER, user.id)
@@ -77,8 +77,7 @@ describe('supplierOperations', () => {
 
     it('should throw error when handle is already taken', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      await scene.hasSupplier({ createdByUserId: user.id })
+      const { user } = await scene.hasUserAndSupplier()
 
       // Act & Assert
       await expect(supplierOperations.register(TEST_SUPPLIER, user.id)).rejects.toThrow()
@@ -92,6 +91,7 @@ describe('supplierOperations', () => {
     it('should convert empty strings to null for optional fields (websiteUrl, description)', async () => {
       // Arrange
       const user = await scene.hasUser()
+      await scene.withoutSupplier({ handle: TEST_SUPPLIER.handle })
 
       // Act
       const result = await supplierOperations.register(
@@ -113,6 +113,7 @@ describe('supplierOperations', () => {
     it('should handle mixed empty and non-empty optional fields', async () => {
       // Arrange
       const user = await scene.hasUser()
+      await scene.withoutSupplier({ handle: TEST_SUPPLIER.handle })
 
       // Act
       const result = await supplierOperations.register(
@@ -158,8 +159,7 @@ describe('supplierOperations', () => {
 
     it('should throw error when user does not have the correct role', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { supplier } = await scene.hasUserAndSupplier()
 
       await expect(
         supplierOperations.updateProfile(supplier.id, createSupplierUpdateForm({ name: 'Updated Supplier' }), '00000000-0000-0000-0000-000000000000')
@@ -168,8 +168,7 @@ describe('supplierOperations', () => {
 
     it('should convert empty strings to null for optional fields (websiteUrl, description)', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Act
       await supplierOperations.updateProfile(supplier.id, createSupplierUpdateForm({ name: 'Updated Supplier', websiteUrl: '', description: '' }), user.id)
@@ -183,8 +182,7 @@ describe('supplierOperations', () => {
 
     it('should handle mixed empty and non-empty optional fields', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Act
       await supplierOperations.updateProfile(
@@ -202,8 +200,7 @@ describe('supplierOperations', () => {
 
     it('should preserve non-empty optional fields', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const websiteUrl = 'https://new-example.com'
       const description = 'New description'
 
@@ -236,8 +233,7 @@ describe('supplierOperations', () => {
 
     it('should handle case insensitivity', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { supplier } = await scene.hasUserAndSupplier()
       const query = supplier.handle.toUpperCase()
 
       // Act
@@ -251,8 +247,7 @@ describe('supplierOperations', () => {
 
     it('should handle partial matches', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const { supplier } = await scene.hasUserAndSupplier()
       const query = supplier.handle.slice(3, 6)
 
       // Act
@@ -266,8 +261,7 @@ describe('supplierOperations', () => {
 
     it('should return empty array when no suppliers are found', async () => {
       // Arrange
-      const user = await scene.hasUser()
-      await scene.hasSupplier({ createdByUserId: user.id })
+      await scene.hasUserAndSupplier()
       const query = 'nonexistent'
 
       // Act

@@ -1,3 +1,4 @@
+import { AuthUserId } from '@/app/_types/users'
 import { Location, Service } from '@/db/constants'
 
 export const queryKeys = {
@@ -7,6 +8,7 @@ export const queryKeys = {
   supplierTiles: (supplierId: string) => ['supplierTiles', supplierId] as const,
   userTiles: (userId: string) => ['userTiles', userId] as const,
   tileCredits: (tileId: string) => ['tileCredits', tileId] as const,
+  feed: (authUserId: AuthUserId) => ['feed', authUserId] as const,
 }
 
 export const nextCacheKey = {
