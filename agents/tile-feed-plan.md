@@ -2,7 +2,7 @@
 
 ## Overview
 
-Add an infinite-scrolling feed of tiles on `/feed` that surfaces relevant content based on a composite scoring algorithm. The feed uses a masonry layout, Suspense-driven data fetching, and cursor-based pagination for optimal performance and UX.
+Add an infinite-scrolling feed of tiles on `/feed` that surfaces relevant content based on a composite scoring algorithm. The feed uses a masonry layout, Suspense-driven data fetching, and view-based pagination (tiles are marked as viewed and won't appear again for 7 days) for optimal performance and UX.
 
 ## Current Architecture Review
 
@@ -13,8 +13,8 @@ Add an infinite-scrolling feed of tiles on `/feed` that surfaces relevant conten
 | **Presentation/UI** | UI layout, presentational components | `TileFeedMasonry` (does not exist), `TileFeedSkeleton` (does not exist), `TileListItem` (existing - can reuse) |
 | **Presentation/Client-side Logic** | Animations, state, data formatting, component state, effects, user interactions | `FeedClient` component (does not exist) |
 | **Presentation/Client-side Boundary** | UX, error handling, data fetching hooks, React Query integration, cache management | `useFeed` hook (does not exist), `useInfiniteScroll` hook (does not exist) |
-| **Presentation/Server-side Boundary** | Authentication, headers/cookies, Zod parsing, SSR data fetching, API endpoints | `page.tsx` (placeholder - only shows skeleton), `/api/feed/route.ts` (does not exist) |
-| **Operations** | Authorization, data integrity, type conversion, business logic orchestration, multi-model coordination | `tileOperations.getFeed` (does not exist) |
+| **Presentation/Server-side Boundary** | Authentication, headers/cookies, Zod parsing, SSR data fetching, API endpoints | `page.tsx` (placeholder - only shows skeleton), `/api/feed/route.ts` (✅ implemented) |
+| **Operations** | Authorization, data integrity, type conversion, business logic orchestration, multi-model coordination | `tileOperations.getFeedForUser` (✅ implemented) |
 | **Data/Access** | CRUD operations, set dates, database queries | `tileModel`, `savedTilesModel`, `tileSupplierModel` (existing - can reuse) |
 | **Data/Definition** | Data shape definition, schema, constants, types, migrations | `db/schema.ts`, `app/_types/tiles.ts` (existing - can reuse) |
 
@@ -45,57 +45,73 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 ### Core Functionality
 - Infinite scroll feed of public tiles sorted by composite score (recency + quality + social proof).
 - Masonry layout using `use-magic-grid` library.
-- Cursor-based pagination to prevent duplicates and ensure deterministic ordering.
+- View-based pagination: tiles are marked as viewed when returned and won't appear again for 7 days (prevents duplicates).
 - Suspense-driven initial load with skeleton fallback.
 - Prefetch next page for seamless scrolling.
 
 ### Scoring Algorithm
-- **Recency**: Weighted by time since creation (newer = higher score) with hyperbolic decay (`1.0 / (daysSinceCreation + 1.0)`).
-- **Quality**: Based on presence of title, description, and multi-credits (complete tiles score higher).
-- **Social Proof**: Based on save count (more saves = higher score).
-- Composite score calculated in SQL.
+- **Recency**: Decays from 1.0 to 0.0 over 7 days. Tiles less than 5 minutes old get max score (1.0).
+- **Quality**: Based on presence of title (0.1), description (0.1), and credits (0-0.8 based on credit count).
+- **Social Proof**: Based on save count using exponential decay formula (approaches 1.0 as saves increase).
+- **Weights**: Recency (0.3), Quality (0.2), Social (0.5).
+- Composite score is **denormalized** and stored in `tiles.score` column (real type, 0-1 range).
+- Score is updated via `updateScore()` function when tiles are created/updated or when credits/saves change.
 
 ### User Experience
 - First paint shows skeleton matching masonry layout.
 - Scroll never blocks; next page loads before user reaches bottom.
 - Loading states for subsequent pages (inline skeletons).
 - Empty state with CTA when no tiles available.
-- Auth-optional: show public feed if not logged in, personalized `isSaved` state if authenticated.
+- **Auth required**: Feed requires authentication. Each user gets a personalized feed based on their view history and saved tiles.
 
 ## Integration Plan
 
 ### Data/Definition Layer
-- **No changes needed**: Existing schema, types, and constants support feed requirements.
+- **Schema changes**:
+  - Added `score` column (real type, 0-1 range) to `tiles` table for denormalized composite score.
+  - Added `scoreUpdatedAt` timestamp to track when score was last calculated.
+  - Added `viewedTiles` table to track which tiles have been shown to users (prevents duplicates for 7 days).
 
 ### Data/Access Layer
 - **No changes needed**: Existing `tileModel`, `savedTilesModel`, and `tileSupplierModel` provide required CRUD operations.
 
 ### Operations Layer
 
-**`tileOperations.getFeed({ authUserId, cursor, limit })`**
-- New operation that:
-  - Queries public tiles (`isPrivate = false`) with LEFT JOINs for credit counts and save counts.
-  - Calculates quality score in SQL (title + description + credits presence).
-  - Computes composite score combining recency, quality, and social proof weights.
-  - Implements cursor-based pagination using `(score, createdAt, id)` tuple.
-  - Returns `{ tiles: TileListItem[], nextCursor: string | null, hasNextPage: boolean }`.
-  - Includes `isSaved` state per tile if `authUserId` provided.
+**`tileOperations.getFeedForUser(authUserId, { pageSize })`** ✅ **IMPLEMENTED**
+- Operation that:
+  - Calls `tileModel.getFeed(authUserId, { limit })` which:
+    - Queries public tiles (`isPrivate = false`) ordered by `score DESC`.
+    - Filters out tiles viewed by user in last 7 days (LEFT JOIN on `viewedTiles`).
+    - Filters out saved tiles (LEFT JOIN on `savedTiles` where `isSaved = true`).
+    - Returns up to `limit` tiles.
+    - Marks returned tiles as viewed in a transaction (updates `viewedTiles` table).
+  - Maps results to `TileListItem[]` with `isSaved: false` (saved tiles already filtered out).
+  - Determines `hasNextPage` by checking if returned tiles count equals requested `pageSize`.
+  - Returns `{ tiles: TileListItem[], hasNextPage: boolean }`.
+  - **Note**: No cursor needed - view tracking handles pagination automatically.
+
+**`updateScore(tileId)`** ✅ **IMPLEMENTED** (in `feed-helpers.ts`)
+- Function that:
+  - Fetches tile, credit count, and save count.
+  - Calculates composite score using `calculateScore()` function.
+  - Updates `tiles.score` column in database.
+  - Should be called when tiles are created/updated or when credits/saves change.
 
 ### Presentation/Server-side Boundary Layer
 
-**`/api/feed/route.ts`**
-- New GET endpoint that:
-  - Accepts `cursor` and `limit` query parameters (Zod validation).
-  - Resolves `authUserId` from session (optional).
-  - Calls `tileOperations.getFeed`.
-  - Returns JSON: `{ tiles, nextCursor, hasNextPage }`.
+**`/api/feed/route.ts`** ✅ **IMPLEMENTED**
+- GET endpoint that:
+  - Accepts `pageSize` query parameter (Zod validation, required, positive integer).
+  - Resolves `authUserId` from session (**required** - returns 401 if not authenticated).
+  - Calls `tileOperations.getFeedForUser(authUserId, { pageSize })`.
+  - Returns JSON: `{ tiles, hasNextPage }`.
   - Exports TypeScript types: `FeedGetResponseBody`, `FeedGetRequestParams`.
 - Follows existing API route patterns (error handling, tryCatch wrapper).
 
 **`page.tsx` (`app/feed/page.tsx`)**
 - **Current state**: Placeholder that only renders `<TileListSkeleton />`.
 - **To be implemented**: Server component that:
-  - Resolves auth user (optional) via `getAuthUserId()`.
+  - Resolves auth user (**required**) via `getAuthUserId()` (redirect to login if not authenticated).
   - Prefetches first page using `getQueryClient().fetchInfiniteQuery`.
   - Wraps `FeedClient` in `<Suspense>` with `TileFeedSkeleton` fallback.
   - Uses `HydrationBoundary` to inject prefetched data.
@@ -105,10 +121,11 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 **`useFeed(authUserId)` (`app/_hooks/use-feed.ts`)**
 - Custom hook wrapping `useSuspenseInfiniteQuery`:
   - Query key: `['feed', authUserId]`.
-  - Fetches from `/api/feed` with cursor pagination.
+  - Fetches from `/api/feed` with `pageSize` parameter (no cursor needed).
   - After fetching, calls `setTilesSaveStateCache(queryClient, tiles, authUserId)` to pre-populate save state cache for efficient `useTileSaveState` lookups (following pattern from `useSupplierTiles`).
   - Returns flattened tiles array, `fetchNextPage`, `hasNextPage`, `isFetchingNextPage`.
   - Configured with `staleTime: 60s` for fast back/forward navigation.
+  - **Note**: Each page request automatically gets the next batch of unviewed tiles (view tracking handles pagination).
 
 **`useInfiniteScroll({ onIntersect, disabled })` (`app/_hooks/use-infinite-scroll.ts`)**
 - Custom hook for IntersectionObserver:
@@ -149,22 +166,44 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 ## Implementation Considerations
 
 ### Database Performance
-- **Performance threshold**: Re-evaluate query performance when reaching ~10K tiles or if query time exceeds 200ms.
-- **Optimization ideas**:
-  - **Denormalized score**: Add `composite_score` column to `tiles` table, updated via periodic cron job or triggers.
-  - **Index optimization**: Add index on `saved_tiles(tile_id, is_saved)` to improve save count aggregation performance.
-  - **Materialized views**: Consider materialized views for pre-computed credit/save counts if real-time accuracy isn't critical.
-- **Query optimization**: Use indexed columns (`createdAt`, `isPrivate`) and efficient JOINs.
+- **Current implementation** ✅:
+  - Score is **denormalized** in `tiles.score` column (real type, 0-1 range).
+  - Score is calculated via `updateScore()` function and stored in database.
+  - `getFeed` query:
+    - Orders by `score DESC` directly in SQL (can use index).
+    - Filters in SQL using LEFT JOINs on `viewedTiles` and `savedTiles`.
+    - Returns exactly `limit` tiles (no client-side filtering needed).
+    - Marks tiles as viewed in same transaction.
+  - **Performance characteristics**:
+    - Single SQL query with efficient JOINs.
+    - Database handles sorting and filtering.
+    - No client-side scoring or sorting.
+    - Scales well as database grows.
+- **Optimization ideas** (if performance becomes an issue):
+  - **Index on score**: Add index on `tiles(score DESC)` to optimize sorting.
+  - **Index on viewedTiles**: Ensure `viewedTiles(userId, viewedAt DESC)` index exists for efficient filtering.
+  - **Score update strategy**: Consider batch updates or triggers to keep scores fresh.
+  - **Query optimization**: Monitor query execution plans, add indexes as needed.
 
 ### Masonry Layout
 - **Library**: `use-magic-grid` handles dynamic content and automatic reflows.
 - **Performance**: Monitor reflow performance with 100+ tiles. Consider virtualization if needed (future optimization).
 - **Item sizing**: Remove `aspect-[2/3]` ratio from tile, rendered heights vary based on image content. Consider having image aspect ratio in tile schema (calculated at upload) if setting an aspect ratio works with magic grid.
 
-### Cursor Pagination
-- **Cursor format**: `(score, createdAt, id)` tuple ensures deterministic ordering and prevents duplicates/skips.
-- **Encoding**: Base64 or JSON-encoded string for URL-safe transmission.
-- **Edge cases**: Handle null cursor (first page), last page detection, cursor invalidation.
+### View-Based Pagination
+- **View tracking**: Tiles are marked as viewed when returned to user (stored in `viewedTiles` table).
+- **7-day window**: Tiles won't appear again for 7 days after being viewed.
+- **Pagination logic**: 
+  - Each request returns next batch of unviewed tiles (ordered by score).
+  - `hasNextPage` is `true` if returned tiles count equals requested `pageSize`.
+  - No cursor needed - view tracking automatically handles pagination.
+- **Benefits**:
+  - Prevents duplicates across pages.
+  - Simple implementation (no cursor encoding/decoding).
+  - Natural "infinite scroll" behavior (each request gets next batch).
+- **Edge cases**: 
+  - If user has viewed all available tiles, returns empty array with `hasNextPage: false`.
+  - After 7 days, tiles become available again (viewedAt expires).
 
 ### Caching Strategy
 - **React Query**: 60s stale time for fast back/forward navigation.
@@ -178,32 +217,41 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 
 ## Ticket Breakdown
 
-### Ticket 1 · Core Feed Operations & API (Plumbing)
-**Goal**: Get the backend feed functionality working with scoring algorithm and cursor pagination.
+### Ticket 1 · Core Feed Operations & API (Plumbing) ✅ **COMPLETED**
+**Goal**: Get the backend feed functionality working with scoring algorithm and view-based pagination.
 
-**Tasks**:
-- Add `tileOperations.getFeed({ authUserId, cursor, limit })`:
-  - SQL query with LEFT JOINs for credit counts and save counts.
-  - Calculate quality score in SQL (title + description + credits presence).
-  - Calculate composite score (recency + quality + social proof) with weights.
-  - Implement cursor-based pagination using `(score, createdAt, id)` tuple.
-  - Encode/decode cursor (Base64 or JSON).
-  - Return `{ tiles: TileListItem[], nextCursor: string | null, hasNextPage: boolean }`.
-  - Include `isSaved` state per tile if `authUserId` provided.
-- Create `/api/feed/route.ts`:
-  - GET handler with Zod validation for `cursor` and `limit` query params.
-  - Resolve `authUserId` from session (optional).
-  - Call `tileOperations.getFeed`.
-  - Return JSON response with proper types.
-  - Add TypeScript exports: `FeedGetResponseBody`, `FeedGetRequestParams`.
-- Add `feed` query key to `src/app/_types/keys.ts`.
-- Unit tests for `tileOperations.getFeed`:
-  - Score calculation correctness.
-  - Cursor pagination (no duplicates, proper ordering).
-  - Save count aggregation.
-- Integration test for `/api/feed` route.
+**Tasks** (✅ Completed):
+- ✅ Added `tileModel.getFeed(authUserId, { limit })`:
+  - SQL query with LEFT JOINs on `viewedTiles` and `savedTiles`.
+  - Filters out tiles viewed in last 7 days and saved tiles.
+  - Orders by `score DESC` (denormalized score column).
+  - Marks returned tiles as viewed in transaction.
+  - Returns `TileRaw[]`.
+- ✅ Added `tileOperations.getFeedForUser(authUserId, { pageSize })`:
+  - Calls `tileModel.getFeed`.
+  - Maps to `TileListItem[]` with `isSaved: false` (saved tiles already filtered).
+  - Determines `hasNextPage` by checking if returned count equals `pageSize`.
+  - Returns `{ tiles: TileListItem[], hasNextPage: boolean }`.
+- ✅ Created `/api/feed/route.ts`:
+  - GET handler with Zod validation for `pageSize` query param (required).
+  - Requires `authUserId` (returns 401 if not authenticated).
+  - Calls `tileOperations.getFeedForUser`.
+  - Returns JSON response with proper types.
+  - Exports TypeScript types: `FeedGetResponseBody`, `FeedGetRequestParams`.
+- ✅ Added `feed` query key to `src/app/_types/keys.ts`.
+- ✅ Added `updateScore(tileId)` function in `feed-helpers.ts`:
+  - Calculates composite score using `calculateScore()`.
+  - Updates `tiles.score` column in database.
+- ✅ Schema changes:
+  - Added `score` column (real type) to `tiles` table.
+  - Added `scoreUpdatedAt` timestamp.
+  - Added `viewedTiles` table for view tracking.
+- ✅ Unit tests for `tileOperations.getFeedForUser`:
+  - No duplicate tiles across pages.
+  - Correct `hasNextPage` logic.
+- ✅ Integration test for `/api/feed` route.
 
-**Acceptance**: API endpoint returns correctly scored and paginated tiles. Cursor pagination works without duplicates/skips.
+**Acceptance**: ✅ API endpoint returns correctly scored and paginated tiles. View-based pagination works without duplicates. Score is denormalized in database.
 
 ---
 
@@ -213,10 +261,11 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
 **Tasks**:
 - Create `useFeed(authUserId)` hook (`app/_hooks/use-feed.ts`):
   - Wrap `useSuspenseInfiniteQuery` with proper query key.
-  - Fetch from `/api/feed` with cursor pagination.
+  - Fetch from `/api/feed` with `pageSize` parameter (no cursor needed).
   - Call `setTilesSaveStateCache` after fetching (cache optimization).
   - Return flattened tiles array, `fetchNextPage`, `hasNextPage`, `isFetchingNextPage`.
   - Configure `staleTime: 60s`.
+  - **Note**: Each page automatically gets next batch of unviewed tiles.
 - Create `useInfiniteScroll({ onIntersect, disabled })` hook (`app/_hooks/use-infinite-scroll.ts`):
   - Set up IntersectionObserver on sentinel element.
   - Call `onIntersect` when sentinel enters viewport.
@@ -230,7 +279,7 @@ For comparison, existing tile list pages (e.g., user tiles, supplier tiles) foll
   - Handle empty state with `noTiles` component.
   - Add sentinel element after tile list for intersection observer.
 - Update `page.tsx` (`app/feed/page.tsx`):
-  - Resolve auth user (optional) via `getAuthUserId()`.
+  - Resolve auth user (**required**) via `getAuthUserId()` (redirect to login if not authenticated).
   - Prefetch first page using `getQueryClient().fetchInfiniteQuery`.
   - Wrap `FeedClient` in `<Suspense>` with `TileListSkeleton` fallback.
   - Use `HydrationBoundary` to inject prefetched data.
