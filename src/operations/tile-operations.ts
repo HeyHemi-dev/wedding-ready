@@ -6,6 +6,8 @@ import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
+import { updateScore } from '@/operations/feed/feed-helpers'
+import { tryCatch } from '@/utils/try-catch'
 
 export const tileOperations = {
   getById,
@@ -150,6 +152,9 @@ async function createCreditForTile({ tileId, credit, authUserId }: { tileId: str
 
   await tileSupplierModel.createRaw({ tileId, supplierId: credit.supplierId, service: credit.service, serviceDescription: credit.serviceDescription })
   const tileCredits = await tileSupplierModel.getCreditsByTileId(tileId)
+
+  const { error } = await tryCatch(updateScore(tileId))
+  if (error) console.error(error) // Don't fail the operation if the score update fails
 
   return tileCredits.map((credit) => ({
     supplierId: credit.supplierId,
