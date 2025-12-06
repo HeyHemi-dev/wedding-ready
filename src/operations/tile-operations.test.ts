@@ -222,14 +222,13 @@ describe('tileOperations', () => {
       // Arrange - Paginate through multiple pages
       const user = await scene.hasUser()
       const seensTileIds = new Map<string, { onPageCount: number; atPosition: number }>()
-      let cursor: string | null = null
       let pageCount = 0
       const maxPages = 50 // Safety limit to prevent infinite loops
       const pageSize = 10
 
       // Act - Fetch multiple pages
       do {
-        const page = await tileOperations.getFeedForUser(user.id, { cursor: cursor || undefined, pageSize })
+        const page = await tileOperations.getFeedForUser(user.id, { pageSize })
 
         // Track all tiles seen across pages
         page.tiles.forEach((tile, index) => {
@@ -248,11 +247,10 @@ describe('tileOperations', () => {
           seensTileIds.set(tile.id, { onPageCount: pageCount, atPosition: index })
         })
 
-        cursor = page.nextCursor
         pageCount++
 
         // Stop if we've reached the end
-        if (!page.hasNextPage || !cursor) break
+        if (!page.hasNextPage) break
       } while (pageCount < maxPages)
 
       // Assert - No duplicates should have been found (error would have been thrown above)
@@ -267,24 +265,21 @@ describe('tileOperations', () => {
       // Act - Fetch first page
       const page1 = await tileOperations.getFeedForUser(user.id, { pageSize })
 
-      // Assert - hasNextPage should be true if we got a full page, false otherwise
+      // Assert - hasNextPage should be true if we got exactly the requested number of tiles, false otherwise
       if (page1.tiles.length === pageSize) {
         expect(page1.hasNextPage).toBe(true)
-        expect(page1.nextCursor).toBeTruthy()
 
-        // Fetch next page to verify cursor works
-        const page2 = await tileOperations.getFeedForUser(user.id, { cursor: page1.nextCursor!, pageSize })
+        // Fetch next page to verify pagination works
+        const page2 = await tileOperations.getFeedForUser(user.id, { pageSize })
         expect(page2.tiles.length).toBeGreaterThanOrEqual(0)
 
         // If page2 has fewer tiles than pageSize, it should be the last page
         if (page2.tiles.length < pageSize) {
           expect(page2.hasNextPage).toBe(false)
-          expect(page2.nextCursor).toBeNull()
         }
       } else {
         // If first page has fewer tiles than requested, it's the last page
         expect(page1.hasNextPage).toBe(false)
-        expect(page1.nextCursor).toBeNull()
       }
     })
 
