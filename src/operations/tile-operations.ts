@@ -185,7 +185,7 @@ async function getSavedState(tileId: string, authUserId: string): Promise<boolea
  * @returns A map of tile ids to their saved state.
  */
 
-async function getSavedStatesMap(tileIds: string[], authUserId: string | undefined): Promise<Map<string, boolean | undefined>> {
+export async function getSavedStatesMap(tileIds: string[], authUserId: string | undefined): Promise<Map<string, boolean | undefined>> {
   // If user is authenticated, initialize all tiles as false (not saved)
   // Otherwise, initialize all tiles as undefined (no saved state)
   const savedStatesMap = new Map<string, boolean | undefined>(tileIds.map((id) => [id, authUserId ? false : undefined]))
