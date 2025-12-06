@@ -7,7 +7,7 @@ import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import { createTileCreditForm, scene, TEST_TILE, TEST_ID_0 } from '@/testing/scene'
 
-import { tileOperations } from './tile-operations'
+import { getSavedStatesMap, tileOperations } from './tile-operations'
 
 const CURRENT_USER = {
   email: 'currentUser@example.com',
@@ -288,7 +288,7 @@ describe('tileOperations', () => {
       }
     })
 
-    it('should only return public tiles (isPrivate = false)', async () => {
+    it('should only return public tiles', async () => {
       // Arrange - Create a private tile directly via model
       const user = await scene.hasUser()
       const privateTile = await tileModel.createRaw({
@@ -314,7 +314,7 @@ describe('tileOperations', () => {
       await tileModel.deleteById(privateTile.id)
     })
 
-    it('should return correct isSaved state when authUserId provided', async () => {
+    it('should not return any tiles that are saved by the current user', async () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
       const currentUser = await scene.hasUser(CURRENT_USER)
@@ -337,11 +337,16 @@ describe('tileOperations', () => {
       // Act - Fetch feed with authUserId
       const result = await tileOperations.getFeedForUser(currentUser.id, { pageSize: 100 })
 
-      // Assert - Verify isSaved states match actual save states
+      // Assert - Verify no saved tiles are returned
+      const hasSavedTile = result.tiles.some((t) => t.id === tile1.id)
+      expect(hasSavedTile).toBe(false)
+      // check stated state of all tiles
+      const savedStates = await getSavedStatesMap(
+        result.tiles.map((t) => t.id),
+        currentUser.id
+      )
       for (const tile of result.tiles) {
-        const savedTile = await savedTilesModel.getRaw(tile.id, currentUser.id)
-        const expectedIsSaved = savedTile?.isSaved ?? false
-        expect(tile.isSaved).toBe(expectedIsSaved)
+        expect(savedStates.get(tile.id)).toBe(false)
       }
     })
   })
