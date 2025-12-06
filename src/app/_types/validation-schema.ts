@@ -147,7 +147,6 @@ export type TileCreate = z.infer<typeof tileCreateSchema>
 // FEED VALIDATION
 
 export const feedQuerySchema = z.object({
-  cursor: z.string().optional(),
-  pageSize: z.coerce.number().int().positive().optional(),
+  pageSize: z.coerce.number().int().positive(),
 })
 export type FeedQuery = z.infer<typeof feedQuerySchema>

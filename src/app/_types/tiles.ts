@@ -30,6 +30,5 @@ export type TileListItem = {
 
 export type FeedQueryResult = {
   tiles: TileListItem[]
-  nextCursor: string | null
   hasNextPage: boolean
 }
