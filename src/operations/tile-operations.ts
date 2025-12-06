@@ -6,7 +6,6 @@ import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
-import { decodeCursor, encodeCursor, CursorData } from '@/operations/feed/cursor'
 
 export const tileOperations = {
   getById,
@@ -44,13 +43,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
   }
 }
 
-async function getFeedForUser(authUserId: string, { cursor, pageSize = 20 }: FeedQuery): Promise<FeedQueryResult> {
-  // Decode cursor if provided
-  let cursorData: CursorData | null = null
-  if (cursor) {
-    cursorData = decodeCursor(cursor)
-  }
-
+async function getFeedForUser(authUserId: string, { pageSize = 20 }: FeedQuery): Promise<FeedQueryResult> {
   const MAX_PAGE_SIZE = Math.min(pageSize, 100) // Cap page size to prevent DoS attacks
   const tilesRaw = await tileModel.getFeed(authUserId, { limit: MAX_PAGE_SIZE })
 
@@ -62,17 +55,11 @@ async function getFeedForUser(authUserId: string, { cursor, pageSize = 20 }: Fee
     isSaved: false, // saved tiles have been filtered out in the query
   }))
 
-  // Generate next cursor from the last tile
-  let nextCursor: string | null = null
-  const hasNextPage = tilesRaw.length > pageSize
-  if (hasNextPage) {
-    const lastTile = tilesRaw[tilesRaw.length - 1]
-    nextCursor = encodeCursor({ tileId: lastTile.id })
-  }
+  // If we got exactly the requested number of tiles, there might be more
+  const hasNextPage = tilesRaw.length === MAX_PAGE_SIZE
 
   return {
     tiles,
-    nextCursor,
     hasNextPage,
   }
 }

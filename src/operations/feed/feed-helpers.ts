@@ -1,6 +1,5 @@
 import * as t from '@/models/types'
 
-import { CursorData } from './cursor'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import { savedTilesModel } from '@/models/saved-tiles'
