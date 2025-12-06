@@ -12,7 +12,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     return Response.json({ message: 'Unauthorized' }, { status: 401 })
   }
 
-  const savedTile = await savedTilesModel.getSavedTileRaw(tileId, id)
+  const savedTile = await savedTilesModel.getRaw(tileId, id)
 
   return Response.json(savedTile)
 }
@@ -30,7 +30,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return Response.json({ message: 'Unauthorized' }, { status: 401 })
   }
 
-  const savedTile = await savedTilesModel.upsertSavedTileRaw({ tileId, userId: authUserId, isSaved: body.isSaved ?? true })
+  const savedTile = await savedTilesModel.upsertRaw({ tileId, userId: authUserId, isSaved: body.isSaved ?? true })
 
   return Response.json(savedTile)
 }

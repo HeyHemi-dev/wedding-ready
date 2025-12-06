@@ -10,7 +10,7 @@ export async function updateScore(tileId: string): Promise<void> {
   const [tile, creditCount, saveCount] = await Promise.all([
     tileModel.getRawById(tileId),
     tileSupplierModel.getCreditCountByTileId(tileId),
-    savedTilesModel.getSaveCountByTileId(tileId),
+    savedTilesModel.getCountByTileId(tileId),
   ])
   if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
   if (tile.isPrivate) return

@@ -174,7 +174,7 @@ async function createCreditForTile({ tileId, credit, authUserId }: { tileId: str
 }
 
 async function getSavedState(tileId: string, authUserId: string): Promise<boolean> {
-  const savedTile = await savedTilesModel.getSavedTileRaw(tileId, authUserId)
+  const savedTile = await savedTilesModel.getRaw(tileId, authUserId)
   return savedTile?.isSaved ?? false
 }
 
@@ -190,7 +190,7 @@ async function getSavedStatesMap(tileIds: string[], authUserId: string | undefin
   // Otherwise, initialize all tiles as undefined (no saved state)
   const savedStatesMap = new Map<string, boolean | undefined>(tileIds.map((id) => [id, authUserId ? false : undefined]))
   if (authUserId) {
-    const savedTiles = await savedTilesModel.getSavedTilesRaw(tileIds, authUserId)
+    const savedTiles = await savedTilesModel.getManyRaw(tileIds, authUserId)
     savedTiles.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
   }
   return savedStatesMap
