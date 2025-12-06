@@ -3,7 +3,6 @@ import { describe, expect, test, beforeEach, afterAll } from 'vitest'
 import { UserSignupForm } from '@/app/_types/validation-schema'
 import { userProfileModel } from '@/models/user'
 import { scene, testClient, TEST_ORIGIN } from '@/testing/scene'
-import { createAdminClient } from '@/utils/supabase/server'
 
 import { authOperations } from './auth-operations'
 
