@@ -7,11 +7,10 @@ import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
 import { decodeCursor, encodeCursor, CursorData } from '@/operations/feed/cursor'
-import { calculateScore, compareTiles, filterTiles } from '@/operations/feed/feed-helpers'
 
 export const tileOperations = {
   getById,
-  getFeed,
+  getFeedForUser,
   getListForSupplier,
   getListForUser,
   createForSupplier,
@@ -45,7 +44,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
   }
 }
 
-async function getFeed({ cursor, pageSize = 20 }: FeedQuery, authUserId?: string): Promise<FeedQueryResult> {
+async function getFeedForUser(authUserId: string, { cursor, pageSize = 20 }: FeedQuery): Promise<FeedQueryResult> {
   // Decode cursor if provided
   let cursorData: CursorData | null = null
   if (cursor) {
@@ -53,18 +52,14 @@ async function getFeed({ cursor, pageSize = 20 }: FeedQuery, authUserId?: string
   }
 
   const MAX_PAGE_SIZE = Math.min(pageSize, 100) // Cap page size to prevent DoS attacks
-  const tilesRaw = await tileModel.getManyRaw({ limit: MAX_PAGE_SIZE })
-  const savedStatesMap = await getSavedStatesMap(
-    tilesRaw.map((t) => t.id),
-    authUserId
-  )
+  const tilesRaw = await tileModel.getFeed(authUserId, { limit: MAX_PAGE_SIZE })
 
   const tiles: TileListItem[] = tilesRaw.map((tile) => ({
     id: tile.id,
     imagePath: tile.imagePath,
     title: tile.title,
     description: tile.description,
-    isSaved: savedStatesMap.get(tile.id),
+    isSaved: false, // saved tiles have been filtered out in the query
   }))
 
   // Generate next cursor from the last tile
