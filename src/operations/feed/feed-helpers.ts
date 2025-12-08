@@ -20,6 +20,7 @@ export const WEIGHTS = {
   recency: 0.3, // recency has a threshold for super recent tiles
   quality: 0.2,
   social: 0.5,
+  total: () => WEIGHTS.recency + WEIGHTS.quality + WEIGHTS.social,
 } as const
 
 export const RECENCY = {
@@ -33,6 +34,7 @@ export const QUALITY = {
   MAX_SCORE_CREDIT: 0.8,
   SCORE_FIRST_CREDIT: 0.3,
   MAX_NUM_CREDITS: 8,
+  SCORE_PER_ADDITIONAL_CREDIT: () => (QUALITY.MAX_SCORE_CREDIT - QUALITY.SCORE_FIRST_CREDIT) / (QUALITY.MAX_NUM_CREDITS - 2), // subtract 2 for first and second credits
 } as const
 
 export const SOCIAL = {
@@ -47,7 +49,7 @@ export function calculateScore(tile: t.TileRaw, creditCount: number, saveCount: 
   }
 
   // Recency, max score of 1.0.
-  if (now - createdAt < RECENCY.THRESHOLD_SECONDS * 1000) return 1.0 // super recent tiles get perfect score
+  if (now - createdAt < RECENCY.THRESHOLD_SECONDS * 1000) return 1 // super recent tiles get perfect score
 
   // Hyperbolic decay approaches 0.0 over RECENCY_MAX_AGE_SECONDS.
   const secondsSinceCreation = (now - createdAt) / 1000
@@ -56,10 +58,7 @@ export function calculateScore(tile: t.TileRaw, creditCount: number, saveCount: 
   // Quality, max score of 1.0.
   // 0.1 point for title; 0.1 point for description; 0 points for 1st credit + 0.3 points for 2nd credit + 0.1 point for each additional credit (up to max of 0.8).
   const creditScore = Math.min(
-    creditCount <= 1
-      ? 0
-      : QUALITY.SCORE_FIRST_CREDIT +
-          ((QUALITY.MAX_SCORE_CREDIT - QUALITY.SCORE_FIRST_CREDIT) / QUALITY.MAX_NUM_CREDITS) * Math.min(creditCount - 2, QUALITY.MAX_NUM_CREDITS),
+    creditCount <= 1 ? 0 : QUALITY.SCORE_FIRST_CREDIT + QUALITY.SCORE_PER_ADDITIONAL_CREDIT() * Math.min(creditCount - 2, QUALITY.MAX_NUM_CREDITS),
     QUALITY.MAX_SCORE_CREDIT
   )
   const qualityScore = (tile.title ? QUALITY.MAX_SCORE_TITLE : 0) + (tile.description ? QUALITY.MAX_SCORE_DESCRIPTION : 0) + creditScore
@@ -70,7 +69,6 @@ export function calculateScore(tile: t.TileRaw, creditCount: number, saveCount: 
 
   // return normalised score between 0 and 1, rounded to 9 decimal places
   const weightedSum = WEIGHTS.recency * recencyScore + WEIGHTS.quality * qualityScore + WEIGHTS.social * socialScore
-  const totalWeight = WEIGHTS.recency + WEIGHTS.quality + WEIGHTS.social
-  const normalisedScore = weightedSum / totalWeight
+  const normalisedScore = weightedSum / WEIGHTS.total()
   return Math.round(normalisedScore * 1e9) / 1e9
 }
