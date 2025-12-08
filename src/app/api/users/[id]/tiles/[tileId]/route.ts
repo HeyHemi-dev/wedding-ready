@@ -35,15 +35,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { data: body, error: parseError } = await tryCatch(req.json())
   if (parseError) return HTTP_ERROR.BAD_REQUEST()
 
-  const parsed = tileSaveStateSchema.safeParse(body)
-  if (!parsed.success) return HTTP_ERROR.BAD_REQUEST()
+  const { data: validated, success } = tileSaveStateSchema.safeParse(body)
+  if (!success) return HTTP_ERROR.BAD_REQUEST()
 
   const authUserId = await getAuthUserId()
   if (!authUserId || authUserId !== id) {
     return HTTP_ERROR.UNAUTHORIZED()
   }
 
-  const { data: saveState, error } = await tryCatch(tileOperations.upsertSaveState(tileId, authUserId, body.isSaved ?? true))
+  const { data: saveState, error } = await tryCatch(tileOperations.upsertSaveState(tileId, authUserId, validated.isSaved))
   if (error) return HTTP_ERROR.INTERNAL_SERVER_ERROR()
 
   return NextResponse.json(saveState)
