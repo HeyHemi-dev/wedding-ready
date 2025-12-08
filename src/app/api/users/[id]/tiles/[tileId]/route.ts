@@ -42,7 +42,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return HTTP_ERROR.UNAUTHORIZED()
   }
 
-  const { data: saveState, error } = await tryCatch(tileOperations.upsertSavedState(tileId, authUserId, body.isSaved ?? true))
+  const { data: saveState, error } = await tryCatch(tileOperations.upsertSaveState(tileId, authUserId, body.isSaved ?? true))
   if (error) return HTTP_ERROR.INTERNAL_SERVER_ERROR()
 
   return NextResponse.json(saveState)

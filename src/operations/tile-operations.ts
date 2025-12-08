@@ -18,7 +18,7 @@ export const tileOperations = {
   createForSupplier,
   getCreditsForTile,
   createCreditForTile,
-  upsertSavedState,
+  upsertSaveState,
 }
 
 async function getById(id: string, authUserId?: string): Promise<Tile> {
@@ -26,7 +26,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
 
   if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
-  const isSaved = authUserId ? await getSavedState(id, authUserId) : undefined
+  const isSaved = authUserId ? await getSaveState(id, authUserId) : undefined
 
   return {
     id: tile.id,
@@ -71,7 +71,7 @@ async function getFeedForUser(authUserId: string, { pageSize = 20 }: FeedQuery):
 async function getListForSupplier(supplierId: string, authUserId?: string): Promise<TileListItem[]> {
   const tiles = await tileModel.getManyRawBySupplierId(supplierId)
 
-  const savedStatesMap = await getSavedStatesMap(
+  const saveStatesMap = await getSaveStatesMap(
     tiles.map((t) => t.id),
     authUserId
   )
@@ -81,7 +81,7 @@ async function getListForSupplier(supplierId: string, authUserId?: string): Prom
     imagePath: tile.imagePath,
     title: tile.title,
     description: tile.description,
-    isSaved: savedStatesMap.get(tile.id),
+    isSaved: saveStatesMap.get(tile.id),
   }))
 }
 
@@ -90,7 +90,7 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
 
   // Get the current auth user's saved status for each tile
   // Note: the authUser can be different from the user we're getting tiles for.
-  const savedStatesMap = await getSavedStatesMap(
+  const saveStatesMap = await getSaveStatesMap(
     tiles.map((t) => t.id),
     authUserId
   )
@@ -100,7 +100,7 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
     imagePath: tile.imagePath,
     title: tile.title,
     description: tile.description,
-    isSaved: savedStatesMap.get(tile.id),
+    isSaved: saveStatesMap.get(tile.id),
   }))
 }
 
@@ -167,7 +167,7 @@ async function createCreditForTile({ tileId, credit, authUserId }: { tileId: str
   }))
 }
 
-async function upsertSavedState(tileId: string, authUserId: string, isSaved: boolean): Promise<TileSaveState> {
+async function upsertSaveState(tileId: string, authUserId: string, isSaved: boolean): Promise<TileSaveState> {
   const [tile, user] = await Promise.all([tileModel.getRawById(tileId), userProfileModel.getRawById(authUserId)])
   if (!tile || !user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
 
@@ -179,7 +179,7 @@ async function upsertSavedState(tileId: string, authUserId: string, isSaved: boo
   return { isSaved: savedTile.isSaved }
 }
 
-async function getSavedState(tileId: string, authUserId: string): Promise<boolean> {
+async function getSaveState(tileId: string, authUserId: string): Promise<boolean> {
   const savedTile = await savedTilesModel.getRaw(tileId, authUserId)
   return savedTile?.isSaved ?? false
 }
@@ -191,13 +191,13 @@ async function getSavedState(tileId: string, authUserId: string): Promise<boolea
  * @returns A map of tile ids to their saved state.
  */
 
-export async function getSavedStatesMap(tileIds: string[], authUserId: string | undefined): Promise<Map<string, boolean | undefined>> {
+export async function getSaveStatesMap(tileIds: string[], authUserId: string | undefined): Promise<Map<string, boolean | undefined>> {
   // If user is authenticated, initialize all tiles as false (not saved)
   // Otherwise, initialize all tiles as undefined (no saved state)
-  const savedStatesMap = new Map<string, boolean | undefined>(tileIds.map((id) => [id, authUserId ? false : undefined]))
+  const saveStatesMap = new Map<string, boolean | undefined>(tileIds.map((id) => [id, authUserId ? false : undefined]))
   if (authUserId) {
     const savedTiles = await savedTilesModel.getManyRaw(tileIds, authUserId)
-    savedTiles.forEach((st) => savedStatesMap.set(st.tileId, st.isSaved))
+    savedTiles.forEach((st) => saveStatesMap.set(st.tileId, st.isSaved))
   }
-  return savedStatesMap
+  return saveStatesMap
 }

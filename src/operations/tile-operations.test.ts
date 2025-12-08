@@ -6,7 +6,7 @@ import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import { createTileCreditForm, scene, TEST_TILE, TEST_ID_0 } from '@/testing/scene'
 
-import { getSavedStatesMap, tileOperations } from './tile-operations'
+import { getSaveStatesMap, tileOperations } from './tile-operations'
 
 const CURRENT_USER = {
   email: 'currentUser@example.com',
@@ -344,12 +344,12 @@ describe('tileOperations', () => {
 
       // Assert - Verify no saved tiles are returned
       expect(result.tiles.find((t) => t.id === tile1.id)).toBeUndefined()
-      const savedStates = await getSavedStatesMap(
+      const saveStates = await getSaveStatesMap(
         result.tiles.map((t) => t.id),
         currentUser.id
       )
       for (const tile of result.tiles) {
-        expect(savedStates.get(tile.id)).toBe(false)
+        expect(saveStates.get(tile.id)).toBe(false)
       }
     })
   })
