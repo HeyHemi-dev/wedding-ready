@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { HttpErrorResponseBody } from '@/app/_types/generics'
 
 // ============================================================================
 // ERROR MESSAGES - Centralized error message definitions
@@ -69,11 +70,6 @@ export const OPERATION_ERROR = {
 // ============================================================================
 // HTTP ERRORS - For use in API routes (NextResponse)
 // ============================================================================
-
-export type HttpErrorResponseBody = {
-  code: string
-  message?: string
-}
 
 export const HTTP_ERROR = {
   BAD_REQUEST: (message?: string) =>

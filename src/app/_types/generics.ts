@@ -1,9 +1,13 @@
-import { HttpErrorResponseBody } from '@/app/_types/errors'
 import { NextResponse } from 'next/server'
 
 export type Href = {
   href: string
   label: string
+}
+
+export type HttpErrorResponseBody = {
+  code: string
+  message?: string
 }
 
 /**
