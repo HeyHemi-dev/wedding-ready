@@ -1,11 +1,12 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { FeedQueryResult, Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
-import { TileCreditForm, TileCreate, FeedQuery } from '@/app/_types/validation-schema'
+import { TileCreditForm, TileCreate, FeedQuery, TileSaveState } from '@/app/_types/validation-schema'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
+import { userProfileModel } from '@/models/user'
 import { updateScore } from '@/operations/feed/feed-helpers'
 import { tryCatch } from '@/utils/try-catch'
 
@@ -166,13 +167,16 @@ async function createCreditForTile({ tileId, credit, authUserId }: { tileId: str
   }))
 }
 
-async function upsertSavedState(tileId: string, authUserId: string, isSaved: boolean): Promise<t.SavedTileRaw> {
+async function upsertSavedState(tileId: string, authUserId: string, isSaved: boolean): Promise<TileSaveState> {
+  const [tile, user] = await Promise.all([tileModel.getRawById(tileId), userProfileModel.getRawById(authUserId)])
+  if (!tile || !user) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
+
   const savedTile = await savedTilesModel.upsertRaw({ tileId, userId: authUserId, isSaved })
 
   const { error } = await tryCatch(updateScore(tileId))
   if (error) console.error(error) // Don't fail the operation if the score update fails
 
-  return savedTile
+  return { isSaved: savedTile.isSaved }
 }
 
 async function getSavedState(tileId: string, authUserId: string): Promise<boolean> {
