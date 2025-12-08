@@ -73,7 +73,7 @@
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.4",
     "eslint": "^9",
-    "eslint-config-next": "15.2.0",
+    "eslint-config-next": "15.5.7",
     "eslint-plugin-import": "^2.31.0",
     "jsdom": "^26.1.0",
     "postcss": "8.4.49",
