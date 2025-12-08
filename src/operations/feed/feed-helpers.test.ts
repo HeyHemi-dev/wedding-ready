@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { ERROR_MESSAGE, OPERATION_ERROR } from '@/app/_types/errors'
+import { ERROR_MESSAGE } from '@/app/_types/errors'
 import { LOCATIONS } from '@/db/constants'
 import type * as t from '@/models/types'
 
-import { calculateScore, RECENCY, QUALITY, SOCIAL, WEIGHTS } from './feed-helpers'
+import { calculateScore, RECENCY, QUALITY, WEIGHTS } from './feed-helpers'
 
 function createMockTile(overrides: Partial<t.TileRaw> = {}): t.TileRaw {
   // use old tile to avoid recency score

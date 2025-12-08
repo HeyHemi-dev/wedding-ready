@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+
 import { HttpErrorResponseBody } from '@/app/_types/generics'
 
 // ============================================================================

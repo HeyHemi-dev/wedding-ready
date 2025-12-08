@@ -12,6 +12,7 @@ export const tileModel = {
   getManyRawBySupplierId,
   getManyRawBySupplierHandle,
   getManyRawByUserId,
+  getRawByStaleScore,
 
   createRaw,
   updateRaw,
@@ -101,6 +102,41 @@ async function getManyRawByUserId(userId: string): Promise<t.TileRaw[]> {
     .innerJoin(s.savedTiles, eq(s.tiles.id, s.savedTiles.tileId))
     .where(and(eq(s.savedTiles.userId, userId), eq(s.savedTiles.isSaved, true)))
     .orderBy(desc(s.tiles.createdAt))
+}
+
+/**
+ * Returns tiles whose score is STALE, using different thresholds depending on how old the tile is.
+ */
+async function getRawByStaleScore(): Promise<t.TileRaw[] | null> {
+  const now = Date.now()
+  const minutesAgo = (minutes: number) => new Date(now - 1000 * 60 * minutes)
+  const hoursAgo = (hours: number) => new Date(now - 1000 * 60 * 60 * hours)
+  const daysAgo = (days: number) => new Date(now - 1000 * 60 * 60 * 24 * days)
+
+  return db
+    .select(s.tileColumns)
+    .from(s.tiles)
+    .where(
+      or(
+        // created < 1 hour, score > 1 minute old
+        and(gte(s.tiles.createdAt, hoursAgo(1)), lt(s.tiles.scoreUpdatedAt, minutesAgo(1))),
+
+        // created 1–6 hours, score > 5 minutes old
+        and(lt(s.tiles.createdAt, hoursAgo(1)), gte(s.tiles.createdAt, hoursAgo(6)), lt(s.tiles.scoreUpdatedAt, minutesAgo(5))),
+
+        // created 6–24 hours, score > 15 minutes old
+        and(lt(s.tiles.createdAt, hoursAgo(6)), gte(s.tiles.createdAt, hoursAgo(24)), lt(s.tiles.scoreUpdatedAt, minutesAgo(15))),
+
+        // created 24–48 hours, score > 60 minutes old
+        and(lt(s.tiles.createdAt, hoursAgo(24)), gte(s.tiles.createdAt, hoursAgo(48)), lt(s.tiles.scoreUpdatedAt, minutesAgo(60))),
+
+        // created 2–7 days, score > 4 hours old
+        and(lt(s.tiles.createdAt, daysAgo(2)), gte(s.tiles.createdAt, daysAgo(7)), lt(s.tiles.scoreUpdatedAt, hoursAgo(4))),
+
+        // created 7–14 days, score > 1 day old
+        and(lt(s.tiles.createdAt, daysAgo(7)), gte(s.tiles.createdAt, daysAgo(14)), lt(s.tiles.scoreUpdatedAt, daysAgo(1)))
+      )
+    )
 }
 
 async function createRaw(tileRawData: t.InsertTileRaw): Promise<t.TileRaw> {

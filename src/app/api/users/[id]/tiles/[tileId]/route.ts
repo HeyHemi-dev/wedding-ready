@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server'
+
 import { HTTP_ERROR } from '@/app/_types/errors'
 import { RouteResponse } from '@/app/_types/generics'
 import { TileSaveState, tileSaveStateSchema } from '@/app/_types/validation-schema'
@@ -5,7 +7,6 @@ import { savedTilesModel } from '@/models/saved-tiles'
 import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
-import { NextResponse } from 'next/server'
 
 export type SaveTileGetResponseBody = TileSaveState
 
