@@ -86,6 +86,7 @@ describe('tileOperations', () => {
       expect(result.isSaved).toBe(false)
     })
   })
+
   describe('getListForSupplier', () => {
     it('should get a list of tiles for a supplier', async () => {
       // Arrange
@@ -145,6 +146,7 @@ describe('tileOperations', () => {
       expect(result.find((t) => t.id === tile2.id)?.isSaved).toBe(false)
     })
   })
+
   describe('getListForUser', () => {
     it('should get a list of tiles saved by a user', async () => {
       // Arrange
@@ -478,6 +480,7 @@ describe('tileOperations', () => {
       expect(credit2?.serviceDescription).toBe('Second supplier description')
     })
   })
+
   describe('getCreditsForTile', () => {
     it('should get the credits for a tile', async () => {
       // Arrange
@@ -499,6 +502,7 @@ describe('tileOperations', () => {
       expect(result.length).toBe(0)
     })
   })
+
   describe('createCreditForTile', () => {
     it('should create a credit for a tile', async () => {
       // Arrange
