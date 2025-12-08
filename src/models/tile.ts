@@ -1,4 +1,4 @@
-import { eq, and, desc, inArray, gte, isNull } from 'drizzle-orm'
+import { eq, and, desc, inArray, gte, isNull, or, lt } from 'drizzle-orm'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
@@ -53,13 +53,15 @@ async function getFeed(authUserId: string, { limit }: GetFeedOptions): Promise<t
       .where(and(eq(s.tiles.isPrivate, false), isNull(s.viewedTiles.tileId), isNull(s.savedTiles.tileId)))
       .orderBy(desc(s.tiles.score))
       .limit(limit)
-    await tx
-      .insert(s.viewedTiles)
-      .values(tiles.map((tile) => ({ userId: authUserId, tileId: tile.id })))
-      .onConflictDoUpdate({
-        target: [s.viewedTiles.userId, s.viewedTiles.tileId],
-        set: { viewedAt: now },
-      })
+    if (tiles.length > 0) {
+      await tx
+        .insert(s.viewedTiles)
+        .values(tiles.map((tile) => ({ userId: authUserId, tileId: tile.id })))
+        .onConflictDoUpdate({
+          target: [s.viewedTiles.userId, s.viewedTiles.tileId],
+          set: { viewedAt: now },
+        })
+    }
     return tiles
   })
 }
