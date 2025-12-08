@@ -4,18 +4,6 @@ import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import * as t from '@/models/types'
 
-export async function updateScore(tileId: string): Promise<void> {
-  const [tile, creditCount, saveCount] = await Promise.all([
-    tileModel.getRawById(tileId),
-    tileSupplierModel.getCreditCountByTileId(tileId),
-    savedTilesModel.getCountByTileId(tileId),
-  ])
-  if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND()
-  if (tile.isPrivate) return
-  const score = calculateScore(tile, creditCount, saveCount)
-  await tileModel.updateScore(tile.id, score)
-}
-
 export const WEIGHTS = {
   recency: 0.3, // recency has a threshold for super recent tiles
   quality: 0.2,
@@ -71,4 +59,12 @@ export function calculateScore(tile: t.TileRaw, creditCount: number, saveCount: 
   const weightedSum = WEIGHTS.recency * recencyScore + WEIGHTS.quality * qualityScore + WEIGHTS.social * socialScore
   const normalisedScore = weightedSum / WEIGHTS.total()
   return Math.round(normalisedScore * 1e9) / 1e9
+}
+
+export async function updateScoreForTile(tile: t.TileRaw): Promise<void> {
+  if (tile.isPrivate) return
+  const [creditCount, saveCount] = await Promise.all([tileSupplierModel.getCreditCountByTileId(tile.id), savedTilesModel.getCountByTileId(tile.id)])
+
+  const score = calculateScore(tile, creditCount, saveCount)
+  await tileModel.updateScore(tile.id, score)
 }

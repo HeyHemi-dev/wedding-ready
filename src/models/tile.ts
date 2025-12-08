@@ -107,7 +107,7 @@ async function getManyRawByUserId(userId: string): Promise<t.TileRaw[]> {
 /**
  * Returns tiles whose score is STALE, using different thresholds depending on how old the tile is.
  */
-async function getRawByStaleScore(): Promise<t.TileRaw[] | null> {
+async function getRawByStaleScore(): Promise<t.TileRaw[]> {
   const now = Date.now()
   const minutesAgo = (minutes: number) => new Date(now - 1000 * 60 * minutes)
   const hoursAgo = (hours: number) => new Date(now - 1000 * 60 * 60 * hours)

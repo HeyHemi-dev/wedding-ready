@@ -6,6 +6,7 @@ import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import { createTileCreditForm, scene, TEST_TILE, TEST_ID_0 } from '@/testing/scene'
 
+import { RECENCY, updateScoreForTile } from './feed/feed-helpers'
 import { getSaveStatesMap, tileOperations } from './tile-operations'
 
 const CURRENT_USER = {
@@ -84,130 +85,6 @@ describe('tileOperations', () => {
 
       // Assert
       expect(result.isSaved).toBe(false)
-    })
-  })
-  describe('getListForSupplier', () => {
-    it('should get a list of tiles for a supplier', async () => {
-      // Arrange
-      const { supplier, tile } = await scene.hasUserSupplierAndTile()
-
-      // Act
-      const result = await tileOperations.getListForSupplier(supplier.id)
-
-      // Assert
-      expect(result.length).toBeGreaterThan(0)
-      expect(result.find((t) => t.id === tile.id)).toBeDefined()
-    })
-
-    it('should return empty array when supplier has no tiles', async () => {
-      // Arrange
-      const { supplier } = await scene.hasUserAndSupplier()
-      await scene.withoutTilesForSupplier({ supplierHandle: supplier.handle })
-
-      // Act
-      const result = await tileOperations.getListForSupplier(supplier.id)
-
-      // Assert
-      expect(result.length).toBe(0)
-    })
-
-    it('should return isSaved as undefined for all tiles when no authUserId provided', async () => {
-      // Arrange
-      const { user, supplier } = await scene.hasUserAndSupplier()
-      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-      await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-
-      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
-
-      // Act
-      const result = await tileOperations.getListForSupplier(supplier.id)
-
-      // Assert
-      expect(result.length).toBeGreaterThan(0)
-      expect(result.every((t) => t.isSaved === undefined)).toBe(true)
-    })
-
-    it('should return correct isSaved status for each tile when authUserId provided', async () => {
-      // Arrange
-      const { user, supplier } = await scene.hasUserAndSupplier()
-      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-      const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
-      await savedTilesModel.upsertRaw({ tileId: tile2.id, userId: user.id, isSaved: false })
-
-      // Act
-      const result = await tileOperations.getListForSupplier(supplier.id, user.id)
-
-      // Assert
-      expect(result.length).toBeGreaterThan(0)
-      expect(result.some((t) => t.isSaved === undefined)).toBe(false)
-      expect(result.find((t) => t.id === tile1.id)?.isSaved).toBe(true)
-      expect(result.find((t) => t.id === tile2.id)?.isSaved).toBe(false)
-    })
-  })
-  describe('getListForUser', () => {
-    it('should get a list of tiles saved by a user', async () => {
-      // Arrange
-      const { user, tile } = await scene.hasUserSupplierAndTile()
-
-      await savedTilesModel.upsertRaw({ tileId: tile.id, userId: user.id, isSaved: true })
-
-      // Act
-      const result = await tileOperations.getListForUser(user.id)
-
-      // Assert
-      expect(result.length).toBeGreaterThan(0)
-      expect(result.find((t) => t.id === tile.id)).toBeDefined()
-    })
-
-    it('should return empty array when user has no saved tiles', async () => {
-      // Arrange
-      const { user, supplier } = await scene.hasUserAndSupplier()
-      await scene.hasTile({
-        createdByUserId: user.id,
-        credits: [createTileCreditForm({ supplierId: supplier.id })],
-      })
-
-      // Act
-      const result = await tileOperations.getListForUser(user.id)
-
-      // Assert
-      expect(result.length).toBe(0)
-    })
-
-    it('should return isSaved as undefined for all tiles when no authUserId provided', async () => {
-      // Arrange
-      const { user, tile } = await scene.hasUserSupplierAndTile()
-
-      await savedTilesModel.upsertRaw({ tileId: tile.id, userId: user.id, isSaved: true })
-
-      // Act
-      const result = await tileOperations.getListForUser(user.id)
-
-      // Assert
-      expect(result.length).toBeGreaterThan(0)
-      expect(result.every((t) => t.isSaved === undefined)).toBe(true)
-    })
-
-    it('should return correct isSaved status for each tile when authUserId provided', async () => {
-      // Arrange
-      const { user, supplier } = await scene.hasUserAndSupplier()
-      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-      const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
-      await savedTilesModel.upsertRaw({ tileId: tile2.id, userId: user.id, isSaved: true })
-
-      const currentUser = await scene.hasUser(CURRENT_USER)
-      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: currentUser.id, isSaved: true })
-
-      // Act
-      const result = await tileOperations.getListForUser(user.id, currentUser.id)
-
-      // Assert
-      expect(result.length).toBeGreaterThan(0)
-      expect(result.some((t) => t.isSaved === undefined)).toBe(false)
-      expect(result.find((t) => t.id === tile1.id)?.isSaved).toBe(true)
-      expect(result.find((t) => t.id === tile2.id)?.isSaved).toBe(false)
     })
   })
 
@@ -354,6 +231,132 @@ describe('tileOperations', () => {
     })
   })
 
+  describe('getListForSupplier', () => {
+    it('should get a list of tiles for a supplier', async () => {
+      // Arrange
+      const { supplier, tile } = await scene.hasUserSupplierAndTile()
+
+      // Act
+      const result = await tileOperations.getListForSupplier(supplier.id)
+
+      // Assert
+      expect(result.length).toBeGreaterThan(0)
+      expect(result.find((t) => t.id === tile.id)).toBeDefined()
+    })
+
+    it('should return empty array when supplier has no tiles', async () => {
+      // Arrange
+      const { supplier } = await scene.hasUserAndSupplier()
+      await scene.withoutTilesForSupplier({ supplierHandle: supplier.handle })
+
+      // Act
+      const result = await tileOperations.getListForSupplier(supplier.id)
+
+      // Assert
+      expect(result.length).toBe(0)
+    })
+
+    it('should return isSaved as undefined for all tiles when no authUserId provided', async () => {
+      // Arrange
+      const { user, supplier } = await scene.hasUserAndSupplier()
+      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+      await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+
+      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
+
+      // Act
+      const result = await tileOperations.getListForSupplier(supplier.id)
+
+      // Assert
+      expect(result.length).toBeGreaterThan(0)
+      expect(result.every((t) => t.isSaved === undefined)).toBe(true)
+    })
+
+    it('should return correct isSaved status for each tile when authUserId provided', async () => {
+      // Arrange
+      const { user, supplier } = await scene.hasUserAndSupplier()
+      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+      const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile2.id, userId: user.id, isSaved: false })
+
+      // Act
+      const result = await tileOperations.getListForSupplier(supplier.id, user.id)
+
+      // Assert
+      expect(result.length).toBeGreaterThan(0)
+      expect(result.some((t) => t.isSaved === undefined)).toBe(false)
+      expect(result.find((t) => t.id === tile1.id)?.isSaved).toBe(true)
+      expect(result.find((t) => t.id === tile2.id)?.isSaved).toBe(false)
+    })
+  })
+
+  describe('getListForUser', () => {
+    it('should get a list of tiles saved by a user', async () => {
+      // Arrange
+      const { user, tile } = await scene.hasUserSupplierAndTile()
+
+      await savedTilesModel.upsertRaw({ tileId: tile.id, userId: user.id, isSaved: true })
+
+      // Act
+      const result = await tileOperations.getListForUser(user.id)
+
+      // Assert
+      expect(result.length).toBeGreaterThan(0)
+      expect(result.find((t) => t.id === tile.id)).toBeDefined()
+    })
+
+    it('should return empty array when user has no saved tiles', async () => {
+      // Arrange
+      const { user, supplier } = await scene.hasUserAndSupplier()
+      await scene.hasTile({
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Act
+      const result = await tileOperations.getListForUser(user.id)
+
+      // Assert
+      expect(result.length).toBe(0)
+    })
+
+    it('should return isSaved as undefined for all tiles when no authUserId provided', async () => {
+      // Arrange
+      const { user, tile } = await scene.hasUserSupplierAndTile()
+
+      await savedTilesModel.upsertRaw({ tileId: tile.id, userId: user.id, isSaved: true })
+
+      // Act
+      const result = await tileOperations.getListForUser(user.id)
+
+      // Assert
+      expect(result.length).toBeGreaterThan(0)
+      expect(result.every((t) => t.isSaved === undefined)).toBe(true)
+    })
+
+    it('should return correct isSaved status for each tile when authUserId provided', async () => {
+      // Arrange
+      const { user, supplier } = await scene.hasUserAndSupplier()
+      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+      const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
+      await savedTilesModel.upsertRaw({ tileId: tile2.id, userId: user.id, isSaved: true })
+
+      const currentUser = await scene.hasUser(CURRENT_USER)
+      await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: currentUser.id, isSaved: true })
+
+      // Act
+      const result = await tileOperations.getListForUser(user.id, currentUser.id)
+
+      // Assert
+      expect(result.length).toBeGreaterThan(0)
+      expect(result.some((t) => t.isSaved === undefined)).toBe(false)
+      expect(result.find((t) => t.id === tile1.id)?.isSaved).toBe(true)
+      expect(result.find((t) => t.id === tile2.id)?.isSaved).toBe(false)
+    })
+  })
+
   describe('createForSupplier', () => {
     it('should create a tile for a supplier', async () => {
       // Arrange
@@ -478,6 +481,7 @@ describe('tileOperations', () => {
       expect(credit2?.serviceDescription).toBe('Second supplier description')
     })
   })
+
   describe('getCreditsForTile', () => {
     it('should get the credits for a tile', async () => {
       // Arrange
@@ -499,6 +503,7 @@ describe('tileOperations', () => {
       expect(result.length).toBe(0)
     })
   })
+
   describe('createCreditForTile', () => {
     it('should create a credit for a tile', async () => {
       // Arrange
@@ -606,6 +611,52 @@ describe('tileOperations', () => {
       const credits = await tileSupplierModel.getCreditsByTileId(tile.id)
       const dbCredit = credits.find((c) => c.supplierId === supplier2.id)
       expect(dbCredit?.serviceDescription).toBe(serviceDescription)
+    })
+  })
+
+  describe('upsertSaveState', () => {
+    it('should upsert the save state for a tile', async () => {
+      // Arrange
+      const { user, tile } = await scene.hasUserSupplierAndTile()
+
+      // Act
+      const saveStateSaved = await tileOperations.upsertSaveState(tile.id, user.id, true)
+      const saveStateUnsaved = await tileOperations.upsertSaveState(tile.id, user.id, false)
+
+      // Assert
+      expect(saveStateSaved.isSaved).toBe(true)
+      expect(saveStateUnsaved.isSaved).toBe(false)
+    })
+  })
+
+  describe('updateScoreForTile helper', () => {
+    it('should update the score for a tile', async () => {
+      // Arrange
+      const { user, supplier } = await scene.hasUserAndSupplier()
+
+      const tile = await scene.hasTile({
+        imagePath: 'new-tile-for-update-scores.jpg',
+        title: 'Update Scores Tile',
+        description: '',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Fake aged tile to trigger score update
+      const agedCreatedAt = new Date(Date.now() - RECENCY.MAX_AGE_SECONDS * 1000)
+      tile.createdAt = agedCreatedAt
+      tile.scoreUpdatedAt = agedCreatedAt
+
+      // Act
+      await updateScoreForTile(tile)
+
+      // Assert
+      const after = await tileModel.getRawById(tile.id)
+      expect(tile.score).toBeGreaterThan(0)
+      expect(after).toBeDefined()
+      expect(after!.score).toBeGreaterThan(0)
+      expect(after!.score).toBeLessThan(tile.score)
+      expect(after!.scoreUpdatedAt).not.toBe(tile.scoreUpdatedAt)
     })
   })
 })
