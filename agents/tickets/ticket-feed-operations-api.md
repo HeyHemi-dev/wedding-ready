@@ -8,15 +8,15 @@ Implement the backend feed functionality with scoring algorithm and cursor-based
 ### 1. Add Feed Query Key & Types
 - Add `feed` query key function to `src/app/_types/keys.ts`: `feed: (authUserId: string | null) => ['feed', authUserId]`.
 - Create TypeScript types in `src/app/api/feed/route.ts`:
-  - `FeedGetQueryParams` (Zod schema for `cursor?: string`, `limit?: number`).
+  - `FeedGetRequestParams` (Zod schema for `cursor?: string`, `limit?: number`).
   - `FeedGetResponseBody` (`{ tiles: TileListItem[], nextCursor: string | null, hasNextPage: boolean }`).
 - Export types for use in hooks.
 
 ### 2. Implement Cursor Encoding/Decoding Utilities
 - Create utility functions for cursor encoding/decoding:
-  - `encodeCursor(score: number, createdAt: Date, id: string): string` - Base64 encode the tuple.
-  - `decodeCursor(cursor: string): { score: number, createdAt: Date, id: string }` - Base64 decode and parse.
-- Handle edge cases: null cursor (first page), invalid cursor format.
+  - `encodeCursor(score: number, createdAt: Date, tileId: string): string` - Base64 encode the tuple.
+  - `decodeCursor(cursor: string): { score: number, createdAt: Date, tileId: string }` - Base64 decode and parse.
+- Handle edge cases: invalid cursor format (decodeCursor should only be called with valid strings; null cursor handling is done at operations layer).
 - Add unit tests for encoding/decoding functions.
 
 ### 3. Implement Feed Scoring Algorithm in Operations
@@ -32,7 +32,8 @@ Implement the backend feed functionality with scoring algorithm and cursor-based
     - Social: `LOG(save_count + 1)`.
     - Composite: `recencyWeight * recency + qualityWeight * quality + socialWeight * social` (weights: 0.4, 0.3, 0.3).
   - Implement cursor-based pagination:
-    - If cursor provided, decode and filter: `WHERE (score, createdAt, id) < (cursor.score, cursor.createdAt, cursor.id)`.
+    - If cursor is null/undefined (first page), fetch from beginning without cursor filter.
+    - If cursor provided, decode using `decodeCursor(cursor)` and filter: `WHERE (score, createdAt, id) < (cursor.score, cursor.createdAt, cursor.tileId)`.
     - Order by: `ORDER BY score DESC, createdAt DESC, id DESC`.
     - Limit results to `limit` (default 20).
   - Calculate `hasNextPage`: fetch `limit + 1` rows, if extra row exists, `hasNextPage = true`.
@@ -49,7 +50,7 @@ Implement the backend feed functionality with scoring algorithm and cursor-based
     - Calls `tileOperations.getFeed({ authUserId, cursor, limit })`.
     - Returns JSON response: `{ tiles, nextCursor, hasNextPage }`.
     - Handles errors with `tryCatch` wrapper, returns appropriate status codes.
-  - Export types: `FeedGetQueryParams`, `FeedGetResponseBody`.
+  - Export types: `FeedGetRequestParams`, `FeedGetResponseBody`.
 - Follow existing API route patterns (error handling, type exports).
 
 ### 5. Add Unit Tests for Feed Operations

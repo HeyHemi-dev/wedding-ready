@@ -1,4 +1,4 @@
-import { eq, and, inArray } from 'drizzle-orm'
+import { count, eq, and, inArray } from 'drizzle-orm'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { db } from '@/db/connection'
@@ -6,12 +6,14 @@ import * as s from '@/db/schema'
 import * as t from '@/models/types'
 
 export const savedTilesModel = {
-  getSavedTileRaw,
-  getSavedTilesRaw,
-  upsertSavedTileRaw,
+  getRaw,
+  getManyRaw,
+  getCountByTileId,
+  getManyCountsByTileId,
+  upsertRaw,
 }
 
-async function getSavedTileRaw(tileId: string, userId: string): Promise<t.SavedTileRaw | null> {
+async function getRaw(tileId: string, userId: string): Promise<t.SavedTileRaw | null> {
   const savedTilesRaw = await db
     .select()
     .from(s.savedTiles)
@@ -21,7 +23,7 @@ async function getSavedTileRaw(tileId: string, userId: string): Promise<t.SavedT
   return savedTilesRaw[0]
 }
 
-async function getSavedTilesRaw(tileIds: string[], userId: string): Promise<t.SavedTileRaw[]> {
+async function getManyRaw(tileIds: string[], userId: string): Promise<t.SavedTileRaw[]> {
   const savedTilesRaw = await db
     .select()
     .from(s.savedTiles)
@@ -29,16 +31,39 @@ async function getSavedTilesRaw(tileIds: string[], userId: string): Promise<t.Sa
   return savedTilesRaw
 }
 
+async function getCountByTileId(tileId: string): Promise<number> {
+  const result = await db
+    .select({
+      saveCount: count(s.savedTiles.tileId),
+    })
+    .from(s.savedTiles)
+    .where(eq(s.savedTiles.tileId, tileId))
+  return result[0].saveCount
+}
+
+async function getManyCountsByTileId(tileIds: string[]): Promise<Map<string, number>> {
+  if (tileIds.length === 0) return new Map()
+  const results = await db
+    .select({
+      tileId: s.savedTiles.tileId,
+      saveCount: count(s.savedTiles.tileId),
+    })
+    .from(s.savedTiles)
+    .where(and(eq(s.savedTiles.isSaved, true), inArray(s.savedTiles.tileId, tileIds)))
+    .groupBy(s.savedTiles.tileId)
+  return new Map(results.map((r) => [r.tileId, Number(r.saveCount)]))
+}
+
 /**
  * lets a user save/unsave a tile by upserting the saved tile relationship.
  * @returns The updated saved status of the tile
  */
-async function upsertSavedTileRaw(savedTileData: t.InsertSavedTileRaw): Promise<t.SavedTileRaw> {
+async function upsertRaw(savedTileData: t.InsertSavedTileRaw): Promise<t.SavedTileRaw> {
   const savedTilesRaw = await db
     .insert(s.savedTiles)
     .values(safeInsertSavedTileRaw(savedTileData))
     .onConflictDoUpdate({
-      target: [s.savedTiles.tileId, s.savedTiles.userId],
+      target: [s.savedTiles.userId, s.savedTiles.tileId],
       set: safeSetSavedTileRaw({
         isSaved: savedTileData.isSaved,
       }),

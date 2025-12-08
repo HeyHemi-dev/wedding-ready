@@ -1,7 +1,6 @@
 import { afterAll, afterEach, describe, expect, it } from 'vitest'
 
-import { scene } from '@/testing/scene'
-import { createAdminClient } from '@/utils/supabase/server'
+import { scene, testClient } from '@/testing/scene'
 
 import { userOperations } from './user-operations'
 
@@ -13,21 +12,19 @@ const TEST_USER_OPERATIONS = {
 }
 
 describe('userOperations', () => {
-  const supabaseAdmin = createAdminClient()
-
   afterEach(async () => {
-    await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle, supabaseClient: supabaseAdmin })
+    await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle, supabaseClient: testClient })
   })
 
   afterAll(async () => {
     await scene.resetTestData()
-    await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle, supabaseClient: supabaseAdmin })
+    await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle, supabaseClient: testClient })
   })
 
   describe('getById', () => {
     it('should get a user by id', async () => {
       // Arrange
-      const testUser = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: supabaseAdmin })
+      const testUser = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: testClient })
 
       // Act
       const user = await userOperations.getById(testUser.id)
@@ -42,7 +39,7 @@ describe('userOperations', () => {
   describe('getByHandle', () => {
     it('should get a user by handle', async () => {
       // Arrange
-      const testUser = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: supabaseAdmin })
+      const testUser = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: testClient })
 
       // Act
       const user = await userOperations.getByHandle(testUser.handle)
@@ -67,7 +64,7 @@ describe('userOperations', () => {
   describe('updateProfile', () => {
     it('should update a user profile', async () => {
       // Arrange
-      const user = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: supabaseAdmin })
+      const user = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: testClient })
 
       // Act
       const updatedUser = await userOperations.updateProfile(
@@ -111,7 +108,7 @@ describe('userOperations', () => {
     })
     it('should throw an error if the user is not the current user', async () => {
       // Arrange
-      const user = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: supabaseAdmin })
+      const user = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: testClient })
       const fakeUserId = '00000000-0000-0000-0000-000000000000'
 
       // Act & Assert
@@ -132,7 +129,7 @@ describe('userOperations', () => {
     })
     it('should handle empty strings as null', async () => {
       // Arrange
-      const user = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: supabaseAdmin })
+      const user = await scene.hasUser({ ...TEST_USER_OPERATIONS, supabaseClient: testClient })
 
       // Act
       await userOperations.updateProfile(

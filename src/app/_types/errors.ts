@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+import { HttpErrorResponseBody } from '@/app/_types/generics'
+
 // ============================================================================
 // ERROR MESSAGES - Centralized error message definitions
 // ============================================================================
@@ -72,7 +74,7 @@ export const OPERATION_ERROR = {
 
 export const HTTP_ERROR = {
   BAD_REQUEST: (message?: string) =>
-    NextResponse.json(
+    NextResponse.json<HttpErrorResponseBody>(
       {
         code: 'Bad Request',
         message,
@@ -81,7 +83,7 @@ export const HTTP_ERROR = {
     ),
 
   UNAUTHORIZED: (message?: string) =>
-    NextResponse.json(
+    NextResponse.json<HttpErrorResponseBody>(
       {
         code: 'Unauthorized',
         message,
@@ -90,7 +92,7 @@ export const HTTP_ERROR = {
     ),
 
   FORBIDDEN: (message?: string) =>
-    NextResponse.json(
+    NextResponse.json<HttpErrorResponseBody>(
       {
         code: 'Forbidden',
         message,
@@ -99,7 +101,7 @@ export const HTTP_ERROR = {
     ),
 
   NOT_FOUND: (message?: string) =>
-    NextResponse.json(
+    NextResponse.json<HttpErrorResponseBody>(
       {
         code: 'Not Found',
         message,
@@ -108,7 +110,7 @@ export const HTTP_ERROR = {
     ),
 
   INTERNAL_SERVER_ERROR: (message?: string) =>
-    NextResponse.json(
+    NextResponse.json<HttpErrorResponseBody>(
       {
         code: 'Internal Server Error',
         message,

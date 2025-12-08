@@ -16,6 +16,13 @@ import { createAdminClient } from '@/utils/supabase/server'
 
 import type { SupabaseClient } from '@supabase/supabase-js'
 
+// Shared Supabase admin client for tests to avoid multiple instances
+export const testClient = createAdminClient()
+
+export const TEST_ID = '123e4567-e89b-4123-a456-426614174000'
+export const TEST_ID_0 = '00000000-0000-4000-8000-000000000000'
+export const TEST_ID_F = 'ffffffff-ffff-4fff-bfff-ffffffffffff'
+
 export const TEST_USER = {
   email: 'test.user@example.com',
   password: 'testpassword123',
@@ -47,7 +54,9 @@ export const TEST_ORIGIN = 'http://localhost:3000'
 export const scene = {
   hasUser,
   hasSupplier,
+  hasUserAndSupplier,
   hasTile,
+  hasUserSupplierAndTile,
   withoutUser,
   withoutSupplier,
   withoutTilesForSupplier,
@@ -59,15 +68,12 @@ async function hasUser({
   password = TEST_USER.password,
   displayName = TEST_USER.displayName,
   handle = TEST_USER.handle,
-  supabaseClient,
+  supabaseClient = testClient,
 }: Partial<UserSignupForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserProfileRaw> {
   const user = await userProfileModel.getRawByHandle(handle)
   if (user) return user
 
-  // Create a client if none provided
-  const client = supabaseClient || createAdminClient()
-
-  return await authOperations.signUp({ userSignFormData: { email, password, displayName, handle }, supabaseClient: client, origin: TEST_ORIGIN })
+  return await authOperations.signUp({ userSignFormData: { email, password, displayName, handle }, supabaseClient, origin: TEST_ORIGIN })
 }
 
 async function hasSupplier({
@@ -83,6 +89,12 @@ async function hasSupplier({
   if (supplier) return supplier
 
   return await supplierOperations.register({ name, handle, websiteUrl, description, locations, services }, createdByUserId)
+}
+
+async function hasUserAndSupplier(): Promise<{ user: t.UserProfileRaw; supplier: Supplier }> {
+  const user = await hasUser()
+  const supplier = await hasSupplier({ createdByUserId: user.id })
+  return { user, supplier }
 }
 
 async function hasTile({
@@ -110,14 +122,21 @@ async function hasTile({
   return tile
 }
 
-async function withoutUser({ handle = TEST_USER.handle, supabaseClient }: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
+async function hasUserSupplierAndTile(): Promise<{ user: t.UserProfileRaw; supplier: Supplier; tile: t.TileRaw }> {
+  const user = await hasUser()
+  const supplier = await hasSupplier({ createdByUserId: user.id })
+  const tile = await hasTile({ createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+  return { user, supplier, tile }
+}
+
+async function withoutUser({
+  handle = TEST_USER.handle,
+  supabaseClient = testClient,
+}: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
   const user = await userProfileModel.getRawByHandle(handle)
   if (!user) return
 
-  // Create a client if none provided
-  const client = supabaseClient || createAdminClient()
-
-  await client.auth.admin.deleteUser(user.id)
+  await supabaseClient.auth.admin.deleteUser(user.id)
 }
 
 async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {

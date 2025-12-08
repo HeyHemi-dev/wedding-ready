@@ -2,8 +2,7 @@ import { describe, expect, test, beforeEach, afterAll } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
 import { userProfileModel } from '@/models/user'
-import { scene, TEST_ORIGIN } from '@/testing/scene'
-import { createAdminClient } from '@/utils/supabase/server'
+import { scene, testClient, TEST_ORIGIN } from '@/testing/scene'
 
 import { authOperations } from './auth-operations'
 
@@ -23,19 +22,17 @@ const AUTH_TEST_USER_2 = {
 }
 
 describe('authOperations', () => {
-  const supabaseAdmin = createAdminClient()
-
   beforeEach(async () => {
     await Promise.all([
-      scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: supabaseAdmin }),
-      scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: supabaseAdmin }),
+      scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
+      scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
     ])
   })
 
   afterAll(async () => {
     await Promise.all([
-      scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: supabaseAdmin }),
-      scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: supabaseAdmin }),
+      scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
+      scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
       scene.resetTestData(),
     ])
   })
@@ -45,7 +42,7 @@ describe('authOperations', () => {
       // Act
       const testUser = await authOperations.signUp({
         userSignFormData: AUTH_TEST_USER_1,
-        supabaseClient: supabaseAdmin,
+        supabaseClient: testClient,
         origin: TEST_ORIGIN,
       })
 
@@ -56,7 +53,7 @@ describe('authOperations', () => {
       expect(testUser.displayName).toBe(AUTH_TEST_USER_1.displayName)
 
       // Verify user exists in auth
-      const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(testUser.id)
+      const { data: authUser } = await testClient.auth.admin.getUserById(testUser.id)
       expect(authUser.user).toBeDefined()
       expect(authUser.user?.email).toBe(AUTH_TEST_USER_1.email)
 
@@ -70,7 +67,7 @@ describe('authOperations', () => {
 
     test('should throw error when email is already taken', async () => {
       // Arrange
-      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: supabaseAdmin })
+      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
 
       // Use same email as first user
       const userSignupData: UserSignupForm = {
@@ -85,7 +82,7 @@ describe('authOperations', () => {
       await expect(
         authOperations.signUp({
           userSignFormData: userSignupData,
-          supabaseClient: supabaseAdmin,
+          supabaseClient: testClient,
           origin: TEST_ORIGIN,
         })
       ).rejects.toThrow()
@@ -93,7 +90,7 @@ describe('authOperations', () => {
 
     test('should throw error when handle is already taken', async () => {
       // Arrange
-      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: supabaseAdmin })
+      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
 
       // Use same handle as first user
       const userSignupData: UserSignupForm = {
@@ -107,7 +104,7 @@ describe('authOperations', () => {
       await expect(
         authOperations.signUp({
           userSignFormData: userSignupData,
-          supabaseClient: supabaseAdmin,
+          supabaseClient: testClient,
           origin: TEST_ORIGIN,
         })
       ).rejects.toThrow()
@@ -117,7 +114,7 @@ describe('authOperations', () => {
   describe('signIn', () => {
     test('should successfully sign in existing user', async () => {
       // Arrange
-      const testUser = await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: supabaseAdmin })
+      const testUser = await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
 
       // Act
       const result = await authOperations.signIn({
@@ -125,7 +122,7 @@ describe('authOperations', () => {
           email: AUTH_TEST_USER_1.email,
           password: AUTH_TEST_USER_1.password,
         },
-        supabaseClient: supabaseAdmin,
+        supabaseClient: testClient,
       })
 
       // Assert
@@ -141,7 +138,7 @@ describe('authOperations', () => {
             email: 'nonexistent@example.com',
             password: 'wrongpassword',
           },
-          supabaseClient: supabaseAdmin,
+          supabaseClient: testClient,
         })
       ).rejects.toThrow()
     })
@@ -152,18 +149,18 @@ describe('authOperations', () => {
       // Arrange
 
       // Create and sign in user
-      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: supabaseAdmin })
+      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
 
       await authOperations.signIn({
         userSigninFormData: {
           email: AUTH_TEST_USER_1.email,
           password: AUTH_TEST_USER_1.password,
         },
-        supabaseClient: supabaseAdmin,
+        supabaseClient: testClient,
       })
 
       // Act & Assert
-      await expect(authOperations.signOut({ supabaseClient: supabaseAdmin })).resolves.not.toThrow()
+      await expect(authOperations.signOut({ supabaseClient: testClient })).resolves.not.toThrow()
     })
   })
 
