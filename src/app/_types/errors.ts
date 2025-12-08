@@ -70,9 +70,14 @@ export const OPERATION_ERROR = {
 // HTTP ERRORS - For use in API routes (NextResponse)
 // ============================================================================
 
+export type HttpErrorResponseBody = {
+  code: string
+  message?: string
+}
+
 export const HTTP_ERROR = {
   BAD_REQUEST: (message?: string) =>
-    NextResponse.json(
+    NextResponse.json<HttpErrorResponseBody>(
       {
         code: 'Bad Request',
         message,
@@ -81,7 +86,7 @@ export const HTTP_ERROR = {
     ),
 
   UNAUTHORIZED: (message?: string) =>
-    NextResponse.json(
+    NextResponse.json<HttpErrorResponseBody>(
       {
         code: 'Unauthorized',
         message,
@@ -90,7 +95,7 @@ export const HTTP_ERROR = {
     ),
 
   FORBIDDEN: (message?: string) =>
-    NextResponse.json(
+    NextResponse.json<HttpErrorResponseBody>(
       {
         code: 'Forbidden',
         message,
@@ -99,7 +104,7 @@ export const HTTP_ERROR = {
     ),
 
   NOT_FOUND: (message?: string) =>
-    NextResponse.json(
+    NextResponse.json<HttpErrorResponseBody>(
       {
         code: 'Not Found',
         message,
@@ -108,7 +113,7 @@ export const HTTP_ERROR = {
     ),
 
   INTERNAL_SERVER_ERROR: (message?: string) =>
-    NextResponse.json(
+    NextResponse.json<HttpErrorResponseBody>(
       {
         code: 'Internal Server Error',
         message,
