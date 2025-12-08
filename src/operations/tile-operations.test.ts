@@ -6,8 +6,8 @@ import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
 import { createTileCreditForm, scene, TEST_TILE, TEST_ID_0 } from '@/testing/scene'
 
-import { getSaveStatesMap, tileOperations } from './tile-operations'
 import { RECENCY, updateScoreForTile } from './feed/feed-helpers'
+import { getSaveStatesMap, tileOperations } from './tile-operations'
 
 const CURRENT_USER = {
   email: 'currentUser@example.com',
