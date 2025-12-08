@@ -180,6 +180,9 @@ async function upsertSaveState(tileId: string, authUserId: string, isSaved: bool
   return { isSaved: savedTile.isSaved }
 }
 
+/**
+ * Updates the scores for all tiles that have stale scores.
+ */
 async function updateScores(): Promise<void> {
   const tiles = await tileModel.getRawByStaleScore()
   if (tiles.length === 0) return
