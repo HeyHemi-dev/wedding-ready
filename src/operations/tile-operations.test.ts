@@ -634,7 +634,7 @@ describe('tileOperations', () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
 
-      const newTile = await scene.hasTile({
+      const tile = await scene.hasTile({
         imagePath: 'new-tile-for-update-scores.jpg',
         title: 'Update Scores Tile',
         description: '',
@@ -642,21 +642,21 @@ describe('tileOperations', () => {
         credits: [createTileCreditForm({ supplierId: supplier.id })],
       })
 
-      // Fake old tile to trigger score update
-      const oldCreatedAt = new Date(Date.now() - RECENCY.MAX_AGE_SECONDS * 1000)
-      newTile.createdAt = oldCreatedAt
-      newTile.scoreUpdatedAt = oldCreatedAt
+      // Fake aged tile to trigger score update
+      const agedCreatedAt = new Date(Date.now() - RECENCY.MAX_AGE_SECONDS * 1000)
+      tile.createdAt = agedCreatedAt
+      tile.scoreUpdatedAt = agedCreatedAt
 
       // Act
-      await updateScoreForTile(newTile)
+      await updateScoreForTile(tile)
 
       // Assert
-      const updatedTile = await tileModel.getRawById(newTile.id)
-      expect(newTile.score).toBeGreaterThan(0)
-      expect(updatedTile).toBeDefined()
-      expect(updatedTile?.score).toBeGreaterThan(0)
-      expect(updatedTile?.score).toBeLessThan(newTile.score)
-      expect(updatedTile?.scoreUpdatedAt).not.toBe(newTile.scoreUpdatedAt)
+      const after = await tileModel.getRawById(tile.id)
+      expect(tile.score).toBeGreaterThan(0)
+      expect(after).toBeDefined()
+      expect(after!.score).toBeGreaterThan(0)
+      expect(after!.score).toBeLessThan(tile.score)
+      expect(after!.scoreUpdatedAt).not.toBe(tile.scoreUpdatedAt)
     })
   })
 })
