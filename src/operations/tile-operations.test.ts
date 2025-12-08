@@ -7,6 +7,7 @@ import { tileSupplierModel } from '@/models/tile-supplier'
 import { createTileCreditForm, scene, TEST_TILE, TEST_ID_0 } from '@/testing/scene'
 
 import { getSaveStatesMap, tileOperations } from './tile-operations'
+import { RECENCY, updateScoreForTile } from './feed/feed-helpers'
 
 const CURRENT_USER = {
   email: 'currentUser@example.com',
@@ -610,6 +611,52 @@ describe('tileOperations', () => {
       const credits = await tileSupplierModel.getCreditsByTileId(tile.id)
       const dbCredit = credits.find((c) => c.supplierId === supplier2.id)
       expect(dbCredit?.serviceDescription).toBe(serviceDescription)
+    })
+  })
+
+  describe('upsertSaveState', () => {
+    it('should upsert the save state for a tile', async () => {
+      // Arrange
+      const { user, tile } = await scene.hasUserSupplierAndTile()
+
+      // Act
+      const saveStateSaved = await tileOperations.upsertSaveState(tile.id, user.id, true)
+      const saveStateUnsaved = await tileOperations.upsertSaveState(tile.id, user.id, false)
+
+      // Assert
+      expect(saveStateSaved.isSaved).toBe(true)
+      expect(saveStateUnsaved.isSaved).toBe(false)
+    })
+  })
+
+  describe('updateScoreForTile helper', () => {
+    it('should update the score for a tile', async () => {
+      // Arrange
+      const { user, supplier } = await scene.hasUserAndSupplier()
+
+      const newTile = await scene.hasTile({
+        imagePath: 'new-tile-for-update-scores.jpg',
+        title: 'Update Scores Tile',
+        description: '',
+        createdByUserId: user.id,
+        credits: [createTileCreditForm({ supplierId: supplier.id })],
+      })
+
+      // Fake old tile to trigger score update
+      const oldCreatedAt = new Date(Date.now() - RECENCY.MAX_AGE_SECONDS * 1000)
+      newTile.createdAt = oldCreatedAt
+      newTile.scoreUpdatedAt = oldCreatedAt
+
+      // Act
+      await updateScoreForTile(newTile)
+
+      // Assert
+      const updatedTile = await tileModel.getRawById(newTile.id)
+      expect(newTile.score).toBeGreaterThan(0)
+      expect(updatedTile).toBeDefined()
+      expect(updatedTile?.score).toBeGreaterThan(0)
+      expect(updatedTile?.score).toBeLessThan(newTile.score)
+      expect(updatedTile?.scoreUpdatedAt).not.toBe(newTile.scoreUpdatedAt)
     })
   })
 })
