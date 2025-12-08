@@ -144,6 +144,11 @@ export const tileCreateSchema = tileUploadFormSchema.extend({
 })
 export type TileCreate = z.infer<typeof tileCreateSchema>
 
+export const tileSaveStateSchema = z.object({
+  isSaved: z.boolean(),
+})
+export type TileSaveState = z.infer<typeof tileSaveStateSchema>
+
 // FEED VALIDATION
 
 export const feedQuerySchema = z.object({
