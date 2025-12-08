@@ -22,9 +22,8 @@ describe('tileOperations', () => {
   afterAll(async () => {
     await scene.resetTestData()
     await scene.withoutUser({ handle: CURRENT_USER.handle })
-    // Clean up additional users created by getFeedForUser tests
-    await scene.withoutUser({ handle: 'thirduser' })
-    await scene.withoutUser({ handle: 'savecount3' })
+
+    // Clean up additional
     await scene.withoutTilesForSupplier({ supplierHandle: 'testsupplier2' })
     await scene.withoutSupplier({ handle: 'testsupplier2' })
   })
@@ -214,14 +213,23 @@ describe('tileOperations', () => {
 
   describe('getFeedForUser', () => {
     it('should not return duplicate tiles across pages', async () => {
-      // Arrange - Paginate through multiple pages
-      const user = await scene.hasUser()
+      // Arrange
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const seensTileIds = new Map<string, { onPageCount: number; atPosition: number }>()
       let pageCount = 0
-      const maxPages = 50 // Safety limit to prevent infinite loops
-      const pageSize = 10
+      const maxPages = 10 // Safety limit to prevent infinite loops
+      const pageSize = 3
 
-      // Act - Fetch multiple pages
+      // Create tiles in case test user has already seen all tiles
+      for (let i = 0; i < pageSize * 3; i++) {
+        await scene.hasTile({
+          imagePath: `feed-no-duplicate-tile-${i}.jpg`,
+          createdByUserId: user.id,
+          credits: [createTileCreditForm({ supplierId: supplier.id })],
+        })
+      }
+
+      // Act
       do {
         const page = await tileOperations.getFeedForUser(user.id, { pageSize })
 
@@ -254,14 +262,22 @@ describe('tileOperations', () => {
 
     it('should correctly indicate hasNextPage', async () => {
       // Arrange
-      const user = await scene.hasUser()
+      const { user, supplier } = await scene.hasUserAndSupplier()
       const pageSize = 5
+      for (let i = 0; i < pageSize + 1; i++) {
+        await scene.hasTile({
+          imagePath: `feed-correctly-indicate-hasnextpage-tile-${i}.jpg`,
+          createdByUserId: user.id,
+          credits: [createTileCreditForm({ supplierId: supplier.id })],
+        })
+      }
 
-      // Act - Fetch first page
+      // Act
       const page1 = await tileOperations.getFeedForUser(user.id, { pageSize })
 
-      // Assert - hasNextPage should be true if we got exactly the requested number of tiles, false otherwise
+      // Assert
       if (page1.tiles.length === pageSize) {
+        // hasNextPage should be true if we got exactly the requested number of tiles, false otherwise
         expect(page1.hasNextPage).toBe(true)
 
         // Fetch next page to verify pagination works
@@ -290,10 +306,11 @@ describe('tileOperations', () => {
         isPrivate: true,
       })
 
-      // Act - Fetch feed and verify none of the returned tiles are private
+      // Act
       const result = await tileOperations.getFeedForUser(user.id, { pageSize: 100 })
 
-      // Assert - Verify none of the returned tiles are private by checking each one
+      // Assert - Verify no private tiles are returned
+      expect(result.tiles.find((t) => t.id === privateTile.id)).toBeUndefined()
       for (const tile of result.tiles) {
         const tileRaw = await tileModel.getRawById(tile.id)
         expect(tileRaw).toBeDefined()
@@ -326,9 +343,7 @@ describe('tileOperations', () => {
       const result = await tileOperations.getFeedForUser(currentUser.id, { pageSize: 100 })
 
       // Assert - Verify no saved tiles are returned
-      const hasSavedTile = result.tiles.some((t) => t.id === tile1.id)
-      expect(hasSavedTile).toBe(false)
-      // check stated state of all tiles
+      expect(result.tiles.find((t) => t.id === tile1.id)).toBeUndefined()
       const savedStates = await getSavedStatesMap(
         result.tiles.map((t) => t.id),
         currentUser.id
