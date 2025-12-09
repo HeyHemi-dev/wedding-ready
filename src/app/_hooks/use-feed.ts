@@ -43,7 +43,8 @@ export function useFeed(authUserId: string) {
 }
 
 async function fetchFeedPage(): Promise<FeedGetResponse> {
-  const queryParams = buildQueryParams({ pageSize: FEED_PAGE_SIZE.toString() })
+  const getFeedParams: FeedGetRequest = { pageSize: FEED_PAGE_SIZE }
+  const queryParams = buildQueryParams({ ...getFeedParams, pageSize: getFeedParams.pageSize.toString() })
 
   const { data, error } = await tryCatchFetch<FeedGetResponse>(`/api/feed${queryParams}`)
 
