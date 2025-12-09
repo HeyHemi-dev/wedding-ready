@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 import { queryKeys } from '@/app/_types/keys'
-import { FeedGetResponse } from '@/app/api/feed/route'
+import { FeedGetResponse } from '@/app/api/feed/types'
 import { TileListSkeleton } from '@/components/tiles/tile-list'
 import { Section } from '@/components/ui/section'
 import { tileOperations } from '@/operations/tile-operations'
