@@ -7,6 +7,7 @@ import { queryKeys } from '@/app/_types/keys'
 import { FeedGetResponseBody } from '@/app/api/feed/route'
 import { TileListSkeleton } from '@/components/tiles/tile-list'
 import { Section } from '@/components/ui/section'
+import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { getAuthUserId } from '@/utils/auth'
 
 import { FeedClient } from './feed-client'
@@ -36,6 +37,7 @@ export default async function Page() {
       return lastPage.hasNextPage ? 1 : null
     },
     initialPageParam: 1,
+    staleTime: DEFAULT_STALE_TIME,
   })
 
   return (
