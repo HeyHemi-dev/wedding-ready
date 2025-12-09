@@ -29,6 +29,8 @@ export function useFeed(authUserId: string) {
     },
     initialPageParam: 1,
     staleTime: DEFAULT_STALE_TIME,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   })
 
   const tiles: TileListItem[] = feedQuery.data.pages.flatMap((page) => page.tiles)
