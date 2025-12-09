@@ -1,4 +1,4 @@
-import { FetchOptions, forwardHeaders, getServerRequestHeaders, normalizeUrl } from './api-helpers'
+import { FetchOptions, forwardHeaders, normalizeUrl } from './api-helpers'
 
 // Types for the result object with discriminated union
 type Success<T> = {
