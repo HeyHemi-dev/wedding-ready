@@ -53,7 +53,7 @@ export async function tryCatchFetch<T, E = Error>(url: string, options?: FetchOp
     const { data: response, error: fetchError } = await tryCatch(fetch(url, options))
 
     if (fetchError) {
-      throw new Error('Network error: Failed to connect to server')
+      throw new Error('Network error: Failed to connect to server', { cause: fetchError })
     }
 
     if (!response.ok) {

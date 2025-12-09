@@ -1,7 +1,5 @@
 import { Suspense } from 'react'
 
-import { SquarePenIcon } from 'lucide-react'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -60,16 +58,5 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
         </div>
       </div>
     </Section>
-  )
-}
-
-function QuickLink({ href, label, Icon }: { href: string; label: string; Icon: React.ElementType }) {
-  return (
-    <Link href={href} className="flex items-center gap-partner">
-      <div className="grid h-14 w-14 place-items-center rounded-full bg-primary p-0 text-primary-foreground">
-        <Icon className="h-6 w-6" />
-      </div>
-      <p>{label}</p>
-    </Link>
   )
 }

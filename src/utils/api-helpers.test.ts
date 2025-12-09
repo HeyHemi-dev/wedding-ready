@@ -1,17 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 
-import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/api/suppliers/search/route'
-
-import { supplierTilesGetRequestSchema, SupplierTilesGetRequest } from '@/app/api/suppliers/[id]/tiles/route'
-
-import { userTilesGetRequestSchema, UserTilesGetRequest } from '@/app/api/users/[id]/tiles/route'
-
 import { FeedGetRequest, feedGetRequestSchema } from '@/app/api/feed/route'
-import { LOCATIONS, SERVICES } from '@/db/constants'
+import { supplierTilesGetRequestSchema, SupplierTilesGetRequest } from '@/app/api/suppliers/[id]/tiles/route'
+import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/api/suppliers/search/route'
+import { userTilesGetRequestSchema, UserTilesGetRequest } from '@/app/api/users/[id]/tiles/route'
+import { TEST_ID } from '@/testing/scene'
 
 import { buildQueryParams, parseQueryParams } from './api-helpers'
-import { TEST_ID, TEST_ID_0 } from '@/testing/scene'
 
 const URL_BASE = 'https://wedding-ready.nz/api' as const
 

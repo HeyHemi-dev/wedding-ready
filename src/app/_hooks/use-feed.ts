@@ -4,13 +4,12 @@ import { useQueryClient, useSuspenseInfiniteQuery } from '@tanstack/react-query'
 
 import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 import { queryKeys } from '@/app/_types/keys'
+import type { TileListItem } from '@/app/_types/tiles'
 import { FeedGetRequest, FeedGetResponse } from '@/app/api/feed/route'
 import { buildQueryParams } from '@/utils/api-helpers'
-import { DEFAULT_STALE_TIME } from '@/utils/constants'
+import { DEFAULT_STALE_TIME , FEED_PAGE_SIZE } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
 
-import type { TileListItem } from '@/app/_types/tiles'
-import { FEED_PAGE_SIZE } from '@/utils/constants'
 
 export function useFeed(authUserId: string) {
   const queryClient = useQueryClient()

@@ -1,6 +1,5 @@
 'use client'
 
-import { useAuthUser } from '@/app/_hooks/use-auth-user'
 import { useFeed } from '@/app/_hooks/use-feed'
 import { useInfiniteScroll } from '@/app/_hooks/use-infinite-scroll'
 import { TileList, TileListSkeleton, noTiles } from '@/components/tiles/tile-list'

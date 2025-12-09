@@ -3,17 +3,16 @@ import { Suspense } from 'react'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { redirect } from 'next/navigation'
 
+import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 import { queryKeys } from '@/app/_types/keys'
 import { FeedGetResponse } from '@/app/api/feed/route'
 import { TileListSkeleton } from '@/components/tiles/tile-list'
 import { Section } from '@/components/ui/section'
-import { DEFAULT_STALE_TIME } from '@/utils/constants'
+import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
+import { DEFAULT_STALE_TIME , FEED_PAGE_SIZE } from '@/utils/constants'
 
 import { FeedClient } from './feed-client'
-import { tileOperations } from '@/operations/tile-operations'
-import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
-import { FEED_PAGE_SIZE } from '@/utils/constants'
 
 export default async function Page() {
   const authUserId = await getAuthUserId()
