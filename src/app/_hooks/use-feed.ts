@@ -4,7 +4,7 @@ import { useQueryClient, useSuspenseInfiniteQuery } from '@tanstack/react-query'
 
 import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 import { queryKeys } from '@/app/_types/keys'
-import { FeedGetResponseBody } from '@/app/api/feed/route'
+import { FeedGetRequest, FeedGetResponse } from '@/app/api/feed/route'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
@@ -24,7 +24,7 @@ export function useFeed(authUserId: string) {
 
       return page
     },
-    getNextPageParam: (lastPage: FeedGetResponseBody) => {
+    getNextPageParam: (lastPage: FeedGetResponse) => {
       return lastPage.hasNextPage ? 1 : null
     },
     initialPageParam: 1,
@@ -42,10 +42,10 @@ export function useFeed(authUserId: string) {
   }
 }
 
-async function fetchFeedPage(): Promise<FeedGetResponseBody> {
+async function fetchFeedPage(): Promise<FeedGetResponse> {
   const queryParams = buildQueryParams({ pageSize: FEED_PAGE_SIZE.toString() })
 
-  const { data, error } = await tryCatchFetch<FeedGetResponseBody>(`/api/feed${queryParams}`)
+  const { data, error } = await tryCatchFetch<FeedGetResponse>(`/api/feed${queryParams}`)
 
   if (error) {
     throw error
