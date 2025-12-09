@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 import { queryKeys } from '@/app/_types/keys'
-import { SupplierTilesGetRequestParams, SupplierTilesGetResponseBody } from '@/app/api/suppliers/[id]/tiles/route'
+import { SupplierTilesGetRequest, SupplierTilesGetResponse } from '@/app/api/suppliers/[id]/tiles/route'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
@@ -32,10 +32,10 @@ export function useSupplierTiles({ supplierId, authUserId }: { supplierId: strin
 }
 
 async function fetchTilesForSupplier(supplierId: string, authUserId: string | undefined): Promise<TileListItem[]> {
-  const getTilesParams: SupplierTilesGetRequestParams = { authUserId }
+  const getTilesParams: SupplierTilesGetRequest = { authUserId }
   const queryParams = buildQueryParams(getTilesParams)
 
-  const { data, error } = await tryCatchFetch<SupplierTilesGetResponseBody>(`/api/suppliers/${supplierId}/tiles${queryParams}`)
+  const { data, error } = await tryCatchFetch<SupplierTilesGetResponse>(`/api/suppliers/${supplierId}/tiles${queryParams}`)
 
   if (error) {
     throw error

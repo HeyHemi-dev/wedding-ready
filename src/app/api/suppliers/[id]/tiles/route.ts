@@ -7,17 +7,15 @@ import { parseQueryParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
-const supplierTilesGetRequestParams = z.object({
+export const supplierTilesGetRequestSchema = z.object({
   authUserId: z.string().optional(),
 })
-
-export type SupplierTilesGetRequestParams = z.infer<typeof supplierTilesGetRequestParams>
-
-export type SupplierTilesGetResponseBody = TileListItem[]
+export type SupplierTilesGetRequest = z.infer<typeof supplierTilesGetRequestSchema>
+export type SupplierTilesGetResponse = TileListItem[]
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const supplierId = (await params).id
-  const parsedQueryParams = parseQueryParams(req.nextUrl, supplierTilesGetRequestParams)
+  const parsedQueryParams = parseQueryParams(req.nextUrl, supplierTilesGetRequestSchema)
 
   // Only check authentication if an authUserId is provided
   if (parsedQueryParams.authUserId) {
@@ -33,7 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ message: 'Error fetching tiles', error: error.message }, { status: 500 })
   }
 
-  const tiles: SupplierTilesGetResponseBody = data
+  const tiles: SupplierTilesGetResponse = data
 
   return NextResponse.json(tiles)
 }
