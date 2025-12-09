@@ -1,3 +1,5 @@
+import { FetchOptions, forwardHeaders, getServerRequestHeaders, normalizeUrl } from './api-helpers'
+
 // Types for the result object with discriminated union
 type Success<T> = {
   data: T
@@ -28,10 +30,6 @@ export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Resul
   }
 }
 
-type FetchOptions = RequestInit & {
-  customErrorMessage?: string
-}
-
 /**
  * Wraps fetch with custom error handling.
  * Handles network errors, auth errors, server errors, and json parsing errors.
@@ -50,10 +48,16 @@ type FetchOptions = RequestInit & {
  */
 export async function tryCatchFetch<T, E = Error>(url: string, options?: FetchOptions): Promise<Result<T, E>> {
   try {
-    const { data: response, error: fetchError } = await tryCatch(fetch(url, options))
+    const normalizedUrl = normalizeUrl(url)
+
+    // On the server, forward cookies and auth headers
+    const fetchOptions = await forwardHeaders(options)
+
+    const { data: response, error: fetchError } = await tryCatch(fetch(normalizedUrl, fetchOptions))
 
     if (fetchError) {
-      throw new Error('Network error: Failed to connect to server', { cause: fetchError })
+      console.error(fetchError)
+      throw new Error('Network error: Failed to connect to server')
     }
 
     if (!response.ok) {
