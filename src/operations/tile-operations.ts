@@ -48,7 +48,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
   }
 }
 
-async function getFeedForUser(authUserId: string, { pageSize = 20 }: FeedQuery): Promise<FeedQueryResult> {
+async function getFeedForUser(authUserId: string, pageSize: number = 20): Promise<FeedQueryResult> {
   const MAX_PAGE_SIZE = Math.min(pageSize, 100) // Cap page size to prevent DoS attacks
   const tilesRaw = await tileModel.getFeed(authUserId, { limit: MAX_PAGE_SIZE })
 

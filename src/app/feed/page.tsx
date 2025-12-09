@@ -27,7 +27,7 @@ export default async function Page() {
   await queryClient.prefetchInfiniteQuery({
     queryKey: queryKeys.feed(authUserId),
     queryFn: async () => {
-      const page = await tileOperations.getFeedForUser(authUserId, { pageSize: FEED_PAGE_SIZE })
+      const page = await tileOperations.getFeedForUser(authUserId, FEED_PAGE_SIZE)
 
       setTilesSaveStateCache(queryClient, page.tiles, authUserId)
 
