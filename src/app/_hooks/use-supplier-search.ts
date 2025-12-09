@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { useQuery } from '@tanstack/react-query'
 
-import { SupplierSearchGetRequest, SupplierSearchGetResponse } from '@/app/api/suppliers/search/route'
+import { SupplierSearchGetRequest, SupplierSearchGetResponse } from '@/app/api/suppliers/search/types'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'

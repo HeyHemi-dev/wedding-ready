@@ -1,17 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { z } from 'zod'
 
-import { TileListItem } from '@/app/_types/tiles'
 import { tileOperations } from '@/operations/tile-operations'
 import { parseQueryParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
-export const userTilesGetRequestSchema = z.object({
-  authUserId: z.string().optional(),
-})
-export type UserTilesGetRequest = z.infer<typeof userTilesGetRequestSchema>
-export type UserTilesGetResponse = TileListItem[]
+import { userTilesGetRequestSchema, type UserTilesGetResponse } from './types'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const userId = (await params).id

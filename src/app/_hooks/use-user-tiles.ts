@@ -4,7 +4,7 @@ import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
 import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 import { queryKeys } from '@/app/_types/keys'
-import { UserTilesGetRequest, UserTilesGetResponse } from '@/app/api/users/[id]/tiles/route'
+import { UserTilesGetRequest, UserTilesGetResponse } from '@/app/api/users/[id]/tiles/types'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'

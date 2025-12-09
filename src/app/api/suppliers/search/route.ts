@@ -1,18 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
 
 import { ROUTE_ERROR } from '@/app/_types/errors'
-import { SupplierSearchResult } from '@/app/_types/suppliers'
 import { supplierOperations } from '@/operations/supplier-operations'
 import { parseQueryParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
-export const supplierSearchGetRequestSchema = z.object({
-  q: z.string().optional(),
-})
-export type SupplierSearchGetRequest = z.infer<typeof supplierSearchGetRequestSchema>
-export type SupplierSearchGetResponse = SupplierSearchResult[]
+import { supplierSearchGetRequestSchema } from './types'
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const userId = await getAuthUserId()
