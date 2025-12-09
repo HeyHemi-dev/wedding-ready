@@ -11,6 +11,7 @@ import { getAuthUserId } from '@/utils/auth'
 
 import { FeedClient } from './feed-client'
 import { tileOperations } from '@/operations/tile-operations'
+import { setTilesSaveStateCache } from '../_hooks/use-tile-saved-state'
 
 const PAGE_SIZE = 10
 
@@ -22,9 +23,16 @@ export default async function Page() {
   }
 
   const queryClient = new QueryClient()
+
   await queryClient.prefetchInfiniteQuery({
     queryKey: queryKeys.feed(authUserId),
-    queryFn: () => tileOperations.getFeedForUser(authUserId, { pageSize: PAGE_SIZE }),
+    queryFn: async () => {
+      const page = await tileOperations.getFeedForUser(authUserId, { pageSize: PAGE_SIZE })
+
+      setTilesSaveStateCache(queryClient, page.tiles, authUserId)
+
+      return page
+    },
     getNextPageParam: (lastPage: FeedGetResponseBody) => {
       return lastPage.hasNextPage ? 1 : null
     },
