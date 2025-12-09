@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 
-import { FeedGetRequest, feedGetRequestSchema } from '@/app/api/feed/route'
-import { supplierTilesGetRequestSchema, SupplierTilesGetRequest } from '@/app/api/suppliers/[id]/tiles/route'
-import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/api/suppliers/search/route'
-import { userTilesGetRequestSchema, UserTilesGetRequest } from '@/app/api/users/[id]/tiles/route'
+import { FeedGetRequest, feedGetRequestSchema } from '@/app/api/feed/types'
+import { supplierTilesGetRequestSchema, SupplierTilesGetRequest } from '@/app/api/suppliers/[id]/tiles/types'
+import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/api/suppliers/search/types'
+import { userTilesGetRequestSchema, UserTilesGetRequest } from '@/app/api/users/[id]/tiles/types'
 import { TEST_ID } from '@/testing/scene'
 
 import { buildQueryParams, parseQueryParams } from './api-helpers'
