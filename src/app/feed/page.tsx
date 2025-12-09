@@ -39,10 +39,10 @@ export default async function Page() {
   })
 
   return (
-    <Section>
+    <Section className="min-h-svh-minus-header pt-0">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <Suspense fallback={<TileListSkeleton />}>
-          <FeedClient />
+          <FeedClient authUserId={authUserId} />
         </Suspense>
       </HydrationBoundary>
     </Section>
