@@ -28,7 +28,7 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
-      <div className="grid grid-cols-2 grid-rows-[auto_1fr] gap-area">
+      <div className="grid grid-rows-[auto_1fr] gap-area">
         <Area className="grid auto-rows-max gap-close-friend">
           <p className="ui-small text-muted-foreground">@{user.handle}</p>
           <div className="flex flex-col gap-partner">
@@ -41,17 +41,8 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
             {user.websiteUrl && <p>Website</p>}
           </div>
         </Area>
-        <Area className="grid auto-rows-max gap-friend">
-          {isCurrentUser && (
-            <>
-              <QuickLink href={`/account`} label="Edit Profile" Icon={SquarePenIcon} />
-              {/* <QuickLink href={`/account`} label="Manage Preferences" Icon={Settings2Icon} />
-              <QuickLink href={''} label="Get Public Share Link" Icon={Share} /> */}
-            </>
-          )}
-        </Area>
 
-        <div className="col-span-full grid grid-rows-[auto_1fr] gap-area">
+        <div className="grid grid-rows-[auto_1fr] gap-area">
           <ErrorBoundary
             fallback={noTiles({
               message: 'Error loading tiles',
