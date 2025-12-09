@@ -18,8 +18,8 @@ export function useFeed(authUserId: string) {
 
   const feedQuery = useSuspenseInfiniteQuery({
     queryKey: queryKeys.feed(authUserId),
-    queryFn: async ({ pageParam }: { pageParam: number }) => {
-      const page = await fetchFeedPage({ pageParam })
+    queryFn: async () => {
+      const page = await fetchFeedPage()
 
       setTilesSaveStateCache(queryClient, page.tiles, authUserId)
 
@@ -42,7 +42,7 @@ export function useFeed(authUserId: string) {
   }
 }
 
-async function fetchFeedPage({ pageParam }: { pageParam: number }): Promise<FeedGetResponseBody> {
+async function fetchFeedPage(): Promise<FeedGetResponseBody> {
   const queryParams = buildQueryParams({ pageSize: PAGE_SIZE.toString() })
 
   const { data, error } = await tryCatchFetch<FeedGetResponseBody>(`/api/feed${queryParams}`)
