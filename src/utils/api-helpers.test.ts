@@ -1,18 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 
-import {
-  FeedQuery,
-  feedQuerySchema,
-  TileCreditForm,
-  tileCreditFormSchema,
-  TileSaveState,
-  tileSaveStateSchema,
-  TileUpload,
-  tileUploadSchema,
-} from '@/app/_types/validation-schema'
+import { TileCreditForm, tileCreditFormSchema, TileSaveState, tileSaveStateSchema, TileUpload, tileUploadSchema } from '@/app/_types/validation-schema'
 
 import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/api/suppliers/search/route'
+
+import { supplierTilesGetRequestSchema, SupplierTilesGetRequest } from '@/app/api/suppliers/[id]/tiles/route'
+
+import { userTilesGetRequestSchema, UserTilesGetRequest } from '@/app/api/users/[id]/tiles/route'
+
+import { FeedGetRequest, feedGetRequestSchema } from '@/app/api/feed/route'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 
 import { buildQueryParams, parseQueryParams } from './api-helpers'
@@ -308,27 +305,27 @@ describe('parseQueryParams', () => {
 })
 
 describe('route schema integration', () => {
-  describe('feedQuerySchema', () => {
+  describe('feedGetRequestSchema', () => {
     it('should handle round trip with positive integers', () => {
       // Arrange
-      const valid = { pageSize: 5 } satisfies FeedQuery
+      const valid = { pageSize: 5 } satisfies FeedGetRequest
 
       // Act
       const params = buildQueryParams({ pageSize: valid.pageSize.toString() })
       const url = new URL(`${URL_BASE}${params}`)
-      const result = parseQueryParams(url, feedQuerySchema)
+      const result = parseQueryParams(url, feedGetRequestSchema)
 
       // Assert
       expect(result).toEqual(valid)
     })
     it('should handle round trip with negative integers', () => {
       // Arrange
-      const valid = { pageSize: -5 } satisfies FeedQuery
+      const valid = { pageSize: -5 } satisfies FeedGetRequest
 
       // Act & Assert
       const params = buildQueryParams({ pageSize: valid.pageSize.toString() })
       const url = new URL(`${URL_BASE}${params}`)
-      expect(() => parseQueryParams(url, feedQuerySchema)).toThrow()
+      expect(() => parseQueryParams(url, feedGetRequestSchema)).toThrow()
     })
     it('should handle round trip with not a number', () => {
       // Arrange
@@ -337,7 +334,7 @@ describe('route schema integration', () => {
       // Act & Assert
       const params = buildQueryParams(valid)
       const url = new URL(`${URL_BASE}${params}`)
-      expect(() => parseQueryParams(url, feedQuerySchema)).toThrow()
+      expect(() => parseQueryParams(url, feedGetRequestSchema)).toThrow()
     })
   })
 
