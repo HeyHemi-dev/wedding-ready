@@ -29,7 +29,6 @@ export function useFeed(authUserId: string) {
     },
     initialPageParam: 1,
     staleTime: DEFAULT_STALE_TIME,
-    refetchOnMount: false,
     refetchOnWindowFocus: false,
   })
 

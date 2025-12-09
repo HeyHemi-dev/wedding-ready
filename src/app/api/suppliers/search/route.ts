@@ -8,17 +8,17 @@ import { parseQueryParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
-const supplierSearchGetRequestParams = z.object({
+export const supplierSearchGetRequestSchema = z.object({
   q: z.string().optional(),
 })
-export type SupplierSearchGetRequestParams = z.infer<typeof supplierSearchGetRequestParams>
-export type SupplierSearchGetResponseBody = SupplierSearchResult[]
+export type SupplierSearchGetRequest = z.infer<typeof supplierSearchGetRequestSchema>
+export type SupplierSearchGetResponse = SupplierSearchResult[]
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const userId = await getAuthUserId()
   if (!userId) return ROUTE_ERROR.NOT_AUTHENTICATED()
 
-  const parsedQueryParams = parseQueryParams(req.nextUrl, supplierSearchGetRequestParams)
+  const parsedQueryParams = parseQueryParams(req.nextUrl, supplierSearchGetRequestSchema)
 
   if (!parsedQueryParams.q || parsedQueryParams.q.trim().length === 0) {
     return NextResponse.json([])
