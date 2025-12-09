@@ -25,20 +25,19 @@ export function useFeed(authUserId: string) {
 
       return page
     },
-    getNextPageParam: (lastPage: FeedGetResponseBody, allPages) => {
-      return lastPage.hasNextPage ? allPages.length + 1 : undefined
+    getNextPageParam: (lastPage: FeedGetResponseBody) => {
+      return lastPage.hasNextPage ? 1 : null
     },
     initialPageParam: 1,
     staleTime: DEFAULT_STALE_TIME,
   })
 
   const tiles: TileListItem[] = feedQuery.data.pages.flatMap((page) => page.tiles)
-  const hasNextPage = feedQuery.data.pages[feedQuery.data.pages.length - 1]?.hasNextPage ?? false
 
   return {
     tiles,
     fetchNextPage: feedQuery.fetchNextPage,
-    hasNextPage,
+    hasNextPage: feedQuery.hasNextPage,
     isFetchingNextPage: feedQuery.isFetchingNextPage,
   }
 }
