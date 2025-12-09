@@ -1,6 +1,6 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { FeedQueryResult, Tile, TileCredit, TileListItem } from '@/app/_types/tiles'
-import { TileCreditForm, TileCreate, FeedQuery, TileSaveState } from '@/app/_types/validation-schema'
+import { TileCreditForm, TileCreate, TileSaveState } from '@/app/_types/validation-schema'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { supplierModel } from '@/models/supplier'
 import { tileModel } from '@/models/tile'
