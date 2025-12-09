@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 
-import { TileCreditForm, tileCreditFormSchema, TileSaveState, tileSaveStateSchema, TileUpload, tileUploadSchema } from '@/app/_types/validation-schema'
-
 import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/api/suppliers/search/route'
 
 import { supplierTilesGetRequestSchema, SupplierTilesGetRequest } from '@/app/api/suppliers/[id]/tiles/route'
@@ -13,6 +11,7 @@ import { FeedGetRequest, feedGetRequestSchema } from '@/app/api/feed/route'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 
 import { buildQueryParams, parseQueryParams } from './api-helpers'
+import { TEST_ID, TEST_ID_0 } from '@/testing/scene'
 
 const URL_BASE = 'https://wedding-ready.nz/api' as const
 
@@ -338,32 +337,67 @@ describe('route schema integration', () => {
     })
   })
 
-  it('should handle round trip with supplierSearchQuerySchema', () => {
-    const valid = {
-      q: 'Test name',
-    } satisfies SupplierSearchGetRequest
+  describe('supplierSearchGetRequestSchema', () => {
+    it('should handle round trip with valid query', () => {
+      // Arrange
+      const valid = {
+        q: 'Test name',
+      } satisfies SupplierSearchGetRequest
 
-    const params = buildQueryParams(valid)
-    const url = new URL(`${URL_BASE}${params}`)
-    const result = parseQueryParams(url, supplierSearchGetRequestSchema)
+      // Act
+      const params = buildQueryParams(valid)
+      const url = new URL(`${URL_BASE}${params}`)
+      const result = parseQueryParams(url, supplierSearchGetRequestSchema)
 
-    expect(result).toEqual(valid)
+      // Assert
+      expect(result).toEqual(valid)
+    })
+    it('should handle round trip with empty query', () => {
+      // Arrange
+      const valid = {
+        q: '',
+      } satisfies SupplierSearchGetRequest
+
+      // Act
+      const params = buildQueryParams(valid)
+      const url = new URL(`${URL_BASE}${params}`)
+      const result = parseQueryParams(url, supplierSearchGetRequestSchema)
+
+      // Assert
+      expect(result).toEqual(valid)
+    })
   })
 
-  it('should handle round trip with tileCreditFormSchema', () => {
-    // Arrange
-    const valid = {
-      supplierId: 'supplier-1',
-      service: SERVICES.CATERER,
-      serviceDescription: 'Great service',
-    } satisfies TileCreditForm
+  describe('supplierTilesGetRequestSchema', () => {
+    it('should handle round trip with valid authUserId', () => {
+      // Arrange
+      const valid = {
+        authUserId: 'user-1',
+      } satisfies SupplierTilesGetRequest
 
-    // Act
-    const params = buildQueryParams(valid)
-    const url = new URL(`${URL_BASE}${params}`)
-    const result = parseQueryParams(url, tileCreditFormSchema)
+      // Act
+      const params = buildQueryParams(valid)
+      const url = new URL(`${URL_BASE}${params}`)
+      const result = parseQueryParams(url, supplierTilesGetRequestSchema)
 
-    // Assert
-    expect(result).toEqual(valid)
+      // Assert
+      expect(result).toEqual(valid)
+    })
+  })
+  describe('userTilesGetRequestSchema', () => {
+    it('should handle round trip with valid authUserId', () => {
+      // Arrange
+      const valid = {
+        authUserId: TEST_ID,
+      } satisfies UserTilesGetRequest
+
+      // Act
+      const params = buildQueryParams(valid)
+      const url = new URL(`${URL_BASE}${params}`)
+      const result = parseQueryParams(url, userTilesGetRequestSchema)
+
+      // Assert
+      expect(result).toEqual(valid)
+    })
   })
 })
