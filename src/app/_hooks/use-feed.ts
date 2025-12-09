@@ -10,8 +10,7 @@ import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
 
 import type { TileListItem } from '@/app/_types/tiles'
-
-const PAGE_SIZE = 10
+import { FEED_PAGE_SIZE } from '@/utils/constants'
 
 export function useFeed(authUserId: string) {
   const queryClient = useQueryClient()
@@ -43,7 +42,7 @@ export function useFeed(authUserId: string) {
 }
 
 async function fetchFeedPage(): Promise<FeedGetResponseBody> {
-  const queryParams = buildQueryParams({ pageSize: PAGE_SIZE.toString() })
+  const queryParams = buildQueryParams({ pageSize: FEED_PAGE_SIZE.toString() })
 
   const { data, error } = await tryCatchFetch<FeedGetResponseBody>(`/api/feed${queryParams}`)
 
