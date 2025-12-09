@@ -121,7 +121,12 @@ describe('parseQueryParams', () => {
       limit: z.string().optional(),
       search: z.string().optional(),
     })
-    const url = new URL(`${URL_BASE}?page=1&limit=10&search=test`)
+    const params = {
+      page: '1',
+      limit: '10',
+      search: 'test',
+    } satisfies z.infer<typeof schema>
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -141,7 +146,10 @@ describe('parseQueryParams', () => {
       limit: z.string().optional(),
       search: z.string().optional(),
     })
-    const url = new URL(`${URL_BASE}?page=1`)
+    const params = {
+      page: '1',
+    } satisfies z.infer<typeof schema>
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -160,7 +168,8 @@ describe('parseQueryParams', () => {
       page: z.string().optional(),
       limit: z.string().optional(),
     })
-    const url = new URL(`${URL_BASE}`)
+    const params = {} satisfies z.infer<typeof schema>
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -178,7 +187,10 @@ describe('parseQueryParams', () => {
       page: z.string(),
       limit: z.string(),
     })
-    const url = new URL(`${URL_BASE}?page=1`)
+    const params = {
+      page: '1',
+    }
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act & Assert
     expect(() => parseQueryParams(url, schema)).toThrow()
@@ -190,7 +202,11 @@ describe('parseQueryParams', () => {
       page: z.string().transform((val) => parseInt(val, 10)),
       limit: z.string().transform((val) => parseInt(val, 10)),
     })
-    const url = new URL(`${URL_BASE}?page=1&limit=10`)
+    const params = {
+      page: '1',
+      limit: '10',
+    }
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -208,7 +224,8 @@ describe('parseQueryParams', () => {
       page: z.string().default('1'),
       limit: z.string().default('10'),
     })
-    const url = new URL(`${URL_BASE}`)
+    const params = {}
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -226,16 +243,17 @@ describe('parseQueryParams', () => {
       active: z.string().optional(),
       published: z.string().optional(),
     })
-    const url = new URL(`${URL_BASE}?active=true&published=false`)
+    const params = {
+      active: 'true',
+      published: 'false',
+    }
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
 
     // Assert
-    expect(result).toEqual({
-      active: 'true',
-      published: 'false',
-    })
+    expect(result).toEqual({ active: 'true', published: 'false' })
   })
 
   it('should handle URL-encoded values', () => {
@@ -244,7 +262,11 @@ describe('parseQueryParams', () => {
       search: z.string().optional(),
       filter: z.string().optional(),
     })
-    const url = new URL(`${URL_BASE}?search=hello+world&filter=test%26value`)
+    const params = {
+      search: 'hello world',
+      filter: 'test&value',
+    }
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -261,7 +283,12 @@ describe('parseQueryParams', () => {
     const schema = z.object({
       page: z.string().optional(),
     })
-    const url = new URL(`${URL_BASE}?page=1&limit=10&extra=value`)
+    const params = {
+      page: '1',
+      limit: '10',
+      extra: 'value',
+    }
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -278,7 +305,11 @@ describe('parseQueryParams', () => {
       search: z.string().optional(),
       filter: z.string().optional(),
     })
-    const url = new URL(`${URL_BASE}?search=&filter=test`)
+    const params = {
+      search: '',
+      filter: 'test',
+    }
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -296,7 +327,11 @@ describe('parseQueryParams', () => {
       page: z.string().regex(/^\d+$/),
       limit: z.string().optional(),
     })
-    const url = new URL(`${URL_BASE}?page=abc&limit=10`)
+    const params = {
+      page: 'abc',
+      limit: '10',
+    }
+    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
 
     // Act & Assert
     expect(() => parseQueryParams(url, schema)).toThrow()
@@ -310,7 +345,7 @@ describe('route schema integration', () => {
       const valid = { pageSize: 5 } satisfies FeedGetRequest
 
       // Act
-      const params = buildQueryParams({ pageSize: valid.pageSize.toString() })
+      const params = buildQueryParams({ ...valid, pageSize: valid.pageSize.toString() })
       const url = new URL(`${URL_BASE}${params}`)
       const result = parseQueryParams(url, feedGetRequestSchema)
 
