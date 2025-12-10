@@ -8,10 +8,10 @@ import { ExpandedRouteConfig } from 'uploadthing/types'
 
 import { Button } from '@/components/ui/button'
 import { MAX_UPLOAD_FILE_SIZE } from '@/utils/constants'
+import { tryCatch } from '@/utils/try-catch'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { useUploadContext } from './upload-context'
-import { tryCatch } from '@/utils/try-catch'
 
 export function UploadDropzone() {
   const { addFiles } = useUploadContext()
