@@ -3,14 +3,17 @@ import { Geist } from 'next/font/google'
 import Footer from '@/components/navigation/footer'
 import Header from '@/components/navigation/header'
 import { Toaster } from '@/components/ui/sonner'
+import { BASE_URL } from '@/utils/constants'
 
 import { Providers } from './providers'
 
+import type { Metadata } from 'next'
+
 import '@/styles/globals.css'
 
-const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
+const defaultUrl = BASE_URL
 
-export const metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: 'WeddingReady - Find your dream team, not just a moodboard.',
   description:

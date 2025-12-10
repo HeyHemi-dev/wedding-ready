@@ -108,7 +108,7 @@ describe('tileOperations', () => {
 
       // Act
       do {
-        const page = await tileOperations.getFeedForUser(user.id, { pageSize })
+        const page = await tileOperations.getFeedForUser(user.id, pageSize)
 
         // Track all tiles seen across pages
         page.tiles.forEach((tile, index) => {
@@ -150,7 +150,7 @@ describe('tileOperations', () => {
       }
 
       // Act
-      const page1 = await tileOperations.getFeedForUser(user.id, { pageSize })
+      const page1 = await tileOperations.getFeedForUser(user.id, pageSize)
 
       // Assert
       if (page1.tiles.length === pageSize) {
@@ -158,7 +158,7 @@ describe('tileOperations', () => {
         expect(page1.hasNextPage).toBe(true)
 
         // Fetch next page to verify pagination works
-        const page2 = await tileOperations.getFeedForUser(user.id, { pageSize })
+        const page2 = await tileOperations.getFeedForUser(user.id, pageSize)
         expect(page2.tiles.length).toBeGreaterThanOrEqual(0)
 
         // If page2 has fewer tiles than pageSize, it should be the last page
@@ -184,7 +184,7 @@ describe('tileOperations', () => {
       })
 
       // Act
-      const result = await tileOperations.getFeedForUser(user.id, { pageSize: 100 })
+      const result = await tileOperations.getFeedForUser(user.id, 100)
 
       // Assert - Verify no private tiles are returned
       expect(result.tiles.find((t) => t.id === privateTile.id)).toBeUndefined()
@@ -217,7 +217,7 @@ describe('tileOperations', () => {
       await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: currentUser.id, isSaved: true })
 
       // Act - Fetch feed with authUserId
-      const result = await tileOperations.getFeedForUser(currentUser.id, { pageSize: 100 })
+      const result = await tileOperations.getFeedForUser(currentUser.id, 100)
 
       // Assert - Verify no saved tiles are returned
       expect(result.tiles.find((t) => t.id === tile1.id)).toBeUndefined()

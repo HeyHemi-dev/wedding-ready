@@ -15,9 +15,16 @@ import { NavLink } from './nav-link'
 export default async function Header() {
   const authUserId = await getAuthUserId()
   const queryClient = new QueryClient()
-  if (authUserId) {
-    await queryClient.prefetchQuery({ queryKey: queryKeys.authUser(), queryFn: () => userOperations.getById(authUserId) })
-  }
+
+  // Always prefetch auth user query to ensure hydration match
+  // If authUserId exists, prefetch the user data; otherwise prefetch null
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.authUser(),
+    queryFn: async () => {
+      if (!authUserId) return null
+      return await userOperations.getById(authUserId)
+    },
+  })
 
   return (
     <header className="grid h-header grid-cols-siteLayout grid-rows-[0_1fr_0] gap-y-area">

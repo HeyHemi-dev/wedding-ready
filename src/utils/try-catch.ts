@@ -1,3 +1,7 @@
+import { OPERATION_ERROR } from '@/app/_types/errors'
+
+import { isClient } from './api-helpers'
+
 // Types for the result object with discriminated union
 type Success<T> = {
   data: T
@@ -28,7 +32,7 @@ export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Resul
   }
 }
 
-type FetchOptions = RequestInit & {
+export type FetchOptions = RequestInit & {
   customErrorMessage?: string
 }
 
@@ -50,9 +54,12 @@ type FetchOptions = RequestInit & {
  */
 export async function tryCatchFetch<T, E = Error>(url: string, options?: FetchOptions): Promise<Result<T, E>> {
   try {
+    if (isClient() === false) throw OPERATION_ERROR.INVALID_STATE('Cannot call tryCatchFetch on the server')
+
     const { data: response, error: fetchError } = await tryCatch(fetch(url, options))
 
     if (fetchError) {
+      console.error(fetchError)
       throw new Error('Network error: Failed to connect to server')
     }
 

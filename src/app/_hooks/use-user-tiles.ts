@@ -2,12 +2,12 @@
 
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
-import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
 import { queryKeys } from '@/app/_types/keys'
-import { UserTilesGetRequestParams, UserTilesGetResponseBody } from '@/app/api/users/[id]/tiles/route'
+import { UserTilesGetRequest, UserTilesGetResponse } from '@/app/api/users/[id]/tiles/types'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
+import { setTilesSaveStateCache } from '@/utils/usequery-helpers'
 
 import { TileListItem } from '../_types/tiles'
 
@@ -32,10 +32,10 @@ export function useUserTiles(userId: string, authUserId: string | null) {
 }
 
 async function fetchTilesForUser(userId: string, authUserId?: string): Promise<TileListItem[]> {
-  const getTilesParams: UserTilesGetRequestParams = { authUserId }
+  const getTilesParams: UserTilesGetRequest = { authUserId }
   const queryParams = buildQueryParams(getTilesParams)
 
-  const { data, error } = await tryCatchFetch<UserTilesGetResponseBody>(`/api/users/${userId}/tiles${queryParams}`)
+  const { data, error } = await tryCatchFetch<UserTilesGetResponse>(`/api/users/${userId}/tiles${queryParams}`)
 
   if (error) {
     throw error

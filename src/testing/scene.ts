@@ -12,6 +12,7 @@ import { userProfileModel } from '@/models/user'
 import { authOperations } from '@/operations/auth-operations'
 import { supplierOperations } from '@/operations/supplier-operations'
 import { tileOperations } from '@/operations/tile-operations'
+import { BASE_URL } from '@/utils/constants'
 import { createAdminClient } from '@/utils/supabase/server'
 
 import type { SupabaseClient } from '@supabase/supabase-js'
@@ -49,7 +50,7 @@ export const TEST_TILE = {
 }
 export type TestTile = typeof TEST_TILE
 
-export const TEST_ORIGIN = 'http://localhost:3000'
+export const TEST_ORIGIN = BASE_URL
 
 export const scene = {
   hasUser,

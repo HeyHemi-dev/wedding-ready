@@ -148,10 +148,3 @@ export const tileSaveStateSchema = z.object({
   isSaved: z.boolean(),
 })
 export type TileSaveState = z.infer<typeof tileSaveStateSchema>
-
-// FEED VALIDATION
-
-export const feedQuerySchema = z.object({
-  pageSize: z.coerce.number().int().positive(),
-})
-export type FeedQuery = z.infer<typeof feedQuerySchema>

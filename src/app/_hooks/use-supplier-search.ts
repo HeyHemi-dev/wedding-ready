@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { useQuery } from '@tanstack/react-query'
 
-import { SupplierSearchGetRequestParams, SupplierSearchGetResponseBody } from '@/app/api/suppliers/search/route'
+import { SupplierSearchGetRequest, SupplierSearchGetResponse } from '@/app/api/suppliers/search/types'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
@@ -35,10 +35,10 @@ export function useSupplierSearch() {
 }
 
 async function fetchSuppliersForSearch(query: string): Promise<SupplierSearchResult[]> {
-  const getSuppliersParams: SupplierSearchGetRequestParams = { q: query }
+  const getSuppliersParams: SupplierSearchGetRequest = { q: query }
   const queryParams = buildQueryParams(getSuppliersParams)
 
-  const { data, error } = await tryCatchFetch<SupplierSearchGetResponseBody>(`/api/suppliers/search${queryParams}`)
+  const { data, error } = await tryCatchFetch<SupplierSearchGetResponse>(`/api/suppliers/search${queryParams}`)
   if (error) throw error
   return data
 }
