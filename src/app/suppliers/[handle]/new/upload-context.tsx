@@ -8,11 +8,12 @@ export type UploadItem = {
   uploadId: string
   file: File
   fileObjectUrl: string
+  ratio: number
 }
 
 type UploadContextType = {
   files: UploadItem[]
-  addFiles: (files: File[]) => void
+  addFiles: (files: File[]) => Promise<void>
   removeFile: (uploadId: string) => void
   clearFiles: () => void
   supplier: Supplier
@@ -24,13 +25,16 @@ const UploadContext = React.createContext<UploadContextType | undefined>(undefin
 export function UploadProvider({ children, supplier, authUserId }: { children: React.ReactNode; supplier: Supplier; authUserId: string }) {
   const [files, setFiles] = React.useState<UploadItem[]>([])
 
-  const addFiles = React.useCallback((files: File[]) => {
-    const uploadItem: UploadItem[] = files.map((file) => ({
-      uploadId: crypto.randomUUID(),
-      file,
-      fileObjectUrl: URL.createObjectURL(file),
-    }))
-    setFiles((prev) => [...prev, ...uploadItem])
+  const addFiles = React.useCallback(async (files: File[]) => {
+    const uploadItems = await Promise.all(
+      files.map(async (file) => ({
+        uploadId: crypto.randomUUID(),
+        file,
+        fileObjectUrl: URL.createObjectURL(file),
+        ratio: await getImageRatio(file),
+      }))
+    )
+    setFiles((prev) => [...prev, ...uploadItems])
   }, [])
 
   const removeFile = React.useCallback((uploadId: string) => {
@@ -78,4 +82,29 @@ export function useUploadContext() {
     throw new Error('useUploadContext must be used within an UploadProvider')
   }
   return context
+}
+
+/**
+ * Calculates the width as a ratio of height = 1. For example, if the width is 100 and the height is 200, the ratio is 0.5.
+ * @param file
+ * @returns
+ */
+function getImageRatio(file: File): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+
+    img.onload = () => {
+      const { width, height } = img
+      const ratio = Math.round((width / height) * 1000) / 1000
+      URL.revokeObjectURL(img.src)
+      resolve(ratio)
+    }
+
+    img.onerror = (err) => {
+      URL.revokeObjectURL(img.src)
+      reject(err)
+    }
+
+    img.src = URL.createObjectURL(file)
+  })
 }

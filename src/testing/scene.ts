@@ -44,6 +44,7 @@ export type TestSupplier = typeof TEST_SUPPLIER
 
 export const TEST_TILE = {
   imagePath: 'https://example.com/fake-image.jpg',
+  imageRatio: 0.667,
   title: '',
   description: '',
   location: LOCATIONS.WELLINGTON,
@@ -100,6 +101,7 @@ async function hasUserAndSupplier(): Promise<{ user: t.UserProfileRaw; supplier:
 
 async function hasTile({
   imagePath = TEST_TILE.imagePath,
+  imageRatio = TEST_TILE.imageRatio,
   title = TEST_TILE.title,
   description = TEST_TILE.description,
   location = TEST_TILE.location,
@@ -112,6 +114,7 @@ async function hasTile({
 
   const newTile = await tileOperations.createForSupplier({
     imagePath,
+    imageRatio,
     title,
     description,
     location,

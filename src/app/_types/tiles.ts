@@ -3,6 +3,7 @@ import { Location, Service } from '@/db/constants'
 export type Tile = {
   id: string
   imagePath: string
+  imageRatio: number
   title: string | null
   description: string | null
   createdAt: Date
@@ -23,6 +24,7 @@ export type TileCredit = {
 export type TileListItem = {
   id: string
   imagePath: string
+  imageRatio: number
   title: string | null
   description: string | null
   isSaved: boolean | undefined

@@ -8,6 +8,7 @@ import { ExpandedRouteConfig } from 'uploadthing/types'
 
 import { Button } from '@/components/ui/button'
 import { MAX_UPLOAD_FILE_SIZE } from '@/utils/constants'
+import { tryCatch } from '@/utils/try-catch'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { useUploadContext } from './upload-context'
@@ -22,7 +23,11 @@ export function UploadDropzone() {
         toast.error('File size is too large')
         return
       }
-      addFiles(acceptedFiles)
+      const { error } = await tryCatch(addFiles(acceptedFiles))
+      if (error) {
+        toast.error('Error adding files')
+        return
+      }
     },
     [routeConfig, addFiles]
   )

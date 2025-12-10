@@ -46,6 +46,7 @@ async function seedDatabase() {
         createdByUserId: user.id,
         credits: [{ supplierId: supplier.id, service: supplier.services[0], serviceDescription: '' }],
         imagePath: image.url,
+        imageRatio: 0.667,
         location: LOCATIONS.WELLINGTON,
       })
     })

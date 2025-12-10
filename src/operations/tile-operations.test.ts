@@ -176,6 +176,7 @@ describe('tileOperations', () => {
       const user = await scene.hasUser()
       const privateTile = await tileModel.createRaw({
         imagePath: 'private-tile-test.jpg',
+        imageRatio: 0.667,
         title: 'Private Tile',
         description: null,
         location: LOCATIONS.WELLINGTON,
