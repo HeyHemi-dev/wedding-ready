@@ -105,13 +105,13 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
   }))
 }
 
-async function createForSupplier({ imagePath, title, description, location, createdByUserId, credits }: TileCreate): Promise<{ id: string }> {
+async function createForSupplier({ imagePath, title, description, location, createdByUserId, imageRatio, credits }: TileCreate): Promise<{ id: string }> {
   if (credits.length === 0) throw OPERATION_ERROR.BUSINESS_RULE_VIOLATION()
 
   // Tiles created for suppliers are always public
   const isPrivate = false
 
-  const tileData: t.InsertTileRaw = { imagePath, title, description, location, createdByUserId, isPrivate }
+  const tileData: t.InsertTileRaw = { imagePath, title, description, location, createdByUserId, isPrivate, imageRatio }
   const tileRaw = await tileModel.createRaw(tileData)
 
   // We check if the supplier exists in uploadthing middleware

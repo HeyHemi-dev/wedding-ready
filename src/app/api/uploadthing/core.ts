@@ -52,6 +52,7 @@ export const uploadthingRouter = {
         location: metadata.formData.location,
         createdByUserId: metadata.authUserId,
         credits: metadata.formData.credits,
+        imageRatio: metadata.imageRatio,
       })
     }),
 } satisfies FileRouter
