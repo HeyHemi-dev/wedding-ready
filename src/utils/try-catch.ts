@@ -1,4 +1,5 @@
-import { FetchOptions, forwardHeaders, normalizeUrl } from './api-helpers'
+import { OPERATION_ERROR } from '@/app/_types/errors'
+import { isClient } from './api-helpers'
 
 // Types for the result object with discriminated union
 type Success<T> = {
@@ -30,6 +31,10 @@ export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Resul
   }
 }
 
+export type FetchOptions = RequestInit & {
+  customErrorMessage?: string
+}
+
 /**
  * Wraps fetch with custom error handling.
  * Handles network errors, auth errors, server errors, and json parsing errors.
@@ -48,12 +53,9 @@ export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Resul
  */
 export async function tryCatchFetch<T, E = Error>(url: string, options?: FetchOptions): Promise<Result<T, E>> {
   try {
-    const normalizedUrl = normalizeUrl(url)
+    if (isClient() === false) throw OPERATION_ERROR.INVALID_STATE('Cannot call tryCatchFetch on the server')
 
-    // On the server, forward cookies and auth headers
-    const fetchOptions = await forwardHeaders(options)
-
-    const { data: response, error: fetchError } = await tryCatch(fetch(normalizedUrl, fetchOptions))
+    const { data: response, error: fetchError } = await tryCatch(fetch(url, options))
 
     if (fetchError) {
       console.error(fetchError)
