@@ -38,6 +38,7 @@ function UploadPreviewItem({ file }: { file: UploadItem }) {
   async function handleUpload(data: TileUploadForm) {
     const input: TileUpload = {
       formData: data,
+      imageRatio: file.ratio,
       authUserId,
       supplierId: supplier.id,
     }

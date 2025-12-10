@@ -133,6 +133,7 @@ export type TileUploadForm = z.infer<typeof tileUploadFormSchema>
 
 export const tileUploadSchema = z.object({
   formData: tileUploadFormSchema,
+  imageRatio: z.number(),
   authUserId: z.string(),
   supplierId: z.string(),
 })
