@@ -2,7 +2,7 @@
 
 import { useQueryClient, useSuspenseInfiniteQuery } from '@tanstack/react-query'
 
-import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
+import { setTilesSaveStateCache } from '@/utils/usequery-helpers'
 import { queryKeys } from '@/app/_types/keys'
 import type { TileListItem } from '@/app/_types/tiles'
 import { FeedGetRequest, FeedGetResponse } from '@/app/api/feed/types'
