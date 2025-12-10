@@ -3,26 +3,22 @@ import { Suspense } from 'react'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { redirect } from 'next/navigation'
 
-import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
+import { setTilesSaveStateCache } from '@/utils/usequery-helpers'
 import { queryKeys } from '@/app/_types/keys'
 import { FeedGetResponse } from '@/app/api/feed/types'
 import { TileListSkeleton } from '@/components/tiles/tile-list'
 import { Section } from '@/components/ui/section'
 import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
-import { DEFAULT_STALE_TIME , FEED_PAGE_SIZE } from '@/utils/constants'
+import { DEFAULT_STALE_TIME, FEED_PAGE_SIZE } from '@/utils/constants'
 
 import { FeedClient } from './feed-client'
 
 export default async function Page() {
   const authUserId = await getAuthUserId()
-
-  if (!authUserId) {
-    redirect('/sign-in')
-  }
+  if (!authUserId) redirect('/sign-in')
 
   const queryClient = new QueryClient()
-
   await queryClient.prefetchInfiniteQuery({
     queryKey: queryKeys.feed(authUserId),
     queryFn: async () => {

@@ -2,7 +2,7 @@
 
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
-import { setTilesSaveStateCache } from '@/app/_hooks/use-tile-saved-state'
+import { setTilesSaveStateCache } from '@/utils/usequery-helpers'
 import { queryKeys } from '@/app/_types/keys'
 import { UserTilesGetRequest, UserTilesGetResponse } from '@/app/api/users/[id]/tiles/types'
 import { buildQueryParams } from '@/utils/api-helpers'
