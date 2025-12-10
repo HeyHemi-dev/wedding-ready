@@ -1,4 +1,5 @@
 import { ZodObject, z } from 'zod'
+import { BASE_URL } from './constants'
 
 // Error response type for API responses
 export type ErrorResponse = {
@@ -52,11 +53,8 @@ export function getBaseUrl(): string {
   // On the client, use relative URLs
   if (onClient()) return ''
 
-  // On the server, construct absolute URL
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
-
-  // Default to localhost for development
-  return 'http://localhost:3000'
+  // On the server, use absolute URL
+  return BASE_URL
 }
 
 /**

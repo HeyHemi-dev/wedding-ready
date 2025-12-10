@@ -15,6 +15,7 @@ import { tileOperations } from '@/operations/tile-operations'
 import { createAdminClient } from '@/utils/supabase/server'
 
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { BASE_URL } from '@/utils/constants'
 
 // Shared Supabase admin client for tests to avoid multiple instances
 export const testClient = createAdminClient()
@@ -49,7 +50,7 @@ export const TEST_TILE = {
 }
 export type TestTile = typeof TEST_TILE
 
-export const TEST_ORIGIN = 'http://localhost:3000'
+export const TEST_ORIGIN = BASE_URL
 
 export const scene = {
   hasUser,

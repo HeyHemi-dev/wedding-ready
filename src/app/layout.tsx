@@ -7,10 +7,12 @@ import { Toaster } from '@/components/ui/sonner'
 import { Providers } from './providers'
 
 import '@/styles/globals.css'
+import { BASE_URL } from '@/utils/constants'
+import type { Metadata } from 'next'
 
-const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
+const defaultUrl = BASE_URL
 
-export const metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: 'WeddingReady - Find your dream team, not just a moodboard.',
   description:
