@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { redirect } from 'next/navigation'
 
-import { setTilesSaveStateCache } from '@/utils/usequery-helpers'
 import { queryKeys } from '@/app/_types/keys'
 import { FeedGetResponse } from '@/app/api/feed/types'
 import { TileListSkeleton } from '@/components/tiles/tile-list'
@@ -11,6 +10,7 @@ import { Section } from '@/components/ui/section'
 import { tileOperations } from '@/operations/tile-operations'
 import { getAuthUserId } from '@/utils/auth'
 import { DEFAULT_STALE_TIME, FEED_PAGE_SIZE } from '@/utils/constants'
+import { setTilesSaveStateCache } from '@/utils/usequery-helpers'
 
 import { FeedClient } from './feed-client'
 

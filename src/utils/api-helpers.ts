@@ -1,4 +1,5 @@
 import { ZodObject, z } from 'zod'
+
 import { BASE_URL } from './constants'
 
 // Error response type for API responses

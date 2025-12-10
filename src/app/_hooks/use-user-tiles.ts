@@ -2,12 +2,12 @@
 
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
-import { setTilesSaveStateCache } from '@/utils/usequery-helpers'
 import { queryKeys } from '@/app/_types/keys'
 import { UserTilesGetRequest, UserTilesGetResponse } from '@/app/api/users/[id]/tiles/types'
 import { buildQueryParams } from '@/utils/api-helpers'
 import { DEFAULT_STALE_TIME } from '@/utils/constants'
 import { tryCatchFetch } from '@/utils/try-catch'
+import { setTilesSaveStateCache } from '@/utils/usequery-helpers'
 
 import { TileListItem } from '../_types/tiles'
 

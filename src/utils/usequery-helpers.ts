@@ -1,6 +1,7 @@
+import { QueryClient } from '@tanstack/react-query'
+
 import { queryKeys } from '@/app/_types/keys'
 import { TileListItem } from '@/app/_types/tiles'
-import { QueryClient } from '@tanstack/react-query'
 
 /**
  * Sets the save state cache for an array of tiles. Use to efficiently set the cache when fetching a large number of tiles at once.
