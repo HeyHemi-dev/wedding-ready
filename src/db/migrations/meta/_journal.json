@@ -78,6 +78,13 @@
       "when": 1765003403222,
       "tag": "0010_nifty_bug",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1765350384070,
+      "tag": "0011_fantastic_the_hand",
+      "breakpoints": true
     }
   ]
 }
