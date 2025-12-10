@@ -15,7 +15,7 @@ export type SetSupplierRaw = Partial<Omit<InsertSupplierRaw, 'createdAt' | 'crea
 
 export type TileRaw = InferSelectModel<typeof schema.tiles>
 export type InsertTileRaw = Omit<InferInsertModel<typeof schema.tiles>, 'id'>
-export type SetTileRaw = Partial<Omit<InsertTileRaw, 'imagePath' | 'createdAt' | 'createdByUserId' | 'isPrivate' | 'score' | 'scoreUpdatedAt'>>
+export type SetTileRaw = Partial<Omit<InsertTileRaw, 'imagePath' | 'imageRatio' | 'createdAt' | 'createdByUserId' | 'isPrivate' | 'score' | 'scoreUpdatedAt'>>
 export type SetScore = Pick<InsertTileRaw, 'score' | 'scoreUpdatedAt'>
 
 export type StackRaw = InferSelectModel<typeof schema.stacks>

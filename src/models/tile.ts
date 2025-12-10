@@ -172,6 +172,7 @@ function safeInsertTileRaw(data: t.InsertTileRaw): t.InsertTileRaw {
     description: emptyStringToNull(data.description),
     createdByUserId: data.createdByUserId,
     imagePath: data.imagePath,
+    imageRatio: data.imageRatio,
     title: emptyStringToNull(data.title),
     location: data.location,
     isPrivate: data.isPrivate,
