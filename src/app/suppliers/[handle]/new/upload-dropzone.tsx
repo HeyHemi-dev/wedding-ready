@@ -11,6 +11,7 @@ import { MAX_UPLOAD_FILE_SIZE } from '@/utils/constants'
 import { useUploadThing, useDropzone } from '@/utils/uploadthing'
 
 import { useUploadContext } from './upload-context'
+import { tryCatch } from '@/utils/try-catch'
 
 export function UploadDropzone() {
   const { addFiles } = useUploadContext()
@@ -22,7 +23,11 @@ export function UploadDropzone() {
         toast.error('File size is too large')
         return
       }
-      addFiles(acceptedFiles)
+      const { error } = await tryCatch(addFiles(acceptedFiles))
+      if (error) {
+        toast.error('Error adding files')
+        return
+      }
     },
     [routeConfig, addFiles]
   )
