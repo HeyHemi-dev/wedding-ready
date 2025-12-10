@@ -3,6 +3,8 @@
 import * as React from 'react'
 
 import { Supplier } from '@/app/_types/suppliers'
+import { tryCatch } from '@/utils/try-catch'
+import { toast } from 'sonner'
 
 export type UploadItem = {
   uploadId: string
@@ -26,20 +28,25 @@ export function UploadProvider({ children, supplier, authUserId }: { children: R
   const [files, setFiles] = React.useState<UploadItem[]>([])
 
   const addFiles = React.useCallback((files: File[]) => {
-    Promise.all(
-      files.map(async (file) => {
-        const fileObjectUrl = URL.createObjectURL(file)
-        return {
-          uploadId: crypto.randomUUID(),
-          file,
-          fileObjectUrl,
-          ratio: await getImageRatio(fileObjectUrl),
-        }
-      })
-    ).then((uploadItems) => {
+    ;(async () => {
+      const { data: uploadItems, error } = await tryCatch(
+        Promise.all(
+          files.map(async (file) => ({
+            uploadId: crypto.randomUUID(),
+            file,
+            fileObjectUrl: URL.createObjectURL(file),
+            ratio: await getImageRatio(file),
+          }))
+        )
+      )
+      if (error) {
+        toast.error('Error adding files')
+        return
+      }
       setFiles((prev) => [...prev, ...uploadItems])
-    })
+    })()
   }, [])
+
   const removeFile = React.useCallback((uploadId: string) => {
     setFiles((prev) => {
       const fileToRemove = prev.find((file) => file.uploadId === uploadId)
@@ -88,11 +95,11 @@ export function useUploadContext() {
 }
 
 /**
- * Returns the width as a ratio of height = 1. For example, if the width is 200 and the height is 100, the ratio is 2.
+ * Returns the height as a ratio of width = 1. For example, if the width is 100 and the height is 200, the ratio is 0.5.
  * @param file
  * @returns
  */
-function getImageRatio(fileObjectUrl: string): Promise<number> {
+function getImageRatio(file: File): Promise<number> {
   return new Promise((resolve, reject) => {
     const img = new Image()
 
@@ -108,6 +115,6 @@ function getImageRatio(fileObjectUrl: string): Promise<number> {
       reject(err)
     }
 
-    img.src = fileObjectUrl
+    img.src = URL.createObjectURL(file)
   })
 }
