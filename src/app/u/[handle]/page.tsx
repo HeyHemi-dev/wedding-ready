@@ -1,17 +1,22 @@
 import { Suspense } from 'react'
 
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { notFound } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
+import { queryKeys } from '@/app/_types/keys'
 import { handleSchema } from '@/app/_types/validation-schema'
 import { ActionBar } from '@/components/action-bar/action-bar'
 import { noTiles, TileListSkeleton } from '@/components/tiles/tile-list'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
+import { tileOperations } from '@/operations/tile-operations'
 import { userOperations } from '@/operations/user-operations'
 import { getAuthUserId } from '@/utils/auth'
+import { DEFAULT_STALE_TIME } from '@/utils/constants'
+import { setTilesSaveStateCache } from '@/utils/usequery-helpers'
 
-import { UserTiles } from './user-tiles'
+import { UserTilesClient } from './user-tiles-client'
 
 export default async function UserPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params
@@ -23,6 +28,19 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
 
   const authUserId = await getAuthUserId()
   const isCurrentUser = authUserId === user.id
+
+  const queryClient = new QueryClient()
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.userTiles(user.id),
+    queryFn: async () => {
+      const tiles = await tileOperations.getListForUser(user.id, authUserId ?? undefined)
+
+      if (authUserId) setTilesSaveStateCache(queryClient, tiles, authUserId)
+
+      return tiles
+    },
+    staleTime: DEFAULT_STALE_TIME,
+  })
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
@@ -51,9 +69,11 @@ export default async function UserPage({ params }: { params: Promise<{ handle: s
                 <div className="flex place-self-end"></div>
               </ActionBar>
             )}
-            <Suspense fallback={<TileListSkeleton />}>
-              <UserTiles user={user} authUserId={authUserId} />
-            </Suspense>
+            <HydrationBoundary state={dehydrate(queryClient)}>
+              <Suspense fallback={<TileListSkeleton />}>
+                <UserTilesClient user={user} authUserId={authUserId} />
+              </Suspense>
+            </HydrationBoundary>
           </ErrorBoundary>
         </div>
       </div>
