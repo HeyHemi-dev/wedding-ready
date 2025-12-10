@@ -85,7 +85,7 @@ export function useUploadContext() {
 }
 
 /**
- * Returns the width as a ratio of height = 1. For example, if the width is 100 and the height is 200, the ratio is 0.5.
+ * Calculates the width as a ratio of height = 1. For example, if the width is 100 and the height is 200, the ratio is 0.5.
  * @param file
  * @returns
  */
