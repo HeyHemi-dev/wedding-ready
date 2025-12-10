@@ -98,7 +98,7 @@ function getImageRatio(fileObjectUrl: string): Promise<number> {
 
     img.onload = () => {
       const { width, height } = img
-      const ratio = width / height
+      const ratio = Math.round((width / height) * 1000) / 1000
       URL.revokeObjectURL(img.src)
       resolve(ratio)
     }
