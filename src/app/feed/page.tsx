@@ -29,6 +29,8 @@ export default async function Page() {
       return page
     },
     getNextPageParam: (lastPage: FeedGetResponse) => {
+      // Pagination is handled by the server.
+      // Return any truthy value to enable next page.
       return lastPage.hasNextPage ? 1 : null
     },
     initialPageParam: 1,
