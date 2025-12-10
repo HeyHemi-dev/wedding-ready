@@ -8,6 +8,7 @@ export type UploadItem = {
   uploadId: string
   file: File
   fileObjectUrl: string
+  ratio: number
 }
 
 type UploadContextType = {
@@ -25,14 +26,20 @@ export function UploadProvider({ children, supplier, authUserId }: { children: R
   const [files, setFiles] = React.useState<UploadItem[]>([])
 
   const addFiles = React.useCallback((files: File[]) => {
-    const uploadItem: UploadItem[] = files.map((file) => ({
-      uploadId: crypto.randomUUID(),
-      file,
-      fileObjectUrl: URL.createObjectURL(file),
-    }))
-    setFiles((prev) => [...prev, ...uploadItem])
+    Promise.all(
+      files.map(async (file) => {
+        const fileObjectUrl = URL.createObjectURL(file)
+        return {
+          uploadId: crypto.randomUUID(),
+          file,
+          fileObjectUrl,
+          ratio: await getImageRatio(fileObjectUrl),
+        }
+      })
+    ).then((uploadItems) => {
+      setFiles((prev) => [...prev, ...uploadItems])
+    })
   }, [])
-
   const removeFile = React.useCallback((uploadId: string) => {
     setFiles((prev) => {
       const fileToRemove = prev.find((file) => file.uploadId === uploadId)
@@ -78,4 +85,29 @@ export function useUploadContext() {
     throw new Error('useUploadContext must be used within an UploadProvider')
   }
   return context
+}
+
+/**
+ * Returns the width as a ratio of height = 1. For example, if the width is 200 and the height is 100, the ratio is 2.
+ * @param file
+ * @returns
+ */
+function getImageRatio(fileObjectUrl: string): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+
+    img.onload = () => {
+      const { width, height } = img
+      const ratio = width / height
+      URL.revokeObjectURL(img.src)
+      resolve(ratio)
+    }
+
+    img.onerror = (err) => {
+      URL.revokeObjectURL(img.src)
+      reject(err)
+    }
+
+    img.src = fileObjectUrl
+  })
 }
