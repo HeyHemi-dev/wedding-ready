@@ -32,6 +32,7 @@ async function getById(id: string, authUserId?: string): Promise<Tile> {
   return {
     id: tile.id,
     imagePath: tile.imagePath,
+    imageRatio: tile.imageRatio,
     title: tile.title,
     description: tile.description,
     createdAt: tile.createdAt,
@@ -55,6 +56,7 @@ async function getFeedForUser(authUserId: string, pageSize: number = 20): Promis
   const tiles: TileListItem[] = tilesRaw.map((tile) => ({
     id: tile.id,
     imagePath: tile.imagePath,
+    imageRatio: tile.imageRatio,
     title: tile.title,
     description: tile.description,
     isSaved: false, // saved tiles have been filtered out in the query
@@ -80,6 +82,7 @@ async function getListForSupplier(supplierId: string, authUserId?: string): Prom
   return tiles.map((tile) => ({
     id: tile.id,
     imagePath: tile.imagePath,
+    imageRatio: tile.imageRatio,
     title: tile.title,
     description: tile.description,
     isSaved: saveStatesMap.get(tile.id),
@@ -99,6 +102,7 @@ async function getListForUser(userId: string, authUserId?: string): Promise<Tile
   return tiles.map((tile) => ({
     id: tile.id,
     imagePath: tile.imagePath,
+    imageRatio: tile.imageRatio,
     title: tile.title,
     description: tile.description,
     isSaved: saveStatesMap.get(tile.id),
