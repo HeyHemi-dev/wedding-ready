@@ -3,8 +3,6 @@
 import * as React from 'react'
 
 import { Supplier } from '@/app/_types/suppliers'
-import { tryCatch } from '@/utils/try-catch'
-import { toast } from 'sonner'
 
 export type UploadItem = {
   uploadId: string
@@ -15,7 +13,7 @@ export type UploadItem = {
 
 type UploadContextType = {
   files: UploadItem[]
-  addFiles: (files: File[]) => void
+  addFiles: (files: File[]) => Promise<void>
   removeFile: (uploadId: string) => void
   clearFiles: () => void
   supplier: Supplier
@@ -27,24 +25,16 @@ const UploadContext = React.createContext<UploadContextType | undefined>(undefin
 export function UploadProvider({ children, supplier, authUserId }: { children: React.ReactNode; supplier: Supplier; authUserId: string }) {
   const [files, setFiles] = React.useState<UploadItem[]>([])
 
-  const addFiles = React.useCallback((files: File[]) => {
-    ;(async () => {
-      const { data: uploadItems, error } = await tryCatch(
-        Promise.all(
-          files.map(async (file) => ({
-            uploadId: crypto.randomUUID(),
-            file,
-            fileObjectUrl: URL.createObjectURL(file),
-            ratio: await getImageRatio(file),
-          }))
-        )
-      )
-      if (error) {
-        toast.error('Error adding files')
-        return
-      }
-      setFiles((prev) => [...prev, ...uploadItems])
-    })()
+  const addFiles = React.useCallback(async (files: File[]) => {
+    const uploadItems = await Promise.all(
+      files.map(async (file) => ({
+        uploadId: crypto.randomUUID(),
+        file,
+        fileObjectUrl: URL.createObjectURL(file),
+        ratio: await getImageRatio(file),
+      }))
+    )
+    setFiles((prev) => [...prev, ...uploadItems])
   }, [])
 
   const removeFile = React.useCallback((uploadId: string) => {
