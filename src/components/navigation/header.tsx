@@ -11,6 +11,7 @@ import { getAuthUserId } from '@/utils/auth'
 
 import { HeaderAuth } from './header-auth'
 import { NavLink } from './nav-link'
+import { ErrorBoundary } from 'react-error-boundary'
 
 export default async function Header() {
   const authUserId = await getAuthUserId()
@@ -38,12 +39,13 @@ export default async function Header() {
           <NavLink link={{ href: '/find-suppliers', label: 'Find Suppliers' }} />
           {/* <NavLink link={{ href: '/articles', label: 'Advice' }} /> */}
         </nav>
-
-        <HydrationBoundary state={dehydrate(queryClient)}>
-          <Suspense fallback={<Skeleton className="aspect-[12/7] rounded-full" />}>
-            <HeaderAuth />
-          </Suspense>
-        </HydrationBoundary>
+        <ErrorBoundary fallback={<Skeleton className="aspect-[12/7] rounded-full" />}>
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <Suspense fallback={<Skeleton className="aspect-[12/7] rounded-full" />}>
+              <HeaderAuth />
+            </Suspense>
+          </HydrationBoundary>
+        </ErrorBoundary>
       </div>
     </header>
   )
