@@ -9,12 +9,6 @@ import { AUTH_STALE_TIME } from '@/utils/constants'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatchFetch } from '@/utils/try-catch'
 
-async function fetchAuthUser(): Promise<User | null> {
-  const { data, error } = await tryCatchFetch<AuthMeResponseBody>(`/api/auth/current`)
-  if (error) return null
-  return data
-}
-
 export function useAuthUser() {
   const queryClient = useQueryClient()
 
@@ -33,4 +27,10 @@ export function useAuthUser() {
     staleTime: AUTH_STALE_TIME,
     retry: false,
   })
+}
+
+async function fetchAuthUser(): Promise<User | null> {
+  const { data, error } = await tryCatchFetch<AuthMeResponseBody>(`/api/auth/current`)
+  if (error) return null
+  return data
 }
