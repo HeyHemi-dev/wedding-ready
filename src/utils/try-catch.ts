@@ -1,6 +1,7 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 
-import { isClient } from './api-helpers'
+import { isClient } from '@/utils/api-helpers'
+import { FETCH_TIMEOUT } from '@/utils/constants'
 
 // Types for the result object with discriminated union
 type Success<T> = {
@@ -53,6 +54,11 @@ export type FetchOptions = RequestInit & {
  * @returns data null and error with type E
  */
 export async function tryCatchFetch<T, E = Error>(url: string, options?: FetchOptions): Promise<Result<T, E>> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => {
+    controller.abort()
+  }, FETCH_TIMEOUT)
+
   try {
     if (isClient() === false) throw OPERATION_ERROR.INVALID_STATE('Cannot call tryCatchFetch on the server')
 
