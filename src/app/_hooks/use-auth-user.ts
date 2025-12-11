@@ -13,9 +13,11 @@ export function useAuthUser() {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    const { data: subscription } = browserSupabase.auth.onAuthStateChange(async () => {
-      // Blow away the cached value so the next render suspends and refetches
-      queryClient.removeQueries({ queryKey: queryKeys.authUser() })
+    const { data: subscription } = browserSupabase.auth.onAuthStateChange(async (event) => {
+      // Invalidate the cached value so the next render suspends and refetches
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+        queryClient.invalidateQueries({ queryKey: queryKeys.authUser() })
+      }
     })
 
     return () => subscription.subscription.unsubscribe()
