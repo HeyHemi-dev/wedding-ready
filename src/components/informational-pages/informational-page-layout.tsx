@@ -1,6 +1,5 @@
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-
 import { marked } from '@/utils/marked/client'
 
 // branded type for markdown content

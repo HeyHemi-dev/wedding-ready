@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import { queryKeys } from '@/app/_types/keys'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -11,7 +12,6 @@ import { getAuthUserId } from '@/utils/auth'
 
 import { HeaderAuth } from './header-auth'
 import { NavLink } from './nav-link'
-import { ErrorBoundary } from 'react-error-boundary'
 
 export default async function Header() {
   const authUserId = await getAuthUserId()
