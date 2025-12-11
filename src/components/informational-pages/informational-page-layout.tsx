@@ -2,11 +2,8 @@ import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
 import { micromark } from 'micromark'
 
-// branded type for markdown content
-export type UnsafeMarkdown = string & { __brand: 'markdown' }
-
-export function InformationalPageLayout({ title, content, children }: { title: string; content: UnsafeMarkdown; children?: React.ReactNode }) {
-  const html = micromark(content)
+export function InformationalPageLayout({ title, markdown, children }: { title: string; markdown: string; children?: React.ReactNode }) {
+  const html = micromark(markdown)
 
   return (
     <Section className="min-h-svh-minus-header pt-0">
