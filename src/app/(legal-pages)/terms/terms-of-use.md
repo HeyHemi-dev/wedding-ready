@@ -10,6 +10,14 @@ We use information about how you use Wedding Ready to recommend tiles and suppli
 
 You may not use the Service to do or share anything that is contrary to these Terms or to applicable law.
 
+---
+
+**Put simply**
+
+Wedding Ready shows you wedding inspiration and suppliers we think you’ll like, sometimes including sponsored content, based on how you use the platform.
+
+
+
 ## Using Wedding Ready
 
 ### Who can use Wedding Ready
@@ -24,6 +32,14 @@ When you create an account, you must provide us with accurate and complete infor
 
 If we have previously disabled or suspended your account for breaching these Terms, our other policies, or for legal reasons, you must not create another account without our express written permission.
 
+---
+
+**Put simply**
+
+You need to be old enough, honest about who you are, and playing by the rules to have a Wedding Ready account.
+
+
+
 ### Your licence to use the Service
 
 Subject to your continued compliance with these Terms and our policies, we grant you a limited, non-exclusive, non-transferable, non-sublicensable, and revocable licence to access and use Wedding Ready for your personal, non-commercial use (for couples and guests) or for your business use (for suppliers) as contemplated by these Terms.
@@ -36,6 +52,14 @@ You must not:
 
 All rights not expressly granted to you in these Terms are reserved by us and our licensors.
 
+---
+
+**Put simply**
+
+You can use Wedding Ready for planning or promoting weddings, but you do not get ownership of the platform or the right to copy or misuse how it works.
+
+
+
 ### Supplier and business use of Wedding Ready
 
 If you use Wedding Ready as a supplier (for example, a business, company, or sole trader listing services or uploading content to promote those services), you represent and warrant that:
@@ -46,6 +70,14 @@ If you use Wedding Ready as a supplier (for example, a business, company, or sol
 - you will ensure that your use of Wedding Ready and all claims you make about your services comply with all advertising, consumer protection, and fair trading laws that apply to you in New Zealand (including the Fair Trading Act 1986 and, where applicable, the Consumer Guarantees Act 1993).
 
 We may offer additional supplier or business-specific terms, guidelines, or policies from time to time. Where those conflict with these Terms, the more specific supplier or business terms will apply to your business use to the extent of the conflict.
+
+---
+
+**Put simply**
+
+If you are a supplier, you need to be authorised to act for your business, be truthful about your services, and follow NZ consumer and fair trading laws.
+
+
 
 ### Prohibited conduct
 
@@ -58,6 +90,14 @@ In using Wedding Ready, you agree that you will not:
 - use the Service to engage in any unlawful, misleading, deceptive, or harmful activity.
 
 Any use of Wedding Ready that is not expressly permitted by these Terms is a breach of these Terms and may violate intellectual property and other laws.
+
+---
+
+**Put simply**
+
+Do not scrape the site, spam people, or use Wedding Ready in ways that are dishonest, harmful, or outside normal wedding planning and supplier use.
+
+
 
 ## Your Content
 
@@ -75,6 +115,14 @@ You agree that:
 - your User Content will not be defamatory, obscene, hateful, threatening, harassing, discriminatory, or otherwise offensive, and will not encourage unlawful or harmful behaviour.
 
 We do not review all User Content before or after it is posted. We are not responsible for, and do not endorse, any User Content posted by you or by any other user.
+
+---
+
+**Put simply**
+
+You own what you upload, but you are responsible for it. Only post content you have rights to use and that is lawful, respectful, and properly consented.
+
+
 
 ### How we can use your User Content
 
@@ -94,6 +142,14 @@ This licence lasts for as long as your User Content remains on Wedding Ready. If
 You also grant us the right to sublicense this licence to our service providers and partners (such as hosting providers, content delivery networks, and analytics providers) to the extent reasonably required for us to provide, secure, and promote the Service.
 
 We will endeavour not to materially distort your User Content when we edit or format it for use on the Service or in our communications.
+
+---
+
+**Put simply**
+
+You give us permission to use your content to run and promote Wedding Ready. If you delete it, we stop using it going forward, but backup copies and existing materials may remain.
+
+
 
 ### How other users can use your User Content
 
@@ -151,11 +207,19 @@ When we receive a report, we will review it and take whatever action we consider
 
 We may refuse, hide, restrict, or remove any User Content at any time, for any reason, whether or not we have received a report, if we reasonably consider that it breaches these Terms, our policies, or applicable law, or is otherwise inappropriate for our community. We are not required to explain every moderation decision, but where appropriate we may provide a brief explanation or a way for you to respond.
 
+---
+
+**Put simply**
+
+You can report content that feels wrong or harmful. We may remove or restrict content or accounts to protect users and comply with the law.
+
+
+
 ## Intellectual Property
 
 ### Your intellectual property
 
-Except for the licence you grant us under section 3(b), you retain ownership of all intellectual property rights you hold in your User Content.
+Except for the licence you grant us under section 3.2, you retain ownership of all intellectual property rights you hold in your User Content.
 
 If we use your User Content in our own marketing or communications, we will, where reasonably practicable, credit you or your business.
 
@@ -172,6 +236,14 @@ You must not use our name, logo, or trade marks without our prior written permis
 
 Nothing in these Terms transfers any ownership of our intellectual property rights to you. We reserve all rights not expressly granted in these Terms.
 
+---
+
+**Put simply**
+
+You own your content, we own the Wedding Ready platform and brand, and neither of us transfers ownership just by using the Service.
+
+
+
 ## Security
 
 We care about the security of your account and your information.
@@ -186,6 +258,14 @@ You agree to:
 
 If you are a supplier or business user, you are responsible for ensuring that only authorised people within your business have access to your account and that departing team members no longer have access.
 
+---
+
+**Put simply**
+
+We work to keep your account safe, but you need to protect your login details and tell us if something looks suspicious.
+
+
+
 ## Third-party links, sites, and services
 
 Wedding Ready may include links to or integrations with third-party websites, platforms, or services (for example, a supplier’s own website, booking system, or social media profile).
@@ -196,6 +276,14 @@ We do not control and are not responsible for:
 - any loss or damage that may arise from your use of third-party sites or services.
 
 If you access any third-party website, service, or content from Wedding Ready, you do so at your own risk. Third-party sites will have their own terms and privacy policies, which you should read carefully.
+
+---
+
+**Put simply**
+
+We can link you out to other websites and tools, but what happens on those services is between you and them.
+
+
 
 ## Accounts, suspension, and termination
 
@@ -215,9 +303,17 @@ If your account is deleted:
 
 - your profile and most of your User Content will no longer be visible to other users
 - we may retain copies of your User Content and account information for a reasonable period for backup, archival, and audit purposes, as described in these Terms and in our Privacy Policy
-- content that has already been saved by other users, or incorporated into materials already created, may continue to exist and be used as described in section 3(e).
+- content that has already been saved by other users, or incorporated into materials already created, may continue to exist and be used as described in section 3.5.
 
 If you are a supplier and you delete your account, User Content associated solely with your account may be deleted and cannot be recovered. Couples may no longer be able to access any information you stored only within Wedding Ready.
+
+---
+
+**Put simply**
+
+You can leave whenever you like, and we can restrict or close accounts where there is harm, risk, or serious breaches of these Terms.
+
+
 
 ## Warranties and indemnities
 
@@ -262,6 +358,14 @@ Where you are using the Service for business purposes, you agree that:
 - the Consumer Guarantees Act 1993 does not apply, and
 - to the extent permitted by law, any guarantees, warranties, or conditions implied by law are excluded.
 
+---
+
+**Put simply**
+
+We provide Wedding Ready as it is and cannot guarantee it will always be perfect, or that every supplier or listing will be accurate or suitable for you.
+
+
+
 ## Limitation of liability
 
 To the maximum extent permitted by New Zealand law, we will not be liable for:
@@ -280,6 +384,14 @@ To the extent we are liable to you and our liability cannot be excluded, our tot
 - NZD $100.
 
 This limitation does not apply to any liability we may have which cannot be excluded or limited under New Zealand law (for example, liability for loss or damage caused by our fraud or deliberate misconduct).
+
+---
+
+**Put simply**
+
+If something goes wrong, our financial responsibility to you is limited, except where New Zealand law says we cannot limit it.
+
+
 
 ## Copyright complaints and takedown process
 
@@ -316,6 +428,14 @@ You have rights under the New Zealand Privacy Act 2020 to access and request cor
 
 Please read our Privacy Policy carefully for more detail.
 
+---
+
+**Put simply**
+
+We use your information to run and improve Wedding Ready, personalise what you see, and meet our legal obligations, in line with New Zealand privacy law.
+
+
+
 ## Changes to the Service and to these Terms
 
 We may change, suspend, or discontinue any part of the Service at any time, including by adding or removing features.
@@ -324,6 +444,14 @@ We may also update these Terms from time to time. When we make material changes,
 
 If you continue to use Wedding Ready after the updated Terms take effect, you will be taken to have accepted them. If you do not agree to the updated Terms, you should stop using the Service and delete your account.
 
+---
+
+**Put simply**
+
+We may update the app and these Terms over time. We will let you know about important changes, and by continuing to use Wedding Ready you accept the updated Terms.
+
+
+
 ## Governing law and disputes
 
 These Terms, and your use of Wedding Ready, are governed by the laws of New Zealand.
@@ -331,6 +459,14 @@ These Terms, and your use of Wedding Ready, are governed by the laws of New Zeal
 You and we agree that the courts of New Zealand will have exclusive jurisdiction over any claim or dispute arising out of or in connection with these Terms or the Service, except where applicable law provides you with a non-excludable right to bring a claim in another forum.
 
 Before starting formal proceedings, we encourage you to contact us to attempt to resolve any issue informally.
+
+---
+
+**Put simply**
+
+These Terms are based on New Zealand law, and most disputes will be handled in New Zealand courts after we have tried to sort things out informally.
+
+
 
 ## General terms
 
