@@ -1,6 +1,7 @@
+import { micromark } from 'micromark'
+
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { micromark } from 'micromark'
 
 export function InformationalPageLayout({ title, markdown, children }: { title: string; markdown: string; children?: React.ReactNode }) {
   const html = micromark(markdown)
