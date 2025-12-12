@@ -9,6 +9,7 @@ import { tryCatch } from '@/utils/try-catch'
 
 export const authOperations = {
   signUp,
+  signUpWithGoogle,
   signIn,
   signOut,
   forgotPassword,
@@ -67,6 +68,15 @@ async function signUp({
   }
 
   return userDetails
+}
+
+async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: SupabaseClient; origin: string }) {
+  await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+    },
+  })
 }
 
 async function signIn({
