@@ -9,19 +9,15 @@ import { AUTH_STALE_TIME } from '@/utils/constants'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatchFetch } from '@/utils/try-catch'
 
-async function fetchAuthUser(): Promise<User | null> {
-  const { data, error } = await tryCatchFetch<AuthMeResponseBody>(`/api/auth/current`)
-  if (error) return null
-  return data
-}
-
 export function useAuthUser() {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    const { data: subscription } = browserSupabase.auth.onAuthStateChange(async () => {
-      // Blow away the cached value so the next render suspends and refetches
-      queryClient.removeQueries({ queryKey: queryKeys.authUser() })
+    const { data: subscription } = browserSupabase.auth.onAuthStateChange(async (event) => {
+      // Invalidate the cached value so the next render suspends and refetches
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+        queryClient.invalidateQueries({ queryKey: queryKeys.authUser() })
+      }
     })
 
     return () => subscription.subscription.unsubscribe()
@@ -33,4 +29,10 @@ export function useAuthUser() {
     staleTime: AUTH_STALE_TIME,
     retry: false,
   })
+}
+
+async function fetchAuthUser(): Promise<User | null> {
+  const { data, error } = await tryCatchFetch<AuthMeResponseBody>(`/api/auth/current`)
+  if (error) return null
+  return data
 }

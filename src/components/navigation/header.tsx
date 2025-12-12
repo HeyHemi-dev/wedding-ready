@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import { queryKeys } from '@/app/_types/keys'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -38,12 +39,13 @@ export default async function Header() {
           <NavLink link={{ href: '/find-suppliers', label: 'Find Suppliers' }} />
           {/* <NavLink link={{ href: '/articles', label: 'Advice' }} /> */}
         </nav>
-
-        <HydrationBoundary state={dehydrate(queryClient)}>
-          <Suspense fallback={<Skeleton className="aspect-[12/7] rounded-full" />}>
-            <HeaderAuth />
-          </Suspense>
-        </HydrationBoundary>
+        <ErrorBoundary fallback={<Skeleton className="aspect-[12/7] rounded-full" />}>
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <Suspense fallback={<Skeleton className="aspect-[12/7] rounded-full" />}>
+              <HeaderAuth />
+            </Suspense>
+          </HydrationBoundary>
+        </ErrorBoundary>
       </div>
     </header>
   )
