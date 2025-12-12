@@ -6,6 +6,14 @@ This Privacy Statement explains how Wedding Ready collects, uses, stores, and pr
 
 By using Wedding Ready, you agree that we may collect, use, and share your information as described in this Privacy Statement and in line with New Zealand privacy law, including the Privacy Act 2020.
 
+---
+
+**Put simply**
+
+This page explains what information we collect about you, how we use it, and your rights under New Zealand privacy law.
+
+
+
 ## The information we collect
 
 We collect personal information from you when you use Wedding Ready. This includes information about your:
@@ -26,6 +34,14 @@ We may also collect:
 Where you use third-party sign-in options (such as Google or Apple), we receive certain basic information from those providers so that we can create and manage your account.
 
 We generally collect information directly from you. We may also collect some information automatically when you use the Service, and we may obtain limited information from third parties where this is reasonably necessary for providing or securing the Service.
+
+---
+
+**Put simply**
+
+We collect basic contact details, activity on Wedding Ready, and limited device and billing information so we can run the service and understand how it is used.
+
+
 
 ## How we use your information
 
@@ -48,6 +64,14 @@ We may use your information to detect, investigate, and prevent fraud, abuse, sp
 We may use personal information, often in aggregated or de-identified form, to run analytics and product experiments so we can test and improve features like the feed, search, and supplier discovery.
 
 We may combine information we collect about you from different sources (for example, from your use of the app and your interactions with our emails) where this is necessary to achieve these purposes and consistent with New Zealand privacy law.
+
+---
+
+**Put simply**
+
+We use your information to run and secure Wedding Ready, personalise what you see, improve the product, communicate with you, and meet our legal obligations.
+
+
 
 ## Sharing your information
 
@@ -91,6 +115,14 @@ Where it is lawful and reasonable for us to do so, we will consider whether we c
 
 If we are involved in a merger, acquisition, reorganisation, sale of assets, or similar transaction, your information may be transferred as part of that deal. We will take reasonable steps to ensure that any new holder of your information continues to protect it in a way that is consistent with this Privacy Statement and New Zealand privacy law.
 
+---
+
+**Put simply**
+
+We share your information with trusted providers who help us run Wedding Ready, give suppliers anonymous performance insights, and may disclose information when the law or safety requires it. We do not sell your personal information.
+
+
+
 ## Advertising and analytics
 
 We do not sell your personal information.
@@ -100,6 +132,14 @@ We may use third-party tools (such as Google or Meta advertising products) to he
 We do not use data about your wider browsing activity on other websites to personalise the content or recommendations you see on Wedding Ready, beyond what those third-party advertising providers do within their own systems in line with their privacy policies.
 
 We may create aggregated or de-identified information (for example, statistics about how tiles perform or how often features are used). We use this information to understand and improve Wedding Ready and, where relevant, to provide insights to suppliers. We will not attempt to re-identify individuals from aggregated or de-identified information.
+
+---
+
+**Put simply**
+
+We use common advertising and analytics tools to understand how people find Wedding Ready and to promote it, but we do not sell your data or use your wider web browsing to personalise what you see on Wedding Ready.
+
+
 
 ## Optional information and what happens if you do not provide it
 
@@ -131,11 +171,27 @@ However, no online service can be guaranteed as completely secure. To help prote
 
 We retain personal information only for as long as we reasonably need it for the purposes described in this Privacy Statement or as required by law. After that, we take reasonable steps to delete it or to store it in a form that does not personally identify you.
 
+---
+
+**Put simply**
+
+We use secure systems and access controls to protect your information, but no online service is perfect, so you also need to protect your login and let us know if something looks wrong.
+
+
+
 ## Where your information is stored and sent
 
 We use service providers that may be located in New Zealand or overseas. This means your personal information may be stored or accessed in countries other than New Zealand.
 
 Where we transfer personal information outside New Zealand, we take reasonable steps to ensure that it is protected by privacy safeguards that are comparable to those in the New Zealand Privacy Act 2020. This may include using contractual protections or choosing providers in countries with similar legal protections.
+
+---
+
+**Put simply**
+
+Your information may be stored overseas, but we require similar privacy protections to those in New Zealand law wherever it goes.
+
+
 
 ## Your rights and how to exercise them
 
@@ -153,6 +209,14 @@ You can also:
 - manage some of your information directly through your account settings
 - unsubscribe from non-essential emails by using the unsubscribe link in those emails (we will still send you important transactional or service messages when necessary).
 
+---
+
+**Put simply**
+
+You can ask to see the information we hold about you, ask us to fix it if it is wrong, manage some settings yourself, and opt out of non-essential emails.
+
+
+
 ## Children and young people
 
 Wedding Ready is not intended for use by children under 13, and any use by people aged 13 to 17 must be with the consent of a parent or legal guardian, as described in our Terms of Use.
@@ -160,6 +224,14 @@ Wedding Ready is not intended for use by children under 13, and any use by peopl
 Where we become aware that we have collected personal information from a child under 13 without appropriate consent, we will take reasonable steps to delete that information.
 
 If you are a parent or legal guardian and believe that we may have collected personal information about your child in a way that concerns you, please contact us using the privacy contact form linked in the footer of our website.
+
+---
+
+**Put simply**
+
+Wedding Ready is for adults and older teens with guardian consent. If we learn we hold information about younger children without proper consent, we will delete it.
+
+
 
 ## Third-party sites and services
 
@@ -176,6 +248,14 @@ We may update this Privacy Statement from time to time to reflect changes in our
 When we make material changes, we will take reasonable steps to let you know (for example, by email or by a notice within the Service) before the updated Privacy Statement takes effect. The updated version will be published in the Wedding Ready app and/or on our website with an updated "Published" date.
 
 If you continue to use Wedding Ready after the updated Privacy Statement takes effect, you will be taken to have accepted the updated terms. If you do not agree with the changes, you should stop using the Service and, if you wish, delete your account.
+
+---
+
+**Put simply**
+
+We may update this Privacy Statement as our service or the law changes. We will try to let you know about important updates, and using Wedding Ready after that means you accept the new version.
+
+
 
 ## Contact us
 
