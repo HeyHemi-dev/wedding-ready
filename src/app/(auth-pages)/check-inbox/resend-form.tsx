@@ -8,8 +8,7 @@ import { toast } from 'sonner'
 import { tryCatch } from '@/utils/try-catch'
 import { resendFormAction } from './resend-form-action'
 
-const COOLDOWN_ENDS_AT_STORAGE_KEY = 'resend-email-cooldown-ends-at-ms'
-const FALLBACK_COOLDOWN_SECONDS = 60
+import { RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY } from '@/utils/constants'
 
 function getSecondsRemaining(cooldownEndsAtMs: number | null) {
   if (!cooldownEndsAtMs) return 0
@@ -18,7 +17,7 @@ function getSecondsRemaining(cooldownEndsAtMs: number | null) {
 }
 
 export function ResendForm() {
-  const [cooldownEndsAtMs, setCooldownEndsAtMs, removeCooldownEndsAtMs] = useLocalStorage<number | null>(COOLDOWN_ENDS_AT_STORAGE_KEY, null)
+  const [cooldownEndsAtMs, setCooldownEndsAtMs, removeCooldownEndsAtMs] = useLocalStorage<number | null>(RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY, null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const secondsRemaining = useMemo(() => getSecondsRemaining(cooldownEndsAtMs), [cooldownEndsAtMs])
 
@@ -39,9 +38,8 @@ export function ResendForm() {
     }
   }, [secondsRemaining, cooldownEndsAtMs, removeCooldownEndsAtMs])
 
-  function startCooldown(seconds: number) {
-    const nextCooldownEndsAtMs = Date.now() + seconds * 1000
-    setCooldownEndsAtMs(nextCooldownEndsAtMs)
+  function startCooldown(cooldownEndsAtMs: number) {
+    setCooldownEndsAtMs(cooldownEndsAtMs)
   }
 
   async function handleResend() {
@@ -55,14 +53,12 @@ export function ResendForm() {
       return
     }
 
-    if (data?.cooldownRemaining) {
-      startCooldown(data.cooldownRemaining)
-      toast.info(`Please wait ${data.cooldownRemaining}s before resending`)
-    } else if (data?.success) {
+    if (data.ok === false) {
+      setCooldownEndsAtMs(data.cooldownEndsAtMs)
+      toast.info(`Please wait ${getSecondsRemaining(data.cooldownEndsAtMs)}s before resending`)
+    } else if (data.ok) {
       toast.success('Confirmation email sent! Please check your inbox.')
-      startCooldown(FALLBACK_COOLDOWN_SECONDS)
-    } else {
-      toast.message('Done.')
+      setCooldownEndsAtMs(data.cooldownEndsAtMs)
     }
     setIsSubmitting(false)
   }
