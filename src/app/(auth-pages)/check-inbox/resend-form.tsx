@@ -1,62 +1,51 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { useLocalStorage } from 'usehooks-ts'
 
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { tryCatch } from '@/utils/try-catch'
-
 import { resendFormAction } from './resend-form-action'
-import { isClient } from '@/utils/api-helpers'
 
-const COOLDOWN_STORAGE_KEY = 'resend-email-cooldown-ends-at-ms'
+const COOLDOWN_ENDS_AT_STORAGE_KEY = 'resend-email-cooldown-ends-at-ms'
 const FALLBACK_COOLDOWN_SECONDS = 60
 
-function clampToSecondsLeft(endsAtMilliSeconds: number | null) {
-  if (!endsAtMilliSeconds) return 0
-  const diff = endsAtMilliSeconds - Date.now()
-  return Math.max(0, Math.ceil(diff / 1000))
+function getSecondsRemaining(cooldownEndsAtMs: number | null) {
+  if (!cooldownEndsAtMs) return 0
+  const msRemaining = cooldownEndsAtMs - Date.now()
+  return Math.max(0, Math.ceil(msRemaining / 1000))
 }
 
 export function ResendForm() {
-  const [endsAtMilliSeconds, setEndsAtMilliSeconds] = useState<number | null>(() => {
-    if (!isClient()) return null
-
-    const raw = window.localStorage.getItem(COOLDOWN_STORAGE_KEY)
-    const parsed = raw ? Number(raw) : NaN
-    return Number.isFinite(parsed) ? parsed : null
-  })
+  const [cooldownEndsAtMs, setCooldownEndsAtMs, removeCooldownEndsAtMs] = useLocalStorage<number | null>(COOLDOWN_ENDS_AT_STORAGE_KEY, null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const secondsLeft = useMemo(() => clampToSecondsLeft(endsAtMilliSeconds), [endsAtMilliSeconds])
+  const secondsRemaining = useMemo(() => getSecondsRemaining(cooldownEndsAtMs), [cooldownEndsAtMs])
 
   useEffect(() => {
-    if (secondsLeft === 0) return
-
+    if (secondsRemaining === 0) return
     const id = window.setInterval(() => {
-      // triggers a re-render so secondsLeft re-computes from Date.now()
-      setEndsAtMilliSeconds((v) => v)
+      // forces a re-render so secondsRemaining recomputes from Date.now()
+      setCooldownEndsAtMs((v) => v)
     }, 1000)
-
     return () => window.clearInterval(id)
-  }, [secondsLeft])
+  }, [secondsRemaining, setCooldownEndsAtMs])
 
-  // Clean up storage when cooldown ends
   useEffect(() => {
-    if (secondsLeft !== 0) return
-    window.localStorage.removeItem(COOLDOWN_STORAGE_KEY)
-    setEndsAtMilliSeconds((prev) => (prev && prev <= Date.now() ? null : prev))
-  }, [secondsLeft])
+    if (secondsRemaining !== 0) return
+    // cleanup persisted value once the cooldown has definitely expired
+    if (cooldownEndsAtMs !== null && cooldownEndsAtMs <= Date.now()) {
+      removeCooldownEndsAtMs()
+    }
+  }, [secondsRemaining, cooldownEndsAtMs, removeCooldownEndsAtMs])
 
   function startCooldown(seconds: number) {
-    const nextEndsAt = Date.now() + seconds * 1000
-    setEndsAtMilliSeconds(nextEndsAt)
-    window.localStorage.setItem(COOLDOWN_STORAGE_KEY, String(nextEndsAt))
+    const nextCooldownEndsAtMs = Date.now() + seconds * 1000
+    setCooldownEndsAtMs(nextCooldownEndsAtMs)
   }
 
   async function handleResend() {
-    if (isSubmitting || secondsLeft > 0) return
-
+    if (isSubmitting || secondsRemaining > 0) return
     setIsSubmitting(true)
     const { data, error } = await tryCatch(resendFormAction())
 
@@ -75,13 +64,12 @@ export function ResendForm() {
     } else {
       toast.message('Done.')
     }
-
     setIsSubmitting(false)
   }
 
   return (
-    <Button onClick={handleResend} disabled={isSubmitting || secondsLeft > 0}>
-      {secondsLeft > 0 ? `Resend in ${secondsLeft}s` : 'Resend email'}
+    <Button onClick={handleResend} disabled={isSubmitting || secondsRemaining > 0}>
+      {secondsRemaining > 0 ? `Resend in ${secondsRemaining}s` : 'Resend email'}
     </Button>
   )
 }
