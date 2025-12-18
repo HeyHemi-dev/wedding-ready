@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 
+import { userProfileModel } from '@/models/user'
 import { createClient } from '@/utils/supabase/server'
+import { PARAMS } from '@/utils/constants'
+import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 
 export async function GET(request: Request) {
   // The `/auth/callback` route is required for the server-side auth flow implemented
@@ -9,9 +12,7 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
 
-  // Support both 'redirect_to' (existing) and 'next' (Google OAuth standard) parameters
-  const redirectTo = searchParams.get('redirect_to') ?? searchParams.get('next')
-  let next = redirectTo ?? '/feed'
+  let next = searchParams.get(PARAMS.NEXT) ?? '/feed'
 
   // Ensure next is a relative URL starting with '/'
   if (!next.startsWith('/')) {
@@ -27,6 +28,32 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent('Authentication failed. Please try again.')}`)
     }
 
+    // Get auth user
+
+    const signUpStatus = await authOperations.getUserSignUpStatus(supabase)
+
+    if (!signUpStatus) {
+      return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent('Authentication failed. Please try again.')}`)
+    }
+
+    if (signUpStatus.status === SIGN_UP_STATUS.UNVERIFIED) {
+      // Redirect to check inbox page
+      return NextResponse.redirect(`${origin}/check-inbox`)
+    }
+
+    if (signUpStatus.status !== SIGN_UP_STATUS.ONBOARDED) {
+      // Redirect to onboarding, preserve original destination
+      const onboardingUrl = new URL('/onboarding', origin)
+      if (next !== '/feed') {
+        onboardingUrl.searchParams.set(PARAMS.NEXT, next)
+      }
+      return NextResponse.redirect(onboardingUrl.toString())
+    }
+
+    // Profile exists, proceed with normal redirect
+    // Handle load balancer redirects in production
+
+    // Profile exists, proceed with normal redirect
     // Handle load balancer redirects in production
     const forwardedHost = request.headers.get('x-forwarded-host')
     const isLocalEnv = process.env.NODE_ENV === 'development'
