@@ -7,7 +7,7 @@ import { notFound, redirect } from 'next/navigation'
 import { handleSchema } from '@/app/_types/validation-schema'
 import { Section } from '@/components/ui/section'
 import { supplierOperations } from '@/operations/supplier-operations'
-import { getAuthUserId } from '@/utils/auth'
+import { getAuthUserId, requireVerifiedAuth } from '@/utils/auth'
 
 import { UploadProvider } from './upload-context'
 import { UploadLayout } from './upload-layout'
@@ -20,10 +20,8 @@ export default async function NewSupplierTilePage({ params }: { params: Promise<
   const supplier = await supplierOperations.getByHandle(handle)
   if (!supplier) return notFound()
 
-  // Check if the user is the owner of the supplier to allow creating tiles
-  const authUserId = await getAuthUserId()
-  if (!authUserId) redirect(`/suppliers/${handle}`)
-
+  // Check if the user is a supplier user to allow creating tiles
+  const { authUserId } = await requireVerifiedAuth()
   const isSupplierUser = supplier.users.some((u) => u.id === authUserId)
   if (!isSupplierUser) redirect(`/suppliers/${handle}`)
 
