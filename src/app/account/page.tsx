@@ -1,17 +1,13 @@
 import { redirect } from 'next/navigation'
 
 import { userOperations } from '@/operations/user-operations'
-import { getAuthUserId } from '@/utils/auth'
+import { requireVerifiedAuth } from '@/utils/auth'
 import { nullToEmptyString } from '@/utils/empty-strings'
 
 import UpdateProfileForm from './update-profile-form'
 
 export default async function AccountPage() {
-  const authUserId = await getAuthUserId()
-
-  if (!authUserId) {
-    redirect('/sign-in')
-  }
+  const { authUserId } = await requireVerifiedAuth()
 
   const user = await userOperations.getById(authUserId)
 
