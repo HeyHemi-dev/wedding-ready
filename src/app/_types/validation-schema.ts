@@ -21,8 +21,6 @@ export type Handle = z.infer<typeof handleSchema>
 export const userSignupFormSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
-  displayName: z.string().trim().min(1, 'Display name is required').max(30, "Display name can't exceed 30 characters"),
-  handle: handleSchema,
 })
 export type UserSignupForm = z.infer<typeof userSignupFormSchema>
 
@@ -46,22 +44,25 @@ export const userResetPasswordFormSchema = z
     path: ['confirmPassword'],
     message: 'Passwords do not match',
   })
-
 export type UserResetPasswordForm = z.infer<typeof userResetPasswordFormSchema>
 
 export const userUpdateEmailFormSchema = userSignupFormSchema.pick({ email: true })
 export type UserUpdateEmailForm = z.infer<typeof userUpdateEmailFormSchema>
 
-const userOmitAuth = userSignupFormSchema.omit({
-  email: true,
-  password: true,
+export const onboardingFormSchema = z.object({
+  handle: handleSchema,
+  displayName: z.string().trim().min(1, 'Display name is required').max(30, "Display name can't exceed 30 characters"),
+  avatarUrl: optionalField(z.string().trim().min(1)),
+})
+export type OnboardingForm = z.infer<typeof onboardingFormSchema>
+
+const userOmitAuth = onboardingFormSchema.omit({
   handle: true,
 })
 
 export const userUpdateFormSchema = userOmitAuth.extend({
   id: z.string().uuid(),
   bio: optionalField(z.string().min(1).max(160, "Bio can't exceed 160 characters")),
-  avatarUrl: optionalField(z.string().trim().min(1)),
   instagramUrl: optionalField(
     z
       .string()
