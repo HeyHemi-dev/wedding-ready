@@ -10,12 +10,6 @@ import { resendFormAction } from './resend-form-action'
 
 import { RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY } from '@/utils/constants'
 
-function getSecondsRemaining(cooldownEndsAtMs: number | null) {
-  if (!cooldownEndsAtMs) return 0
-  const msRemaining = cooldownEndsAtMs - Date.now()
-  return Math.max(0, Math.ceil(msRemaining / 1000))
-}
-
 export function ResendForm() {
   const [cooldownEndsAtMs, setCooldownEndsAtMs, removeCooldownEndsAtMs] = useLocalStorage<number | null>(RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY, null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -68,4 +62,10 @@ export function ResendForm() {
       {secondsRemaining > 0 ? `Resend in ${secondsRemaining}s` : 'Resend email'}
     </Button>
   )
+}
+
+function getSecondsRemaining(cooldownEndsAtMs: number | null) {
+  if (!cooldownEndsAtMs) return 0
+  const msRemaining = cooldownEndsAtMs - Date.now()
+  return Math.max(0, Math.ceil(msRemaining / 1000))
 }
