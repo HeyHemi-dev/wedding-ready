@@ -150,7 +150,7 @@ type RequireVerifiedAuthOptions = {
  * Redirects to sign-in if not authenticated, check-inbox if email not verified, or onboarding if email is verified but profile is not created.
  * @returns The authenticated user's ID.
  */
-export async function requireVerifiedAuth(options: RequireVerifiedAuthOptions): Promise<{
+export async function requireVerifiedAuth(options?: RequireVerifiedAuthOptions): Promise<{
   authUserId: string
 }> {
   const authUserId = await getAuthUserId()
@@ -168,7 +168,7 @@ export async function requireVerifiedAuth(options: RequireVerifiedAuthOptions): 
     redirect('/check-inbox')
   }
   if (data.status !== SIGN_UP_STATUS.ONBOARDED) {
-    redirect(`/onboarding${options.redirectAfterOnboarding ? `?next=${options.redirectAfterOnboarding}` : ''}`)
+    redirect(`/onboarding${options?.redirectAfterOnboarding && `?next=${options.redirectAfterOnboarding}`}`)
   }
 
   return { authUserId }
