@@ -8,15 +8,14 @@ import { FeedGetResponse } from '@/app/api/feed/types'
 import { TileListSkeleton } from '@/components/tiles/tile-list'
 import { Section } from '@/components/ui/section'
 import { tileOperations } from '@/operations/tile-operations'
-import { getAuthUserId } from '@/utils/auth'
+import { requireVerifiedAuth } from '@/utils/auth'
 import { DEFAULT_STALE_TIME, FEED_PAGE_SIZE } from '@/utils/constants'
 import { setTilesSaveStateCache } from '@/utils/usequery-helpers'
 
 import { FeedClient } from './feed-client'
 
 export default async function Page() {
-  const authUserId = await getAuthUserId()
-  if (!authUserId) redirect('/sign-in')
+  const { authUserId } = await requireVerifiedAuth()
 
   const queryClient = new QueryClient()
   await queryClient.prefetchInfiniteQuery({
