@@ -14,4 +14,8 @@ export const RESEND_EMAIL_COOLDOWN_SECONDS = 60
 
 export const PARAMS = {
   NEXT: 'next',
-}
+} as const
+
+export const HEADERS = {
+  AUTH_USER_ID: 'x-auth-user-id',
+} as const

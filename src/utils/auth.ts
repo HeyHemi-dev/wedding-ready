@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from './supabase/server'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { tryCatch } from './try-catch'
-import { PARAMS } from './constants'
+import { PARAMS, HEADERS } from './constants'
 
 export const PROTECTED_PATHS = ['/feed', '/account', '/suppliers/register', '/suppliers/:handle/new']
 
@@ -16,7 +16,7 @@ export function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PATHS.some((path) => pathname.startsWith(path))
 }
 
-export const AUTH_HEADER_NAME = 'x-auth-user-id'
+export const AUTH_HEADER_NAME = HEADERS.AUTH_USER_ID
 
 /**
  * Gets the authenticated user's ID from request headers.
