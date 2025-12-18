@@ -1,14 +1,15 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+
+import { toast } from 'sonner'
 import { useLocalStorage } from 'usehooks-ts'
 
 import { Button } from '@/components/ui/button'
-import { toast } from 'sonner'
-import { tryCatch } from '@/utils/try-catch'
-import { resendFormAction } from './resend-form-action'
-
 import { RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY } from '@/utils/constants'
+import { tryCatch } from '@/utils/try-catch'
+
+import { resendFormAction } from './resend-form-action'
 
 export function ResendForm() {
   const [cooldownEndsAtMs, setCooldownEndsAtMs, removeCooldownEndsAtMs] = useLocalStorage<number | null>(RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY, null)
@@ -31,10 +32,6 @@ export function ResendForm() {
       removeCooldownEndsAtMs()
     }
   }, [secondsRemaining, cooldownEndsAtMs, removeCooldownEndsAtMs])
-
-  function startCooldown(cooldownEndsAtMs: number) {
-    setCooldownEndsAtMs(cooldownEndsAtMs)
-  }
 
   async function handleResend() {
     if (isSubmitting || secondsRemaining > 0) return

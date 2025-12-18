@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 
-import { userProfileModel } from '@/models/user'
-import { createClient } from '@/utils/supabase/server'
-import { PARAMS } from '@/utils/constants'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
+import { PARAMS } from '@/utils/constants'
+import { createClient } from '@/utils/supabase/server'
 
 export async function GET(request: Request) {
   // The `/auth/callback` route is required for the server-side auth flow implemented

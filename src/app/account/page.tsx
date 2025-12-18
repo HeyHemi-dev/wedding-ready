@@ -1,5 +1,3 @@
-import { redirect } from 'next/navigation'
-
 import { userOperations } from '@/operations/user-operations'
 import { requireVerifiedAuth } from '@/utils/auth'
 import { nullToEmptyString } from '@/utils/empty-strings'

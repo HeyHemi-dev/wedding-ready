@@ -1,14 +1,10 @@
 import { redirect } from 'next/navigation'
 
-import { userProfileModel } from '@/models/user'
-import { getAuthUserId } from '@/utils/auth'
+import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
+import { PARAMS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 
 import { ResendForm } from './resend-form'
-import { userOperations } from '@/operations/user-operations'
-import { tryCatch } from '@/utils/try-catch'
-import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
-import { PARAMS } from '@/utils/constants'
 
 export default async function CheckInboxPage() {
   const supabase = await createClient()

@@ -15,10 +15,10 @@ import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PARAMS } from '@/utils/constants'
 import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 
 import { onboardingFormAction } from './onboarding-form-action'
-import { PARAMS } from '@/utils/constants'
 
 export default function OnboardingForm() {
   const router = useRouter()

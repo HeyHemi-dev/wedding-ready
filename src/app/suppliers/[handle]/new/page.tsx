@@ -7,7 +7,7 @@ import { notFound, redirect } from 'next/navigation'
 import { handleSchema } from '@/app/_types/validation-schema'
 import { Section } from '@/components/ui/section'
 import { supplierOperations } from '@/operations/supplier-operations'
-import { getAuthUserId, requireVerifiedAuth } from '@/utils/auth'
+import { requireVerifiedAuth } from '@/utils/auth'
 
 import { UploadProvider } from './upload-context'
 import { UploadLayout } from './upload-layout'

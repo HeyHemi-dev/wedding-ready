@@ -1,12 +1,10 @@
 import { redirect } from 'next/navigation'
 
-import { userProfileModel } from '@/models/user'
-import { getAuthUserId } from '@/utils/auth'
+import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { createClient } from '@/utils/supabase/server'
+import { tryCatch } from '@/utils/try-catch'
 
 import OnboardingForm from './onboarding-form'
-import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
-import { tryCatch } from '@/utils/try-catch'
 
 export default async function OnboardingPage() {
   const supabase = await createClient()

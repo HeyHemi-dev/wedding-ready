@@ -2,11 +2,11 @@
 
 import { cookies } from 'next/headers'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { authOperations } from '@/operations/auth-operations'
+import { RESEND_EMAIL_COOLDOWN_SECONDS, RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-import { RESEND_EMAIL_COOLDOWN_SECONDS, RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY } from '@/utils/constants'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export type ResendEmailResult = { ok: true; cooldownEndsAtMs: number } | { ok: false; cooldownEndsAtMs: number } // rate-limited
 

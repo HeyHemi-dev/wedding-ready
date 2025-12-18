@@ -2,10 +2,11 @@ import { AuthResponse, User } from '@supabase/supabase-js'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { createClient } from './supabase/server'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
-import { tryCatch } from './try-catch'
+
 import { PARAMS, HEADERS } from './constants'
+import { createClient } from './supabase/server'
+import { tryCatch } from './try-catch'
 
 export const PROTECTED_PATHS = ['/feed', '/account', '/suppliers/register', '/suppliers/:handle/new']
 

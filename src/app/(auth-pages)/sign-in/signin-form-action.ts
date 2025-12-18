@@ -3,11 +3,10 @@
 import { redirect } from 'next/navigation'
 
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
-
+import { PARAMS } from '@/utils/constants'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-import { PARAMS } from '@/utils/constants'
 
 export async function signInFormAction(formData: FormData) {
   const email = formData.get('email')?.toString()

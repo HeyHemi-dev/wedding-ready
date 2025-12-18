@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
 
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
-import { redirect } from 'next/navigation'
 
 import { queryKeys } from '@/app/_types/keys'
 import { FeedGetResponse } from '@/app/api/feed/types'
