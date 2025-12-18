@@ -34,6 +34,39 @@ export async function getAuthUserId(): Promise<string | null> {
   return userId
 }
 
+type RequireVerifiedAuthOptions = {
+  redirectAfterOnboarding?: string
+}
+
+/**
+ * Requires authenticated user with verified email.
+ * Redirects to sign-in if not authenticated, check-inbox if email not verified, or onboarding if email is verified but profile is not created.
+ * @returns The authenticated user's ID.
+ */
+export async function requireVerifiedAuth(options?: RequireVerifiedAuthOptions): Promise<{
+  authUserId: string
+}> {
+  const authUserId = await getAuthUserId()
+  if (!authUserId) {
+    redirect('/sign-in')
+  }
+
+  const supabase = await createClient()
+  const { data, error } = await tryCatch(authOperations.getUserSignUpStatus(supabase))
+
+  if (error || !data) {
+    redirect('/sign-in')
+  }
+  if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
+    redirect('/check-inbox')
+  }
+  if (data.status !== SIGN_UP_STATUS.ONBOARDED) {
+    redirect(`/onboarding${options?.redirectAfterOnboarding && `?${PARAMS.NEXT}=${options.redirectAfterOnboarding}`}`)
+  }
+
+  return { authUserId }
+}
+
 export function handleSupabaseSignUpAuthResponse({ data, error }: AuthResponse): User {
   // Supabase Auth Response Types according to docs.
   // https://supabase.com/docs/reference/javascript/auth-signup
@@ -72,37 +105,4 @@ export function handleSupabaseSignUpAuthResponse({ data, error }: AuthResponse):
 
   // We can assert that data.user exists because we have handled all other possible cases.
   return data.user!
-}
-
-type RequireVerifiedAuthOptions = {
-  redirectAfterOnboarding?: string
-}
-
-/**
- * Requires authenticated user with verified email.
- * Redirects to sign-in if not authenticated, check-inbox if email not verified, or onboarding if email is verified but profile is not created.
- * @returns The authenticated user's ID.
- */
-export async function requireVerifiedAuth(options?: RequireVerifiedAuthOptions): Promise<{
-  authUserId: string
-}> {
-  const authUserId = await getAuthUserId()
-  if (!authUserId) {
-    redirect('/sign-in')
-  }
-
-  const supabase = await createClient()
-  const { data, error } = await tryCatch(authOperations.getUserSignUpStatus(supabase))
-
-  if (error || !data) {
-    redirect('/sign-in')
-  }
-  if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
-    redirect('/check-inbox')
-  }
-  if (data.status !== SIGN_UP_STATUS.ONBOARDED) {
-    redirect(`/onboarding${options?.redirectAfterOnboarding && `?${PARAMS.NEXT}=${options.redirectAfterOnboarding}`}`)
-  }
-
-  return { authUserId }
 }
