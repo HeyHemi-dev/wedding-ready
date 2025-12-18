@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from './supabase/server'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { tryCatch } from './try-catch'
+import { PARAMS } from './constants'
 
 export const PROTECTED_PATHS = ['/feed', '/account', '/suppliers/register', '/suppliers/:handle/new']
 
@@ -168,7 +169,7 @@ export async function requireVerifiedAuth(options?: RequireVerifiedAuthOptions):
     redirect('/check-inbox')
   }
   if (data.status !== SIGN_UP_STATUS.ONBOARDED) {
-    redirect(`/onboarding${options?.redirectAfterOnboarding && `?next=${options.redirectAfterOnboarding}`}`)
+    redirect(`/onboarding${options?.redirectAfterOnboarding && `?${PARAMS.NEXT}=${options.redirectAfterOnboarding}`}`)
   }
 
   return { authUserId }

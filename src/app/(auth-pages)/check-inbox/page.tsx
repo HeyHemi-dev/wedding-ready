@@ -8,6 +8,7 @@ import { ResendForm } from './resend-form'
 import { userOperations } from '@/operations/user-operations'
 import { tryCatch } from '@/utils/try-catch'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
+import { PARAMS } from '@/utils/constants'
 
 export default async function CheckInboxPage() {
   const supabase = await createClient()
@@ -36,6 +37,6 @@ export default async function CheckInboxPage() {
   if (signUpStatus.status === SIGN_UP_STATUS.ONBOARDED) {
     redirect('/feed')
   } else {
-    redirect('/onboarding?next=/feed')
+    redirect(`/onboarding?${PARAMS.NEXT}=/feed`)
   }
 }

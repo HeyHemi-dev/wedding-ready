@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 
 import { onboardingFormAction } from './onboarding-form-action'
+import { PARAMS } from '@/utils/constants'
 
 export default function OnboardingForm() {
   const router = useRouter()
@@ -76,7 +77,7 @@ export default function OnboardingForm() {
     }
 
     toast.success('Profile created successfully!')
-    const next = searchParams.get('next') || '/feed'
+    const next = searchParams.get(PARAMS.NEXT) ?? '/feed'
     router.push(next)
   }
 

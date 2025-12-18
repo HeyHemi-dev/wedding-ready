@@ -11,3 +11,7 @@ export const FETCH_TIMEOUT = 10 * 1000 // 10 seconds
 
 export const RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY = 'resend-email-cooldown-ends-at-ms'
 export const RESEND_EMAIL_COOLDOWN_SECONDS = 60
+
+export const PARAMS = {
+  NEXT: 'next',
+}
