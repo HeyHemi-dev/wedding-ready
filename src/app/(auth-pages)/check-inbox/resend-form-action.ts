@@ -6,56 +6,53 @@ import { authOperations } from '@/operations/auth-operations'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 import { RESEND_EMAIL_COOLDOWN_SECONDS, RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY } from '@/utils/constants'
+import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export type ResendEmailResult = { ok: true; cooldownEndsAtMs: number } | { ok: false; cooldownEndsAtMs: number } // rate-limited
 
 export async function resendFormAction(): Promise<ResendEmailResult> {
+  const nowMs = Date.now()
   const cookieStore = await cookies()
-  const lastResendCookie = cookieStore.get(RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY)
+  const cooldownEndsAtMs = getCooldownEndsAtFromCookie(cookieStore, nowMs)
 
-  if (lastResendCookie) {
-    const lastResendTime = parseInt(lastResendCookie.value, 10)
-    const now = Date.now()
-    const elapsed = Math.floor((now - lastResendTime) / 1000)
-    const remaining = RESEND_EMAIL_COOLDOWN_SECONDS - elapsed
-
-    if (remaining > 0) {
-      return { ok: false, cooldownEndsAtMs: lastResendTime + remaining * 1000 }
-    }
+  if (cooldownEndsAtMs && cooldownEndsAtMs > nowMs) {
+    return { ok: false, cooldownEndsAtMs }
   }
 
-  // Get user email from auth
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
+  if (!data.user?.email) throw OPERATION_ERROR.INVALID_STATE('User not found')
 
-  if (!user || !user.email) {
-    throw new Error('User not found')
-  }
-
-  // Resend email
   const { error } = await tryCatch(
     authOperations.resendEmailConfirmation({
       supabaseClient: supabase,
-      email: user.email,
+      email: data.user.email,
     })
   )
 
   if (error) {
     console.error('Failed to resend email:', error)
-    throw new Error('Failed to resend email')
+    throw OPERATION_ERROR.DATABASE_ERROR('Failed to resend email')
   }
 
-  // Set cooldown cookie
-
-  const cooldownEndsAtMs = Date.now() + RESEND_EMAIL_COOLDOWN_SECONDS * 1000
-  cookieStore.set(RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY, cooldownEndsAtMs.toString(), {
+  const nextCooldownEndsAtMs = nowMs + RESEND_EMAIL_COOLDOWN_SECONDS * 1000
+  cookieStore.set(RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY, String(nextCooldownEndsAtMs), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: RESEND_EMAIL_COOLDOWN_SECONDS,
+    path: '/',
   })
 
-  return { ok: true, cooldownEndsAtMs }
+  return { ok: true, cooldownEndsAtMs: nextCooldownEndsAtMs }
+}
+
+function getCooldownEndsAtFromCookie(cookieStore: Awaited<ReturnType<typeof cookies>>, nowMs: number) {
+  const cookieValue = cookieStore.get(RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY)?.value
+  if (!cookieValue) return null
+  const parsed = Number(cookieValue)
+  if (!Number.isFinite(parsed)) return null
+  // If clock moved backwards, ensure we don’t extend beyond the standard window
+  const maxEndsAtMs = nowMs + RESEND_EMAIL_COOLDOWN_SECONDS * 1000
+  return Math.min(parsed, maxEndsAtMs)
 }
