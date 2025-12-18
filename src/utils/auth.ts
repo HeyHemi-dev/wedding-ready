@@ -1,7 +1,10 @@
 import { AuthResponse, User } from '@supabase/supabase-js'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 import { createClient } from './supabase/server'
+import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
+import { tryCatch } from './try-catch'
 
 export const PROTECTED_PATHS = ['/feed', '/account', '/suppliers/register', '/suppliers/:handle/new']
 
@@ -56,6 +59,48 @@ export async function getAuthUserIdFromSupabase(): Promise<string | null> {
   return user.id
 }
 
+/**
+ * Checks if the authenticated user's email is verified.
+ * @returns true if email is verified, false otherwise
+ */
+export async function isEmailVerified(): Promise<boolean> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
+
+  if (error || !user) return false
+
+  // Supabase sets email_confirmed_at when email is verified
+  // OAuth providers automatically verify emails
+  return !!user.email_confirmed_at
+}
+
+/**
+ * Gets the authenticated user with verification status.
+ * @returns User object with email verification status, or null if not authenticated
+ */
+export async function getAuthUserWithStatus(): Promise<{
+  id: string
+  email: string
+  emailVerified: boolean
+} | null> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
+
+  if (error || !user) return null
+
+  return {
+    id: user.id,
+    email: user.email || '',
+    emailVerified: !!user.email_confirmed_at,
+  }
+}
+
 export function handleSupabaseSignUpAuthResponse({ data, error }: AuthResponse): User {
   // Supabase Auth Response Types according to docs.
   // https://supabase.com/docs/reference/javascript/auth-signup
@@ -94,4 +139,37 @@ export function handleSupabaseSignUpAuthResponse({ data, error }: AuthResponse):
 
   // We can assert that data.user exists because we have handled all other possible cases.
   return data.user!
+}
+
+type RequireVerifiedAuthOptions = {
+  redirectAfterOnboarding?: string
+}
+
+/**
+ * Requires authenticated user with verified email.
+ * Redirects to sign-in if not authenticated, check-inbox if email not verified, or onboarding if email is verified but profile is not created.
+ * @returns The authenticated user's ID.
+ */
+export async function requireVerifiedAuth(options: RequireVerifiedAuthOptions): Promise<{
+  authUserId: string
+}> {
+  const authUserId = await getAuthUserId()
+  if (!authUserId) {
+    redirect('/sign-in')
+  }
+
+  const supabase = await createClient()
+  const { data, error } = await tryCatch(authOperations.getUserSignUpStatus(supabase))
+
+  if (error || !data) {
+    redirect('/sign-in')
+  }
+  if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
+    redirect('/check-inbox')
+  }
+  if (data.status !== SIGN_UP_STATUS.ONBOARDED) {
+    redirect(`/onboarding${options.redirectAfterOnboarding ? `?next=${options.redirectAfterOnboarding}` : ''}`)
+  }
+
+  return { authUserId }
 }
