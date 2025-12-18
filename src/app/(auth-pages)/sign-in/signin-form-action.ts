@@ -2,7 +2,8 @@
 
 import { redirect } from 'next/navigation'
 
-import { authOperations } from '@/operations/auth-operations'
+import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
+
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
@@ -21,6 +22,15 @@ export async function signInFormAction(formData: FormData) {
 
   if (error) {
     return encodedRedirect('error', '/sign-in', 'Invalid email or password')
+  }
+
+  const signUpStatus = await authOperations.getUserSignUpStatus(supabase)
+  if (signUpStatus?.status === SIGN_UP_STATUS.UNVERIFIED) {
+    return redirect('/check-inbox')
+  }
+
+  if (signUpStatus?.status === SIGN_UP_STATUS.VERIFIED) {
+    return redirect('/onboarding?next=' + encodeURIComponent(redirectTo))
   }
 
   return redirect(redirectTo)
