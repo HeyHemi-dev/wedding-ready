@@ -52,9 +52,6 @@ export async function GET(request: Request) {
 
     // Profile exists, proceed with normal redirect
     // Handle load balancer redirects in production
-
-    // Profile exists, proceed with normal redirect
-    // Handle load balancer redirects in production
     const forwardedHost = request.headers.get('x-forwarded-host')
     const isLocalEnv = process.env.NODE_ENV === 'development'
 
