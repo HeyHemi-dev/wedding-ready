@@ -4,17 +4,19 @@ import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswo
 import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
-import { createAdminClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
 export const authOperations = {
   signUp,
   signUpWithGoogle,
+  getUserSignUpStatus,
   signIn,
   signOut,
   forgotPassword,
   resetPassword,
   updateEmail,
+  resendEmailConfirmation,
+  completeOnboarding,
 }
 
 async function signUp({
@@ -25,15 +27,10 @@ async function signUp({
   userSignFormData: UserSignupForm
   supabaseClient: SupabaseClient
   origin: string
-}): Promise<t.UserProfileRaw> {
-  const { email, password, handle, displayName } = userSignFormData
+}): Promise<{ authUserId: string }> {
+  const { email, password } = userSignFormData
 
-  const isAvailable = await userProfileModel.isHandleAvailable(handle)
-  if (!isAvailable) {
-    throw new Error('Handle is already taken')
-  }
-
-  // Create supabase user for auth
+  // Create supabase user for auth only
   const { data: authResponse, error: signUpError } = await tryCatch(
     supabaseClient.auth.signUp({
       email,
@@ -51,23 +48,7 @@ async function signUp({
   }
   const user = handleSupabaseSignUpAuthResponse(authResponse)
 
-  // Create userDetail record for app data
-  const { data: userDetails, error: dbError } = await tryCatch(
-    userProfileModel.createRaw({
-      id: user.id,
-      handle,
-      displayName,
-    })
-  )
-
-  if (dbError) {
-    const supabaseAdmin = createAdminClient()
-    console.error('Failed to create user details:', dbError)
-    await supabaseAdmin.auth.admin.deleteUser(user.id)
-    throw new Error('Failed to create account')
-  }
-
-  return userDetails
+  return { authUserId: user.id }
 }
 
 async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: SupabaseClient; origin: string }) {
@@ -77,6 +58,53 @@ async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: Su
       redirectTo: `${origin}/auth/callback`,
     },
   })
+}
+
+export const SIGN_UP_STATUS = {
+  UNVERIFIED: 'unverified',
+  VERIFIED: 'verified',
+  ONBOARDED: 'onboarded',
+} as const
+
+export type SignUpStatus = (typeof SIGN_UP_STATUS)[keyof typeof SIGN_UP_STATUS]
+
+export type UserWithSignUpStatus =
+  | null
+  | {
+      status: typeof SIGN_UP_STATUS.UNVERIFIED
+      authUserId: string
+      email: string
+    }
+  | {
+      status: typeof SIGN_UP_STATUS.VERIFIED
+      authUserId: string
+      email: string
+    }
+  | {
+      status: typeof SIGN_UP_STATUS.ONBOARDED
+      authUserId: string
+    }
+
+async function getUserSignUpStatus(supabaseClient: SupabaseClient): Promise<UserWithSignUpStatus> {
+  const {
+    data: { user },
+    error,
+  } = await supabaseClient.auth.getUser()
+
+  if (error || !user) return null
+
+  const authUserId = user.id
+  const email = user.email || ''
+
+  if (!user.email_confirmed_at) {
+    return { status: SIGN_UP_STATUS.UNVERIFIED, authUserId, email }
+  }
+
+  const profile = await userProfileModel.getRawById(authUserId)
+  if (!profile) {
+    return { status: SIGN_UP_STATUS.VERIFIED, authUserId, email }
+  }
+  return { status: SIGN_UP_STATUS.ONBOARDED, authUserId }
 }
 
 async function signIn({
@@ -159,4 +187,38 @@ async function updateEmail({
   }
 
   return { authUserId: data.user.id }
+}
+
+async function resendEmailConfirmation({ supabaseClient, email }: { supabaseClient: SupabaseClient; email: string }): Promise<void> {
+  const { error } = await supabaseClient.auth.resend({
+    type: 'signup',
+    email,
+  })
+
+  if (error) {
+    console.error('Failed to resend confirmation email:', error)
+    throw new Error('Failed to resend confirmation email')
+  }
+}
+
+async function completeOnboarding({ authUserId, handle, displayName }: { authUserId: string; handle: string; displayName: string }): Promise<t.UserProfileRaw> {
+  const isAvailable = await userProfileModel.isHandleAvailable(handle)
+  if (!isAvailable) {
+    throw new Error('Handle is already taken')
+  }
+
+  const { data: userDetails, error: dbError } = await tryCatch(
+    userProfileModel.createRaw({
+      id: authUserId,
+      handle,
+      displayName,
+    })
+  )
+
+  if (dbError) {
+    console.error('Failed to create user details:', dbError)
+    throw new Error('Failed to create profile')
+  }
+
+  return userDetails
 }
