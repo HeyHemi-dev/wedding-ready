@@ -4,6 +4,7 @@ import { FormMessage, Message } from '@/components/form/form-message'
 import { createClient } from '@/utils/supabase/server'
 
 import ResetPasswordForm from './reset-password-form'
+import { PARAMS } from '@/utils/constants'
 
 export default async function ResetPassword(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams
@@ -16,13 +17,13 @@ export default async function ResetPassword(props: { searchParams: Promise<Messa
   } = await supabase.auth.getSession()
 
   if (sessionError || !session) {
-    redirect('/sign-in?message=Please request a password reset first')
+    redirect(`/sign-in?${PARAMS.MESSAGE}=${encodeURIComponent('Please request a password reset first')}`)
   }
 
   // Verify this is specifically a recovery session from password reset
   // The session's user metadata will indicate if this is a recovery session
   if (session.user.app_metadata?.provider !== 'email') {
-    redirect('/sign-in?message=Please request a password reset first')
+    redirect(`/sign-in?${PARAMS.MESSAGE}=${encodeURIComponent('Please request a password reset first')}`)
   }
 
   return (
