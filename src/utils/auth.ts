@@ -4,20 +4,13 @@ import { redirect } from 'next/navigation'
 
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 
-import { PARAMS, HEADERS } from './constants'
+import { PARAMS } from './constants'
+import { AUTH_HEADER_NAME, isProtectedPath } from './auth-edge'
 import { createClient } from './supabase/server'
 import { tryCatch } from './try-catch'
 
-export const PROTECTED_PATHS = ['/feed', '/account', '/suppliers/register', '/suppliers/:handle/new']
-
-/**
- * Checks if a given pathname requires authentication. Used by middleware and auth-related functions to enforce authentication.
- */
-export function isProtectedPath(pathname: string): boolean {
-  return PROTECTED_PATHS.some((path) => pathname.startsWith(path))
-}
-
-export const AUTH_HEADER_NAME = HEADERS.AUTH_USER_ID
+// Re-export for backward compatibility
+export { isProtectedPath, AUTH_HEADER_NAME }
 
 /**
  * Gets the authenticated user's ID from request headers.

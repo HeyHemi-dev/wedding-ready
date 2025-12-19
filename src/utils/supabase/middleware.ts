@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { isProtectedPath, AUTH_HEADER_NAME } from '@/utils/auth'
+import { isProtectedPath, AUTH_HEADER_NAME } from '@/utils/auth-edge'
 
 export const updateSession = async (request: NextRequest) => {
   let supabaseResponse = NextResponse.next({
