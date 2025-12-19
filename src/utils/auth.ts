@@ -3,9 +3,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
-
 import { PARAMS, HEADERS } from '@/utils/constants'
-
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 

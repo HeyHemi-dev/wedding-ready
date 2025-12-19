@@ -1,7 +1,6 @@
 import { describe, expect, test, beforeEach, afterAll } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
-
 import { scene, testClient, TEST_ORIGIN } from '@/testing/scene'
 
 import { authOperations, SIGN_UP_STATUS } from './auth-operations'

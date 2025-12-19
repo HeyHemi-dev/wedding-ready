@@ -1,7 +1,7 @@
 'use server'
 
-import { authOperations } from '@/operations/auth-operations'
 import { isProtectedPath } from '@/middleware-helpers'
+import { authOperations } from '@/operations/auth-operations'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
