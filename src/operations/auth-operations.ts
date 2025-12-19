@@ -27,7 +27,7 @@ async function signUp({
   userSignFormData: UserSignupForm
   supabaseClient: SupabaseClient
   origin: string
-}): Promise<{ authUserId: string }> {
+}): Promise<{ id: string }> {
   const { email, password } = userSignFormData
 
   // Create supabase user for auth only
@@ -48,7 +48,7 @@ async function signUp({
   }
   const user = handleSupabaseSignUpAuthResponse(authResponse)
 
-  return { authUserId: user.id }
+  return { id: user.id }
 }
 
 async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: SupabaseClient; origin: string }) {
