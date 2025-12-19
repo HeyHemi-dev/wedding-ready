@@ -2,8 +2,8 @@ import { redirect } from 'next/navigation'
 
 import { PARAMS } from '@/utils/constants'
 
-const encodedRedirectTypes = [PARAMS.ERROR, PARAMS.SUCCESS, PARAMS.MESSAGE] as const
-type EncodedRedirectType = (typeof encodedRedirectTypes)[number]
+export const ENCODED_REDIRECT_TYPES = [PARAMS.ERROR, PARAMS.SUCCESS, PARAMS.MESSAGE] as const
+type EncodedRedirectType = (typeof ENCODED_REDIRECT_TYPES)[number]
 
 /**
  * Redirects to a specified path with an encoded message as a query parameter.

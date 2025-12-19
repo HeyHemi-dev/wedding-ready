@@ -5,10 +5,10 @@ import { revalidateTag } from 'next/cache'
 import { tags } from '@/app/_types/tags'
 import { UserResetPasswordForm, userResetPasswordFormSchema } from '@/app/_types/validation-schema'
 import { authOperations } from '@/operations/auth-operations'
+import { PARAMS } from '@/utils/constants'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-
 
 export async function resetPasswordFormAction({ data }: { data: UserResetPasswordForm }) {
   const { success, error: parseError, data: validatedData } = userResetPasswordFormSchema.safeParse(data)
@@ -17,7 +17,7 @@ export async function resetPasswordFormAction({ data }: { data: UserResetPasswor
   }
 
   if (validatedData.password !== validatedData.confirmPassword) {
-    encodedRedirect('error', '/account/reset-password', 'Passwords do not match')
+    encodedRedirect(PARAMS.ERROR, '/account/reset-password', 'Passwords do not match')
   }
 
   const supabase = await createClient()

@@ -14,6 +14,7 @@ import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 import { PARAMS } from '@/utils/constants'
+import { encodedRedirect } from '@/utils/encoded-redirect'
 import { tryCatch } from '@/utils/try-catch'
 
 export const authOperations = {
@@ -71,7 +72,7 @@ async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: Su
 
   if (error) {
     console.error(error.message)
-    redirect(`${origin}/sign-in?${PARAMS.ERROR}=${encodeURIComponent(error.message)}`)
+    encodedRedirect(PARAMS.ERROR, `${origin}/sign-in`, error.message)
   }
 
   if (data.url) {
