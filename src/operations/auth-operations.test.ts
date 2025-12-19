@@ -55,7 +55,7 @@ describe('authOperations', () => {
       expect(authUser.user?.email).toBe(AUTH_TEST_USER_1.email)
 
       // Clean up
-      testClient.auth.admin.deleteUser(testUser.id)
+      await testClient.auth.admin.deleteUser(testUser.id)
     })
 
     test('should throw error when email is already taken', async () => {
@@ -134,7 +134,7 @@ describe('authOperations', () => {
       expect(result?.authUserId).toBe(testUser.id)
 
       // Clean up
-      testClient.auth.admin.deleteUser(testUser.id)
+      await testClient.auth.admin.deleteUser(testUser.id)
     })
 
     test('should return SIGN_UP_STATUS.ONBOARDED when user is verified and profile is created', async () => {
@@ -159,7 +159,7 @@ describe('authOperations', () => {
       expect(result?.status).toBe(SIGN_UP_STATUS.ONBOARDED)
 
       // Clean up
-      testClient.auth.admin.deleteUser(testUser.id)
+      await testClient.auth.admin.deleteUser(testUser.id)
     })
   })
 
