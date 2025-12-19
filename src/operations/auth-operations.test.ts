@@ -90,10 +90,10 @@ describe('authOperations', () => {
       })
 
       // Act
-      const result = await authOperations.completeOnboarding({
-        authUserId: testUser.id,
+      const result = await authOperations.completeOnboarding(testUser.id, {
         handle: AUTH_TEST_USER_1.handle,
         displayName: AUTH_TEST_USER_1.displayName,
+        avatarUrl: '',
       })
 
       // Assert
@@ -145,10 +145,10 @@ describe('authOperations', () => {
         supabaseClient: testClient,
         origin: TEST_ORIGIN,
       })
-      await authOperations.completeOnboarding({
-        authUserId: testUser.id,
+      await authOperations.completeOnboarding(testUser.id, {
         handle: AUTH_TEST_USER_1.handle,
         displayName: AUTH_TEST_USER_1.displayName,
+        avatarUrl: '',
       })
 
       // Act

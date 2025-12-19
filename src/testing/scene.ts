@@ -70,6 +70,7 @@ async function hasUser({
   password = TEST_USER.password,
   displayName = TEST_USER.displayName,
   handle = TEST_USER.handle,
+  avatarUrl = '',
   supabaseClient = testClient,
 }: Partial<UserSignupForm> & Partial<OnboardingForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserProfileRaw> {
   const user = await userProfileModel.getRawByHandle(handle)
@@ -77,7 +78,7 @@ async function hasUser({
 
   const { id } = await authOperations.signUp({ userSignFormData: { email, password }, supabaseClient, origin: TEST_ORIGIN })
 
-  return await authOperations.completeOnboarding({ authUserId: id, handle, displayName })
+  return await authOperations.completeOnboarding(id, { handle, displayName, avatarUrl })
 }
 
 async function hasSupplier({

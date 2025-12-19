@@ -18,10 +18,10 @@ export async function onboardingFormAction({ data }: { data: OnboardingForm }): 
   }
 
   const { error } = await tryCatch(
-    authOperations.completeOnboarding({
-      authUserId,
+    authOperations.completeOnboarding(authUserId, {
       handle: validatedData.handle,
       displayName: validatedData.displayName,
+      avatarUrl: validatedData.avatarUrl,
     })
   )
 
