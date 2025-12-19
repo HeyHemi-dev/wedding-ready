@@ -13,6 +13,8 @@ import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
+import { redirect } from 'next/navigation'
+import { PARAMS } from '@/utils/constants'
 
 export const authOperations = {
   signUp,
@@ -60,12 +62,21 @@ async function signUp({
 }
 
 async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: SupabaseClient; origin: string }) {
-  await supabaseClient.auth.signInWithOAuth({
+  const { data, error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
     options: {
       redirectTo: `${origin}/auth/callback`,
     },
   })
+
+  if (error) {
+    console.error(error.message)
+    redirect(`${origin}/sign-in?${PARAMS.ERROR}=${encodeURIComponent(error.message)}`)
+  }
+
+  if (data.url) {
+    redirect(data.url)
+  }
 }
 
 async function completeOnboarding(authUserId: string, { handle, displayName }: OnboardingForm): Promise<t.UserProfileRaw> {
