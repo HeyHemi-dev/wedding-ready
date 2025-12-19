@@ -1,7 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { isProtectedPath, AUTH_HEADER_NAME } from '@/utils/auth-edge'
+import { isProtectedPath } from '@/middleware-helpers'
+import { HEADERS } from '@/utils/constants'
 
 export const updateSession = async (request: NextRequest) => {
   let supabaseResponse = NextResponse.next({
@@ -45,7 +46,7 @@ export const updateSession = async (request: NextRequest) => {
   // Only set the auth user header if we have one.
   // If we try to get the header later on and it doesn't exist then next/headers will return null.
   if (user) {
-    supabaseResponse.headers.set(AUTH_HEADER_NAME, user.id)
+    supabaseResponse.headers.set(HEADERS.AUTH_USER_ID, user.id)
   }
 
   // IMPORTANT: You must return the supabaseResponse object as is to maintain session state
