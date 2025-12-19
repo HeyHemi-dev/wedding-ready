@@ -5,24 +5,19 @@ import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
 import OnboardingForm from './onboarding-form'
+import { encodedRedirect } from '@/utils/encoded-redirect'
 
 export default async function OnboardingPage() {
   const supabase = await createClient()
   const { data, error } = await tryCatch(authOperations.getUserSignUpStatus(supabase))
-
-  if (error || !data) {
-    redirect('/sign-in')
-  }
+  if (error) encodedRedirect('error', '/sign-in', error.message)
+  if (!data) redirect('/sign-in')
 
   // Check email verification
-  if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
-    redirect('/check-inbox')
-  }
+  if (data.status === SIGN_UP_STATUS.UNVERIFIED) redirect('/check-inbox')
 
   // Check if profile already exists
-  if (data.status === SIGN_UP_STATUS.ONBOARDED) {
-    redirect('/feed')
-  }
+  if (data.status === SIGN_UP_STATUS.ONBOARDED) redirect('/feed')
 
   return (
     <>
