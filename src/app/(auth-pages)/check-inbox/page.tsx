@@ -2,11 +2,11 @@ import { redirect } from 'next/navigation'
 
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { PARAMS } from '@/utils/constants'
+import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient } from '@/utils/supabase/server'
+import { tryCatch } from '@/utils/try-catch'
 
 import { ResendForm } from './resend-form'
-import { tryCatch } from '@/utils/try-catch'
-import { encodedRedirect } from '@/utils/encoded-redirect'
 
 export default async function CheckInboxPage() {
   const supabase = await createClient()

@@ -2,9 +2,9 @@ import { describe, expect, test, beforeEach, afterAll } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
 import { scene, testClient, TEST_ORIGIN } from '@/testing/scene'
+import { tryCatch } from '@/utils/try-catch'
 
 import { authOperations, SIGN_UP_STATUS } from './auth-operations'
-import { tryCatch } from '@/utils/try-catch'
 
 // Define different test users only for auth testing so we can create a delete as needed without affecting other tests
 const AUTH_TEST_USER_1 = {

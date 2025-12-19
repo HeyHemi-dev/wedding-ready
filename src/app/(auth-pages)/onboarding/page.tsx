@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
 
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
+import { encodedRedirect } from '@/utils/encoded-redirect'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
 import OnboardingForm from './onboarding-form'
-import { encodedRedirect } from '@/utils/encoded-redirect'
 
 export default async function OnboardingPage() {
   const supabase = await createClient()

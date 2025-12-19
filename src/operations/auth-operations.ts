@@ -1,5 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import {
   UserSignupForm,
   UserSigninForm,
@@ -12,7 +13,6 @@ import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export const authOperations = {
   signUp,
