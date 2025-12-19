@@ -9,7 +9,7 @@ import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { encodedRedirect } from '@/utils/encoded-redirect'
+
 import { tryCatch } from '@/utils/try-catch'
 
 import { signUpFormAction } from './signup-form-action'
@@ -28,7 +28,7 @@ export default function SignUpForm() {
     const { error } = await tryCatch(signUpFormAction({ data }))
     if (error) {
       toast.error(error.message)
-      return encodedRedirect('error', '/sign-up', error.message)
+      return
     }
 
     // signUpFormAction redirects to /check-inbox, so we shouldn't reach here
