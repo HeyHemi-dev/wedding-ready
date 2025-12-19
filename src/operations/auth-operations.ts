@@ -9,6 +9,7 @@ import { tryCatch } from '@/utils/try-catch'
 export const authOperations = {
   signUp,
   signUpWithGoogle,
+  completeOnboarding,
   getUserSignUpStatus,
   signIn,
   signOut,
@@ -16,7 +17,6 @@ export const authOperations = {
   resetPassword,
   updateEmail,
   resendEmailConfirmation,
-  completeOnboarding,
 }
 
 async function signUp({
@@ -58,6 +58,28 @@ async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: Su
       redirectTo: `${origin}/auth/callback`,
     },
   })
+}
+
+async function completeOnboarding({ authUserId, handle, displayName }: { authUserId: string; handle: string; displayName: string }): Promise<t.UserProfileRaw> {
+  const isAvailable = await userProfileModel.isHandleAvailable(handle)
+  if (!isAvailable) {
+    throw new Error('Handle is already taken')
+  }
+
+  const { data: userDetails, error: dbError } = await tryCatch(
+    userProfileModel.createRaw({
+      id: authUserId,
+      handle,
+      displayName,
+    })
+  )
+
+  if (dbError) {
+    console.error('Failed to create user details:', dbError)
+    throw new Error('Failed to create profile')
+  }
+
+  return userDetails
 }
 
 export const SIGN_UP_STATUS = {
@@ -199,26 +221,4 @@ async function resendEmailConfirmation({ supabaseClient, email }: { supabaseClie
     console.error('Failed to resend confirmation email:', error)
     throw new Error('Failed to resend confirmation email')
   }
-}
-
-async function completeOnboarding({ authUserId, handle, displayName }: { authUserId: string; handle: string; displayName: string }): Promise<t.UserProfileRaw> {
-  const isAvailable = await userProfileModel.isHandleAvailable(handle)
-  if (!isAvailable) {
-    throw new Error('Handle is already taken')
-  }
-
-  const { data: userDetails, error: dbError } = await tryCatch(
-    userProfileModel.createRaw({
-      id: authUserId,
-      handle,
-      displayName,
-    })
-  )
-
-  if (dbError) {
-    console.error('Failed to create user details:', dbError)
-    throw new Error('Failed to create profile')
-  }
-
-  return userDetails
 }
