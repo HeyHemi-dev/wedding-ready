@@ -49,7 +49,7 @@ export async function requireVerifiedAuth(options?: RequireVerifiedAuthOptions):
     redirect('/check-inbox')
   }
   if (data.status !== SIGN_UP_STATUS.ONBOARDED) {
-    redirect(`/onboarding${options?.redirectAfterOnboarding && `?${PARAMS.NEXT}=${options.redirectAfterOnboarding}`}`)
+    redirect(`/onboarding${options?.redirectAfterOnboarding && `?${PARAMS.NEXT}=${encodeURIComponent(options.redirectAfterOnboarding)}`}`)
   }
 
   return { authUserId }
