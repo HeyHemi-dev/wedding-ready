@@ -42,7 +42,7 @@ async function signUp({
   const { email, password } = userSignFormData
 
   // Create supabase user for auth only
-  const { data: authResponse, error: signUpError } = await tryCatch(
+  const { data, error } = await tryCatch(
     supabaseClient.auth.signUp({
       email,
       password,
@@ -52,12 +52,13 @@ async function signUp({
     })
   )
 
-  if (signUpError) {
-    // Complete failure (network, etc)
-    console.error('Auth error:', signUpError)
-    throw new Error('Failed to create account')
+  if (error || !data) {
+    console.error(error?.message ?? 'Failed to create account')
+    throw OPERATION_ERROR.DATABASE_ERROR(error?.message ?? 'Failed to create account')
   }
-  const user = handleSupabaseSignUpAuthResponse(authResponse)
+
+  // we can assert that data exists because we have handled all other possible cases
+  const user = handleSupabaseSignUpAuthResponse(data!)
 
   return { id: user.id }
 }
@@ -83,23 +84,14 @@ async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: Su
 async function completeOnboarding(authUserId: string, { handle, displayName }: OnboardingForm): Promise<t.UserProfileRaw> {
   const isAvailable = await userProfileModel.isHandleAvailable(handle)
   if (!isAvailable) {
-    throw new Error('Handle is already taken')
+    throw OPERATION_ERROR.RESOURCE_CONFLICT('Handle is already taken')
   }
 
-  const { data: userDetails, error: dbError } = await tryCatch(
-    userProfileModel.createRaw({
-      id: authUserId,
-      handle,
-      displayName,
-    })
-  )
-
-  if (dbError) {
-    console.error('Failed to create user details:', dbError)
-    throw new Error('Failed to create profile')
-  }
-
-  return userDetails
+  return userProfileModel.createRaw({
+    id: authUserId,
+    handle,
+    displayName,
+  })
 }
 
 export const SIGN_UP_STATUS = {
@@ -173,7 +165,7 @@ async function signIn({
 
   if (error) {
     console.error(error.message)
-    throw new Error()
+    throw OPERATION_ERROR.DATABASE_ERROR(error.message)
   }
 
   return { authUserId: data.user.id }
@@ -183,7 +175,7 @@ async function signOut({ supabaseClient }: { supabaseClient: SupabaseClient }) {
   const { error } = await supabaseClient.auth.signOut()
   if (error) {
     console.error(error.message)
-    throw new Error()
+    throw OPERATION_ERROR.DATABASE_ERROR('Failed to sign out')
   }
 }
 
@@ -199,7 +191,7 @@ async function forgotPassword({
 
   if (error) {
     console.error(error.message)
-    throw new Error()
+    throw OPERATION_ERROR.DATABASE_ERROR('Failed to send reset password email')
   }
 }
 
@@ -216,7 +208,7 @@ async function resetPassword({
 
   if (error) {
     console.error(error.message)
-    throw new Error()
+    throw OPERATION_ERROR.DATABASE_ERROR('Failed to reset password')
   }
 
   return { authUserId: data.user.id }
@@ -235,7 +227,7 @@ async function updateEmail({
 
   if (error) {
     console.error(error.message)
-    throw new Error()
+    throw OPERATION_ERROR.DATABASE_ERROR('Failed to update email')
   }
 
   return { authUserId: data.user.id }
@@ -248,7 +240,7 @@ async function resendEmailConfirmation({ supabaseClient, email }: { supabaseClie
   })
 
   if (error) {
-    console.error('Failed to resend confirmation email:', error)
-    throw new Error('Failed to resend confirmation email')
+    console.error(error.message)
+    throw OPERATION_ERROR.DATABASE_ERROR('Failed to resend confirmation email')
   }
 }

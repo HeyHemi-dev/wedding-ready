@@ -16,6 +16,7 @@ import { BASE_URL } from '@/utils/constants'
 import { createAdminClient } from '@/utils/supabase/server'
 
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { OPERATION_ERROR } from '@/app/_types/errors'
 
 // Shared Supabase admin client for tests to avoid multiple instances
 export const testClient = createAdminClient()
@@ -125,7 +126,7 @@ async function hasTile({
     credits,
   })
   const tile = await tileModel.getRawById(newTile.id)
-  if (!tile) throw new Error('Failed to create tile')
+  if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND('Failed to create tile')
   return tile
 }
 
