@@ -11,7 +11,7 @@ import { ResendForm } from './resend-form'
 export default async function CheckInboxPage() {
   const supabase = await createClient()
   const { data, error } = await tryCatch(authOperations.getUserSignUpStatus(supabase))
-  if (error) encodedRedirect('error', '/sign-in', error.message)
+  if (error) encodedRedirect(PARAMS.ERROR, '/sign-in', error.message)
   if (!data) redirect('/sign-in')
 
   if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
