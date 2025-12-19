@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
     if (error) {
       // Redirect to sign-in with error message using the established pattern
-      return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent('Authentication failed. Please try again.')}`)
+      return NextResponse.redirect(`${origin}/sign-in?${PARAMS.ERROR}=${encodeURIComponent('Authentication failed. Please try again.')}`)
     }
 
     // Get auth user
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     const signUpStatus = await authOperations.getUserSignUpStatus(supabase)
 
     if (!signUpStatus) {
-      return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent('Authentication failed. Please try again.')}`)
+      return NextResponse.redirect(`${origin}/sign-in?${PARAMS.ERROR}=${encodeURIComponent('Authentication failed. Please try again.')}`)
     }
 
     if (signUpStatus.status === SIGN_UP_STATUS.UNVERIFIED) {
@@ -67,5 +67,5 @@ export async function GET(request: Request) {
   }
 
   // If no code, redirect to sign-in with error
-  return NextResponse.redirect(`${origin}/sign-in?error=${encodeURIComponent('Invalid authentication request. Please try signing in again.')}`)
+  return NextResponse.redirect(`${origin}/sign-in?${PARAMS.ERROR}=${encodeURIComponent('Invalid authentication request. Please try signing in again.')}`)
 }
