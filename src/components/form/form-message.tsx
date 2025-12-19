@@ -10,8 +10,6 @@ export function FormMessage({ message }: { message: Message }) {
       {'error' in message && <div className="rounded border border-destructive/50 bg-destructive/10 px-md py-sm text-destructive">{message.error}</div>}
 
       {'message' in message && <div className="rounded border border-amber-600/50 bg-amber-600/10 px-md py-sm text-foreground">{message.message}</div>}
-
-      {'message' in message && <div className="rounded border border-amber-600/50 bg-amber-600/10 px-md py-sm text-foreground">{message.message}</div>}
     </div>
   )
 }
