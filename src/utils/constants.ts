@@ -14,6 +14,9 @@ export const RESEND_EMAIL_COOLDOWN_SECONDS = 60
 
 export const PARAMS = {
   NEXT: 'next',
+  SUCCESS: 'success',
+  ERROR: 'error',
+  MESSAGE: 'message',
 } as const
 
 export const HEADERS = {
