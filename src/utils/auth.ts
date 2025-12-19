@@ -1,18 +1,11 @@
 import { AuthResponse, User } from '@supabase/supabase-js'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 
-import { createClient } from './supabase/server'
-
-export const PROTECTED_PATHS = ['/feed', '/account', '/suppliers/register', '/suppliers/:handle/new']
-
-/**
- * Checks if a given pathname requires authentication. Used by middleware and auth-related functions to enforce authentication.
- */
-export function isProtectedPath(pathname: string): boolean {
-  return PROTECTED_PATHS.some((path) => pathname.startsWith(path))
-}
-
-export const AUTH_HEADER_NAME = 'x-auth-user-id'
+import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
+import { PARAMS, HEADERS } from '@/utils/constants'
+import { createClient } from '@/utils/supabase/server'
+import { tryCatch } from '@/utils/try-catch'
 
 /**
  * Gets the authenticated user's ID from request headers.
@@ -24,36 +17,42 @@ export async function getAuthUserId(): Promise<string | null> {
   const headersList = await headers()
 
   // userId will a valid string if authHeaderName is set. This is handled in middleware
-  const userId = headersList.get(AUTH_HEADER_NAME)
+  const userId = headersList.get(HEADERS.AUTH_USER_ID)
 
   return userId
 }
 
+type RequireVerifiedAuthOptions = {
+  redirectAfterOnboarding?: string
+}
+
 /**
- * @deprecated Use getAuthUserId() instead
- * middleware does run on server actions, so this is no longer needed
- *
- * Gets the authenticated user's ID from Supabase Auth.
- * Use only when middleware hasn't run (e.g. form actions).
- *
- * @returns The authenticated user's id or null if not authenticated
+ * Requires authenticated user with verified email.
+ * Redirects to sign-in if not authenticated, check-inbox if email not verified, or onboarding if email is verified but profile is not created.
+ * @returns The authenticated user's ID.
  */
-export async function getAuthUserIdFromSupabase(): Promise<string | null> {
+export async function requireVerifiedAuth(options?: RequireVerifiedAuthOptions): Promise<{
+  authUserId: string
+}> {
+  const authUserId = await getAuthUserId()
+  if (!authUserId) {
+    redirect('/sign-in')
+  }
+
   const supabase = await createClient()
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
+  const { data, error } = await tryCatch(authOperations.getUserSignUpStatus(supabase))
 
-  if (error) {
-    throw new Error('Failed to get authenticated user')
+  if (error || !data) {
+    redirect('/sign-in')
+  }
+  if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
+    redirect('/check-inbox')
+  }
+  if (data.status !== SIGN_UP_STATUS.ONBOARDED) {
+    redirect(`/onboarding${options?.redirectAfterOnboarding && `?${PARAMS.NEXT}=${encodeURIComponent(options.redirectAfterOnboarding)}`}`)
   }
 
-  if (!user) {
-    return null
-  }
-
-  return user.id
+  return { authUserId }
 }
 
 export function handleSupabaseSignUpAuthResponse({ data, error }: AuthResponse): User {

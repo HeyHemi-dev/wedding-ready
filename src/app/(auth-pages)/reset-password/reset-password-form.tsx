@@ -10,6 +10,7 @@ import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PARAMS } from '@/utils/constants'
 import { encodedRedirect } from '@/utils/encoded-redirect'
 import { tryCatch } from '@/utils/try-catch'
 
@@ -35,7 +36,7 @@ export default function ResetPasswordForm() {
     const { error } = await tryCatch(resetPasswordFormAction({ data }))
     if (error) {
       toast.error(error.message)
-      return encodedRedirect('error', '/sign-up', error.message)
+      return encodedRedirect(PARAMS.ERROR, '/sign-up', error.message)
     }
 
     toast.success('Password updated')

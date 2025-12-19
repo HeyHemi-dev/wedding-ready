@@ -1,17 +1,11 @@
-import { redirect } from 'next/navigation'
-
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
-import { getAuthUserId } from '@/utils/auth'
+import { requireVerifiedAuth } from '@/utils/auth'
 
 import RegistrationForm from './registration-form'
 
 export default async function SupplierRegisterPage() {
-  const authUserId = await getAuthUserId()
-
-  if (!authUserId) {
-    redirect('/sign-in')
-  }
+  const { authUserId } = await requireVerifiedAuth({ redirectAfterOnboarding: '/suppliers/register' })
 
   return (
     <Section className="min-h-svh-minus-header pt-0">

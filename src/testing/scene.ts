@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 
 import { Supplier } from '@/app/_types/suppliers'
-import { SupplierRegistrationForm, SupplierUpdateForm, TileCreate, TileCreditForm, UserSignupForm } from '@/app/_types/validation-schema'
+import { OnboardingForm, SupplierRegistrationForm, SupplierUpdateForm, TileCreate, TileCreditForm, UserSignupForm } from '@/app/_types/validation-schema'
 import { db } from '@/db/connection'
 import { LOCATIONS, SERVICES } from '@/db/constants'
 import * as s from '@/db/schema'
@@ -70,12 +70,15 @@ async function hasUser({
   password = TEST_USER.password,
   displayName = TEST_USER.displayName,
   handle = TEST_USER.handle,
+  avatarUrl = '',
   supabaseClient = testClient,
-}: Partial<UserSignupForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserProfileRaw> {
+}: Partial<UserSignupForm> & Partial<OnboardingForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserProfileRaw> {
   const user = await userProfileModel.getRawByHandle(handle)
   if (user) return user
 
-  return await authOperations.signUp({ userSignFormData: { email, password, displayName, handle }, supabaseClient, origin: TEST_ORIGIN })
+  const { id } = await authOperations.signUp({ userSignFormData: { email, password }, supabaseClient, origin: TEST_ORIGIN })
+
+  return await authOperations.completeOnboarding(id, { handle, displayName, avatarUrl })
 }
 
 async function hasSupplier({
