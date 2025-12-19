@@ -20,6 +20,11 @@ export const HEADERS = {
   AUTH_USER_ID: 'x-auth-user-id', // pass authenticated user ID from middleware to server components
 } as const
 
+export const LOCAL_STORAGE_KEYS = {
+  RESEND_EMAIL_COOLDOWN_ENDS_AT: 'resend-email-cooldown-ends-at-ms',
+  LAST_SIGN_IN_WITH: 'last-sign-in-with',
+} as const
+
 /**
  * Paths that require authentication. Used by middleware and auth-related functions.
  */
