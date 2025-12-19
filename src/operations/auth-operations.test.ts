@@ -4,6 +4,7 @@ import { UserSignupForm } from '@/app/_types/validation-schema'
 import { scene, testClient, TEST_ORIGIN } from '@/testing/scene'
 
 import { authOperations, SIGN_UP_STATUS } from './auth-operations'
+import { tryCatch } from '@/utils/try-catch'
 
 // Define different test users only for auth testing so we can create a delete as needed without affecting other tests
 const AUTH_TEST_USER_1 = {
@@ -21,10 +22,27 @@ const AUTH_TEST_USER_2 = {
 }
 
 describe('authOperations', () => {
+  // Track created test user IDs to clean up after tests
+  const createdTestUserIds = new Set<string>()
+  const addTestUserToCleanup = (id: string) => createdTestUserIds.add(id)
+  const cleanUpTestUsers = async () => {
+    await Promise.all(
+      Array.from(createdTestUserIds).map(async (id) => {
+        const { error } = await tryCatch(testClient.auth.admin.deleteUser(id))
+        if (error) {
+          console.error('Error cleaning up test user:', error)
+          return Promise.resolve(null)
+        }
+        createdTestUserIds.delete(id)
+      })
+    )
+  }
+
   beforeEach(async () => {
     await Promise.all([
       scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
       scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
+      cleanUpTestUsers(),
     ])
   })
 
@@ -33,6 +51,7 @@ describe('authOperations', () => {
       scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
       scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
       scene.resetTestData(),
+      cleanUpTestUsers(),
     ])
   })
 
@@ -44,6 +63,7 @@ describe('authOperations', () => {
         supabaseClient: testClient,
         origin: TEST_ORIGIN,
       })
+      addTestUserToCleanup(testUser.id)
 
       // Assert
       expect(testUser).toBeDefined()
@@ -53,9 +73,6 @@ describe('authOperations', () => {
       const { data: authUser } = await testClient.auth.admin.getUserById(testUser.id)
       expect(authUser.user).toBeDefined()
       expect(authUser.user?.email).toBe(AUTH_TEST_USER_1.email)
-
-      // Clean up
-      await testClient.auth.admin.deleteUser(testUser.id)
     })
 
     test('should throw error when email is already taken', async () => {
@@ -69,13 +86,15 @@ describe('authOperations', () => {
       }
 
       // Act & Assert
-      await expect(
-        authOperations.signUp({
+      await expect(async () => {
+        const result = await authOperations.signUp({
           userSignFormData: userSignupData,
           supabaseClient: testClient,
           origin: TEST_ORIGIN,
         })
-      ).rejects.toThrow()
+        addTestUserToCleanup(result.id)
+        return
+      }).rejects.toThrow()
     })
   })
 
@@ -87,6 +106,7 @@ describe('authOperations', () => {
         supabaseClient: testClient,
         origin: TEST_ORIGIN,
       })
+      addTestUserToCleanup(testUser.id)
 
       // Act
       const result = await authOperations.completeOnboarding(testUser.id, {
@@ -101,6 +121,8 @@ describe('authOperations', () => {
       expect(result.handle).toBe(AUTH_TEST_USER_1.handle)
       expect(result.displayName).toBe(AUTH_TEST_USER_1.displayName)
     })
+    test('should throw error when user is not found', async () => {})
+    test('should throw error when handle is already taken', async () => {})
   })
 
   describe('getUserSignUpStatus', () => {
@@ -124,6 +146,7 @@ describe('authOperations', () => {
         supabaseClient: testClient,
         origin: TEST_ORIGIN,
       })
+      addTestUserToCleanup(testUser.id)
 
       // Act
       const result = await authOperations.getUserSignUpStatus(testClient)
@@ -132,9 +155,6 @@ describe('authOperations', () => {
       expect(result).toBeDefined()
       expect(result?.status).toBe(SIGN_UP_STATUS.VERIFIED)
       expect(result?.authUserId).toBe(testUser.id)
-
-      // Clean up
-      await testClient.auth.admin.deleteUser(testUser.id)
     })
 
     test('should return SIGN_UP_STATUS.ONBOARDED when user is verified and profile is created', async () => {
@@ -144,6 +164,7 @@ describe('authOperations', () => {
         supabaseClient: testClient,
         origin: TEST_ORIGIN,
       })
+      addTestUserToCleanup(testUser.id)
       await authOperations.completeOnboarding(testUser.id, {
         handle: AUTH_TEST_USER_1.handle,
         displayName: AUTH_TEST_USER_1.displayName,
@@ -157,9 +178,6 @@ describe('authOperations', () => {
       expect(result).toBeDefined()
       expect(result?.authUserId).toBe(testUser.id)
       expect(result?.status).toBe(SIGN_UP_STATUS.ONBOARDED)
-
-      // Clean up
-      await testClient.auth.admin.deleteUser(testUser.id)
     })
   })
 
@@ -184,15 +202,17 @@ describe('authOperations', () => {
 
     test('should throw error when credentials are invalid', async () => {
       // Act & Assert
-      await expect(
-        authOperations.signIn({
+      await expect(async () => {
+        const result = await authOperations.signIn({
           userSigninFormData: {
             email: 'nonexistent@example.com',
             password: 'wrongpassword',
           },
           supabaseClient: testClient,
         })
-      ).rejects.toThrow()
+        addTestUserToCleanup(result.authUserId)
+        return
+      }).rejects.toThrow()
     })
   })
 
