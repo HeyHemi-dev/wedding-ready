@@ -4,13 +4,10 @@ import { redirect } from 'next/navigation'
 
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 
-import { PARAMS } from './constants'
-import { AUTH_HEADER_NAME, isProtectedPath } from './auth-edge'
-import { createClient } from './supabase/server'
-import { tryCatch } from './try-catch'
+import { PARAMS, HEADERS } from '@/utils/constants'
 
-// Re-export for backward compatibility
-export { isProtectedPath, AUTH_HEADER_NAME }
+import { createClient } from '@/utils/supabase/server'
+import { tryCatch } from '@/utils/try-catch'
 
 /**
  * Gets the authenticated user's ID from request headers.
@@ -22,7 +19,7 @@ export async function getAuthUserId(): Promise<string | null> {
   const headersList = await headers()
 
   // userId will a valid string if authHeaderName is set. This is handled in middleware
-  const userId = headersList.get(AUTH_HEADER_NAME)
+  const userId = headersList.get(HEADERS.AUTH_USER_ID)
 
   return userId
 }

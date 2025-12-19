@@ -17,5 +17,10 @@ export const PARAMS = {
 } as const
 
 export const HEADERS = {
-  AUTH_USER_ID: 'x-auth-user-id',
+  AUTH_USER_ID: 'x-auth-user-id', // pass authenticated user ID from middleware to server components
 } as const
+
+/**
+ * Paths that require authentication. Used by middleware and auth-related functions.
+ */
+export const PROTECTED_PATHS = ['/account', '/suppliers/register', '/suppliers/:handle/new']
