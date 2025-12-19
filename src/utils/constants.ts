@@ -13,18 +13,26 @@ export const RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY = 'resend-email-cooldown-
 export const RESEND_EMAIL_COOLDOWN_SECONDS = 60
 
 export const PARAMS = {
+  // next URL to redirect to
   NEXT: 'next',
+
+  // message to display using encodedRedirect and FormMessage
   SUCCESS: 'success',
+
+  // message to display using encodedRedirect and FormMessage
   ERROR: 'error',
+
+  // message to display using encodedRedirect and FormMessage
   MESSAGE: 'message',
 } as const
 
 export const HEADERS = {
-  AUTH_USER_ID: 'x-auth-user-id', // pass authenticated user ID from middleware to server components
+  // pass authenticated user ID from middleware to server components
+  AUTH_USER_ID: 'x-auth-user-id',
 } as const
 
 export const LOCAL_STORAGE_KEYS = {
-  RESEND_EMAIL_COOLDOWN_ENDS_AT: 'resend-email-cooldown-ends-at-ms',
+  RESEND_EMAIL_COOLDOWN_ENDS_AT: RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY,
   LAST_SIGN_IN_WITH: 'last-sign-in-with',
 } as const
 
