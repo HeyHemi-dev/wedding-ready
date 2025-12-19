@@ -19,7 +19,7 @@ export function SignOutFormMenuItem({ children }: { children: React.ReactNode })
   const queryClient = useQueryClient()
 
   async function onSubmit() {
-    const { data, error } = await tryCatch(SignOutFormAction({ pathname }))
+    const { data, error } = await tryCatch(SignOutFormAction({ next: pathname }))
     if (error) {
       toast.error(error.message)
       return
