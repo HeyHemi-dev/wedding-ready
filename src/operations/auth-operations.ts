@@ -12,6 +12,7 @@ import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
+import { OPERATION_ERROR } from '@/app/_types/errors'
 
 export const authOperations = {
   signUp,
@@ -117,10 +118,14 @@ export type UserWithSignUpStatus =
 async function getUserSignUpStatus(supabaseClient: SupabaseClient): Promise<UserWithSignUpStatus> {
   const {
     data: { user },
-    error,
+    error: authError,
   } = await supabaseClient.auth.getUser()
 
-  if (error || !user) return null
+  if (authError) {
+    console.error(authError.message)
+    throw OPERATION_ERROR.NOT_AUTHENTICATED(authError.message)
+  }
+  if (!user) return null
 
   const authUserId = user.id
   const email = user.email || ''
@@ -129,11 +134,17 @@ async function getUserSignUpStatus(supabaseClient: SupabaseClient): Promise<User
     return { status: SIGN_UP_STATUS.UNVERIFIED, authUserId, email }
   }
 
-  const profile = await userProfileModel.getRawById(authUserId)
-  if (!profile) {
-    return { status: SIGN_UP_STATUS.VERIFIED, authUserId, email }
+  const { data, error: profileError } = await tryCatch(userProfileModel.getRawById(authUserId))
+  if (profileError) {
+    console.error(profileError.message)
+    throw OPERATION_ERROR.DATABASE_ERROR(profileError.message)
   }
-  return { status: SIGN_UP_STATUS.ONBOARDED, authUserId }
+
+  if (!data) return { status: SIGN_UP_STATUS.VERIFIED, authUserId, email }
+  if (data) return { status: SIGN_UP_STATUS.ONBOARDED, authUserId }
+
+  // Should never happen
+  throw OPERATION_ERROR.INVALID_STATE()
 }
 
 async function signIn({
