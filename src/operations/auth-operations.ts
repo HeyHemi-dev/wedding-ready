@@ -1,6 +1,13 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
-import { UserSignupForm, UserSigninForm, UserForgotPasswordForm, UserResetPasswordForm, UserUpdateEmailForm } from '@/app/_types/validation-schema'
+import {
+  UserSignupForm,
+  UserSigninForm,
+  UserForgotPasswordForm,
+  UserResetPasswordForm,
+  UserUpdateEmailForm,
+  OnboardingForm,
+} from '@/app/_types/validation-schema'
 import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
@@ -60,7 +67,7 @@ async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: Su
   })
 }
 
-async function completeOnboarding({ authUserId, handle, displayName }: { authUserId: string; handle: string; displayName: string }): Promise<t.UserProfileRaw> {
+async function completeOnboarding(authUserId: string, { handle, displayName }: OnboardingForm): Promise<t.UserProfileRaw> {
   const isAvailable = await userProfileModel.isHandleAvailable(handle)
   if (!isAvailable) {
     throw new Error('Handle is already taken')
