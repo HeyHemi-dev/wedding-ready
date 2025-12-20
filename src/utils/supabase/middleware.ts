@@ -4,14 +4,14 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { isProtectedPath } from '@/middleware-helpers'
 import { HEADERS } from '@/utils/constants'
 
-export const updateSession = async (request: NextRequest) => {
+export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
+    request,
   })
 
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+  // With Fluid compute, don't put this client in a global environment
+  // variable. Always create a new one on each request.
+  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
     cookies: {
       getAll() {
         return request.cookies.getAll()
@@ -27,28 +27,42 @@ export const updateSession = async (request: NextRequest) => {
   })
 
   // Do not run code between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
+  // supabase.auth.getClaims(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
-  // https://supabase.com/docs/guides/auth/server-side/nextjs
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
 
-  // getUser will refresh session if expired - required for Server Components
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
+  // IMPORTANT: If you remove getClaims() and you use server-side rendering
+  // with the Supabase client, your users may be randomly logged out.
+  const { data, error } = await supabase.auth.getClaims()
 
-  // protected routes
-  if (isProtectedPath(request.nextUrl.pathname) && error) {
-    return NextResponse.redirect(new URL('/sign-in', request.url))
-  }
+  const user = data?.claims
 
   // Only set the auth user header if we have one.
   // If we try to get the header later on and it doesn't exist then next/headers will return null.
+  // `sub` means subject, is the unique ID of the user represented by the token.
   if (user) {
-    supabaseResponse.headers.set(HEADERS.AUTH_USER_ID, user.id)
+    supabaseResponse.headers.set(HEADERS.AUTH_USER_ID, user.sub)
   }
 
-  // IMPORTANT: You must return the supabaseResponse object as is to maintain session state
+  // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
+  // creating a new response object with NextResponse.next() make sure to:
+  // 1. Pass the request in it, like so:
+  //    const myNewResponse = NextResponse.next({ request })
+  // 2. Copy over the cookies, like so:
+  //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
+  // 3. Change the myNewResponse object to fit your needs, but avoid changing
+  //    the cookies!
+  // 4. Finally:
+  //    return myNewResponse
+  // If this is not done, you may be causing the browser and server to go out
+  // of sync and terminate the user's session prematurely!
+
+  // protected routes
+  if (isProtectedPath(request.nextUrl.pathname) && error) {
+    const nextUrl = request.nextUrl.clone()
+    nextUrl.pathname = '/sign-in'
+    const newResponse = NextResponse.next({ request })
+    return NextResponse.redirect(new URL('/sign-in', request.url))
+  }
+
   return supabaseResponse
 }
