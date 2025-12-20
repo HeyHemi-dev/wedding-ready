@@ -1,5 +1,4 @@
-import { SupabaseClient } from '@supabase/supabase-js'
-import { redirect } from 'next/navigation'
+import { OAuthResponse, SupabaseClient } from '@supabase/supabase-js'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import {
@@ -13,8 +12,7 @@ import {
 import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
-import { PARAMS } from '@/utils/constants'
-import { encodedRedirect } from '@/utils/encoded-redirect'
+
 import { tryCatch } from '@/utils/try-catch'
 
 export const authOperations = {
@@ -63,22 +61,13 @@ async function signUp({
   return { id: user.id }
 }
 
-async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: SupabaseClient; origin: string }) {
-  const { data, error } = await supabaseClient.auth.signInWithOAuth({
+async function signUpWithGoogle({ supabaseClient, origin }: { supabaseClient: SupabaseClient; origin: string }): Promise<OAuthResponse> {
+  return await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
     options: {
       redirectTo: `${origin}/auth/callback`,
     },
   })
-
-  if (error) {
-    console.error(error.message)
-    encodedRedirect(PARAMS.ERROR, `${origin}/sign-in`, error.message)
-  }
-
-  if (data.url) {
-    redirect(data.url)
-  }
 }
 
 async function completeOnboarding(authUserId: string, { handle, displayName }: OnboardingForm): Promise<t.UserProfileRaw> {
