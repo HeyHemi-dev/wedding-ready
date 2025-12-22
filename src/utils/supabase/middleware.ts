@@ -1,8 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
-import { type NextRequest, NextResponse } from 'next/server'
-
-import { HEADERS } from '@/utils/constants'
 import { JwtPayload } from '@supabase/supabase-js'
+import { type NextRequest, NextResponse } from 'next/server'
 
 /**
  * Updates the Supabase session by refreshing auth tokens and setting the auth user header.

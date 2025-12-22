@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { isProtectedPath } from '@/middleware-helpers'
 import { updateSession } from '@/utils/supabase/middleware'
+
 import { HEADERS } from './utils/constants'
 
 /**
