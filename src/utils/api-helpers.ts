@@ -1,6 +1,7 @@
 import { ZodObject, z } from 'zod'
 
 import { BASE_URL } from './constants'
+import { OPERATION_ERROR } from '@/app/_types/errors'
 
 // Error response type for API responses
 export type ErrorResponse = {
@@ -71,4 +72,18 @@ export function normalizeUrl(url: string): string {
   // On the server, convert relative URLs to absolute
   const baseUrl = getBaseUrl()
   return `${baseUrl}${url}`
+}
+
+/**
+ * Gets the origin of the current page.
+ * On the client, returns the window.location.origin.
+ * On the server, throws an error.
+ */
+
+export function getOrigin(): string {
+  if (isClient()) {
+    return window.location.origin
+  } else {
+    throw OPERATION_ERROR.INVALID_STATE('Cannot call getOrigin on the server')
+  }
 }
