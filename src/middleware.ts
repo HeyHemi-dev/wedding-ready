@@ -10,11 +10,17 @@ import { HEADERS } from './utils/constants'
  * @important Keep middleware as simple as possible, because it runs on every request and is very hard to debug.
  */
 export async function middleware(request: NextRequest) {
-  const response = await updateSession(request)
-  const authUserId = response.headers.get(HEADERS.AUTH_USER_ID)
+  const { response, user } = await updateSession(request)
+
+  // Only set the auth user header if we have one.
+  // If we try to get the header later on and it doesn't exist then next/headers will return null.
+  // `sub` means subject, is the unique ID of the user represented by the token.
+  if (user) {
+    response.headers.set(HEADERS.AUTH_USER_ID, user.sub)
+  }
 
   // Handle protected routes - redirect unauthenticated users to sign-in
-  if (isProtectedPath(request.nextUrl.pathname) && !authUserId) {
+  if (isProtectedPath(request.nextUrl.pathname) && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/sign-in'
     return NextResponse.redirect(url)
