@@ -1,6 +1,8 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 
+import { isProtectedPath } from '@/middleware-helpers'
 import { updateSession } from '@/utils/supabase/middleware'
+import { HEADERS } from './utils/constants'
 
 /**
  * Next.js middleware that runs before the route code (page or api route) for every request.
@@ -8,12 +10,21 @@ import { updateSession } from '@/utils/supabase/middleware'
  * @important Keep middleware as simple as possible, because it runs on every request and is very hard to debug.
  */
 export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+  const response = await updateSession(request)
+  const authUserId = response.headers.get(HEADERS.AUTH_USER_ID)
+
+  // Handle protected routes - redirect unauthenticated users to sign-in
+  if (isProtectedPath(request.nextUrl.pathname) && !authUserId) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/sign-in'
+    return NextResponse.redirect(url)
+  }
+
+  return response
 }
 
 export const config = {
-  // We do not use matcher for defining protected routes
-  // The updateSession function has isProtectedPath logic
+  // We do not use matcher for defining protected routes use isProtectedPath instead
   matcher: [
     /*
      * Match all request paths except:

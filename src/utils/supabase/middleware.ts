@@ -1,10 +1,15 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { isProtectedPath } from '@/middleware-helpers'
 import { HEADERS } from '@/utils/constants'
 
-export async function updateSession(request: NextRequest) {
+/**
+ * Updates the Supabase session by refreshing auth tokens and setting the auth user header.
+ * This function only handles session management - routing logic should be handled by the caller.
+ *
+ * @returns An object containing the response and the authenticated user's claims (if any)
+ */
+export async function updateSession(request: NextRequest): Promise<NextResponse> {
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -32,7 +37,7 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: If you remove getClaims() and you use server-side rendering
   // with the Supabase client, your users may be randomly logged out.
-  const { data, error } = await supabase.auth.getClaims()
+  const { data } = await supabase.auth.getClaims()
 
   const user = data?.claims
 
@@ -55,13 +60,6 @@ export async function updateSession(request: NextRequest) {
   //    return myNewResponse
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
-
-  // protected routes
-  if (isProtectedPath(request.nextUrl.pathname) && !user) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/sign-in'
-    return NextResponse.redirect(url)
-  }
 
   return supabaseResponse
 }
