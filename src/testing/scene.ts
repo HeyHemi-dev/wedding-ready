@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Supplier } from '@/app/_types/suppliers'
 import { OnboardingForm, SupplierRegistrationForm, SupplierUpdateForm, TileCreate, TileCreditForm, UserSignupForm } from '@/app/_types/validation-schema'
 import { db } from '@/db/connection'
@@ -16,7 +17,6 @@ import { BASE_URL } from '@/utils/constants'
 import { createAdminClient } from '@/utils/supabase/server'
 
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 
 // Shared Supabase admin client for tests to avoid multiple instances
 export const testClient = createAdminClient()

@@ -12,7 +12,6 @@ import {
 import * as t from '@/models/types'
 import { userProfileModel } from '@/models/user'
 import { handleSupabaseSignUpAuthResponse } from '@/utils/auth'
-
 import { tryCatch } from '@/utils/try-catch'
 
 export const authOperations = {

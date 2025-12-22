@@ -1,5 +1,6 @@
 import { afterAll, afterEach, describe, expect, it } from 'vitest'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { LOCATIONS } from '@/db/constants'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { tileModel } from '@/models/tile'
@@ -8,7 +9,6 @@ import { createTileCreditForm, scene, TEST_TILE, TEST_ID_0 } from '@/testing/sce
 
 import { RECENCY, updateScoreForTile } from './feed/feed-helpers'
 import { getSaveStatesMap, tileOperations } from './tile-operations'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 
 const CURRENT_USER = {
   email: 'currentUser@example.com',

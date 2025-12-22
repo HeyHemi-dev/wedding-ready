@@ -2,11 +2,11 @@ import { AuthResponse, User } from '@supabase/supabase-js'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { PARAMS, HEADERS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 
 /**
  * Gets the authenticated user's ID from request headers.
