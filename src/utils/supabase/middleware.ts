@@ -57,7 +57,7 @@ export async function updateSession(request: NextRequest) {
   // of sync and terminate the user's session prematurely!
 
   // protected routes
-  if (isProtectedPath(request.nextUrl.pathname) && error) {
+  if (isProtectedPath(request.nextUrl.pathname) && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/sign-in'
     return NextResponse.redirect(url)
