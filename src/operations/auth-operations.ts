@@ -75,11 +75,20 @@ async function completeOnboarding(authUserId: string, { handle, displayName }: O
     throw OPERATION_ERROR.RESOURCE_CONFLICT('Handle is already taken')
   }
 
-  return userProfileModel.createRaw({
-    id: authUserId,
-    handle,
-    displayName,
-  })
+  const { data, error } = await tryCatch(
+    userProfileModel.createRaw({
+      id: authUserId,
+      handle,
+      displayName,
+    })
+  )
+
+  if (error) {
+    console.error(error.message)
+    throw OPERATION_ERROR.DATABASE_ERROR('Failed to complete onboarding')
+  }
+
+  return data
 }
 
 export const SIGN_UP_STATUS = {
