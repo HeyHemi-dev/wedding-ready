@@ -58,10 +58,9 @@ export async function updateSession(request: NextRequest) {
 
   // protected routes
   if (isProtectedPath(request.nextUrl.pathname) && error) {
-    const nextUrl = request.nextUrl.clone()
-    nextUrl.pathname = '/sign-in'
-    const newResponse = NextResponse.next({ request })
-    return NextResponse.redirect(new URL('/sign-in', request.url))
+    const url = request.nextUrl.clone()
+    url.pathname = '/sign-in'
+    return NextResponse.redirect(url)
   }
 
   return supabaseResponse
