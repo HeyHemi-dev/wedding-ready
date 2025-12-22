@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Supplier } from '@/app/_types/suppliers'
 import { OnboardingForm, SupplierRegistrationForm, SupplierUpdateForm, TileCreate, TileCreditForm, UserSignupForm } from '@/app/_types/validation-schema'
 import { db } from '@/db/connection'
@@ -125,7 +126,7 @@ async function hasTile({
     credits,
   })
   const tile = await tileModel.getRawById(newTile.id)
-  if (!tile) throw new Error('Failed to create tile')
+  if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND('Failed to create tile')
   return tile
 }
 

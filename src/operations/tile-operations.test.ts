@@ -1,5 +1,6 @@
 import { afterAll, afterEach, describe, expect, it } from 'vitest'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { LOCATIONS } from '@/db/constants'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { tileModel } from '@/models/tile'
@@ -122,7 +123,7 @@ describe('tileOperations', () => {
                 atPosition: index,
               },
             })
-            throw new Error('Duplicate tile found')
+            throw OPERATION_ERROR.BUSINESS_RULE_VIOLATION('Duplicate tile found')
           }
           seensTileIds.set(tile.id, { onPageCount: pageCount, atPosition: index })
         })

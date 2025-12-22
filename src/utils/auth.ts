@@ -2,6 +2,7 @@ import { AuthResponse, User } from '@supabase/supabase-js'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { PARAMS, HEADERS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
@@ -82,13 +83,13 @@ export function handleSupabaseSignUpAuthResponse({ data, error }: AuthResponse):
   if (error) {
     if (error.message === 'User already registered') {
       // existing confirmed user
-      throw new Error('User already exists')
+      throw OPERATION_ERROR.RESOURCE_CONFLICT('User already exists')
     } else {
       // some other error
       console.error(error.message)
     }
   } else if (!data.session) {
-    throw new Error('Check your email')
+    throw OPERATION_ERROR.BUSINESS_RULE_VIOLATION('Check your email')
   }
 
   // We can assert that data.user exists because we have handled all other possible cases.
