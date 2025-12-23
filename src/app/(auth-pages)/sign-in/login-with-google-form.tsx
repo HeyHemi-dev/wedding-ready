@@ -6,12 +6,12 @@ import { toast } from 'sonner'
 
 import { Form } from '@/components/ui/form'
 import { OPERATION_ERROR } from '@/app/_types/errors'
-import { GoogleIcon } from '@/components/icons'
-import { Button } from '@/components/ui/button'
+
 import { getOrigin } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
+import { AuthOptionsButton } from '@/app/(auth-pages)/sign-in/auth-options-button'
 
 export default function LoginWithGoogleForm() {
   const router = useRouter()
@@ -31,14 +31,9 @@ export default function LoginWithGoogleForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Button
-          type="submit"
-          variant="outline"
-          disabled={form.formState.isSubmitting}
-          className="relative grid w-full grid-cols-[1fr_auto_1fr] gap-sibling p-2">
-          <GoogleIcon />
-          <span className="text-center">Continue with Google</span>
-        </Button>
+        <AuthOptionsButton type="submit" disabled={form.formState.isSubmitting} icon={'google'}>
+          Continue with Google
+        </AuthOptionsButton>
       </form>
     </Form>
   )
