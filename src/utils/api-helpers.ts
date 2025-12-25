@@ -1,7 +1,8 @@
 import { ZodObject, z } from 'zod'
 
-import { BASE_URL } from './constants'
 import { OPERATION_ERROR } from '@/app/_types/errors'
+
+import { BASE_URL } from './constants'
 
 // Error response type for API responses
 export type ErrorResponse = {
