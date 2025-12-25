@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -14,18 +14,18 @@ import { tryCatch } from '@/utils/try-catch'
 import { AuthOptionsButton } from '@/app/(auth-pages)/sign-in/auth-options-button'
 
 export default function LoginWithGoogleForm() {
-  const router = useRouter()
+  const searchParams = useSearchParams()
+  const next = searchParams.get(PARAMS.NEXT) ?? '/feed'
   const form = useForm({})
 
   async function onSubmit() {
-    const { error } = await tryCatch(handleLogin())
+    const { error } = await tryCatch(handleLogin(next))
     if (error) {
       toast.error(error.message)
       return
     }
 
     toast.success('Logged in successfully')
-    router.push('/feed')
   }
 
   return (
@@ -39,12 +39,12 @@ export default function LoginWithGoogleForm() {
   )
 }
 
-async function handleLogin(): Promise<void> {
+async function handleLogin(next: string): Promise<void> {
   const origin = getOrigin()
   const { error } = await browserSupabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${origin}/auth/callback?${PARAMS.NEXT}=${encodeURIComponent('/feed')}`,
+      redirectTo: `${origin}/auth/callback?${PARAMS.NEXT}=${encodeURIComponent(next)}`,
     },
   })
 
