@@ -16,7 +16,22 @@ import { emptyStringToNull } from '@/utils/empty-strings'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
 import React from 'react'
-import { Button } from '@/components/ui/button'
+import { AuthOptionsButton } from './auth-options-button'
+
+export function LoginWithEmailPasswordFormButton() {
+  const [showForm, setShowForm] = React.useState(false)
+  return (
+    <>
+      {showForm ? (
+        <LoginWithEmailPasswordForm />
+      ) : (
+        <AuthOptionsButton onClick={() => setShowForm(!showForm)} icon="email">
+          Continue with email and password
+        </AuthOptionsButton>
+      )}
+    </>
+  )
+}
 
 export default function LoginWithEmailPasswordForm() {
   const router = useRouter()
@@ -28,6 +43,10 @@ export default function LoginWithEmailPasswordForm() {
     },
     mode: 'onBlur',
   })
+
+  React.useEffect(() => {
+    form.setFocus('email')
+  }, [form])
 
   async function onSubmit(data: UserSigninForm) {
     const { error } = await tryCatch(handleLogin(data))
