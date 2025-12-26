@@ -12,8 +12,29 @@ import { Input } from '@/components/ui/input'
 import { tryCatch } from '@/utils/try-catch'
 
 import { signUpFormAction } from './signup-form-action'
+import React from 'react'
+import { AuthOptionsButton } from '../sign-in/auth-options-button'
+import { useRouter } from 'next/router'
+import { OPERATION_ERROR } from '@/app/_types/errors'
+import { browserSupabase } from '@/utils/supabase/client'
 
-export default function SignUpForm() {
+export function SignUpWithEmailPasswordFormButton() {
+  const [showForm, setShowForm] = React.useState(false)
+  return (
+    <>
+      {showForm ? (
+        <SignUpWithEmailPasswordForm />
+      ) : (
+        <AuthOptionsButton onClick={() => setShowForm(!showForm)} icon="email">
+          Continue with email and password
+        </AuthOptionsButton>
+      )}
+    </>
+  )
+}
+
+export default function SignUpWithEmailPasswordForm() {
+  const router = useRouter()
   const form = useForm<UserSignupForm>({
     resolver: zodResolver(userSignupFormSchema),
     defaultValues: {
@@ -23,8 +44,13 @@ export default function SignUpForm() {
     mode: 'onBlur',
   })
 
+  React.useEffect(() => {
+    form.setFocus('email')
+  }, [form])
+
   async function onSubmit(data: UserSignupForm) {
-    const { error } = await tryCatch(signUpFormAction({ data }))
+    const { error } = await tryCatch(handleSignUp(data))
+
     if (error) {
       toast.error(error.message)
       return
@@ -33,6 +59,7 @@ export default function SignUpForm() {
     // signUpFormAction redirects to /check-inbox, so we shouldn't reach here
     // But if we do, show success message
     toast.success('Thanks for signing up! Please check your email for a verification link.')
+    router.push('/check-inbox')
   }
 
   return (
@@ -67,4 +94,22 @@ export default function SignUpForm() {
       </form>
     </Form>
   )
+}
+
+async function handleSignUp(data: UserSignupForm) {
+  const { success, data: validatedData } = userSignupFormSchema.safeParse(data)
+  if (!success) {
+    throw OPERATION_ERROR.VALIDATION_ERROR('Invalid email or password')
+  }
+
+  const { error } = await browserSupabase.auth.signUp({
+    email: validatedData.email,
+    password: validatedData.password,
+  })
+
+  if (error) {
+    throw OPERATION_ERROR.INVALID_STATE(error.message)
+  }
+
+  return
 }
