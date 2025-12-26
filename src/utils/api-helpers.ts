@@ -56,27 +56,22 @@ export function parseQueryParams<T extends ZodObject<Record<string, z.ZodType>>>
  * - Uses `URLSearchParams` for correct encoding
  *
  * @param baseUrl - The existing URL or path (e.g. "/sign-in?next=/account")
- * @param params - Query params to set or update
+ * @param searchParams - Query params to set or update
  * @returns The updated path including query string
  */
-export function buildUrlWithSearchParams(baseUrl: string, params: SearchParams): string {
-  const url = new URL(baseUrl, BASE_URL) // base required for relative paths
-  const searchParams = url.searchParams
+export function buildUrlWithSearchParams(baseUrl: string, searchParams: SearchParams): string {
+  const url = new URL(baseUrl, BASE_URL)
+  const sp = url.searchParams
 
-  Object.entries(params).forEach(([key, value]) => {
-    searchParams.delete(key)
-
+  Object.entries(searchParams).forEach(([key, value]) => {
+    sp.delete(key)
     if (value === undefined) return
 
-    if (Array.isArray(value)) {
-      value.forEach((v) => searchParams.append(key, v))
-    } else {
-      searchParams.append(key, value)
-    }
+    if (Array.isArray(value)) value.forEach((v) => sp.append(key, v))
+    else sp.append(key, value)
   })
 
-  const qs = searchParams.toString()
-  return `${url.pathname}${qs ? `?${qs}` : ''}`
+  return url.toString()
 }
 
 /**
