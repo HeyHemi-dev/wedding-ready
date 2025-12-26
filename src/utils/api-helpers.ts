@@ -3,6 +3,7 @@ import { ZodObject, z } from 'zod'
 import { OPERATION_ERROR } from '@/app/_types/errors'
 
 import { BASE_URL } from './constants'
+import { SearchParams } from '@/app/_types/generics'
 
 // Error response type for API responses
 export type ErrorResponse = {
@@ -42,6 +43,62 @@ export function parseQueryParams<T extends ZodObject<Record<string, z.ZodType>>>
   }
 
   return schema.parse(raw)
+}
+
+/**
+ * Gets specific query parameter from Next.js search params.
+ * @param params - The Next.js search params object.
+ * @param key - The key of the query parameter to get.
+ * @returns The value of the query parameter, or undefined.
+ */
+export function getQueryParam(params: SearchParams, key: string) {
+  const v = params[key]
+  return typeof v === 'string' ? v : undefined
+}
+
+/**
+ * Parses Next.js search params using a Zod object schema.
+ *
+ * - Treats query params as untrusted input.
+ * - Only extracts keys defined in the Zod schema (allow-list).
+ * - Ignores all other query params.
+ * - Preserves Next.js semantics where a param may be a string or string[].
+ * - Delegates validation, coercion, defaults, and optionality to Zod.
+ *
+ * Designed to work with:
+ * - `searchParams` from `page.tsx` (Server Components)
+ * - Normalised search params from route handlers (`urlSearchParamsToObject(req.nextUrl.searchParams)`)
+ *
+ * @param searchParams - The Next.js search params object.
+ * @param schema - A Zod object schema defining the allowed query parameters.
+ * @returns The parsed and validated object inferred from the schema.
+ *
+ * @example
+ * const SignInParams = z.object({
+ *   next: z.string().optional(),
+ *   msg: z.enum(['invalid_credentials', 'session_expired']).optional(),
+ * })
+ *
+ * const { next, msg } = parseSearchParams(searchParams, SignInParams)
+ */
+export function parseSearchParams<T extends z.ZodRawShape>(searchParams: SearchParams, schema: z.ZodObject<T>): z.infer<typeof schema> {
+  const raw: Record<string, string | string[] | undefined> = {}
+
+  for (const key of Object.keys(schema.shape)) {
+    const v = searchParams[key]
+    raw[key] = typeof v === 'string' || Array.isArray(v) ? v : undefined
+  }
+
+  return schema.parse(raw)
+}
+
+export function urlSearchParamsToObject(searchParams: URLSearchParams): SearchParams {
+  const object: SearchParams = {}
+  for (const key of searchParams.keys()) {
+    const all = searchParams.getAll(key)
+    object[key] = all.length === 1 ? all[0] : all.length > 1 ? all : undefined
+  }
+  return object
 }
 
 export function isClient(): boolean {
