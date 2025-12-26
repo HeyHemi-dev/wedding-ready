@@ -2,7 +2,7 @@ import { ZodObject, z } from 'zod'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 
-import { BASE_URL } from './constants'
+import { ALLOWED_NEXT_PATHS, BASE_URL } from './constants'
 import { SearchParams } from '@/app/_types/generics'
 
 // Error response type for API responses
@@ -170,4 +170,12 @@ export function getOrigin(): string {
   } else {
     throw OPERATION_ERROR.INVALID_STATE('Cannot call getOrigin on the server')
   }
+}
+
+export function sanitizeNext(next: string | null | undefined): string {
+  if (!next) return ALLOWED_NEXT_PATHS[0]
+
+  if (!ALLOWED_NEXT_PATHS.some((p) => next === p || next.startsWith(p + '/'))) return ALLOWED_NEXT_PATHS[0]
+
+  return next
 }
