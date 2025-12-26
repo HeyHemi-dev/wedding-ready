@@ -3,8 +3,10 @@ import { redirect } from 'next/navigation'
 
 import { FormMessage, Message } from '@/components/form/form-message'
 import { getAuthUserId } from '@/utils/auth'
+import { AuthCard } from '@/components/auth/auth-card'
 
-import SignUpForm from './signup-form'
+import SignUpForm, { SignUpWithEmailPasswordFormButton } from './signup-form'
+import LoginWithGoogleForm from '../sign-in/login-with-google-form'
 
 export default async function Signup(props: { searchParams: Promise<Message> }) {
   // If user is already logged in, they don't need to be here.
@@ -13,21 +15,11 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
     redirect('/feed')
   }
 
-  const searchParams = await props.searchParams
-
   return (
-    <>
-      <div className="grid gap-spouse">
-        <h1 className="heading-md">Sign up</h1>
-        <p className="ui-small">
-          Already have an account?{' '}
-          <Link className="ui-small-s1 text-primary-foreground underline" href="/sign-in">
-            Log in
-          </Link>
-        </p>
-      </div>
-      <SignUpForm />
-      <FormMessage message={searchParams} />
-    </>
+    <AuthCard title="Sign up for your Wedding Ready account">
+      <LoginWithGoogleForm />
+      <hr />
+      <SignUpWithEmailPasswordFormButton />
+    </AuthCard>
   )
 }
