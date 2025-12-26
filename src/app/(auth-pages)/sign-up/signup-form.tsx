@@ -108,7 +108,7 @@ async function handleSignUp(data: UserSignupForm) {
   })
 
   if (error) {
-    throw OPERATION_ERROR.INVALID_STATE(error.message)
+    throw OPERATION_ERROR.DATABASE_ERROR(error.message)
   }
 
   return
