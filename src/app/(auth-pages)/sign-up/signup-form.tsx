@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { tryCatch } from '@/utils/try-catch'
 
 import React from 'react'
-import { AuthOptionsButton } from '../sign-in/auth-options-button'
+import { AuthOptionsButton } from '@/components/auth/auth-options-button'
 import { useRouter } from 'next/router'
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { browserSupabase } from '@/utils/supabase/client'

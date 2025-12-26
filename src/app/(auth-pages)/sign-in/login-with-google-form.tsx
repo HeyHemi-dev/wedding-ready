@@ -11,7 +11,7 @@ import { getOrigin } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
-import { AuthOptionsButton } from '@/app/(auth-pages)/sign-in/auth-options-button'
+import { AuthOptionsButton } from '@/components/auth/auth-options-button'
 
 export default function LoginWithGoogleForm() {
   const searchParams = useSearchParams()

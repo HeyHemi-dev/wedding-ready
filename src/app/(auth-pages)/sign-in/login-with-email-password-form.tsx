@@ -16,7 +16,7 @@ import { emptyStringToNull } from '@/utils/empty-strings'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
 import React from 'react'
-import { AuthOptionsButton } from './auth-options-button'
+import { AuthOptionsButton } from '@/components/auth/auth-options-button'
 
 export function LoginWithEmailPasswordFormButton() {
   const [showForm, setShowForm] = React.useState(false)
