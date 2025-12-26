@@ -17,6 +17,7 @@ type ParamValue = string | undefined
  * Builds a query string from a record of parameters.
  * @param params - The record of parameters to build the query string from.
  * @returns The query string.
+ * @deprecated use buildUrlWithSearchParams instead
  */
 export function buildQueryParams<T extends Record<ParamKey, ParamValue>>(params: T): string {
   const searchParams = new URLSearchParams()
@@ -33,6 +34,7 @@ export function buildQueryParams<T extends Record<ParamKey, ParamValue>>(params:
  * @param url - The URL object to parse.
  * @param schema - The Zod schema to validate the query parameters against.
  * @returns The parsed query parameters.
+ * @deprecated use parseSearchParams instead
  */
 export function parseQueryParams<T extends ZodObject<Record<string, z.ZodType>>>(url: URL, schema: T): z.infer<T> {
   const raw: Record<ParamKey, ParamValue> = {}
@@ -46,14 +48,35 @@ export function parseQueryParams<T extends ZodObject<Record<string, z.ZodType>>>
 }
 
 /**
- * Gets specific query parameter from Next.js search params.
- * @param params - The Next.js search params object.
- * @param key - The key of the query parameter to get.
- * @returns The value of the query parameter, or undefined.
+ * Updates the query parameters of a URL or path.
+ *
+ * - Replaces existing values for the same key
+ * - Removes keys when value is `undefined`
+ * - Supports repeated params via `string[]`
+ * - Uses `URLSearchParams` for correct encoding
+ *
+ * @param baseUrl - The existing URL or path (e.g. "/sign-in?next=/account")
+ * @param params - Query params to set or update
+ * @returns The updated path including query string
  */
-export function getQueryParam(params: SearchParams, key: string) {
-  const v = params[key]
-  return typeof v === 'string' ? v : undefined
+export function buildUrlWithSearchParams(baseUrl: string, params: SearchParams): string {
+  const url = new URL(baseUrl, BASE_URL) // base required for relative paths
+  const searchParams = url.searchParams
+
+  Object.entries(params).forEach(([key, value]) => {
+    searchParams.delete(key)
+
+    if (value === undefined) return
+
+    if (Array.isArray(value)) {
+      value.forEach((v) => searchParams.append(key, v))
+    } else {
+      searchParams.append(key, value)
+    }
+  })
+
+  const qs = searchParams.toString()
+  return `${url.pathname}${qs ? `?${qs}` : ''}`
 }
 
 /**
@@ -71,17 +94,15 @@ export function getQueryParam(params: SearchParams, key: string) {
  *
  * @param searchParams - The Next.js search params object.
  * @param schema - A Zod object schema defining the allowed query parameters.
- * @returns The parsed and validated object inferred from the schema.
+ * @returns a promise that resolves to the parsed and validated object inferred from the schema. Use with tryCatch util function to handle validation errors.
  *
  * @example
- * const SignInParams = z.object({
+ * const Schema = z.object({
  *   next: z.string().optional(),
- *   msg: z.enum(['invalid_credentials', 'session_expired']).optional(),
  * })
- *
- * const { next, msg } = parseSearchParams(searchParams, SignInParams)
+ * const { data, error } = await tryCatch(parseSearchParams(searchParams, Schema))
  */
-export function parseSearchParams<T extends z.ZodRawShape>(searchParams: SearchParams, schema: z.ZodObject<T>): z.infer<typeof schema> {
+export async function parseSearchParams<T extends z.ZodRawShape>(searchParams: SearchParams, schema: z.ZodObject<T>): Promise<z.infer<typeof schema>> {
   const raw: Record<string, string | string[] | undefined> = {}
 
   for (const key of Object.keys(schema.shape)) {
@@ -92,10 +113,20 @@ export function parseSearchParams<T extends z.ZodRawShape>(searchParams: SearchP
   return schema.parse(raw)
 }
 
-export function urlSearchParamsToObject(searchParams: URLSearchParams): SearchParams {
+/**
+ * Converts nextUrl.searchParams to a searchParams object. Use with parseSearchParams to parse the search params.
+ *
+ * @param urlSearchParams - A nextUrl.searchParams object to convert.
+ * @returns The converted searchParams object.
+ *
+ * @example
+ * const searchParams = urlSearchParamsToObject(nextUrl.searchParams)
+ * const { data } = await tryCatch(parseSearchParams(searchParams, Schema))
+ */
+export function urlSearchParamsToObject(urlSearchParams: URLSearchParams): SearchParams {
   const object: SearchParams = {}
-  for (const key of searchParams.keys()) {
-    const all = searchParams.getAll(key)
+  for (const key of urlSearchParams.keys()) {
+    const all = urlSearchParams.getAll(key)
     object[key] = all.length === 1 ? all[0] : all.length > 1 ? all : undefined
   }
   return object
