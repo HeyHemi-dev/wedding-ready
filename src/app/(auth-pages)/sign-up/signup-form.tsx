@@ -14,8 +14,8 @@ import { tryCatch } from '@/utils/try-catch'
 import React from 'react'
 import { AuthOptionsButton } from '@/components/auth/auth-options-button'
 import { useRouter } from 'next/router'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 import { browserSupabase } from '@/utils/supabase/client'
+import { handleSupabaseSignUpWithPassword } from '@/components/auth/auth-handlers'
 
 export function SignUpWithEmailPasswordFormButton() {
   const [showForm, setShowForm] = React.useState(false)
@@ -48,7 +48,7 @@ export default function SignUpWithEmailPasswordForm() {
   }, [form])
 
   async function onSubmit(data: UserSignupForm) {
-    const { error } = await tryCatch(handleSignUp(data))
+    const { error } = await tryCatch(handleSupabaseSignUpWithPassword(browserSupabase, data))
 
     if (error) {
       toast.error(error.message)
@@ -93,22 +93,4 @@ export default function SignUpWithEmailPasswordForm() {
       </form>
     </Form>
   )
-}
-
-async function handleSignUp(data: UserSignupForm) {
-  const { success, data: validatedData } = userSignupFormSchema.safeParse(data)
-  if (!success) {
-    throw OPERATION_ERROR.VALIDATION_ERROR('Invalid email or password')
-  }
-
-  const { error } = await browserSupabase.auth.signUp({
-    email: validatedData.email,
-    password: validatedData.password,
-  })
-
-  if (error) {
-    throw OPERATION_ERROR.DATABASE_ERROR(error.message)
-  }
-
-  return
 }

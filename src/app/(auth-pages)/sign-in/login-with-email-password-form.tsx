@@ -17,6 +17,7 @@ import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
 import React from 'react'
 import { AuthOptionsButton } from '@/components/auth/auth-options-button'
+import { handleSupabaseSignInWithPassword } from '@/components/auth/auth-handlers'
 
 export function LoginWithEmailPasswordFormButton() {
   const [showForm, setShowForm] = React.useState(false)
@@ -49,7 +50,7 @@ export default function LoginWithEmailPasswordForm() {
   }, [form])
 
   async function onSubmit(data: UserSigninForm) {
-    const { error } = await tryCatch(handleLogin(data))
+    const { error } = await tryCatch(handleSupabaseSignInWithPassword(browserSupabase, data))
     if (error) {
       toast.error(error.message)
       return
@@ -90,24 +91,4 @@ export default function LoginWithEmailPasswordForm() {
       </form>
     </Form>
   )
-}
-
-async function handleLogin(data: UserSigninForm): Promise<void> {
-  const email = emptyStringToNull(data.email)
-  const password = emptyStringToNull(data.password)
-
-  if (!email || !password) {
-    throw OPERATION_ERROR.VALIDATION_ERROR('Email and password are required')
-  }
-
-  const { error } = await browserSupabase.auth.signInWithPassword({
-    email,
-    password,
-  })
-
-  if (error) {
-    throw OPERATION_ERROR.INVALID_STATE(error.message)
-  }
-
-  return
 }

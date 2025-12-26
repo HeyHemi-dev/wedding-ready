@@ -1,17 +1,16 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { Form } from '@/components/ui/form'
-import { OPERATION_ERROR } from '@/app/_types/errors'
 
-import { getOrigin } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
 import { AuthOptionsButton } from '@/components/auth/auth-options-button'
+import { handleSupabaseSignInWithGoogle } from '@/components/auth/auth-handlers'
 
 export default function LoginWithGoogleForm() {
   const searchParams = useSearchParams()
@@ -19,7 +18,7 @@ export default function LoginWithGoogleForm() {
   const form = useForm({})
 
   async function onSubmit() {
-    const { error } = await tryCatch(handleLogin(next))
+    const { error } = await tryCatch(handleSupabaseSignInWithGoogle(browserSupabase, next))
     if (error) {
       toast.error(error.message)
       return
@@ -37,20 +36,4 @@ export default function LoginWithGoogleForm() {
       </form>
     </Form>
   )
-}
-
-async function handleLogin(next: string): Promise<void> {
-  const origin = getOrigin()
-  const { error } = await browserSupabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${origin}/auth/callback?${PARAMS.NEXT}=${encodeURIComponent(next)}`,
-    },
-  })
-
-  if (error) {
-    throw OPERATION_ERROR.INVALID_STATE(error.message)
-  }
-
-  return
 }
