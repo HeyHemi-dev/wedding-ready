@@ -17,13 +17,10 @@ export const PARAMS = {
   NEXT: 'next',
 
   // message to display using encodedRedirect and FormMessage
-  SUCCESS: 'success',
+  MESSAGE: 'm',
 
-  // message to display using encodedRedirect and FormMessage
-  ERROR: 'error',
-
-  // message to display using encodedRedirect and FormMessage
-  MESSAGE: 'message',
+  // message type using encodedRedirect and FormMessage
+  MESSAGE_TYPE: 'mtype',
 } as const
 
 export const HEADERS = {
