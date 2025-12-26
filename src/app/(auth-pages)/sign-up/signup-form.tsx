@@ -11,7 +11,6 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { tryCatch } from '@/utils/try-catch'
 
-import { signUpFormAction } from './signup-form-action'
 import React from 'react'
 import { AuthOptionsButton } from '../sign-in/auth-options-button'
 import { useRouter } from 'next/router'
