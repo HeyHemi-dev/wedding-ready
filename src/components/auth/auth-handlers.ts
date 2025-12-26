@@ -8,6 +8,7 @@ import { SupabaseClient } from '@supabase/supabase-js'
 
 import { getOrigin } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
+import { isProtectedPath } from '@/middleware-helpers'
 
 export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseClient, data: UserSignupForm) {
   const { success, data: validatedData } = userSignupFormSchema.safeParse(data)
@@ -61,4 +62,14 @@ export async function handleSupabaseSignInWithGoogle(supabaseClient: SupabaseCli
   }
 
   return
+}
+
+export async function handleSupabaseSignOut(supabaseClient: SupabaseClient, pathname: string): Promise<{ next: string }> {
+  const { error } = await supabaseClient.auth.signOut()
+
+  if (error) {
+    throw OPERATION_ERROR.INVALID_STATE(error.message)
+  }
+
+  return { next: isProtectedPath(pathname) ? '/sign-in' : pathname }
 }
