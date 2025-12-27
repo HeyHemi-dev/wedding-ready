@@ -2,13 +2,12 @@ import { NextResponse } from 'next/server'
 import z from 'zod'
 
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
-import { buildUrlWithSearchParams, parseSearchParams, sanitizeNext, urlSearchParamsToObject } from '@/utils/api-helpers'
+import { buildUrlWithSearchParams, getNextUrl, nextParamSchema, parseSearchParams, sanitizeNext, urlSearchParamsToObject } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
 const codeSchema = z.object({ code: z.string().min(1) })
-const nextSchema = z.object({ [PARAMS.NEXT]: z.string() })
 
 export async function GET(request: Request) {
   // The `/auth/callback` route is required for the server-side auth flow implemented
@@ -17,8 +16,7 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const searchParamsObject = urlSearchParamsToObject(searchParams)
   const { data: codeData } = await tryCatch(parseSearchParams(searchParamsObject, codeSchema))
-  const { data: nextData } = await tryCatch(parseSearchParams(searchParamsObject, nextSchema))
-  const next = sanitizeNext(nextData?.next)
+  const next = await getNextUrl(searchParamsObject)
 
   // If no code, redirect to sign-in with error
   if (!codeData) {

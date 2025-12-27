@@ -2,16 +2,22 @@ import { redirect } from 'next/navigation'
 
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { PARAMS } from '@/utils/constants'
-import { encodedRedirect } from '@/utils/encoded-redirect'
+
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
 import { ResendForm } from './resend-form'
+import { MESSAGE_CODES } from '@/components/form/auth-message'
+import { buildUrlWithSearchParams, getNextUrl } from '@/utils/api-helpers'
+import { SearchParams } from '@/app/_types/generics'
 
-export default async function CheckInboxPage() {
+export default async function CheckInboxPage(props: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await props.searchParams
+  const next = await getNextUrl(searchParams)
+
   const supabase = await createClient()
   const { data, error } = await tryCatch(authOperations.getUserSignUpStatus(supabase))
-  if (error) encodedRedirect(PARAMS.ERROR, '/sign-in', error.message)
+  if (error) redirect(buildUrlWithSearchParams('/sign-in', { [PARAMS.MESSAGE_TYPE]: 'error', [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.AUTH_FAILED }))
   if (!data) redirect('/sign-in')
 
   if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
@@ -20,7 +26,8 @@ export default async function CheckInboxPage() {
         <div className="grid gap-spouse text-center">
           <h1 className="heading-md">Check your inbox</h1>
           <p className="ui-small">
-            We&apos;ve sent a confirmation email to <strong>{data.email}</strong>. Please click the link in the email to verify your account.
+            We&apos;ve sent a confirmation to <strong>{data.email}</strong>. Please click the link in the email to verify your account. If you don't see it,
+            check your spam folder.
           </p>
         </div>
         <div className="flex flex-col gap-sibling">
@@ -31,8 +38,8 @@ export default async function CheckInboxPage() {
   }
 
   if (data.status === SIGN_UP_STATUS.ONBOARDED) {
-    redirect('/feed')
+    redirect(next)
   } else {
-    redirect(`/onboarding?${PARAMS.NEXT}=/feed`)
+    redirect(buildUrlWithSearchParams(`/onboarding`, { [PARAMS.NEXT]: next }))
   }
 }
