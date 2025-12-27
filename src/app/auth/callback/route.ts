@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import z from 'zod'
 
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
-import { buildUrlWithSearchParams, getNextUrl, nextParamSchema, parseSearchParams, sanitizeNext, urlSearchParamsToObject } from '@/utils/api-helpers'
+import { buildUrlWithSearchParams, getNextUrl, parseSearchParams, urlSearchParamsToObject } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'

@@ -1,15 +1,14 @@
 import { redirect } from 'next/navigation'
 
+import { SearchParams } from '@/app/_types/generics'
+import { MESSAGE_CODES } from '@/components/form/auth-message'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
+import { buildUrlWithSearchParams, getNextUrl } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
-
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
 import { ResendForm } from './resend-form'
-import { MESSAGE_CODES } from '@/components/form/auth-message'
-import { buildUrlWithSearchParams, getNextUrl } from '@/utils/api-helpers'
-import { SearchParams } from '@/app/_types/generics'
 
 export default async function CheckInboxPage(props: { searchParams: Promise<SearchParams> }) {
   const searchParams = await props.searchParams
@@ -26,8 +25,8 @@ export default async function CheckInboxPage(props: { searchParams: Promise<Sear
         <div className="grid gap-spouse text-center">
           <h1 className="heading-md">Check your inbox</h1>
           <p className="ui-small">
-            We&apos;ve sent a confirmation to <strong>{data.email}</strong>. Please click the link in the email to verify your account. If you don't see it,
-            check your spam folder.
+            We&apos;ve sent a confirmation to <strong>{data.email}</strong>. Please click the link in the email to verify your account. If you don&apos;t see
+            it, check your spam folder.
           </p>
         </div>
         <div className="flex flex-col gap-sibling">

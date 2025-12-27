@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation'
-import { MESSAGE_TYPES, MESSAGE_CODES, messageType, messageCode } from '@/components/form/auth-message'
 
+import { messageCode, messageType } from '@/components/form/auth-message'
 import { PARAMS } from '@/utils/constants'
+
 import { buildUrlWithSearchParams } from './api-helpers'
 
 /**
