@@ -4,13 +4,13 @@ import { PARAMS } from '@/utils/constants'
 import { cn } from '@/utils/shadcn-utils'
 
 export const MESSAGE_TYPES = ['success', 'error', 'info'] as const
-type messageType = (typeof MESSAGE_TYPES)[number]
+export type messageType = (typeof MESSAGE_TYPES)[number]
 export const MESSAGE_CODES = {
   INVALID_AUTH_REQUEST: 'invalid_auth_request',
   AUTH_FAILED: 'auth_failed',
   INVALID_PASSWORD_RESET_SESSION: 'invalid_password_reset_session',
 } as const
-type messageCode = (typeof MESSAGE_CODES)[keyof typeof MESSAGE_CODES]
+export type messageCode = (typeof MESSAGE_CODES)[keyof typeof MESSAGE_CODES]
 
 export const messageSchema = z.object({
   [PARAMS.AUTH_MESSAGE_CODE]: z.nativeEnum(MESSAGE_CODES),
