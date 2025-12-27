@@ -60,16 +60,20 @@ export async function GET(request: Request) {
 
   if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
     // Redirect to check inbox page
-    return NextResponse.redirect(`${origin}/check-inbox`)
+    return NextResponse.redirect(
+      buildUrlWithSearchParams(`${origin}/check-inbox`, {
+        [PARAMS.NEXT]: next,
+      })
+    )
   }
 
   if (data.status !== SIGN_UP_STATUS.ONBOARDED) {
     // Redirect to onboarding, preserve original destination
-    const onboardingUrl = new URL('/onboarding', origin)
-    if (next !== '/feed') {
-      onboardingUrl.searchParams.set(PARAMS.NEXT, next)
-    }
-    return NextResponse.redirect(onboardingUrl.toString())
+    return NextResponse.redirect(
+      buildUrlWithSearchParams(`${origin}/onboarding`, {
+        [PARAMS.NEXT]: next,
+      })
+    )
   }
 
   // Profile exists, proceed with normal redirect
