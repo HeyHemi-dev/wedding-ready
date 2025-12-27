@@ -3,7 +3,8 @@ import { ZodObject, z } from 'zod'
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { SearchParams } from '@/app/_types/generics'
 
-import { ALLOWED_NEXT_PATHS, BASE_URL } from './constants'
+import { ALLOWED_NEXT_PATHS, AllowedNextPath, BASE_URL, PARAMS } from './constants'
+import { tryCatch } from './try-catch'
 
 // Error response type for API responses
 export type ErrorResponse = {
@@ -172,10 +173,28 @@ export function getOrigin(): string {
   }
 }
 
-export function sanitizeNext(next: string | null | undefined): string {
-  if (!next) return ALLOWED_NEXT_PATHS[0]
+/**
+ * Zod schema for parameter that defines the next url to redirect to after authentication.
+ * @example
+ * const { data: nextData } = await tryCatch(parseSearchParams(searchParams, nextParamSchema))
+ */
+export const nextParamSchema = z.object({ [PARAMS.NEXT]: z.string() })
 
-  if (!ALLOWED_NEXT_PATHS.some((p) => next === p || next.startsWith(p + '/'))) return ALLOWED_NEXT_PATHS[0]
+/**
+ * Sanitizes the next url to redirect to after authentication. If the next url is not in the allowed paths, it will return the default next url.
+ * @param next - The next url to sanitize.
+ * @returns The sanitized next url.
+ */
+export function sanitizeNext(next: string | null | undefined): AllowedNextPath {
+  if (!next) return '/feed'
+  if (!ALLOWED_NEXT_PATHS.some((p) => next === p || next.startsWith(p + '/'))) return '/feed'
 
-  return next
+  // Type assertion is safe because we have already checked that the next path is in the allowed paths
+  return next as AllowedNextPath
+}
+
+export async function getNextUrl(searchParams: SearchParams): Promise<AllowedNextPath> {
+  const { data: nextData } = await tryCatch(parseSearchParams(searchParams, nextParamSchema))
+  if (!nextData) return '/feed'
+  return sanitizeNext(nextData.next)
 }
