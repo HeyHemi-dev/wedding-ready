@@ -1,8 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server'
 
-import { SearchParams } from '@/app/_types/generics'
 import { tileOperations } from '@/operations/tile-operations'
-import { parseQueryParams, parseSearchParams, urlSearchParamsToObject } from '@/utils/api-helpers'
+import { parseSearchParams, urlSearchParamsToObject } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 

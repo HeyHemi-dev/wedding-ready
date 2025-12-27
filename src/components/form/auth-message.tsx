@@ -3,9 +3,7 @@ import z from 'zod'
 import { PARAMS } from '@/utils/constants'
 import { cn } from '@/utils/shadcn-utils'
 
-// export type Message = { [PARAMS.SUCCESS]: string } | { [PARAMS.ERROR]: string } | { [PARAMS.MESSAGE]: string }
-
-const MESSAGE_TYPES = ['success', 'error', 'info'] as const
+export const MESSAGE_TYPES = ['success', 'error', 'info'] as const
 type messageType = (typeof MESSAGE_TYPES)[number]
 export const MESSAGE_CODES = {
   INVALID_AUTH_REQUEST: 'invalid_auth_request',

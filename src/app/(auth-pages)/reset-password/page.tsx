@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 
 import { SearchParams } from '@/app/_types/generics'
-import { AuthMessage, Message, MESSAGE_CODES, messageSchema } from '@/components/form/auth-message'
+import { AuthMessage, MESSAGE_CODES, messageSchema } from '@/components/form/auth-message'
 import { buildUrlWithSearchParams, parseSearchParams } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'

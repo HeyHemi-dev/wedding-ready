@@ -1,9 +1,8 @@
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { SearchParams } from '@/app/_types/generics'
 import { AuthCard } from '@/components/auth/auth-card'
-import { AuthMessage, Message, messageSchema } from '@/components/form/auth-message'
+import { AuthMessage, messageSchema } from '@/components/form/auth-message'
 import { parseSearchParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'

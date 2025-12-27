@@ -5,7 +5,6 @@ import { AuthCard } from '@/components/auth/auth-card'
 import { AuthMessage, messageSchema } from '@/components/form/auth-message'
 import { parseSearchParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
-import { PARAMS } from '@/utils/constants'
 import { tryCatch } from '@/utils/try-catch'
 
 import { LoginWithEmailPasswordFormButton } from './login-with-email-password-form'
