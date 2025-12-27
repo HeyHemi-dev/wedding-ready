@@ -1,9 +1,9 @@
 import { ZodObject, z } from 'zod'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
+import { SearchParams } from '@/app/_types/generics'
 
 import { ALLOWED_NEXT_PATHS, BASE_URL } from './constants'
-import { SearchParams } from '@/app/_types/generics'
 
 // Error response type for API responses
 export type ErrorResponse = {

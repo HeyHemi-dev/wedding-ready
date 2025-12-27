@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
+import z from 'zod'
 
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
+import { buildUrlWithSearchParams, parseSearchParams, sanitizeNext, urlSearchParamsToObject } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-import { buildUrlWithSearchParams, parseSearchParams, sanitizeNext, urlSearchParamsToObject } from '@/utils/api-helpers'
-import z from 'zod'
 
 const codeSchema = z.object({ code: z.string().min(1) })
 const nextSchema = z.object({ [PARAMS.NEXT]: z.string() })

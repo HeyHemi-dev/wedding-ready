@@ -1,15 +1,15 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { AuthMessage, Message, messageSchema } from '@/components/form/auth-message'
-import { getAuthUserId } from '@/utils/auth'
+import { SearchParams } from '@/app/_types/generics'
 import { AuthCard } from '@/components/auth/auth-card'
+import { AuthMessage, Message, messageSchema } from '@/components/form/auth-message'
+import { parseSearchParams } from '@/utils/api-helpers'
+import { getAuthUserId } from '@/utils/auth'
+import { tryCatch } from '@/utils/try-catch'
 
 import { SignUpWithEmailPasswordFormButton } from './signup-form'
 import LoginWithGoogleForm from '../sign-in/login-with-google-form'
-import { SearchParams } from '@/app/_types/generics'
-import { tryCatch } from '@/utils/try-catch'
-import { parseSearchParams } from '@/utils/api-helpers'
 
 export default async function Signup(props: { searchParams: Promise<SearchParams> }) {
   // If user is already logged in, they don't need to be here.

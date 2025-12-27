@@ -1,7 +1,9 @@
+import React from 'react'
+
+import { MailIcon } from 'lucide-react'
+
 import { AppleIcon, GoogleIcon, MicrosoftIcon } from '@/components/icons'
 import { Button } from '@/components/ui/button'
-import { MailIcon } from 'lucide-react'
-import React from 'react'
 
 const iconVariants = {
   google: <GoogleIcon />,

@@ -1,12 +1,12 @@
 import { NextResponse, NextRequest } from 'next/server'
 
+import { SearchParams } from '@/app/_types/generics'
 import { tileOperations } from '@/operations/tile-operations'
 import { parseQueryParams, parseSearchParams, urlSearchParamsToObject } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
 import { supplierTilesGetRequestSchema, type SupplierTilesGetResponse } from './types'
-import { SearchParams } from '@/app/_types/generics'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const supplierId = (await params).id

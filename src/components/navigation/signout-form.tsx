@@ -8,8 +8,8 @@ import { toast } from 'sonner'
 import { queryKeys } from '@/app/_types/keys'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { Form } from '@/components/ui/form'
-import { tryCatch } from '@/utils/try-catch'
 import { browserSupabase } from '@/utils/supabase/client'
+import { tryCatch } from '@/utils/try-catch'
 
 import { handleSupabaseSignOut } from '../auth/auth-handlers'
 

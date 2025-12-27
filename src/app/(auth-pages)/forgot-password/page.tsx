@@ -1,16 +1,16 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import Field from '@/components/form/field'
+import { SearchParams } from '@/app/_types/generics'
 import { AuthMessage, Message, messageSchema } from '@/components/form/auth-message'
+import Field from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'
+import { parseSearchParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
+import { tryCatch } from '@/utils/try-catch'
 
 import { forgotPasswordFormAction } from './forgot-password-form-action'
-import { SearchParams } from '@/app/_types/generics'
-import { parseSearchParams } from '@/utils/api-helpers'
-import { tryCatch } from '@/utils/try-catch'
 
 export default async function ForgotPassword(props: { searchParams: Promise<SearchParams> }) {
   // If user is already logged in, they don't need to be here.

@@ -1,14 +1,11 @@
-import { OPERATION_ERROR } from '@/app/_types/errors'
-import { UserSigninForm } from '@/app/_types/validation-schema'
-
-import { emptyStringToNull } from '@/utils/empty-strings'
-
-import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
 import { SupabaseClient } from '@supabase/supabase-js'
 
+import { OPERATION_ERROR } from '@/app/_types/errors'
+import { UserSigninForm , UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
+import { isProtectedPath } from '@/middleware-helpers'
 import { getOrigin } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
-import { isProtectedPath } from '@/middleware-helpers'
+import { emptyStringToNull } from '@/utils/empty-strings'
 
 export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseClient, data: UserSignupForm) {
   const { success, data: validatedData } = userSignupFormSchema.safeParse(data)
