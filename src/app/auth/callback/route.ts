@@ -8,7 +8,7 @@ import { buildUrlWithSearchParams, parseSearchParams, sanitizeNext, urlSearchPar
 import z from 'zod'
 
 const codeSchema = z.object({ code: z.string().min(1) })
-const nextSchema = z.object({ next: z.string() })
+const nextSchema = z.object({ [PARAMS.NEXT]: z.string() })
 
 export async function GET(request: Request) {
   // The `/auth/callback` route is required for the server-side auth flow implemented
