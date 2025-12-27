@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { SearchParams } from '@/app/_types/generics'
-import { AuthMessage, messageSchema } from '@/components/form/auth-message'
+import { AuthMessage, messageSchema } from '@/components/auth/auth-message'
 import Field from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Input } from '@/components/ui/input'

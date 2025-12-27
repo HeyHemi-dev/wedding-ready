@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 
 import { SearchParams } from '@/app/_types/generics'
-import { MESSAGE_CODES } from '@/components/form/auth-message'
+import { MESSAGE_CODES } from '@/components/auth/auth-message'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { buildUrlWithSearchParams, getNextUrl } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'

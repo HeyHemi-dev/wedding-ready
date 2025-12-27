@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-import { messageCode, messageType } from '@/components/form/auth-message'
+import { messageCode, messageType } from '@/components/auth/auth-message'
 import { PARAMS } from '@/utils/constants'
 
 import { buildUrlWithSearchParams } from './api-helpers'
