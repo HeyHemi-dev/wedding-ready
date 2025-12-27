@@ -21,11 +21,20 @@ export const PARAMS = {
 
   // message type using encodedRedirect and FormMessage
   MESSAGE_TYPE: 'mtype',
+
+  // message code using encodedRedirect and AuthMessage
+  AUTH_MESSAGE_CODE: 'auth_code',
 } as const
 
 export const HEADERS = {
   // pass authenticated user ID from middleware to server components
   AUTH_USER_ID: 'x-auth-user-id',
+
+  // pass authenticated user verified status from middleware to server components
+  AUTH_IS_VERIFIED: 'x-auth-is-verified',
+
+  // pass authenticated user onboarded status from middleware to server components
+  AUTH_IS_ONBOARDED: 'x-auth-is-onboarded',
 } as const
 
 export const LOCAL_STORAGE_KEYS = {
