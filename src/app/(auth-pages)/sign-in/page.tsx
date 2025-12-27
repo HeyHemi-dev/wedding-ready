@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 
 import { getAuthUserId } from '@/utils/auth'
 import { AuthCard } from '@/components/auth/auth-card'
-import { FormMessage, messageSchema } from '@/components/form/form-message'
+import { AuthMessage, messageSchema } from '@/components/form/auth-message'
 
 import { LoginWithEmailPasswordFormButton } from './login-with-email-password-form'
 import LoginWithGoogleForm from './login-with-google-form'
@@ -27,7 +27,7 @@ export default async function Login(props: { searchParams: Promise<SearchParams>
         <LoginWithGoogleForm />
         <hr />
         <LoginWithEmailPasswordFormButton />
-        {message && <FormMessage message={message} />}
+        {message && <AuthMessage message={message} />}
       </AuthCard>
     )
   }
