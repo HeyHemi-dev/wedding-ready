@@ -1,14 +1,15 @@
 import { redirect } from 'next/navigation'
 
-import { FormMessage, Message } from '@/components/form/form-message'
+import { AuthMessage, Message, MESSAGE_CODES, messageSchema } from '@/components/form/auth-message'
 import { PARAMS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 
 import ResetPasswordForm from './reset-password-form'
+import { SearchParams } from '@/app/_types/generics'
+import { buildUrlWithSearchParams, parseSearchParams } from '@/utils/api-helpers'
+import { tryCatch } from '@/utils/try-catch'
 
-export default async function ResetPassword(props: { searchParams: Promise<Message> }) {
-  const searchParams = await props.searchParams
-
+export default async function ResetPassword(props: { searchParams: Promise<SearchParams> }) {
   // Check for valid recovery session
   const supabase = await createClient()
   const {
@@ -17,14 +18,17 @@ export default async function ResetPassword(props: { searchParams: Promise<Messa
   } = await supabase.auth.getSession()
 
   if (sessionError || !session) {
-    redirect(`/sign-in?${PARAMS.MESSAGE}=${encodeURIComponent('Please request a password reset first')}`)
+    redirect(buildUrlWithSearchParams(`/sign-in`, { [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.INVALID_PASSWORD_RESET_SESSION }))
   }
 
   // Verify this is specifically a recovery session from password reset
   // The session's user metadata will indicate if this is a recovery session
   if (session.user.app_metadata?.provider !== 'email') {
-    redirect(`/sign-in?${PARAMS.MESSAGE}=${encodeURIComponent('Please request a password reset first')}`)
+    redirect(buildUrlWithSearchParams(`/sign-in`, { [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.INVALID_PASSWORD_RESET_SESSION }))
   }
+
+  const searchParams = await props.searchParams
+  const { data: message } = await tryCatch(parseSearchParams(searchParams, messageSchema))
 
   return (
     <>
@@ -33,7 +37,7 @@ export default async function ResetPassword(props: { searchParams: Promise<Messa
         <p className="ui-small">Please enter your new password below.</p>
       </div>
       <ResetPasswordForm />
-      <FormMessage message={searchParams} />
+      {message && <AuthMessage message={message} />}
     </>
   )
 }
