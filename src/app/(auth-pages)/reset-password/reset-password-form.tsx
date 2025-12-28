@@ -11,10 +11,12 @@ import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PARAMS } from '@/utils/constants'
-import { encodedRedirect } from '@/utils/encoded-redirect'
 import { tryCatch } from '@/utils/try-catch'
 
-import { resetPasswordFormAction } from './reset-password-form-action'
+import { handleSupabaseUpdatePassword } from '@/components/auth/auth-handlers'
+import { browserSupabase } from '@/utils/supabase/client'
+import { buildUrlWithSearchParams } from '@/utils/api-helpers'
+import { MESSAGE_CODES } from '@/components/auth/auth-message'
 
 export default function ResetPasswordForm() {
   const router = useRouter()
@@ -29,18 +31,24 @@ export default function ResetPasswordForm() {
   })
 
   async function onSubmit(data: UserResetPasswordForm) {
-    if (data.password !== data.confirmPassword) {
-      toast.error('Passwords do not match')
-    }
-
-    const { error } = await tryCatch(resetPasswordFormAction({ data }))
+    const { error } = await tryCatch(handleSupabaseUpdatePassword(browserSupabase, data))
     if (error) {
       toast.error(error.message)
-      return encodedRedirect(PARAMS.ERROR, '/sign-up', error.message)
+      return router.push(
+        buildUrlWithSearchParams('/reset-password', {
+          [PARAMS.MESSAGE_TYPE]: 'error',
+          [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.PASSWORD_UPDATE_FAILED,
+        })
+      )
     }
 
     toast.success('Password updated')
-    router.push(`/sign-in`)
+    router.push(
+      buildUrlWithSearchParams('/sign-in', {
+        [PARAMS.MESSAGE_TYPE]: 'success',
+        [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.PASSWORD_UPDATE_SUCCESS,
+      })
+    )
   }
 
   return (
@@ -64,7 +72,7 @@ export default function ResetPasswordForm() {
             render={({ field }) => (
               <FormFieldItem label="Confirm password">
                 <FormControl>
-                  <Input {...field} placeholder="Confirm password" type="password" required />
+                  <Input {...field} placeholder="Confirm password" type="password" required onBlur={() => form.trigger()} />
                 </FormControl>
               </FormFieldItem>
             )}
