@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 
+import LoginWithGoogleForm from '@/app/(auth-pages)/sign-in/login-with-google-form'
 import { SearchParams } from '@/app/_types/generics'
 import { AuthCard } from '@/components/auth/auth-card'
 import { AuthMessage, messageSchema } from '@/components/auth/auth-message'
@@ -8,7 +9,6 @@ import { getAuthUserId } from '@/utils/auth'
 import { tryCatch } from '@/utils/try-catch'
 
 import SignUpWithEmailPasswordForm from './signup-form'
-import LoginWithGoogleForm from '@/app/(auth-pages)/sign-in/login-with-google-form'
 
 export default async function Signup(props: { searchParams: Promise<SearchParams> }) {
   // If user is already logged in, they don't need to be here.

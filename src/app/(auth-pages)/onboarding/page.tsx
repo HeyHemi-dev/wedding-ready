@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 
+import { SearchParams } from '@/app/_types/generics'
 import { MESSAGE_CODES } from '@/components/auth/auth-message'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { buildUrlWithSearchParams, getNextUrl } from '@/utils/api-helpers'
@@ -8,7 +9,6 @@ import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
 import OnboardingForm from './onboarding-form'
-import { SearchParams } from '@/app/_types/generics'
 
 export default async function OnboardingPage(props: { searchParams: Promise<SearchParams> }) {
   const searchParams = await props.searchParams

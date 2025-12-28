@@ -14,10 +14,10 @@ import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { browserSupabase } from '@/utils/supabase/client'
-import { tryCatch } from '@/utils/try-catch'
 import { buildUrlWithSearchParams } from '@/utils/api-helpers'
 import { AllowedNextPath, PARAMS } from '@/utils/constants'
+import { browserSupabase } from '@/utils/supabase/client'
+import { tryCatch } from '@/utils/try-catch'
 
 export default function SignUpWithEmailPasswordForm({ next }: { next: AllowedNextPath }) {
   const router = useRouter()
