@@ -16,7 +16,14 @@ export default async function CheckInboxPage(props: { searchParams: Promise<Sear
 
   const supabase = await createClient()
   const { data, error } = await tryCatch(authOperations.getUserSignUpStatus(supabase))
-  if (error) redirect(buildUrlWithSearchParams('/sign-in', { [PARAMS.MESSAGE_TYPE]: 'error', [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.AUTH_FAILED }))
+  if (error)
+    redirect(
+      buildUrlWithSearchParams('/sign-in', {
+        [PARAMS.MESSAGE_TYPE]: 'error',
+        [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.AUTH_FAILED,
+        [PARAMS.NEXT]: next,
+      })
+    )
   if (!data) redirect('/sign-in')
 
   if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
@@ -25,8 +32,7 @@ export default async function CheckInboxPage(props: { searchParams: Promise<Sear
         <div className="grid gap-spouse text-center">
           <h1 className="heading-md">You've got mail!</h1>
           <p className="ui-small">
-            We&apos;ve sent a confirmation to <strong>{data.email}</strong>. Please click the link in the email to verify your account. If you don&apos;t see
-            it, check your spam folder.
+            {`We've sent a confirmation to ${data.email}. Please click the link in the email to verify your account. If you don't see it, check your spam folder.`}
           </p>
         </div>
         <div className="flex flex-col gap-sibling">
