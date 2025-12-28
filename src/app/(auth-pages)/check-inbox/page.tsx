@@ -23,7 +23,7 @@ export default async function CheckInboxPage(props: { searchParams: Promise<Sear
     return (
       <>
         <div className="grid gap-spouse text-center">
-          <h1 className="heading-md">Check your inbox</h1>
+          <h1 className="heading-md">You've got mail!</h1>
           <p className="ui-small">
             We&apos;ve sent a confirmation to <strong>{data.email}</strong>. Please click the link in the email to verify your account. If you don&apos;t see
             it, check your spam folder.
