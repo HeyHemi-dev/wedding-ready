@@ -59,7 +59,7 @@ export async function GET(request: Request) {
   if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
     // Redirect to check inbox page
     return NextResponse.redirect(
-      buildUrlWithSearchParams(`${origin}/check-inbox`, {
+      buildUrlWithSearchParams(`${origin}/sign-up/check-inbox`, {
         [PARAMS.NEXT]: next,
       })
     )

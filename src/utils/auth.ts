@@ -47,7 +47,7 @@ export async function requireVerifiedAuth(options?: RequireVerifiedAuthOptions):
     redirect('/sign-in')
   }
   if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
-    redirect('/check-inbox')
+    redirect('/sign-up/check-inbox')
   }
   if (data.status !== SIGN_UP_STATUS.ONBOARDED) {
     redirect(`/onboarding${options?.redirectAfterOnboarding && `?${PARAMS.NEXT}=${encodeURIComponent(options.redirectAfterOnboarding)}`}`)
