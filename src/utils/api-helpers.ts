@@ -128,6 +128,13 @@ export function urlSearchParamsToObject(urlSearchParams: URLSearchParams): Searc
   return object
 }
 
+/**
+ * Checks if the current environment is development.
+ * @returns true if the current environment is development, false otherwise.
+ */
+export const isDev = process.env.NODE_ENV === 'development'
+
+// TODO: refactor to be a constant
 export function isClient(): boolean {
   return typeof window !== 'undefined'
 }
