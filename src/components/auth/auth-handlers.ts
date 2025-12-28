@@ -1,13 +1,21 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
-import { UserSigninForm , UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
+import {
+  UserForgotPasswordForm,
+  userForgotPasswordFormSchema,
+  UserResetPasswordForm,
+  UserSigninForm,
+  UserSignupForm,
+  userSignupFormSchema,
+} from '@/app/_types/validation-schema'
 import { isProtectedPath } from '@/middleware-helpers'
 import { getOrigin } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
 import { emptyStringToNull } from '@/utils/empty-strings'
+import { logger } from '@/utils/logger'
 
-export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseClient, data: UserSignupForm) {
+export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseClient, data: UserSignupForm): Promise<void> {
   const { success, data: validatedData } = userSignupFormSchema.safeParse(data)
   if (!success) {
     throw OPERATION_ERROR.VALIDATION_ERROR('Invalid email or password')
@@ -69,4 +77,32 @@ export async function handleSupabaseSignOut(supabaseClient: SupabaseClient, path
   }
 
   return { next: isProtectedPath(pathname) ? '/sign-in' : pathname }
+}
+
+export async function handleSupabaseForgotPassword(supabaseClient: SupabaseClient, data: UserForgotPasswordForm): Promise<void> {
+  // No need to validate data here, the schema is already validated by RHF
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(data.email)
+
+  if (error) {
+    throw OPERATION_ERROR.INVALID_STATE(error.message)
+  }
+
+  return
+}
+
+export async function handleSupabaseUpdatePassword(supabaseClient: SupabaseClient, data: UserResetPasswordForm): Promise<void> {
+  // No need to validate data here, the schema is already validated by RHF
+  const { error } = await supabaseClient.auth.updateUser({
+    password: data.password,
+  })
+
+  if (error) {
+    logger.error('auth.update_password_failed', {
+      code: error.code,
+      message: error.message,
+    })
+    throw OPERATION_ERROR.DATABASE_ERROR('Failed to update password')
+  }
+
+  return
 }
