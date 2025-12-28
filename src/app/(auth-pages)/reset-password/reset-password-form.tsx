@@ -6,17 +6,17 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { userResetPasswordFormSchema, UserResetPasswordForm } from '@/app/_types/validation-schema'
+import { handleSupabaseUpdatePassword } from '@/components/auth/auth-handlers'
+import { MESSAGE_CODES } from '@/components/auth/auth-message'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { buildUrlWithSearchParams } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
+import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
 
-import { handleSupabaseUpdatePassword } from '@/components/auth/auth-handlers'
-import { browserSupabase } from '@/utils/supabase/client'
-import { buildUrlWithSearchParams } from '@/utils/api-helpers'
-import { MESSAGE_CODES } from '@/components/auth/auth-message'
 
 export default function ResetPasswordForm() {
   const router = useRouter()
