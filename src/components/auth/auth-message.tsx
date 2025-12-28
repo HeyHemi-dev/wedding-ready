@@ -11,6 +11,8 @@ export const MESSAGE_CODES = {
   INVALID_PASSWORD_RESET_SESSION: 'password_reset_invalid_session',
   PASSWORD_RESET_SENT: 'password_reset_sent',
   PASSWORD_RESET_FAILED: 'password_reset_failed',
+  PASSWORD_UPDATE_FAILED: 'password_update_failed',
+  PASSWORD_UPDATE_SUCCESS: 'password_update_success',
 } as const
 export type messageCode = (typeof MESSAGE_CODES)[keyof typeof MESSAGE_CODES]
 
@@ -52,10 +54,18 @@ const MESSAGE_DATA = {
   },
   [MESSAGE_CODES.PASSWORD_RESET_SENT]: {
     type: 'success',
-    content: 'Password reset email sent. Please check your inbox.',
+    content: "We've sent you an email with a link to reset your password. If you don't see it, check your spam folder.",
   },
   [MESSAGE_CODES.PASSWORD_RESET_FAILED]: {
     type: 'error',
     content: 'Could not reset password. Please try again.',
+  },
+  [MESSAGE_CODES.PASSWORD_UPDATE_FAILED]: {
+    type: 'error',
+    content: 'Could not update password. Please try again.',
+  },
+  [MESSAGE_CODES.PASSWORD_UPDATE_SUCCESS]: {
+    type: 'success',
+    content: 'Password updated. Please sign in with your new password.',
   },
 } satisfies Record<messageCode, { type: messageType; content: string }>
