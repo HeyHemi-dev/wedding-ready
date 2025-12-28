@@ -14,8 +14,13 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
+import { buildUrlWithSearchParams } from '@/utils/api-helpers'
+import { useRouter } from 'next/navigation'
+import { PARAMS } from '@/utils/constants'
+import { MESSAGE_CODES } from '@/components/auth/auth-message'
 
 export default function ForgotPasswordForm() {
+  const router = useRouter()
   const form = useForm<UserForgotPasswordForm>({
     resolver: zodResolver(userForgotPasswordFormSchema),
     defaultValues: {
@@ -35,7 +40,10 @@ export default function ForgotPasswordForm() {
       return
     }
 
-    toast.success('Check your email for a link to reset your password.')
+    toast.success("We've sent you an email with a link to reset your password. If you don't see it, check your spam folder.")
+    router.push(
+      buildUrlWithSearchParams('/forgot-password', { [PARAMS.MESSAGE_TYPE]: 'success', [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.PASSWORD_RESET_SENT })
+    )
   }
 
   return (
