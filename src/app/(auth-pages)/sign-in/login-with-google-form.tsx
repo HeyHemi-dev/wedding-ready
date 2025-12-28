@@ -7,13 +7,11 @@ import { toast } from 'sonner'
 import { handleSupabaseSignInWithGoogle } from '@/components/auth/auth-handlers'
 import { AuthOptionsButton } from '@/components/auth/auth-options-button'
 import { Form } from '@/components/ui/form'
-import { PARAMS } from '@/utils/constants'
+import { AllowedNextPath, PARAMS } from '@/utils/constants'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
 
-export default function LoginWithGoogleForm() {
-  const searchParams = useSearchParams()
-  const next = searchParams.get(PARAMS.NEXT) ?? '/feed'
+export default function LoginWithGoogleForm({ next }: { next: AllowedNextPath }) {
   const form = useForm({})
 
   async function onSubmit() {

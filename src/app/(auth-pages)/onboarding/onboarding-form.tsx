@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle, XCircle, LoaderCircle } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -15,14 +15,14 @@ import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PARAMS } from '@/utils/constants'
+import { AllowedNextPath, PARAMS } from '@/utils/constants'
 import { tryCatch, tryCatchFetch } from '@/utils/try-catch'
 
 import { onboardingFormAction } from './onboarding-form-action'
 
-export default function OnboardingForm() {
+export default function OnboardingForm({ next }: { next: AllowedNextPath }) {
   const router = useRouter()
-  const searchParams = useSearchParams()
+
   const controller = useRef(new AbortController())
   const [handleStatus, setHandleStatus] = useState<HandleStatus>(status.Undefined)
   const form = useForm<FormValues>({
@@ -77,7 +77,6 @@ export default function OnboardingForm() {
     }
 
     toast.success('Profile created successfully!')
-    const next = searchParams.get(PARAMS.NEXT) ?? '/feed'
     router.push(next)
   }
 
