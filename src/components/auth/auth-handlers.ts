@@ -73,7 +73,7 @@ export async function handleSupabaseSignOut(supabaseClient: SupabaseClient, path
 }
 
 export async function handleSupabaseForgotPassword(supabaseClient: SupabaseClient, data: UserForgotPasswordForm): Promise<void> {
-  // No need to validate data here, the schema is already validated by RHF
+  // No need for zod validation, the schema is already validated by RHF
   const { error } = await supabaseClient.auth.resetPasswordForEmail(data.email)
 
   if (error) {
@@ -84,7 +84,8 @@ export async function handleSupabaseForgotPassword(supabaseClient: SupabaseClien
 }
 
 export async function handleSupabaseUpdatePassword(supabaseClient: SupabaseClient, data: UserResetPasswordForm): Promise<void> {
-  // No need to validate data here, the schema is already validated by RHF
+  // Password === confirmPassword is validated by the schema
+  // No need for zod validation, the schema is already validated by RHF
   const { error } = await supabaseClient.auth.updateUser({
     password: data.password,
   })
