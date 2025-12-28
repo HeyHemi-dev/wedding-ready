@@ -1,14 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
-import {
-  UserForgotPasswordForm,
-  userForgotPasswordFormSchema,
-  UserResetPasswordForm,
-  UserSigninForm,
-  UserSignupForm,
-  userSignupFormSchema,
-} from '@/app/_types/validation-schema'
+import { UserForgotPasswordForm, UserResetPasswordForm, UserSigninForm, UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
 import { isProtectedPath } from '@/middleware-helpers'
 import { getOrigin } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
