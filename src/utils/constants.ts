@@ -16,13 +16,10 @@ export const PARAMS = {
   // next URL to redirect to
   NEXT: 'next',
 
-  // message to display using encodedRedirect and FormMessage
-  MESSAGE: 'm',
-
-  // message type using encodedRedirect and FormMessage
+  // message type using AuthMessage
   MESSAGE_TYPE: 'mtype',
 
-  // message code using encodedRedirect and AuthMessage
+  // message code using AuthMessage
   AUTH_MESSAGE_CODE: 'auth_code',
 } as const
 
