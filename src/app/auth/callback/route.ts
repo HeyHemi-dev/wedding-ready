@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import z from 'zod'
 
+import { MESSAGE_CODES } from '@/components/auth/auth-message'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { buildUrlWithSearchParams, getNextUrl, parseSearchParams, urlSearchParamsToObject } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
-import { MESSAGE_CODES } from '@/components/auth/auth-message'
 
 const codeSchema = z.object({ code: z.string().min(1) })
 
