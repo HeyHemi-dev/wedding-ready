@@ -22,6 +22,7 @@ import { tryCatch } from '@/utils/try-catch'
 export default function SignUpWithEmailPasswordForm({ next }: { next: AllowedNextPath }) {
   const router = useRouter()
   const [showForm, setShowForm] = React.useState(false)
+  const hasRunAutoFocus = React.useRef(false)
   const form = useForm<UserSignupForm>({
     resolver: zodResolver(userSignupFormSchema),
     defaultValues: {
@@ -32,8 +33,10 @@ export default function SignUpWithEmailPasswordForm({ next }: { next: AllowedNex
   })
 
   React.useEffect(() => {
+    if (!showForm || hasRunAutoFocus.current) return
+    hasRunAutoFocus.current = true
     form.setFocus('email')
-  }, [form])
+  }, [form, showForm])
 
   async function onSubmit(data: UserSignupForm) {
     const { error } = await tryCatch(handleSupabaseSignUpWithPassword(browserSupabase, data))
@@ -80,7 +83,11 @@ export default function SignUpWithEmailPasswordForm({ next }: { next: AllowedNex
           <SubmitButton pendingChildren={'Signing Up...'}>Sign Up</SubmitButton>
         </form>
       ) : (
-        <AuthOptionsButton onClick={() => setShowForm(!showForm)} icon="email">
+        <AuthOptionsButton
+          icon="email"
+          onClick={() => {
+            setShowForm(true)
+          }}>
           Continue with email and password
         </AuthOptionsButton>
       )}
