@@ -1,49 +1,52 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
-import { UserForgotPasswordForm, UserResetPasswordForm, UserSigninForm, UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
+import { UserForgotPasswordForm, UserResetPasswordForm, UserSigninForm, UserSignupForm } from '@/app/_types/validation-schema'
 import { isProtectedPath } from '@/middleware-helpers'
 import { getOrigin } from '@/utils/api-helpers'
 import { PARAMS } from '@/utils/constants'
 import { emptyStringToNull } from '@/utils/empty-strings'
 import { logger } from '@/utils/logger'
 
-export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseClient, data: UserSignupForm): Promise<void> {
-  const { success, data: validatedData } = userSignupFormSchema.safeParse(data)
-  if (!success) {
-    throw OPERATION_ERROR.VALIDATION_ERROR('Invalid email or password')
-  }
-
-  const { error } = await supabaseClient.auth.signUp({
-    email: validatedData.email,
-    password: validatedData.password,
+export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseClient, data: UserSignupForm): Promise<{ id: string }> {
+  // No need for zod validation, the schema is already validated by RHF
+  const { data: authData, error } = await supabaseClient.auth.signUp({
+    email: data.email,
+    password: data.password,
   })
 
-  if (error) {
-    throw OPERATION_ERROR.DATABASE_ERROR(error.message)
+  if (error || !authData.user) {
+    logger.error('auth.sign_up_failed', {
+      code: error?.code,
+      message: error?.message,
+    })
+    throw OPERATION_ERROR.DATABASE_ERROR('Failed to create user')
   }
 
-  return
+  return { id: authData.user.id }
 }
 
-export async function handleSupabaseSignInWithPassword(supabaseClient: SupabaseClient, data: UserSigninForm): Promise<void> {
+export async function handleSupabaseSignInWithPassword(supabaseClient: SupabaseClient, data: UserSigninForm): Promise<{ authUserId: string }> {
+  // Validation required, the schema is very permissive as a security measure and allows empty strings
   const email = emptyStringToNull(data.email)
   const password = emptyStringToNull(data.password)
-
   if (!email || !password) {
     throw OPERATION_ERROR.VALIDATION_ERROR('Email and password are required')
   }
 
-  const { error } = await supabaseClient.auth.signInWithPassword({
+  const { data: authData, error } = await supabaseClient.auth.signInWithPassword({
     email,
     password,
   })
-
-  if (error) {
-    throw OPERATION_ERROR.INVALID_STATE(error.message)
+  if (error || !authData.user) {
+    logger.error('auth.sign_in_failed', {
+      code: error?.code,
+      message: error?.message,
+    })
+    throw OPERATION_ERROR.INVALID_STATE('Failed to sign in')
   }
 
-  return
+  return { authUserId: authData.user.id }
 }
 
 export async function handleSupabaseSignInWithGoogle(supabaseClient: SupabaseClient, next: string): Promise<void> {
