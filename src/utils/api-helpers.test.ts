@@ -1,27 +1,23 @@
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 
+import type { SearchParams } from '@/app/_types/generics'
 import { FeedGetRequest, feedGetRequestSchema } from '@/app/api/feed/types'
 import { supplierTilesGetRequestSchema, SupplierTilesGetRequest } from '@/app/api/suppliers/[id]/tiles/types'
 import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/api/suppliers/search/types'
 import { userTilesGetRequestSchema, UserTilesGetRequest } from '@/app/api/users/[id]/tiles/types'
 import { TEST_ID } from '@/testing/scene'
+import { ALLOWED_NEXT_PATHS, AllowedNextPath, BASE_URL } from '@/utils/constants'
 
 import {
   buildQueryParams,
   buildUrlWithSearchParams,
-  getBaseUrl,
   getNextUrl,
-  getOrigin,
-  nextParamSchema,
   parseQueryParams,
   parseSearchParams,
   sanitizeNext,
   urlSearchParamsToObject,
 } from './api-helpers'
-import { ALLOWED_NEXT_PATHS, AllowedNextPath, BASE_URL } from './constants'
-
-import type { SearchParams } from '@/app/_types/generics'
 
 const TEST_BASE_URL = 'https://example.com/api' as const
 
