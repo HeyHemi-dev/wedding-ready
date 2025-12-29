@@ -517,6 +517,8 @@ describe('buildUrlWithSearchParams', () => {
       // Assert
       const url = new URL(result)
       expect(url.searchParams.get('page')).toBe('1')
+      expect(url.searchParams.getAll('page')).toEqual(['1'])
+      expect(Array.from(new Set(url.searchParams.keys()))).toEqual(['page']) // Ensure no unexpected params
     })
 
     it('should handle all undefined values', () => {
@@ -547,6 +549,9 @@ describe('buildUrlWithSearchParams', () => {
       const url = new URL(result)
       expect(url.searchParams.get('search')).toBe('hello world')
       expect(url.searchParams.get('filter')).toBe('test&value')
+      // Guard against a bug where `&` is not encoded and splits query params.
+      expect(result).toContain('search=hello+world')
+      expect(result).toContain('filter=test%26value')
     })
 
     it('should handle empty string values', () => {
@@ -581,8 +586,26 @@ describe('buildUrlWithSearchParams', () => {
       const url = new URL(result)
       expect(url.searchParams.get('page')).toBe('2')
       expect(url.searchParams.get('limit')).toBe('10')
-      expect(url.searchParams.getAll('page')).toEqual(['2']) // Ensure no duplicates
-      expect(url.searchParams.getAll('limit')).toEqual(['10']) // Ensure no duplicates
+      expect(url.searchParams.getAll('page')).toEqual(['2'])
+      expect(url.searchParams.getAll('limit')).toEqual(['10'])
+    })
+
+    it('should preserve unrelated existing query parameters when replacing', () => {
+      // Arrange
+      const relativeUrl = `${TEST_BASE_URL}?page=1&keep=1`
+      const searchParams = {
+        page: '2',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(relativeUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.searchParams.get('page')).toBe('2')
+      expect(url.searchParams.get('keep')).toBe('1')
+      expect(url.searchParams.getAll('page')).toEqual(['2'])
+      expect(url.searchParams.getAll('keep')).toEqual(['1'])
     })
 
     it('should replace existing query parameters and add new ones', () => {
@@ -600,8 +623,8 @@ describe('buildUrlWithSearchParams', () => {
       const url = new URL(result)
       expect(url.searchParams.get('page')).toBe('2')
       expect(url.searchParams.get('limit')).toBe('10')
-      expect(url.searchParams.getAll('page')).toEqual(['2']) // Ensure no duplicates
-      expect(url.searchParams.getAll('limit')).toEqual(['10']) // Ensure no duplicates
+      expect(url.searchParams.getAll('page')).toEqual(['2'])
+      expect(url.searchParams.getAll('limit')).toEqual(['10'])
     })
 
     it('should remove existing query parameters when set to undefined', () => {
@@ -619,7 +642,7 @@ describe('buildUrlWithSearchParams', () => {
       const url = new URL(result)
       expect(url.searchParams.has('page')).toBe(false)
       expect(url.searchParams.get('limit')).toBe('20')
-      expect(url.searchParams.getAll('limit')).toEqual(['20']) // Ensure no duplicates
+      expect(url.searchParams.getAll('limit')).toEqual(['20'])
     })
   })
 
@@ -683,7 +706,7 @@ describe('buildUrlWithSearchParams', () => {
 
       // Assert
       const url = new URL(result)
-      expect(url.searchParams.getAll('tags')).toEqual([])
+      expect(url.searchParams.has('tags')).toBe(false)
       expect(url.searchParams.get('page')).toBe('1')
     })
   })
@@ -736,7 +759,7 @@ describe('buildUrlWithSearchParams', () => {
       const url = new URL(result)
       expect(url.pathname).toBe('/sign-in')
       expect(url.searchParams.get('next')).toBe('/new')
-      expect(url.searchParams.getAll('next')).toEqual(['/new']) // Ensure no duplicates
+      expect(url.searchParams.getAll('next')).toEqual(['/new'])
     })
   })
 })
