@@ -7,9 +7,10 @@ import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/
 import { userTilesGetRequestSchema, UserTilesGetRequest } from '@/app/api/users/[id]/tiles/types'
 import { TEST_ID } from '@/testing/scene'
 
-import { buildQueryParams, parseQueryParams } from './api-helpers'
+import { buildQueryParams, buildUrlWithSearchParams, parseQueryParams, sanitizeNext } from './api-helpers'
+import { ALLOWED_NEXT_PATHS, AllowedNextPath } from './constants'
 
-const URL_BASE = 'https://wedding-ready.nz/api' as const
+const URL_BASE = 'https://example.com/api' as const
 
 describe('buildQueryParams', () => {
   it('should build query string from multiple parameters', () => {
@@ -429,6 +430,546 @@ describe('route schema integration', () => {
 
       // Assert
       expect(result).toEqual(valid)
+    })
+  })
+})
+
+const isAllowedNextPath = (path: string) => ALLOWED_NEXT_PATHS.includes(path as AllowedNextPath)
+
+describe('sanitizeNext', () => {
+  describe('basic functionality', () => {
+    it('should return the default next path if no next path is provided', () => {
+      // Arrange
+      const next = undefined
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should return the default next path if next is null', () => {
+      // Arrange
+      const next = null
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should return the default next path if next is empty string', () => {
+      // Arrange
+      const next = ''
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should return the next path if the next path is in the allowed paths', () => {
+      // Arrange
+      const next = '/feed'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should return the next path for all allowed paths', () => {
+      // Arrange, Act & Assert
+      ALLOWED_NEXT_PATHS.forEach((path) => {
+        expect(sanitizeNext(path)).toBe(path)
+      })
+    })
+
+    it('should return the default next path if the next path is not in the allowed paths', () => {
+      // Arrange
+      const next = '/not-allowed'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+  })
+
+  describe('open redirect attacks', () => {
+    it('should reject external HTTPS URLs', () => {
+      // Arrange
+      const next = 'https://evil.com'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject external HTTP URLs', () => {
+      // Arrange
+      const next = 'http://evil.com'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject javascript: protocol', () => {
+      // Arrange
+      const next = 'javascript:alert(1)'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject data: protocol', () => {
+      // Arrange
+      const next = 'data:text/html,<script>alert(1)</script>'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject protocol-relative URLs', () => {
+      // Arrange
+      const next = '//evil.com'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject mixed case protocol schemes', () => {
+      // Arrange
+      const testCases = ['JavaScript:alert(1)', 'HTTPS://evil.com', 'Http://evil.com']
+
+      // Act & Assert
+      testCases.forEach((next) => {
+        expect(isAllowedNextPath(sanitizeNext(next))).toBe(true)
+      })
+    })
+  })
+
+  describe('path traversal attacks', () => {
+    it('should reject path traversal from feed to account', () => {
+      // Arrange
+      const next = '/feed/../account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject deep path traversal', () => {
+      // Arrange
+      const next = '/feed/../../../../../etc/passwd'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject mixed path traversal', () => {
+      // Arrange
+      const next = '/feed/./../account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject URL-encoded path traversal', () => {
+      // Arrange
+      const next = '/feed/%2e%2e/account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject double-encoded path traversal', () => {
+      // Arrange
+      const next = '/feed/%252e%252e/account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject encoded slash in path traversal', () => {
+      // Arrange
+      const next = '/feed/%2faccount'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject double slashes with traversal', () => {
+      // Arrange
+      const next = '/feed//../account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject traversal from suppliers to account', () => {
+      // Arrange
+      const next = '/suppliers/../account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject traversal from onboarding to account', () => {
+      // Arrange
+      const next = '/onboarding/../account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+  })
+
+  describe('case sensitivity attacks', () => {
+    it('should return the lowercase feed path', () => {
+      // Arrange
+      const next = '/Feed'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+      expect(result).toBe('/feed' satisfies AllowedNextPath)
+    })
+
+    it('should return the lowercase account path', () => {
+      // Arrange
+      const next = '/Account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+      expect(result).toBe('/account' satisfies AllowedNextPath)
+    })
+
+    it('should return the lowercase suppliers/register path', () => {
+      // Arrange
+      const next = '/Suppliers/register'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+      expect(result).toBe('/suppliers/register' satisfies AllowedNextPath)
+    })
+
+    it('should return the lowercase paths', () => {
+      // Arrange
+      const testCases = ['/FEED', '/FeEd', '/AcCoUnT', '/SUPPLIERS/regisTEr']
+
+      testCases.forEach((next) => {
+        // Act
+        const result = sanitizeNext(next)
+
+        // Assert
+        expect(isAllowedNextPath(result)).toBe(true)
+        expect(result).toBe(next.toLowerCase())
+      })
+    })
+  })
+
+  describe('whitespace and control character attacks', () => {
+    it('should reject leading whitespace', () => {
+      // Arrange
+      const next = ' /feed'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject trailing whitespace', () => {
+      // Arrange
+      const next = '/feed '
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject leading and trailing whitespace', () => {
+      // Arrange
+      const next = ' /feed '
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject newline characters', () => {
+      // Arrange
+      const next = '/feed\n/account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject tab characters', () => {
+      // Arrange
+      const next = '/feed\t/account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject null byte characters', () => {
+      // Arrange
+      const next = '/feed\0/account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject carriage return characters', () => {
+      // Arrange
+      const next = '/feed\r/account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+  })
+
+  describe('query parameter and fragment injection', () => {
+    it('should handle query parameters in allowed paths', () => {
+      // Arrange
+      const next = '/feed?test=1'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should handle query parameters with redirect attempts', () => {
+      // Arrange
+      const next = '/feed?redirect=https://evil.com'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should handle fragments in allowed paths', () => {
+      // Arrange
+      const next = '/feed#section'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should handle query parameters with nested next param', () => {
+      // Arrange
+      const next = '/feed?next=https://evil.com'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+  })
+
+  describe('path normalization edge cases', () => {
+    it('should handle trailing slashes', () => {
+      // Arrange
+      const next = '/feed/'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should handle double slashes', () => {
+      // Arrange
+      const next = '/feed//account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should handle current directory references', () => {
+      // Arrange
+      const next = '/feed/./account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should handle sub-paths of allowed paths', () => {
+      // Arrange
+      const next = '/feed/some/sub/path'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should handle suppliers sub-paths', () => {
+      // Arrange
+      const next = '/suppliers/register'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+  })
+
+  describe('URL encoding bypass attempts', () => {
+    it('should reject encoded feed path', () => {
+      // Arrange
+      const next = '%2Ffeed'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject encoded account path', () => {
+      // Arrange
+      const next = '%2Faccount'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject mixed encoding', () => {
+      // Arrange
+      const next = '%2f%66%65%65%64'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+  })
+
+  describe('path prefix confusion attacks', () => {
+    it('should reject paths that look like allowed paths but are not', () => {
+      // Arrange
+      const next = '/feed-extra'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject paths that start with allowed path but are malicious', () => {
+      // Arrange
+      const next = '/feed/../../account'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
+    })
+
+    it('should reject paths that bypass with similar names', () => {
+      // Arrange
+      const next = '/feedx'
+
+      // Act
+      const result = sanitizeNext(next)
+
+      // Assert
+      expect(isAllowedNextPath(result)).toBe(true)
     })
   })
 })
