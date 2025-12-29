@@ -56,7 +56,7 @@ export default function LoginWithEmailPasswordForm({ next }: { next: AllowedNext
               render={({ field }) => (
                 <FormFieldItem label="Email" htmlFor="email">
                   <FormControl>
-                    <Input {...field} placeholder="you@example.com" required />
+                    <Input {...field} placeholder="you@example.com" type="email" required />
                   </FormControl>
                 </FormFieldItem>
               )}
@@ -67,7 +67,7 @@ export default function LoginWithEmailPasswordForm({ next }: { next: AllowedNext
               render={({ field }) => (
                 <FormFieldItem label="Password" htmlFor="password">
                   <FormControl>
-                    <Input {...field} placeholder="Your password" required />
+                    <Input {...field} placeholder="Your password" type="password" required />
                   </FormControl>
                 </FormFieldItem>
               )}
