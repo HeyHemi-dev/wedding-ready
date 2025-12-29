@@ -457,7 +457,7 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should build a URL with search params from relative path', () => {
       // Arrange
-      const baseUrl = '/sign-in'
+      const relativeUrl = '/sign-in'
       const searchParams = {
         page: '1',
         limit: '10',
@@ -465,7 +465,7 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(relativeUrl, searchParams)
 
       // Assert
       const url = new URL(result)
@@ -569,13 +569,13 @@ describe('buildUrlWithSearchParams', () => {
   describe('replacing existing query parameters', () => {
     it('should replace existing query parameters', () => {
       // Arrange
-      const baseUrl = `${TEST_BASE_URL}?page=1&limit=10`
+      const relativeUrl = `${TEST_BASE_URL}?page=1&limit=10`
       const searchParams = {
         page: '2',
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(relativeUrl, searchParams)
 
       // Assert
       const url = new URL(result)
@@ -587,14 +587,14 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should replace existing query parameters and add new ones', () => {
       // Arrange
-      const baseUrl = `${TEST_BASE_URL}?page=1`
+      const relativeUrl = `${TEST_BASE_URL}?page=1`
       const searchParams = {
         page: '2',
         limit: '10',
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(relativeUrl, searchParams)
 
       // Assert
       const url = new URL(result)
@@ -606,14 +606,14 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should remove existing query parameters when set to undefined', () => {
       // Arrange
-      const baseUrl = `${TEST_BASE_URL}?page=1&limit=10`
+      const relativeUrl = `${TEST_BASE_URL}?page=1&limit=10`
       const searchParams = {
         page: undefined,
         limit: '20',
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(relativeUrl, searchParams)
 
       // Assert
       const url = new URL(result)
@@ -658,13 +658,13 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should replace existing single values with array values', () => {
       // Arrange
-      const baseUrl = `${TEST_BASE_URL}?tags=old`
+      const relativeUrl = `${TEST_BASE_URL}?tags=old`
       const searchParams = {
         tags: ['new1', 'new2'],
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(relativeUrl, searchParams)
 
       // Assert
       const url = new URL(result)
@@ -691,13 +691,13 @@ describe('buildUrlWithSearchParams', () => {
   describe('relative paths', () => {
     it('should handle relative path without existing query params', () => {
       // Arrange
-      const baseUrl = '/sign-in'
+      const relativeUrl = '/sign-in'
       const searchParams = {
         next: '/account',
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(relativeUrl, searchParams)
 
       // Assert
       const url = new URL(result)
@@ -707,13 +707,13 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should handle relative path with existing query params', () => {
       // Arrange
-      const baseUrl = '/sign-in?error=1'
+      const relativeUrl = '/sign-in?error=1'
       const searchParams = {
         next: '/account',
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(relativeUrl, searchParams)
 
       // Assert
       const url = new URL(result)
@@ -724,13 +724,13 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should handle relative path replacing existing params', () => {
       // Arrange
-      const baseUrl = '/sign-in?next=/old'
+      const relativeUrl = '/sign-in?next=/old'
       const searchParams = {
         next: '/new',
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(relativeUrl, searchParams)
 
       // Assert
       const url = new URL(result)
