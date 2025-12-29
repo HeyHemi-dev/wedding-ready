@@ -6,12 +6,12 @@ import { buildUrlWithSearchParams, getNextUrl, parseSearchParams, urlSearchParam
 import { PARAMS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
+import { MESSAGE_CODES } from '@/components/auth/auth-message'
 
 const codeSchema = z.object({ code: z.string().min(1) })
 
 export async function GET(request: Request) {
-  // The `/auth/callback` route is required for the server-side auth flow implemented
-  // by the SSR package. It exchanges an auth code for the user's session.
+  // The `/auth/callback` route is required for the server-side auth flow implemented by the SSR package. It exchanges an auth code for the user's session.
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   const { searchParams, origin } = new URL(request.url)
   const searchParamsObject = urlSearchParamsToObject(searchParams)
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
   if (!codeData) {
     return NextResponse.redirect(
       buildUrlWithSearchParams(`${origin}/sign-in`, {
-        [PARAMS.MESSAGE]: 'Invalid authentication request. Please try signing in again.',
+        [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.INVALID_AUTH_REQUEST,
         [PARAMS.MESSAGE_TYPE]: 'error',
         [PARAMS.NEXT]: next,
       })
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
     // Redirect to sign-in with error message using the established pattern
     return NextResponse.redirect(
       buildUrlWithSearchParams(`${origin}/sign-in`, {
-        [PARAMS.MESSAGE]: 'Authentication failed. Please try again.',
+        [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.AUTH_FAILED,
         [PARAMS.MESSAGE_TYPE]: 'error',
         [PARAMS.NEXT]: next,
       })
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
   if (getUserSignUpStatusError || !data) {
     return NextResponse.redirect(
       buildUrlWithSearchParams(`${origin}/sign-in`, {
-        [PARAMS.MESSAGE]: 'Authentication failed. Please try again.',
+        [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.AUTH_FAILED,
         [PARAMS.MESSAGE_TYPE]: 'error',
         [PARAMS.NEXT]: next,
       })
