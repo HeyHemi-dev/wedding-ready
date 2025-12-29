@@ -50,5 +50,5 @@ export const PROTECTED_PATHS = ['/account', '/suppliers/register', '/suppliers/:
 /**
  * Paths that are allowed to be redirected to using the NEXT parameter
  */
-export const ALLOWED_NEXT_PATHS = ['/feed', '/account', '/suppliers', '/onboarding'] as const
+export const ALLOWED_NEXT_PATHS = ['/feed', '/account', '/suppliers/register', '/onboarding'] as const
 export type AllowedNextPath = (typeof ALLOWED_NEXT_PATHS)[number]

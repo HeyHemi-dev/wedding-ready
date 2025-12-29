@@ -194,7 +194,10 @@ export const nextParamSchema = z.object({ [PARAMS.NEXT]: z.string() })
  */
 export function sanitizeNext(next: string | null | undefined): AllowedNextPath {
   if (!next) return '/feed'
-  if (!ALLOWED_NEXT_PATHS.some((p) => next === p || next.startsWith(p + '/'))) return '/feed'
+  next = next.toLowerCase()
+
+  // Only allow exact matches
+  if (!ALLOWED_NEXT_PATHS.includes(next as AllowedNextPath)) return '/feed'
 
   // Type assertion is safe because we have already checked that the next path is in the allowed paths
   return next as AllowedNextPath
