@@ -19,8 +19,7 @@ export default function LoginWithGoogleForm({ next }: { next: AllowedNextPath })
       toast.error(error.message)
       return
     }
-
-    toast.success('Logged in successfully')
+    // Redirect is handled by the auth callback route
   }
 
   return (
