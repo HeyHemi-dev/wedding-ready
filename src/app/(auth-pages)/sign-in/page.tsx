@@ -21,14 +21,12 @@ export default async function Login(props: { searchParams: Promise<SearchParams>
   const next = await getNextUrl(searchParams)
   const { data: message } = await tryCatch(parseSearchParams(searchParams, messageSchema))
 
-  {
-    return (
-      <AuthCard title="Log in to your Wedding Ready account">
-        <LoginWithGoogleForm next={next} />
-        <hr />
-        <LoginWithEmailPasswordForm next={next} />
-        {message && <AuthMessage message={message} />}
-      </AuthCard>
-    )
-  }
+  return (
+    <AuthCard title="Log in to your Wedding Ready account">
+      <LoginWithGoogleForm next={next} />
+      <hr />
+      <LoginWithEmailPasswordForm next={next} />
+      {message && <AuthMessage message={message} />}
+    </AuthCard>
+  )
 }
