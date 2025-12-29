@@ -11,7 +11,7 @@ import { buildUrlWithSearchParams } from './api-helpers'
  * @param {string} path - The path to redirect to.
  * @param {messageCode} message - The message code to be encoded and added as a query parameter.
  * @returns {never} This function doesn't return as it triggers a redirect.
- * @deprecated Use buildUrlWithSearchParams instead.
+ * @deprecated Use redirect/router with buildUrlWithSearchParams instead.
  */
 export function encodedRedirect(type: messageType, path: string, message: messageCode) {
   return redirect(
