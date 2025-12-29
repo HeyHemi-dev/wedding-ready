@@ -10,7 +10,7 @@ import { tryCatch } from '@/utils/try-catch'
 
 const codeSchema = z.object({ code: z.string().min(1) })
 
-export async function GET(request: Request) {
+export async function GET(request: Request): Promise<NextResponse> {
   // The `/auth/callback` route is required for the server-side auth flow implemented by the SSR package. It exchanges an auth code for the user's session.
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   const { searchParams, origin } = new URL(request.url)
