@@ -7,8 +7,10 @@ import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/
 import { userTilesGetRequestSchema, UserTilesGetRequest } from '@/app/api/users/[id]/tiles/types'
 import { TEST_ID } from '@/testing/scene'
 
-import { buildQueryParams, buildUrlWithSearchParams, getBaseUrl, getOrigin, parseQueryParams, sanitizeNext } from './api-helpers'
+import { buildQueryParams, buildUrlWithSearchParams, getBaseUrl, getOrigin, parseQueryParams, parseSearchParams, sanitizeNext } from './api-helpers'
 import { ALLOWED_NEXT_PATHS, AllowedNextPath, BASE_URL } from './constants'
+
+import type { SearchParams } from '@/app/_types/generics'
 
 const TEST_BASE_URL = 'https://example.com/api' as const
 
@@ -764,7 +766,249 @@ describe('buildUrlWithSearchParams', () => {
   })
 })
 
-describe('parseSearchParams', () => {})
+describe('parseSearchParams', () => {
+  it('should parse search params with valid schema', async () => {
+    // Arrange
+    const schema = z.object({
+      page: z.string().optional(),
+      limit: z.string().optional(),
+      search: z.string().optional(),
+    })
+    const searchParams = {
+      page: '1',
+      limit: '10',
+      search: 'test',
+    } satisfies z.infer<typeof schema>
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({
+      page: '1',
+      limit: '10',
+      search: 'test',
+    })
+  })
+
+  it('should set undefined for missing search params', async () => {
+    // Arrange
+    const schema = z.object({
+      page: z.string().optional(),
+      limit: z.string().optional(),
+      search: z.string().optional(),
+    })
+    const searchParams = {
+      page: '1',
+    } satisfies z.infer<typeof schema>
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({
+      page: '1',
+      limit: undefined,
+      search: undefined,
+    })
+  })
+
+  it('should handle empty search params object', async () => {
+    // Arrange
+    const schema = z.object({
+      page: z.string().optional(),
+      limit: z.string().optional(),
+    })
+    const searchParams: SearchParams = {}
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({
+      page: undefined,
+      limit: undefined,
+    })
+  })
+
+  it('should validate required fields and throw on missing values', async () => {
+    // Arrange
+    const schema = z.object({
+      page: z.string(),
+      limit: z.string(),
+    })
+    const searchParams = {
+      page: '1',
+    } satisfies Partial<z.infer<typeof schema>>
+
+    // Act & Assert
+    await expect(parseSearchParams(searchParams, schema)).rejects.toThrow()
+  })
+
+  it('should handle Zod transformations', async () => {
+    // Arrange
+    const schema = z.object({
+      page: z.string().transform((val) => parseInt(val, 10)),
+      limit: z.string().transform((val) => parseInt(val, 10)),
+    })
+    const searchParams: SearchParams = {
+      page: '1',
+      limit: '10',
+    }
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({
+      page: 1,
+      limit: 10,
+    })
+  })
+
+  it('should handle default values in schema', async () => {
+    // Arrange
+    const schema = z.object({
+      page: z.string().default('1'),
+      limit: z.string().default('10'),
+    })
+    const searchParams: SearchParams = {}
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({
+      page: '1',
+      limit: '10',
+    })
+  })
+
+  it('should handle boolean-like string values', async () => {
+    // Arrange
+    const schema = z.object({
+      active: z.string().optional(),
+      published: z.string().optional(),
+    })
+    const searchParams = {
+      active: 'true',
+      published: 'false',
+    } satisfies z.infer<typeof schema>
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({ active: 'true', published: 'false' })
+  })
+
+  it('should handle URL-decoded values (e.g. spaces and ampersands)', async () => {
+    // Arrange
+    const schema = z.object({
+      search: z.string().optional(),
+      filter: z.string().optional(),
+    })
+    const searchParams = {
+      search: 'hello world',
+      filter: 'test&value',
+    } satisfies z.infer<typeof schema>
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({
+      search: 'hello world',
+      filter: 'test&value',
+    })
+  })
+
+  it('should only parse parameters defined in schema (allow-list)', async () => {
+    // Arrange
+    const schema = z.object({
+      page: z.string().optional(),
+    })
+    const searchParams = {
+      page: '1',
+      limit: '10',
+      extra: 'value',
+    } satisfies SearchParams
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({ page: '1' })
+  })
+
+  it('should handle empty string values', async () => {
+    // Arrange
+    const schema = z.object({
+      search: z.string().optional(),
+      filter: z.string().optional(),
+    })
+    const searchParams = {
+      search: '',
+      filter: 'test',
+    } satisfies z.infer<typeof schema>
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({
+      search: '',
+      filter: 'test',
+    })
+  })
+
+  it('should throw validation error for invalid schema values', async () => {
+    // Arrange
+    const schema = z.object({
+      page: z.string().regex(/^\d+$/),
+      limit: z.string().optional(),
+    })
+    const searchParams = {
+      page: 'abc',
+      limit: '10',
+    } satisfies SearchParams
+
+    // Act & Assert
+    await expect(parseSearchParams(searchParams, schema)).rejects.toThrow()
+  })
+
+  it('should support array values for params', async () => {
+    // Arrange
+    const schema = z.object({
+      tags: z.array(z.string()).optional(),
+    })
+    const searchParams = {
+      tags: ['wedding', 'photography'],
+    } satisfies SearchParams
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({ tags: ['wedding', 'photography'] })
+  })
+
+  it('should treat non-string and non-array values as undefined', async () => {
+    // Arrange
+    const schema = z.object({
+      page: z.string().optional(),
+    })
+    const searchParams = {
+      page: 123,
+    } as unknown as SearchParams
+
+    // Act
+    const result = await parseSearchParams(searchParams, schema)
+
+    // Assert
+    expect(result).toEqual({ page: undefined })
+  })
+})
 
 const isAllowedNextPath = (path: string) => ALLOWED_NEXT_PATHS.includes(path as AllowedNextPath)
 
