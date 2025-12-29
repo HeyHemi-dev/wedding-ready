@@ -11,6 +11,7 @@ import { buildQueryParams, buildUrlWithSearchParams, parseQueryParams, sanitizeN
 import { ALLOWED_NEXT_PATHS, AllowedNextPath } from './constants'
 
 const URL_BASE = 'https://example.com/api' as const
+const URL_RELATIVE = '/api' as const
 
 describe('buildQueryParams', () => {
   it('should build query string from multiple parameters', () => {
@@ -433,6 +434,329 @@ describe('route schema integration', () => {
     })
   })
 })
+
+describe('buildUrlWithSearchParams', () => {
+  describe('basic functionality', () => {
+    it('should build a URL with search params from absolute URL', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api'
+      const searchParams = {
+        page: '1',
+        limit: '10',
+        search: 'test',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.searchParams.get('page')).toBe('1')
+      expect(url.searchParams.get('limit')).toBe('10')
+      expect(url.searchParams.get('search')).toBe('test')
+    })
+
+    it('should build a URL with search params from relative path', () => {
+      // Arrange
+      const baseUrl = '/sign-in'
+      const searchParams = {
+        page: '1',
+        limit: '10',
+        search: 'test',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.pathname).toBe('/sign-in')
+      expect(url.searchParams.get('page')).toBe('1')
+      expect(url.searchParams.get('limit')).toBe('10')
+      expect(url.searchParams.get('search')).toBe('test')
+    })
+
+    it('should exclude undefined values from the URL', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api'
+      const searchParams = {
+        page: '1',
+        limit: undefined,
+        search: 'test',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.searchParams.get('page')).toBe('1')
+      expect(url.searchParams.get('search')).toBe('test')
+      expect(url.searchParams.has('limit')).toBe(false)
+    })
+
+    it('should handle empty params object', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api'
+      const searchParams = {}
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      expect(result).toBe('https://example.com/api')
+    })
+
+    it('should handle single parameter', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api'
+      const searchParams = {
+        page: '1',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      expect(result).toBe('https://example.com/api?page=1')
+    })
+
+    it('should handle all undefined values', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api'
+      const searchParams = {
+        page: undefined,
+        limit: undefined,
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      expect(result).toBe('https://example.com/api')
+    })
+
+    it('should encode special characters in values', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api'
+      const searchParams = {
+        search: 'hello world',
+        filter: 'test&value',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.searchParams.get('search')).toBe('hello world')
+      expect(url.searchParams.get('filter')).toBe('test&value')
+    })
+
+    it('should handle empty string values', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api'
+      const searchParams = {
+        page: '',
+        limit: '10',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.searchParams.get('page')).toBe('')
+      expect(url.searchParams.get('limit')).toBe('10')
+    })
+  })
+
+  describe('replacing existing query parameters', () => {
+    it('should replace existing query parameters', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api?page=1&limit=10'
+      const searchParams = {
+        page: '2',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.searchParams.get('page')).toBe('2')
+      expect(url.searchParams.get('limit')).toBe('10')
+      expect(url.searchParams.getAll('page')).toEqual(['2']) // Ensure no duplicates
+      expect(url.searchParams.getAll('limit')).toEqual(['10'])
+    })
+
+    it('should replace existing query parameters and add new ones', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api?page=1'
+      const searchParams = {
+        page: '2',
+        limit: '10',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.searchParams.get('page')).toBe('2')
+      expect(url.searchParams.get('limit')).toBe('10')
+      expect(url.searchParams.getAll('page')).toEqual(['2'])
+      expect(url.searchParams.getAll('limit')).toEqual(['10'])
+    })
+
+    it('should remove existing query parameters when set to undefined', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api?page=1&limit=10'
+      const searchParams = {
+        page: undefined,
+        limit: '20',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.searchParams.has('page')).toBe(false)
+      expect(url.searchParams.get('limit')).toBe('20')
+      expect(url.searchParams.getAll('limit')).toEqual(['20'])
+    })
+  })
+
+  describe('array values', () => {
+    it('should handle array values for repeated parameters', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api'
+      const searchParams = {
+        tags: ['wedding', 'photography', 'venue'],
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.searchParams.getAll('tags')).toEqual(['wedding', 'photography', 'venue'])
+    })
+
+    it('should handle array values with other parameters', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api'
+      const searchParams = {
+        page: '1',
+        tags: ['wedding', 'photography'],
+        limit: '10',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.searchParams.get('page')).toBe('1')
+      expect(url.searchParams.getAll('tags')).toEqual(['wedding', 'photography'])
+      expect(url.searchParams.get('limit')).toBe('10')
+    })
+
+    it('should replace existing single values with array values', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api?tags=old'
+      const searchParams = {
+        tags: ['new1', 'new2'],
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.searchParams.getAll('tags')).toEqual(['new1', 'new2'])
+    })
+
+    it('should handle empty array', () => {
+      // Arrange
+      const baseUrl = 'https://example.com/api'
+      const searchParams = {
+        tags: [],
+        page: '1',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.searchParams.getAll('tags')).toEqual([])
+      expect(url.searchParams.get('page')).toBe('1')
+    })
+  })
+
+  describe('relative paths', () => {
+    it('should handle relative path without existing query params', () => {
+      // Arrange
+      const baseUrl = '/sign-in'
+      const searchParams = {
+        next: '/account',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.pathname).toBe('/sign-in')
+      expect(url.searchParams.get('next')).toBe('/account')
+    })
+
+    it('should handle relative path with existing query params', () => {
+      // Arrange
+      const baseUrl = '/sign-in?error=1'
+      const searchParams = {
+        next: '/account',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.pathname).toBe('/sign-in')
+      expect(url.searchParams.get('error')).toBe('1')
+      expect(url.searchParams.get('next')).toBe('/account')
+    })
+
+    it('should handle relative path replacing existing params', () => {
+      // Arrange
+      const baseUrl = '/sign-in?next=/old'
+      const searchParams = {
+        next: '/new',
+      }
+
+      // Act
+      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+
+      // Assert
+      const url = new URL(result)
+      expect(url.pathname).toBe('/sign-in')
+      expect(url.searchParams.get('next')).toBe('/new')
+      expect(url.searchParams.getAll('next')).toEqual(['/new'])
+    })
+  })
+})
+
+describe('parseSearchParams', () => {})
 
 const isAllowedNextPath = (path: string) => ALLOWED_NEXT_PATHS.includes(path as AllowedNextPath)
 
