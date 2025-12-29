@@ -7,7 +7,16 @@ import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/
 import { userTilesGetRequestSchema, UserTilesGetRequest } from '@/app/api/users/[id]/tiles/types'
 import { TEST_ID } from '@/testing/scene'
 
-import { buildQueryParams, buildUrlWithSearchParams, getBaseUrl, getOrigin, parseQueryParams, parseSearchParams, sanitizeNext } from './api-helpers'
+import {
+  buildQueryParams,
+  buildUrlWithSearchParams,
+  getBaseUrl,
+  getOrigin,
+  parseQueryParams,
+  parseSearchParams,
+  sanitizeNext,
+  urlSearchParamsToObject,
+} from './api-helpers'
 import { ALLOWED_NEXT_PATHS, AllowedNextPath, BASE_URL } from './constants'
 
 import type { SearchParams } from '@/app/_types/generics'
@@ -951,6 +960,8 @@ describe('parseSearchParams', () => {
 
     it('should treat empty arrays as present-but-empty for array params', async () => {
       // Arrange
+      // NOTE: This is essentially impossible for real URL search params, because query strings cannot represent an empty list without a sentinel (e.g. `tags=` or `tags=__empty__`).
+      // We keep this as a defensive test for callers who may construct SearchParams objects directly.
       const schema = z.object({
         tags: z.array(z.string()).optional(),
       })
@@ -1086,6 +1097,140 @@ describe('parseSearchParams', () => {
         search: 'hello world',
         filter: 'test&value',
       })
+    })
+  })
+})
+
+describe('buildUrlWithSearchParams + parse (round trip)', () => {
+  describe('parseSearchParams round trip (URL -> Next.js searchParams object -> schema)', () => {
+    it('should round trip multiple params', async () => {
+      // Arrange
+      const schema = z.object({
+        page: z.string().optional(),
+        limit: z.string().optional(),
+        search: z.string().optional(),
+      })
+      const input = {
+        page: '1',
+        limit: '10',
+        search: 'test',
+      }
+
+      // Act
+      const built = buildUrlWithSearchParams(TEST_BASE_URL, input)
+      const url = new URL(built)
+      const searchParamsObject = urlSearchParamsToObject(url.searchParams)
+      const parsed = await parseSearchParams(searchParamsObject, schema)
+
+      // Assert
+      expect(parsed).toEqual(input)
+    })
+
+    it('should round trip and omit undefined values', async () => {
+      // Arrange
+      const schema = z.object({
+        page: z.string().optional(),
+        limit: z.string().optional(),
+        search: z.string().optional(),
+      })
+      const input = {
+        page: '1',
+        limit: undefined,
+        search: 'test',
+      } as const
+
+      // Act
+      const built = buildUrlWithSearchParams(TEST_BASE_URL, input)
+      const url = new URL(built)
+      const searchParamsObject = urlSearchParamsToObject(url.searchParams)
+      const parsed = await parseSearchParams(searchParamsObject, schema)
+
+      // Assert
+      expect(parsed).toEqual({
+        page: '1',
+        limit: undefined,
+        search: 'test',
+      })
+    })
+
+    it('should round trip empty strings', async () => {
+      // Arrange
+      const schema = z.object({
+        page: z.string().optional(),
+        limit: z.string().optional(),
+      })
+      const input = {
+        page: '',
+        limit: '10',
+      }
+
+      // Act
+      const built = buildUrlWithSearchParams(TEST_BASE_URL, input)
+      const url = new URL(built)
+      const searchParamsObject = urlSearchParamsToObject(url.searchParams)
+      const parsed = await parseSearchParams(searchParamsObject, schema)
+
+      // Assert
+      expect(parsed).toEqual(input)
+    })
+
+    it('should round trip values containing spaces and ampersands', async () => {
+      // Arrange
+      const schema = z.object({
+        search: z.string().optional(),
+        filter: z.string().optional(),
+      })
+      const input = {
+        search: 'hello world',
+        filter: 'test&value',
+      }
+
+      // Act
+      const built = buildUrlWithSearchParams(TEST_BASE_URL, input)
+      const url = new URL(built)
+      const searchParamsObject = urlSearchParamsToObject(url.searchParams)
+      const parsed = await parseSearchParams(searchParamsObject, schema)
+
+      // Assert
+      expect(parsed).toEqual(input)
+    })
+
+    it('should round trip and preserve arrays for repeated params', async () => {
+      // Arrange
+      const schema = z.object({
+        tags: z.array(z.string()),
+      })
+      const input = {
+        tags: ['wedding', 'photography', 'venue'],
+      }
+
+      // Act
+      const built = buildUrlWithSearchParams(TEST_BASE_URL, input)
+      const url = new URL(built)
+      const searchParamsObject = urlSearchParamsToObject(url.searchParams)
+      const parsed = await parseSearchParams(searchParamsObject, schema)
+
+      // Assert
+      expect(parsed).toEqual(input)
+    })
+
+    it('should round trip and omit empty arrays (empty list cannot be represented in a query string)', async () => {
+      // Arrange
+      const schema = z.object({
+        tags: z.array(z.string()).optional(),
+      })
+      const input = {
+        tags: [],
+      }
+
+      // Act
+      const built = buildUrlWithSearchParams(TEST_BASE_URL, input)
+      const url = new URL(built)
+      const searchParamsObject = urlSearchParamsToObject(url.searchParams)
+      const parsed = await parseSearchParams(searchParamsObject, schema)
+
+      // Assert
+      expect(parsed).toEqual({ tags: undefined })
     })
   })
 })
