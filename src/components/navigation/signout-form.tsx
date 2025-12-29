@@ -8,9 +8,10 @@ import { toast } from 'sonner'
 import { queryKeys } from '@/app/_types/keys'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { Form } from '@/components/ui/form'
+import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
 
-import { SignOutFormAction } from './signout-form-action'
+import { handleSupabaseSignOut } from '../auth/auth-handlers'
 
 export function SignOutFormMenuItem({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -19,7 +20,7 @@ export function SignOutFormMenuItem({ children }: { children: React.ReactNode })
   const queryClient = useQueryClient()
 
   async function onSubmit() {
-    const { data, error } = await tryCatch(SignOutFormAction({ next: pathname }))
+    const { data, error } = await tryCatch(handleSupabaseSignOut(browserSupabase, pathname))
     if (error) {
       toast.error(error.message)
       return
@@ -27,11 +28,8 @@ export function SignOutFormMenuItem({ children }: { children: React.ReactNode })
     queryClient.removeQueries({
       queryKey: queryKeys.authUser(),
     })
-    if (data.redirectTo !== pathname) {
-      router.push(data.redirectTo)
-    }
-    router.refresh()
-    toast.success('You have beeen signed out')
+    toast.success('You have been signed out')
+    router.push(data.next)
   }
 
   return (

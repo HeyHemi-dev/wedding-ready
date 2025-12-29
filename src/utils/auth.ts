@@ -4,9 +4,11 @@ import { redirect } from 'next/navigation'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
+import { buildUrlWithSearchParams, sanitizeNext } from '@/utils/api-helpers'
 import { PARAMS, HEADERS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
+
 
 /**
  * Gets the authenticated user's ID from request headers.
@@ -35,22 +37,23 @@ type RequireVerifiedAuthOptions = {
 export async function requireVerifiedAuth(options?: RequireVerifiedAuthOptions): Promise<{
   authUserId: string
 }> {
+  const next = sanitizeNext(options?.redirectAfterOnboarding)
   const authUserId = await getAuthUserId()
   if (!authUserId) {
-    redirect('/sign-in')
+    redirect(buildUrlWithSearchParams('/sign-in', { [PARAMS.NEXT]: next }))
   }
 
   const supabase = await createClient()
   const { data, error } = await tryCatch(authOperations.getUserSignUpStatus(supabase))
 
   if (error || !data) {
-    redirect('/sign-in')
+    redirect(buildUrlWithSearchParams('/sign-in', { [PARAMS.NEXT]: next }))
   }
   if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
-    redirect('/check-inbox')
+    redirect('/sign-up/check-inbox')
   }
   if (data.status !== SIGN_UP_STATUS.ONBOARDED) {
-    redirect(`/onboarding${options?.redirectAfterOnboarding && `?${PARAMS.NEXT}=${encodeURIComponent(options.redirectAfterOnboarding)}`}`)
+    redirect(buildUrlWithSearchParams(`/onboarding`, { [PARAMS.NEXT]: next }))
   }
 
   return { authUserId }

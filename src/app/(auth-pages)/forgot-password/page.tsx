@@ -1,15 +1,15 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import Field from '@/components/form/field'
-import { FormMessage, Message } from '@/components/form/form-message'
-import { SubmitButton } from '@/components/submit-button'
-import { Input } from '@/components/ui/input'
+import { SearchParams } from '@/app/_types/generics'
+import { AuthMessage, messageSchema } from '@/components/auth/auth-message'
+import { parseSearchParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
+import { tryCatch } from '@/utils/try-catch'
 
-import { forgotPasswordFormAction } from './forgot-password-form-action'
+import ForgotPasswordForm from './forgot-password-form'
 
-export default async function ForgotPassword(props: { searchParams: Promise<Message> }) {
+export default async function ForgotPassword(props: { searchParams: Promise<SearchParams> }) {
   // If user is already logged in, they don't need to be here.
   const authUserId = await getAuthUserId()
   if (authUserId) {
@@ -17,6 +17,7 @@ export default async function ForgotPassword(props: { searchParams: Promise<Mess
   }
 
   const searchParams = await props.searchParams
+  const { data: message } = await tryCatch(parseSearchParams(searchParams, messageSchema))
 
   return (
     <>
@@ -29,13 +30,8 @@ export default async function ForgotPassword(props: { searchParams: Promise<Mess
           </Link>
         </p>
       </div>
-      <form action={forgotPasswordFormAction} className="grid gap-close-friend">
-        <Field label="Email" htmlFor="email">
-          <Input name="email" placeholder="you@example.com" required />
-        </Field>
-        <SubmitButton>Reset Password</SubmitButton>
-        <FormMessage message={searchParams} />
-      </form>
+      <ForgotPasswordForm />
+      {message && <AuthMessage message={message} />}
     </>
   )
 }

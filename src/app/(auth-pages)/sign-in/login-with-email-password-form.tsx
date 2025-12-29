@@ -7,24 +7,23 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-import { UserSignupForm, userSignupFormSchema } from '@/app/_types/validation-schema'
-import { handleSupabaseSignUpWithPassword } from '@/components/auth/auth-handlers'
+import { UserSigninForm, userSigninFormSchema } from '@/app/_types/validation-schema'
+import { handleSupabaseSignInWithPassword } from '@/components/auth/auth-handlers'
 import { AuthOptionsButton } from '@/components/auth/auth-options-button'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { buildUrlWithSearchParams } from '@/utils/api-helpers'
-import { AllowedNextPath, PARAMS } from '@/utils/constants'
+import { AllowedNextPath } from '@/utils/constants'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
 
-export default function SignUpWithEmailPasswordForm({ next }: { next: AllowedNextPath }) {
+export default function LoginWithEmailPasswordForm({ next }: { next: AllowedNextPath }) {
   const router = useRouter()
   const [showForm, setShowForm] = React.useState(false)
   const hasRunAutoFocus = React.useRef(false)
-  const form = useForm<UserSignupForm>({
-    resolver: zodResolver(userSignupFormSchema),
+  const form = useForm<UserSigninForm>({
+    resolver: zodResolver(userSigninFormSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -38,29 +37,27 @@ export default function SignUpWithEmailPasswordForm({ next }: { next: AllowedNex
     form.setFocus('email')
   }, [form, showForm])
 
-  async function onSubmit(data: UserSignupForm) {
-    const { error } = await tryCatch(handleSupabaseSignUpWithPassword(browserSupabase, data))
-
+  async function onSubmit(data: UserSigninForm) {
+    const { error } = await tryCatch(handleSupabaseSignInWithPassword(browserSupabase, data))
     if (error) {
       toast.error(error.message)
       return
     }
 
-    toast.success("We've sent you an email with a link to verify your account. If you don't see it, check your spam folder.")
-
-    router.push(buildUrlWithSearchParams('/sign-up/check-inbox', { [PARAMS.NEXT]: next }))
+    toast.success('Logged in successfully')
+    router.push(next)
   }
 
   return (
     <Form {...form}>
       {showForm ? (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-close-friend">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-friend">
           <div className="grid gap-sibling">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormFieldItem label="Email">
+                <FormFieldItem label="Email" htmlFor="email">
                   <FormControl>
                     <Input {...field} placeholder="you@example.com" type="email" required />
                   </FormControl>
@@ -71,7 +68,7 @@ export default function SignUpWithEmailPasswordForm({ next }: { next: AllowedNex
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormFieldItem label="Password">
+                <FormFieldItem label="Password" htmlFor="password">
                   <FormControl>
                     <Input {...field} placeholder="Your password" type="password" required />
                   </FormControl>
@@ -79,8 +76,7 @@ export default function SignUpWithEmailPasswordForm({ next }: { next: AllowedNex
               )}
             />
           </div>
-
-          <SubmitButton pendingChildren={'Signing Up...'}>Sign Up</SubmitButton>
+          <SubmitButton pendingChildren={'Logging In...'}>Log In</SubmitButton>
         </form>
       ) : (
         <AuthOptionsButton

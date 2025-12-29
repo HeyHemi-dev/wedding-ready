@@ -1,16 +1,16 @@
-import { headers } from 'next/headers'
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import Field from '@/components/form/field'
-import { FormMessage, Message } from '@/components/form/form-message'
-import { SubmitButton } from '@/components/submit-button'
-import { Input } from '@/components/ui/input'
+import { SearchParams } from '@/app/_types/generics'
+import { AuthCard } from '@/components/auth/auth-card'
+import { AuthMessage, messageSchema } from '@/components/auth/auth-message'
+import { getNextUrl, parseSearchParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
+import { tryCatch } from '@/utils/try-catch'
 
-import { signInFormAction } from './signin-form-action'
+import LoginWithEmailPasswordForm from './login-with-email-password-form'
+import LoginWithGoogleForm from './login-with-google-form'
 
-export default async function Login(props: { searchParams: Promise<Message> }) {
+export default async function Login(props: { searchParams: Promise<SearchParams> }) {
   // If user is already logged in, they don't need to be here.
   const authUserId = await getAuthUserId()
   if (authUserId) {
@@ -18,36 +18,15 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
   }
 
   const searchParams = await props.searchParams
-  const headersList = await headers()
-  const referer = headersList.get('referer') || '/feed'
+  const next = await getNextUrl(searchParams)
+  const { data: message } = await tryCatch(parseSearchParams(searchParams, messageSchema))
 
   return (
-    <>
-      <div className="grid gap-spouse">
-        <h1 className="heading-md">Log in</h1>
-        <p className="ui-small">
-          Don&apos;t have an account?{' '}
-          <Link className="ui-small-s1 text-primary-foreground underline" href="/sign-up">
-            Sign up
-          </Link>
-        </p>
-      </div>
-      <form action={signInFormAction} className="grid gap-close-friend">
-        <div className="grid gap-sibling">
-          <Field label="Email" htmlFor="email">
-            <Input name="email" placeholder="you@example.com" required />
-          </Field>
-          <Field label="Password" htmlFor="password">
-            <Input type="password" name="password" placeholder="Your password" required />
-            <Link className="self-end text-xs text-foreground underline" href="/forgot-password">
-              Forgot Password?
-            </Link>
-          </Field>
-          <Input type="hidden" name="redirectTo" value={referer} />
-        </div>
-        <SubmitButton pendingChildren={'Signing In...'}>Log In</SubmitButton>
-        <FormMessage message={searchParams} />
-      </form>
-    </>
+    <AuthCard title="Log in to your Wedding Ready account">
+      <LoginWithGoogleForm next={next} />
+      <hr />
+      <LoginWithEmailPasswordForm next={next} />
+      {message && <AuthMessage message={message} />}
+    </AuthCard>
   )
 }

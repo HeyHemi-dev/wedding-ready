@@ -1,12 +1,16 @@
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { FormMessage, Message } from '@/components/form/form-message'
+import LoginWithGoogleForm from '@/app/(auth-pages)/sign-in/login-with-google-form'
+import { SearchParams } from '@/app/_types/generics'
+import { AuthCard } from '@/components/auth/auth-card'
+import { AuthMessage, messageSchema } from '@/components/auth/auth-message'
+import { getNextUrl, parseSearchParams } from '@/utils/api-helpers'
 import { getAuthUserId } from '@/utils/auth'
+import { tryCatch } from '@/utils/try-catch'
 
-import SignUpForm from './signup-form'
+import SignUpWithEmailPasswordForm from './signup-form'
 
-export default async function Signup(props: { searchParams: Promise<Message> }) {
+export default async function Signup(props: { searchParams: Promise<SearchParams> }) {
   // If user is already logged in, they don't need to be here.
   const authUserId = await getAuthUserId()
   if (authUserId) {
@@ -14,20 +18,15 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
   }
 
   const searchParams = await props.searchParams
+  const next = await getNextUrl(searchParams)
+  const { data: message } = await tryCatch(parseSearchParams(searchParams, messageSchema))
 
   return (
-    <>
-      <div className="grid gap-spouse">
-        <h1 className="heading-md">Sign up</h1>
-        <p className="ui-small">
-          Already have an account?{' '}
-          <Link className="ui-small-s1 text-primary-foreground underline" href="/sign-in">
-            Log in
-          </Link>
-        </p>
-      </div>
-      <SignUpForm />
-      <FormMessage message={searchParams} />
-    </>
+    <AuthCard title="Sign up for your Wedding Ready account">
+      <LoginWithGoogleForm next={next} />
+      <hr />
+      <SignUpWithEmailPasswordForm next={next} />
+      {message && <AuthMessage message={message} />}
+    </AuthCard>
   )
 }

@@ -13,11 +13,14 @@ import { HEADERS } from './utils/constants'
 export async function middleware(request: NextRequest) {
   const { response, user } = await updateSession(request)
 
-  // Only set the auth user header if we have one.
+  // SECURITY: Always set or delete the auth user header to prevent client spoofing.
   // If we try to get the header later on and it doesn't exist then next/headers will return null.
-  // `sub` means subject, is the unique ID of the user represented by the token.
   if (user) {
+    // `sub` means subject, is the unique ID of the user represented by the token.
     response.headers.set(HEADERS.AUTH_USER_ID, user.sub)
+  } else {
+    // Explicitly delete any client-sent header to prevent spoofing
+    response.headers.delete(HEADERS.AUTH_USER_ID)
   }
 
   // Handle protected routes - redirect unauthenticated users to sign-in

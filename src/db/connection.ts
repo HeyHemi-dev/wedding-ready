@@ -10,8 +10,9 @@ if (!process.env.VERCEL_ENV || process.env.VERCEL_ENV === 'development') {
   config({ path: '.env.local', override: true })
 }
 
+// DATABASE_URL includes the connection password. It is not safe to log this in the console.
 const connectionString = process.env.DATABASE_URL!
-console.log('Attempting to connect with:', connectionString)
+console.log('Attempting to connect with drizzle client')
 
 export const client = postgres(connectionString, {
   prepare: false, // Required for transaction pool mode

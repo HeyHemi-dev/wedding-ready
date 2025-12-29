@@ -8,11 +8,12 @@ import { PARAMS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
-import OnboardingForm from './onboarding-form'
+import { ResendForm } from './resend-form'
 
-export default async function OnboardingPage(props: { searchParams: Promise<SearchParams> }) {
+export default async function CheckInboxPage(props: { searchParams: Promise<SearchParams> }) {
   const searchParams = await props.searchParams
   const next = await getNextUrl(searchParams)
+
   const supabase = await createClient()
   const { data, error } = await tryCatch(authOperations.getUserSignUpStatus(supabase))
   if (error)
@@ -20,24 +21,30 @@ export default async function OnboardingPage(props: { searchParams: Promise<Sear
       buildUrlWithSearchParams('/sign-in', {
         [PARAMS.MESSAGE_TYPE]: 'error',
         [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.AUTH_FAILED,
-        [PARAMS.NEXT]: '/onboarding',
+        [PARAMS.NEXT]: next,
       })
     )
   if (!data) redirect('/sign-in')
 
-  // Check email verification
-  if (data.status === SIGN_UP_STATUS.UNVERIFIED) redirect('/sign-up/check-inbox')
+  if (data.status === SIGN_UP_STATUS.UNVERIFIED) {
+    return (
+      <>
+        <div className="grid gap-spouse text-center">
+          <h1 className="heading-md">{`You've got mail!`}</h1>
+          <p className="ui-small">
+            {`We've sent a confirmation to ${data.email}. Please click the link in the email to verify your account. If you don't see it, check your spam folder.`}
+          </p>
+        </div>
+        <div className="flex flex-col gap-sibling">
+          <ResendForm />
+        </div>
+      </>
+    )
+  }
 
-  // Check if profile already exists
-  if (data.status === SIGN_UP_STATUS.ONBOARDED) redirect(next)
-
-  return (
-    <>
-      <div className="grid gap-spouse">
-        <h1 className="heading-md">Complete your profile</h1>
-        <p className="ui-small">Just a few more details to get started.</p>
-      </div>
-      <OnboardingForm next={next} />
-    </>
-  )
+  if (data.status === SIGN_UP_STATUS.ONBOARDED) {
+    redirect(next)
+  } else {
+    redirect(buildUrlWithSearchParams(`/onboarding`, { [PARAMS.NEXT]: next }))
+  }
 }
