@@ -913,6 +913,23 @@ describe('parseSearchParams', () => {
       // Assert
       expect(result).toEqual({ page: '1' })
     })
+
+    it('should ignore extra parameters even when they are arrays', async () => {
+      // Arrange
+      const schema = z.object({
+        page: z.string().optional(),
+      })
+      const searchParams = {
+        page: '1',
+        tags: ['wedding', 'photography'],
+      } satisfies SearchParams
+
+      // Act
+      const result = await parseSearchParams(searchParams, schema)
+
+      // Assert
+      expect(result).toEqual({ page: '1' })
+    })
   })
 
   describe('type handling', () => {
@@ -930,6 +947,22 @@ describe('parseSearchParams', () => {
 
       // Assert
       expect(result).toEqual({ tags: ['wedding', 'photography'] })
+    })
+
+    it('should treat empty arrays as present-but-empty for array params', async () => {
+      // Arrange
+      const schema = z.object({
+        tags: z.array(z.string()).optional(),
+      })
+      const searchParams = {
+        tags: [],
+      } satisfies SearchParams
+
+      // Act
+      const result = await parseSearchParams(searchParams, schema)
+
+      // Assert
+      expect(result).toEqual({ tags: [] })
     })
 
     it('should treat non-string and non-array values as undefined', async () => {
@@ -973,6 +1006,32 @@ describe('parseSearchParams', () => {
       const searchParams = {
         page: 'abc',
         limit: '10',
+      } satisfies SearchParams
+
+      // Act & Assert
+      await expect(parseSearchParams(searchParams, schema)).rejects.toThrow()
+    })
+
+    it('should throw if schema expects string but search param is an array', async () => {
+      // Arrange
+      const schema = z.object({
+        page: z.string(),
+      })
+      const searchParams = {
+        page: ['1', '2'],
+      } satisfies SearchParams
+
+      // Act & Assert
+      await expect(parseSearchParams(searchParams, schema)).rejects.toThrow()
+    })
+
+    it('should throw if schema expects array but search param is a string', async () => {
+      // Arrange
+      const schema = z.object({
+        tags: z.array(z.string()),
+      })
+      const searchParams = {
+        tags: 'wedding',
       } satisfies SearchParams
 
       // Act & Assert
