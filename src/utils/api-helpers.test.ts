@@ -11,7 +11,9 @@ import {
   buildQueryParams,
   buildUrlWithSearchParams,
   getBaseUrl,
+  getNextUrl,
   getOrigin,
+  nextParamSchema,
   parseQueryParams,
   parseSearchParams,
   sanitizeNext,
@@ -1230,6 +1232,65 @@ describe('roundtrip: build -> URL -> object -> parse', () => {
 
     // Assert
     expect(parsed).toEqual({ tags: undefined })
+  })
+
+  describe('nextParamSchema', () => {
+    it('should handle roundtrip with valid next', async () => {
+      // Arrange
+      const next = '/account' satisfies AllowedNextPath
+
+      // Act
+      const built = buildUrlWithSearchParams(TEST_BASE_URL, { next } satisfies SearchParams)
+      const url = new URL(built)
+      const searchParamsObject = urlSearchParamsToObject(url.searchParams)
+      const parsed = await getNextUrl(searchParamsObject)
+
+      // Assert
+      expect(isAllowedNextPath(parsed)).toBe(true)
+      expect(parsed).toBe(next)
+    })
+
+    it('should return the default next path when next is not in the allowed paths', async () => {
+      // Arrange
+      const next = '/not-allowed'
+
+      // Act
+      const built = buildUrlWithSearchParams(TEST_BASE_URL, { next } satisfies SearchParams)
+      const url = new URL(built)
+      const searchParamsObject = urlSearchParamsToObject(url.searchParams)
+      const parsed = await getNextUrl(searchParamsObject)
+
+      // Assert
+      expect(isAllowedNextPath(parsed)).toBe(true)
+      expect(parsed).not.toBe(next)
+    })
+
+    it('should return the default next path when next is missing after roundtrip', async () => {
+      // Arrange
+      const next = undefined
+
+      // Act
+      const built = buildUrlWithSearchParams(TEST_BASE_URL, { next } satisfies SearchParams)
+      const url = new URL(built)
+      const searchParamsObject = urlSearchParamsToObject(url.searchParams)
+      const parsed = await getNextUrl(searchParamsObject)
+
+      // Assert
+      expect(isAllowedNextPath(parsed)).toBe(true)
+      expect(parsed).not.toBe(next)
+    })
+
+    it('should return the default next path when next appears multiple times in the URL', async () => {
+      // Arrange
+      const url = new URL(`${TEST_BASE_URL}?next=/account&next=/feed`)
+
+      // Act
+      const searchParamsObject = urlSearchParamsToObject(url.searchParams)
+      const parsed = await getNextUrl(searchParamsObject)
+
+      // Assert
+      expect(isAllowedNextPath(parsed)).toBe(true)
+    })
   })
 
   describe('feedGetRequestSchema', () => {
