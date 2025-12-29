@@ -16,24 +16,11 @@ import { Form, FormControl, FormField } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { browserSupabase } from '@/utils/supabase/client'
 import { tryCatch } from '@/utils/try-catch'
+import { AllowedNextPath } from '@/utils/constants'
 
-export function LoginWithEmailPasswordFormButton() {
-  const [showForm, setShowForm] = React.useState(false)
-  return (
-    <>
-      {showForm ? (
-        <LoginWithEmailPasswordForm />
-      ) : (
-        <AuthOptionsButton onClick={() => setShowForm(!showForm)} icon="email">
-          Continue with email and password
-        </AuthOptionsButton>
-      )}
-    </>
-  )
-}
-
-export default function LoginWithEmailPasswordForm() {
+export default function LoginWithEmailPasswordForm({ next }: { next: AllowedNextPath }) {
   const router = useRouter()
+  const [showForm, setShowForm] = React.useState(false)
   const form = useForm<UserSigninForm>({
     resolver: zodResolver(userSigninFormSchema),
     defaultValues: {
@@ -55,38 +42,44 @@ export default function LoginWithEmailPasswordForm() {
     }
 
     toast.success('Logged in successfully')
-    router.push('/feed')
+    router.push(next)
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-friend">
-        <div className="grid gap-sibling">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormFieldItem label="Email" htmlFor="email">
-                <FormControl>
-                  <Input {...field} placeholder="you@example.com" required />
-                </FormControl>
-              </FormFieldItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormFieldItem label="Password" htmlFor="password">
-                <FormControl>
-                  <Input {...field} placeholder="Your password" required />
-                </FormControl>
-              </FormFieldItem>
-            )}
-          />
-        </div>
-        <SubmitButton pendingChildren={'Logging In...'}>Log In</SubmitButton>
-      </form>
+      {showForm ? (
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-friend">
+          <div className="grid gap-sibling">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormFieldItem label="Email" htmlFor="email">
+                  <FormControl>
+                    <Input {...field} placeholder="you@example.com" required />
+                  </FormControl>
+                </FormFieldItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormFieldItem label="Password" htmlFor="password">
+                  <FormControl>
+                    <Input {...field} placeholder="Your password" required />
+                  </FormControl>
+                </FormFieldItem>
+              )}
+            />
+          </div>
+          <SubmitButton pendingChildren={'Logging In...'}>Log In</SubmitButton>
+        </form>
+      ) : (
+        <AuthOptionsButton onClick={() => setShowForm(!showForm)} icon="email">
+          Continue with email and password
+        </AuthOptionsButton>
+      )}
     </Form>
   )
 }
