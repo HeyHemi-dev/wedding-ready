@@ -439,7 +439,6 @@ describe('buildUrlWithSearchParams', () => {
   describe('basic functionality', () => {
     it('should build a URL with search params from absolute URL', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api'
       const searchParams = {
         page: '1',
         limit: '10',
@@ -447,11 +446,11 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('1')
       expect(url.searchParams.get('limit')).toBe('10')
       expect(url.searchParams.get('search')).toBe('test')
@@ -479,7 +478,6 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should exclude undefined values from the URL', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api'
       const searchParams = {
         page: '1',
         limit: undefined,
@@ -487,11 +485,11 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('1')
       expect(url.searchParams.get('search')).toBe('test')
       expect(url.searchParams.has('limit')).toBe(false)
@@ -499,77 +497,74 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should handle empty params object', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api'
       const searchParams = {}
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
 
       // Assert
-      expect(result).toBe('https://example.com/api')
+      expect(result).toBe(URL_BASE)
     })
 
     it('should handle single parameter', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api'
       const searchParams = {
         page: '1',
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
 
       // Assert
-      expect(result).toBe('https://example.com/api?page=1')
+      const url = new URL(result)
+      expect(url.origin + url.pathname).toBe(URL_BASE)
+      expect(url.searchParams.get('page')).toBe('1')
     })
 
     it('should handle all undefined values', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api'
       const searchParams = {
         page: undefined,
         limit: undefined,
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
 
       // Assert
-      expect(result).toBe('https://example.com/api')
+      expect(result).toBe(URL_BASE)
     })
 
     it('should encode special characters in values', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api'
       const searchParams = {
         search: 'hello world',
         filter: 'test&value',
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('search')).toBe('hello world')
       expect(url.searchParams.get('filter')).toBe('test&value')
     })
 
     it('should handle empty string values', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api'
       const searchParams = {
         page: '',
         limit: '10',
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('')
       expect(url.searchParams.get('limit')).toBe('10')
     })
@@ -578,7 +573,7 @@ describe('buildUrlWithSearchParams', () => {
   describe('replacing existing query parameters', () => {
     it('should replace existing query parameters', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api?page=1&limit=10'
+      const baseUrl = `${URL_BASE}?page=1&limit=10`
       const searchParams = {
         page: '2',
       }
@@ -588,7 +583,7 @@ describe('buildUrlWithSearchParams', () => {
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('2')
       expect(url.searchParams.get('limit')).toBe('10')
       expect(url.searchParams.getAll('page')).toEqual(['2']) // Ensure no duplicates
@@ -597,7 +592,7 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should replace existing query parameters and add new ones', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api?page=1'
+      const baseUrl = `${URL_BASE}?page=1`
       const searchParams = {
         page: '2',
         limit: '10',
@@ -608,7 +603,7 @@ describe('buildUrlWithSearchParams', () => {
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('2')
       expect(url.searchParams.get('limit')).toBe('10')
       expect(url.searchParams.getAll('page')).toEqual(['2'])
@@ -617,7 +612,7 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should remove existing query parameters when set to undefined', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api?page=1&limit=10'
+      const baseUrl = `${URL_BASE}?page=1&limit=10`
       const searchParams = {
         page: undefined,
         limit: '20',
@@ -628,7 +623,7 @@ describe('buildUrlWithSearchParams', () => {
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe('https://example.com/api')
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.has('page')).toBe(false)
       expect(url.searchParams.get('limit')).toBe('20')
       expect(url.searchParams.getAll('limit')).toEqual(['20'])
@@ -638,22 +633,21 @@ describe('buildUrlWithSearchParams', () => {
   describe('array values', () => {
     it('should handle array values for repeated parameters', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api'
       const searchParams = {
         tags: ['wedding', 'photography', 'venue'],
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
 
       // Assert
       const url = new URL(result)
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.getAll('tags')).toEqual(['wedding', 'photography', 'venue'])
     })
 
     it('should handle array values with other parameters', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api'
       const searchParams = {
         page: '1',
         tags: ['wedding', 'photography'],
@@ -661,10 +655,11 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
 
       // Assert
       const url = new URL(result)
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('1')
       expect(url.searchParams.getAll('tags')).toEqual(['wedding', 'photography'])
       expect(url.searchParams.get('limit')).toBe('10')
@@ -672,7 +667,7 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should replace existing single values with array values', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api?tags=old'
+      const baseUrl = `${URL_BASE}?tags=old`
       const searchParams = {
         tags: ['new1', 'new2'],
       }
@@ -682,22 +677,23 @@ describe('buildUrlWithSearchParams', () => {
 
       // Assert
       const url = new URL(result)
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.getAll('tags')).toEqual(['new1', 'new2'])
     })
 
     it('should handle empty array', () => {
       // Arrange
-      const baseUrl = 'https://example.com/api'
       const searchParams = {
         tags: [],
         page: '1',
       }
 
       // Act
-      const result = buildUrlWithSearchParams(baseUrl, searchParams)
+      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
 
       // Assert
       const url = new URL(result)
+      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.getAll('tags')).toEqual([])
       expect(url.searchParams.get('page')).toBe('1')
     })
