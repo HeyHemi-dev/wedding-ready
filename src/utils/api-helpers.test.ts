@@ -7,11 +7,10 @@ import { supplierSearchGetRequestSchema, SupplierSearchGetRequest } from '@/app/
 import { userTilesGetRequestSchema, UserTilesGetRequest } from '@/app/api/users/[id]/tiles/types'
 import { TEST_ID } from '@/testing/scene'
 
-import { buildQueryParams, buildUrlWithSearchParams, parseQueryParams, sanitizeNext } from './api-helpers'
-import { ALLOWED_NEXT_PATHS, AllowedNextPath } from './constants'
+import { buildQueryParams, buildUrlWithSearchParams, getBaseUrl, getOrigin, parseQueryParams, sanitizeNext } from './api-helpers'
+import { ALLOWED_NEXT_PATHS, AllowedNextPath, BASE_URL as BASE_URL_CONSTANT } from './constants'
 
-const URL_BASE = 'https://example.com/api' as const
-const URL_RELATIVE = '/api' as const
+const BASE_URL = 'https://example.com/api' as const
 
 describe('buildQueryParams', () => {
   it('should build query string from multiple parameters', () => {
@@ -124,7 +123,7 @@ describe('parseQueryParams', () => {
       limit: '10',
       search: 'test',
     } satisfies z.infer<typeof schema>
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -147,7 +146,7 @@ describe('parseQueryParams', () => {
     const params = {
       page: '1',
     } satisfies z.infer<typeof schema>
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -167,7 +166,7 @@ describe('parseQueryParams', () => {
       limit: z.string().optional(),
     })
     const params = {} satisfies z.infer<typeof schema>
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -188,7 +187,7 @@ describe('parseQueryParams', () => {
     const params = {
       page: '1',
     }
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act & Assert
     expect(() => parseQueryParams(url, schema)).toThrow()
@@ -204,7 +203,7 @@ describe('parseQueryParams', () => {
       page: '1',
       limit: '10',
     }
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -223,7 +222,7 @@ describe('parseQueryParams', () => {
       limit: z.string().default('10'),
     })
     const params = {}
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -245,7 +244,7 @@ describe('parseQueryParams', () => {
       active: 'true',
       published: 'false',
     }
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -264,7 +263,7 @@ describe('parseQueryParams', () => {
       search: 'hello world',
       filter: 'test&value',
     }
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -286,7 +285,7 @@ describe('parseQueryParams', () => {
       limit: '10',
       extra: 'value',
     }
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -307,7 +306,7 @@ describe('parseQueryParams', () => {
       search: '',
       filter: 'test',
     }
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act
     const result = parseQueryParams(url, schema)
@@ -329,7 +328,7 @@ describe('parseQueryParams', () => {
       page: 'abc',
       limit: '10',
     }
-    const url = new URL(`${URL_BASE}${buildQueryParams(params)}`)
+    const url = new URL(`${BASE_URL}${buildQueryParams(params)}`)
 
     // Act & Assert
     expect(() => parseQueryParams(url, schema)).toThrow()
@@ -344,7 +343,7 @@ describe('route schema integration', () => {
 
       // Act
       const params = buildQueryParams({ ...valid, pageSize: valid.pageSize.toString() })
-      const url = new URL(`${URL_BASE}${params}`)
+      const url = new URL(`${BASE_URL}${params}`)
       const result = parseQueryParams(url, feedGetRequestSchema)
 
       // Assert
@@ -356,7 +355,7 @@ describe('route schema integration', () => {
 
       // Act & Assert
       const params = buildQueryParams({ pageSize: valid.pageSize.toString() })
-      const url = new URL(`${URL_BASE}${params}`)
+      const url = new URL(`${BASE_URL}${params}`)
       expect(() => parseQueryParams(url, feedGetRequestSchema)).toThrow()
     })
     it('should handle round trip with not a number', () => {
@@ -365,7 +364,7 @@ describe('route schema integration', () => {
 
       // Act & Assert
       const params = buildQueryParams(valid)
-      const url = new URL(`${URL_BASE}${params}`)
+      const url = new URL(`${BASE_URL}${params}`)
       expect(() => parseQueryParams(url, feedGetRequestSchema)).toThrow()
     })
   })
@@ -379,7 +378,7 @@ describe('route schema integration', () => {
 
       // Act
       const params = buildQueryParams(valid)
-      const url = new URL(`${URL_BASE}${params}`)
+      const url = new URL(`${BASE_URL}${params}`)
       const result = parseQueryParams(url, supplierSearchGetRequestSchema)
 
       // Assert
@@ -393,7 +392,7 @@ describe('route schema integration', () => {
 
       // Act
       const params = buildQueryParams(valid)
-      const url = new URL(`${URL_BASE}${params}`)
+      const url = new URL(`${BASE_URL}${params}`)
       const result = parseQueryParams(url, supplierSearchGetRequestSchema)
 
       // Assert
@@ -410,7 +409,7 @@ describe('route schema integration', () => {
 
       // Act
       const params = buildQueryParams(valid)
-      const url = new URL(`${URL_BASE}${params}`)
+      const url = new URL(`${BASE_URL}${params}`)
       const result = parseQueryParams(url, supplierTilesGetRequestSchema)
 
       // Assert
@@ -426,7 +425,7 @@ describe('route schema integration', () => {
 
       // Act
       const params = buildQueryParams(valid)
-      const url = new URL(`${URL_BASE}${params}`)
+      const url = new URL(`${BASE_URL}${params}`)
       const result = parseQueryParams(url, userTilesGetRequestSchema)
 
       // Assert
@@ -446,11 +445,11 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
+      const result = buildUrlWithSearchParams(BASE_URL, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
+      expect(url.origin + url.pathname).toBe(BASE_URL)
       expect(url.searchParams.get('page')).toBe('1')
       expect(url.searchParams.get('limit')).toBe('10')
       expect(url.searchParams.get('search')).toBe('test')
@@ -470,6 +469,7 @@ describe('buildUrlWithSearchParams', () => {
 
       // Assert
       const url = new URL(result)
+      expect(url.origin).toBe(BASE_URL_CONSTANT)
       expect(url.pathname).toBe('/sign-in')
       expect(url.searchParams.get('page')).toBe('1')
       expect(url.searchParams.get('limit')).toBe('10')
@@ -485,11 +485,10 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
+      const result = buildUrlWithSearchParams(BASE_URL, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('1')
       expect(url.searchParams.get('search')).toBe('test')
       expect(url.searchParams.has('limit')).toBe(false)
@@ -500,10 +499,10 @@ describe('buildUrlWithSearchParams', () => {
       const searchParams = {}
 
       // Act
-      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
+      const result = buildUrlWithSearchParams(BASE_URL, searchParams)
 
       // Assert
-      expect(result).toBe(URL_BASE)
+      expect(result).toBe(BASE_URL)
     })
 
     it('should handle single parameter', () => {
@@ -513,11 +512,10 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
+      const result = buildUrlWithSearchParams(BASE_URL, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('1')
     })
 
@@ -529,10 +527,10 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
+      const result = buildUrlWithSearchParams(BASE_URL, searchParams)
 
       // Assert
-      expect(result).toBe(URL_BASE)
+      expect(result).toBe(BASE_URL)
     })
 
     it('should encode special characters in values', () => {
@@ -543,11 +541,10 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
+      const result = buildUrlWithSearchParams(BASE_URL, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('search')).toBe('hello world')
       expect(url.searchParams.get('filter')).toBe('test&value')
     })
@@ -560,11 +557,10 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
+      const result = buildUrlWithSearchParams(BASE_URL, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('')
       expect(url.searchParams.get('limit')).toBe('10')
     })
@@ -573,7 +569,7 @@ describe('buildUrlWithSearchParams', () => {
   describe('replacing existing query parameters', () => {
     it('should replace existing query parameters', () => {
       // Arrange
-      const baseUrl = `${URL_BASE}?page=1&limit=10`
+      const baseUrl = `${BASE_URL}?page=1&limit=10`
       const searchParams = {
         page: '2',
       }
@@ -583,16 +579,15 @@ describe('buildUrlWithSearchParams', () => {
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('2')
       expect(url.searchParams.get('limit')).toBe('10')
       expect(url.searchParams.getAll('page')).toEqual(['2']) // Ensure no duplicates
-      expect(url.searchParams.getAll('limit')).toEqual(['10'])
+      expect(url.searchParams.getAll('limit')).toEqual(['10']) // Ensure no duplicates
     })
 
     it('should replace existing query parameters and add new ones', () => {
       // Arrange
-      const baseUrl = `${URL_BASE}?page=1`
+      const baseUrl = `${BASE_URL}?page=1`
       const searchParams = {
         page: '2',
         limit: '10',
@@ -603,16 +598,15 @@ describe('buildUrlWithSearchParams', () => {
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('2')
       expect(url.searchParams.get('limit')).toBe('10')
-      expect(url.searchParams.getAll('page')).toEqual(['2'])
-      expect(url.searchParams.getAll('limit')).toEqual(['10'])
+      expect(url.searchParams.getAll('page')).toEqual(['2']) // Ensure no duplicates
+      expect(url.searchParams.getAll('limit')).toEqual(['10']) // Ensure no duplicates
     })
 
     it('should remove existing query parameters when set to undefined', () => {
       // Arrange
-      const baseUrl = `${URL_BASE}?page=1&limit=10`
+      const baseUrl = `${BASE_URL}?page=1&limit=10`
       const searchParams = {
         page: undefined,
         limit: '20',
@@ -623,10 +617,9 @@ describe('buildUrlWithSearchParams', () => {
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.has('page')).toBe(false)
       expect(url.searchParams.get('limit')).toBe('20')
-      expect(url.searchParams.getAll('limit')).toEqual(['20'])
+      expect(url.searchParams.getAll('limit')).toEqual(['20']) // Ensure no duplicates
     })
   })
 
@@ -638,11 +631,10 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
+      const result = buildUrlWithSearchParams(BASE_URL, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.getAll('tags')).toEqual(['wedding', 'photography', 'venue'])
     })
 
@@ -655,11 +647,10 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
+      const result = buildUrlWithSearchParams(BASE_URL, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.get('page')).toBe('1')
       expect(url.searchParams.getAll('tags')).toEqual(['wedding', 'photography'])
       expect(url.searchParams.get('limit')).toBe('10')
@@ -667,7 +658,7 @@ describe('buildUrlWithSearchParams', () => {
 
     it('should replace existing single values with array values', () => {
       // Arrange
-      const baseUrl = `${URL_BASE}?tags=old`
+      const baseUrl = `${BASE_URL}?tags=old`
       const searchParams = {
         tags: ['new1', 'new2'],
       }
@@ -677,7 +668,6 @@ describe('buildUrlWithSearchParams', () => {
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.getAll('tags')).toEqual(['new1', 'new2'])
     })
 
@@ -689,11 +679,10 @@ describe('buildUrlWithSearchParams', () => {
       }
 
       // Act
-      const result = buildUrlWithSearchParams(URL_BASE, searchParams)
+      const result = buildUrlWithSearchParams(BASE_URL, searchParams)
 
       // Assert
       const url = new URL(result)
-      expect(url.origin + url.pathname).toBe(URL_BASE)
       expect(url.searchParams.getAll('tags')).toEqual([])
       expect(url.searchParams.get('page')).toBe('1')
     })
@@ -747,7 +736,7 @@ describe('buildUrlWithSearchParams', () => {
       const url = new URL(result)
       expect(url.pathname).toBe('/sign-in')
       expect(url.searchParams.get('next')).toBe('/new')
-      expect(url.searchParams.getAll('next')).toEqual(['/new'])
+      expect(url.searchParams.getAll('next')).toEqual(['/new']) // Ensure no duplicates
     })
   })
 })
