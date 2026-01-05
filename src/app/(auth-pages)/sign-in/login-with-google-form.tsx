@@ -25,7 +25,7 @@ export default function LoginWithGoogleForm({ next }: { next: AllowedNextPath })
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <AuthOptionsButton type="submit" disabled={form.formState.isSubmitting} icon={'google'}>
+        <AuthOptionsButton type="submit" disabled={form.formState.isSubmitting} icon="google" method="google">
           Continue with Google
         </AuthOptionsButton>
       </form>

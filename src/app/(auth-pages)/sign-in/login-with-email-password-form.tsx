@@ -81,6 +81,7 @@ export default function LoginWithEmailPasswordForm({ next }: { next: AllowedNext
       ) : (
         <AuthOptionsButton
           icon="email"
+          method="email"
           onClick={() => {
             setShowForm(true)
           }}>
