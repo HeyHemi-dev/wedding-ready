@@ -8,7 +8,7 @@ import { PARAMS, SIGN_IN_METHODS } from '@/utils/constants'
 import { emptyStringToNull } from '@/utils/empty-strings'
 import { saveLastSignInMethod } from '@/utils/local-storage'
 import { logger } from '@/utils/logger'
-import { tryCatch } from '@/utils/try-catch'
+import { tryCatchSync } from '@/utils/try-catch'
 
 export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseClient, data: UserSignupForm): Promise<{ id: string }> {
   // No need for zod validation, the schema is already validated by RHF
@@ -26,10 +26,7 @@ export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseC
   }
 
   // Save last sign-in method (non-critical, fail silently)
-  const { error: saveMethodError } = await tryCatch(saveLastSignInMethod(SIGN_IN_METHODS.EMAIL))
-  if (saveMethodError) {
-    logger.error('auth.save_sign_in_method_failed', { error: saveMethodError })
-  }
+  saveLastSignInMethod(SIGN_IN_METHODS.EMAIL)
 
   return { id: authData.user.id }
 }
@@ -55,10 +52,7 @@ export async function handleSupabaseSignInWithPassword(supabaseClient: SupabaseC
   }
 
   // Save last sign-in method (non-critical, fail silently)
-  const { error: saveMethodError } = await tryCatch(saveLastSignInMethod(SIGN_IN_METHODS.EMAIL))
-  if (saveMethodError) {
-    logger.error('auth.save_sign_in_method_failed', { error: saveMethodError })
-  }
+  saveLastSignInMethod(SIGN_IN_METHODS.EMAIL)
 
   return { authUserId: authData.user.id }
 }
@@ -77,10 +71,7 @@ export async function handleSupabaseSignInWithGoogle(supabaseClient: SupabaseCli
   }
 
   // Save last sign-in method (non-critical, fail silently)
-  const { error: saveMethodError } = await tryCatch(saveLastSignInMethod(SIGN_IN_METHODS.GOOGLE))
-  if (saveMethodError) {
-    logger.error('auth.save_sign_in_method_failed', { error: saveMethodError })
-  }
+  saveLastSignInMethod(SIGN_IN_METHODS.GOOGLE)
 
   return
 }
