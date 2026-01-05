@@ -31,12 +31,6 @@ export function AuthOptionsButton({ children, icon, method, ...props }: AuthOpti
 
   const isLastUsed = lastSignInMethod === method
 
-  const getMethodDisplayName = (method: SignInMethod): string => {
-    if (method === SIGN_IN_METHODS.EMAIL) return 'email'
-    if (method === SIGN_IN_METHODS.GOOGLE) return 'Google'
-    return method
-  }
-
   return (
     <div className="grid gap-xs">
       <Button variant={'outline'} className="relative grid w-full grid-cols-[1fr_auto_1fr] gap-sibling p-2" {...props}>
@@ -46,4 +40,10 @@ export function AuthOptionsButton({ children, icon, method, ...props }: AuthOpti
       {isLastUsed && <p className="ui-small text-center text-muted-foreground">Last signed in with {getMethodDisplayName(method)}</p>}
     </div>
   )
+}
+
+function getMethodDisplayName(method: SignInMethod): string {
+  if (method === SIGN_IN_METHODS.EMAIL) return 'email'
+  if (method === SIGN_IN_METHODS.GOOGLE) return 'Google'
+  return method
 }
