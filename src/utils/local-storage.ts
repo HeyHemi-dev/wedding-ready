@@ -2,6 +2,7 @@ import { isClient } from '@/utils/api-helpers'
 import { tryCatchSync } from '@/utils/try-catch'
 
 import { LOCAL_STORAGE_KEYS, SignInMethod, SIGN_IN_METHODS } from './constants'
+import { logger } from '@/utils/logger'
 
 /**
  * Saves the last sign-in method to localStorage.
@@ -14,6 +15,10 @@ export function saveLastSignInMethod(method: SignInMethod): void {
   const { error } = tryCatchSync(() => {
     localStorage.setItem(LOCAL_STORAGE_KEYS.LAST_SIGN_IN_METHOD, method)
   })
+
+  if (error) {
+    logger.error('local-storage.save_last_sign_in_method_failed', { error })
+  }
   // Silently fail - error is ignored
 }
 
