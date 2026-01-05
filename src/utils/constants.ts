@@ -34,9 +34,16 @@ export const HEADERS = {
   AUTH_IS_ONBOARDED: 'x-auth-is-onboarded',
 } as const
 
+export const SIGN_IN_METHODS = {
+  EMAIL: 'email',
+  GOOGLE: 'google',
+} as const
+export type SignInMethod = (typeof SIGN_IN_METHODS)[keyof typeof SIGN_IN_METHODS]
+
 export const LOCAL_STORAGE_KEYS = {
   RESEND_EMAIL_COOLDOWN_ENDS_AT: RESEND_EMAIL_COOLDOWN_ENDS_AT_STORAGE_KEY,
   LAST_SIGN_IN_WITH: 'last-sign-in-with',
+  LAST_SIGN_IN_METHOD: 'last-sign-in-method',
 } as const
 
 /**
