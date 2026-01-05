@@ -1,9 +1,13 @@
+'use client'
+
 import React from 'react'
 
 import { MailIcon } from 'lucide-react'
 
 import { AppleIcon, GoogleIcon, MicrosoftIcon } from '@/components/icons'
 import { Button } from '@/components/ui/button'
+import { SignInMethod, SIGN_IN_METHODS } from '@/utils/constants'
+import { getLastSignInMethod } from '@/utils/local-storage'
 
 const iconVariants = {
   google: <GoogleIcon />,
@@ -11,17 +15,35 @@ const iconVariants = {
   microsoft: <MicrosoftIcon />,
   email: <MailIcon className="h-4 w-4" />,
 }
+type iconKey = keyof typeof iconVariants
 
 export interface AuthOptionsButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  icon: keyof typeof iconVariants
+  icon: iconKey
+  method: SignInMethod
 }
 
-export const AuthOptionsButton = React.forwardRef<HTMLButtonElement, AuthOptionsButtonProps>(({ children, icon, ...props }, ref) => {
+export function AuthOptionsButton({ children, icon, method, ...props }: AuthOptionsButtonProps) {
+  const [lastSignInMethod, setLastSignInMethod] = React.useState<SignInMethod | null>(null)
+
+  React.useEffect(() => {
+    setLastSignInMethod(getLastSignInMethod())
+  }, [])
+
+  const isLastUsed = lastSignInMethod === method
+
+  const getMethodDisplayName = (method: SignInMethod): string => {
+    if (method === SIGN_IN_METHODS.EMAIL) return 'email'
+    if (method === SIGN_IN_METHODS.GOOGLE) return 'Google'
+    return method
+  }
+
   return (
-    <Button variant={'outline'} className="relative grid w-full grid-cols-[1fr_auto_1fr] gap-sibling p-2" ref={ref} {...props}>
-      {iconVariants[icon]}
-      <div className="text-center">{children}</div>
-    </Button>
+    <div className="grid gap-xs">
+      <Button variant={'outline'} className="relative grid w-full grid-cols-[1fr_auto_1fr] gap-sibling p-2" {...props}>
+        {iconVariants[icon]}
+        <div className="text-center">{children}</div>
+      </Button>
+      {isLastUsed && <p className="ui-small text-center text-muted-foreground">Last signed in with {getMethodDisplayName(method)}</p>}
+    </div>
   )
-})
-AuthOptionsButton.displayName = 'AuthOptionsButton'
+}
