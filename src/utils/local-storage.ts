@@ -1,8 +1,8 @@
 import { isClient } from '@/utils/api-helpers'
+import { logger } from '@/utils/logger'
 import { tryCatchSync } from '@/utils/try-catch'
 
 import { LOCAL_STORAGE_KEYS, SignInMethod, SIGN_IN_METHODS } from './constants'
-import { logger } from '@/utils/logger'
 
 /**
  * Saves the last sign-in method to localStorage.

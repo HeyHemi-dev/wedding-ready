@@ -8,7 +8,6 @@ import { PARAMS, SIGN_IN_METHODS } from '@/utils/constants'
 import { emptyStringToNull } from '@/utils/empty-strings'
 import { saveLastSignInMethod } from '@/utils/local-storage'
 import { logger } from '@/utils/logger'
-import { tryCatchSync } from '@/utils/try-catch'
 
 export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseClient, data: UserSignupForm): Promise<{ id: string }> {
   // No need for zod validation, the schema is already validated by RHF
