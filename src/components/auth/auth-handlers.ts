@@ -4,9 +4,11 @@ import { OPERATION_ERROR } from '@/app/_types/errors'
 import { UserForgotPasswordForm, UserResetPasswordForm, UserSigninForm, UserSignupForm } from '@/app/_types/validation-schema'
 import { isProtectedPath } from '@/middleware-helpers'
 import { getOrigin } from '@/utils/api-helpers'
-import { PARAMS } from '@/utils/constants'
+import { PARAMS, SIGN_IN_METHODS } from '@/utils/constants'
 import { emptyStringToNull } from '@/utils/empty-strings'
+import { saveLastSignInMethod } from '@/utils/local-storage'
 import { logger } from '@/utils/logger'
+import { tryCatch } from '@/utils/try-catch'
 
 export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseClient, data: UserSignupForm): Promise<{ id: string }> {
   // No need for zod validation, the schema is already validated by RHF
@@ -21,6 +23,12 @@ export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseC
       message: error?.message,
     })
     throw OPERATION_ERROR.DATABASE_ERROR('Failed to create user')
+  }
+
+  // Save last sign-in method (non-critical, fail silently)
+  const { error: saveMethodError } = await tryCatch(saveLastSignInMethod(SIGN_IN_METHODS.EMAIL))
+  if (saveMethodError) {
+    logger.error('auth.save_sign_in_method_failed', { error: saveMethodError })
   }
 
   return { id: authData.user.id }
@@ -46,6 +54,12 @@ export async function handleSupabaseSignInWithPassword(supabaseClient: SupabaseC
     throw OPERATION_ERROR.INVALID_STATE('Failed to sign in')
   }
 
+  // Save last sign-in method (non-critical, fail silently)
+  const { error: saveMethodError } = await tryCatch(saveLastSignInMethod(SIGN_IN_METHODS.EMAIL))
+  if (saveMethodError) {
+    logger.error('auth.save_sign_in_method_failed', { error: saveMethodError })
+  }
+
   return { authUserId: authData.user.id }
 }
 
@@ -60,6 +74,12 @@ export async function handleSupabaseSignInWithGoogle(supabaseClient: SupabaseCli
 
   if (error) {
     throw OPERATION_ERROR.INVALID_STATE(error.message)
+  }
+
+  // Save last sign-in method (non-critical, fail silently)
+  const { error: saveMethodError } = await tryCatch(saveLastSignInMethod(SIGN_IN_METHODS.GOOGLE))
+  if (saveMethodError) {
+    logger.error('auth.save_sign_in_method_failed', { error: saveMethodError })
   }
 
   return
