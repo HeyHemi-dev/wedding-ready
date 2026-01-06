@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { handleSupabaseSignInWithGoogle } from '@/components/auth/auth-handlers'
-import { AuthOptionsButton } from '@/components/auth/auth-options-button'
+import { AuthMethodButton } from '@/components/auth/auth-method-button'
 import { Form } from '@/components/ui/form'
 import { AllowedNextPath } from '@/utils/constants'
 import { browserSupabase } from '@/utils/supabase/client'
@@ -25,9 +25,9 @@ export default function LoginWithGoogleForm({ next }: { next: AllowedNextPath })
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <AuthOptionsButton type="submit" disabled={form.formState.isSubmitting} icon="google" method="google">
+        <AuthMethodButton type="submit" disabled={form.formState.isSubmitting} icon="google" method="google">
           Continue with Google
-        </AuthOptionsButton>
+        </AuthMethodButton>
       </form>
     </Form>
   )

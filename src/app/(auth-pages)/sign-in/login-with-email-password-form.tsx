@@ -9,7 +9,7 @@ import { toast } from 'sonner'
 
 import { UserSigninForm, userSigninFormSchema } from '@/app/_types/validation-schema'
 import { handleSupabaseSignInWithPassword } from '@/components/auth/auth-handlers'
-import { AuthOptionsButton } from '@/components/auth/auth-options-button'
+import { AuthMethodButton } from '@/components/auth/auth-method-button'
 import { FormFieldItem } from '@/components/form/field'
 import { SubmitButton } from '@/components/submit-button'
 import { Form, FormControl, FormField } from '@/components/ui/form'
@@ -79,14 +79,14 @@ export default function LoginWithEmailPasswordForm({ next }: { next: AllowedNext
           <SubmitButton pendingChildren={'Logging In...'}>Log In</SubmitButton>
         </form>
       ) : (
-        <AuthOptionsButton
+        <AuthMethodButton
           icon="email"
           method="email"
           onClick={() => {
             setShowForm(true)
           }}>
           Continue with email and password
-        </AuthOptionsButton>
+        </AuthMethodButton>
       )}
     </Form>
   )

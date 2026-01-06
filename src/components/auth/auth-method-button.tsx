@@ -17,12 +17,12 @@ const iconVariants = {
 }
 type IconKey = keyof typeof iconVariants
 
-export interface AuthOptionsButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface AuthMethodButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon: IconKey
   method: SignInMethod
 }
 
-export function AuthOptionsButton({ children, icon, method, ...props }: AuthOptionsButtonProps) {
+export function AuthMethodButton({ children, icon, method, ...props }: AuthMethodButtonProps) {
   const [lastSignInMethod, setLastSignInMethod] = React.useState<SignInMethod | null>(null)
 
   React.useEffect(() => {
