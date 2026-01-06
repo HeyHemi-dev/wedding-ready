@@ -21,6 +21,9 @@ export const PARAMS = {
 
   // message code using AuthMessage
   AUTH_MESSAGE_CODE: 'auth_code',
+
+  // oauth provider indicator for post-auth client-side handling
+  OAUTH_PROVIDER: 'oauth_provider',
 } as const
 
 export const HEADERS = {
