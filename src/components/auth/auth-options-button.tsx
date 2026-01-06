@@ -15,10 +15,10 @@ const iconVariants = {
   microsoft: <MicrosoftIcon />,
   email: <MailIcon className="h-4 w-4" />,
 }
-type iconKey = keyof typeof iconVariants
+type IconKey = keyof typeof iconVariants
 
 export interface AuthOptionsButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  icon: iconKey
+  icon: IconKey
   method: SignInMethod
 }
 
