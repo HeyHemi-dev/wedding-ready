@@ -15,6 +15,7 @@ import {
   getNextUrl,
   parseQueryParams,
   parseSearchParams,
+  removeSearchParam,
   sanitizeNext,
   urlSearchParamsToObject,
 } from './api-helpers'
@@ -770,6 +771,50 @@ describe('buildUrlWithSearchParams', () => {
       expect(url.searchParams.get('next')).toBe('/new')
       expect(url.searchParams.getAll('next')).toEqual(['/new'])
     })
+  })
+})
+
+describe('removeSearchParam', () => {
+  it('should remove a param from an absolute URL', () => {
+    // Arrange
+    const url = `${TEST_BASE_URL}?oauth_provider=google&next=/feed`
+
+    // Act
+    const result = removeSearchParam(url, 'oauth_provider')
+
+    // Assert
+    const parsed = new URL(result)
+    expect(parsed.origin + parsed.pathname).toBe(TEST_BASE_URL)
+    expect(parsed.searchParams.get('oauth_provider')).toBeNull()
+    expect(parsed.searchParams.get('next')).toBe('/feed')
+  })
+
+  it('should remove a param from a relative path and preserve other params', () => {
+    // Arrange
+    const url = '/feed?oauth_provider=google&next=/account'
+
+    // Act
+    const result = removeSearchParam(url, 'oauth_provider')
+
+    // Assert
+    const parsed = new URL(result)
+    expect(parsed.origin).toBe(BASE_URL)
+    expect(parsed.pathname).toBe('/feed')
+    expect(parsed.searchParams.get('oauth_provider')).toBeNull()
+    expect(parsed.searchParams.get('next')).toBe('/account')
+  })
+
+  it('should be a no-op if param is not present', () => {
+    // Arrange
+    const url = '/feed?next=/account'
+
+    // Act
+    const result = removeSearchParam(url, 'oauth_provider')
+
+    // Assert
+    const parsed = new URL(result)
+    expect(parsed.pathname).toBe('/feed')
+    expect(parsed.searchParams.get('next')).toBe('/account')
   })
 })
 
