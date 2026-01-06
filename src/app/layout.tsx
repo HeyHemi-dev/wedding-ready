@@ -1,5 +1,7 @@
 import { Geist } from 'next/font/google'
+import { Suspense } from 'react'
 
+import { AppEffects } from '@/components/app-effects'
 import Footer from '@/components/navigation/footer'
 import Header from '@/components/navigation/header'
 import { Toaster } from '@/components/ui/sonner'
@@ -34,6 +36,9 @@ export default function RootLayout({
     <html lang="en" className={geistSans.className} suppressHydrationWarning>
       <body className="bg-background text-foreground">
         <Providers>
+          <Suspense fallback={null}>
+            <AppEffects />
+          </Suspense>
           <div className="grid min-h-dvh grid-rows-[auto_1fr_auto]">
             <Header />
 
