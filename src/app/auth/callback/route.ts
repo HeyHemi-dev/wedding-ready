@@ -51,7 +51,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
 
   // Pass to AppEffects to handle persistence of last sign-in method for OAuth providers
-  const isGoogleOAuth = user && user.app_metadata.provider === SIGN_IN_METHODS.GOOGLE
+  const isGoogleOAuth = user?.app_metadata?.provider === SIGN_IN_METHODS.GOOGLE
   if (isGoogleOAuth) {
     nextParams[PARAMS.OAUTH_PROVIDER] = SIGN_IN_METHODS.GOOGLE
   }
