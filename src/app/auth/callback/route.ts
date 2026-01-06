@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import z from 'zod'
 
+import { SearchParams } from '@/app/_types/generics'
 import { MESSAGE_CODES } from '@/components/auth/auth-message'
 import { authOperations, SIGN_UP_STATUS } from '@/operations/auth-operations'
 import { buildUrlWithSearchParams, getNextUrl, parseSearchParams, urlSearchParamsToObject } from '@/utils/api-helpers'
-import { PARAMS } from '@/utils/constants'
+import { PARAMS, SIGN_IN_METHODS } from '@/utils/constants'
 import { createClient } from '@/utils/supabase/server'
 import { tryCatch } from '@/utils/try-catch'
 
@@ -17,6 +18,9 @@ export async function GET(request: Request): Promise<NextResponse> {
   const searchParamsObject = urlSearchParamsToObject(searchParams)
   const { data: codeData } = await tryCatch(parseSearchParams(searchParamsObject, codeSchema))
   const next = await getNextUrl(searchParamsObject)
+  const nextParams: SearchParams = {
+    [PARAMS.NEXT]: next,
+  }
 
   // If no code, redirect to sign-in with error
   if (!codeData) {
@@ -24,13 +28,16 @@ export async function GET(request: Request): Promise<NextResponse> {
       buildUrlWithSearchParams(`${origin}/sign-in`, {
         [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.INVALID_AUTH_REQUEST,
         [PARAMS.MESSAGE_TYPE]: 'error',
-        [PARAMS.NEXT]: next,
+        ...nextParams,
       })
     )
   }
 
   const supabase = await createClient()
-  const { error: exchangeCodeError } = await tryCatch(supabase.auth.exchangeCodeForSession(codeData.code))
+  const {
+    data: { user },
+    error: exchangeCodeError,
+  } = await supabase.auth.exchangeCodeForSession(codeData.code)
 
   if (exchangeCodeError) {
     // Redirect to sign-in with error message using the established pattern
@@ -38,9 +45,15 @@ export async function GET(request: Request): Promise<NextResponse> {
       buildUrlWithSearchParams(`${origin}/sign-in`, {
         [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.AUTH_FAILED,
         [PARAMS.MESSAGE_TYPE]: 'error',
-        [PARAMS.NEXT]: next,
+        ...nextParams,
       })
     )
+  }
+
+  // Pass to AppEffects to handle persistence of last sign-in method for OAuth providers
+  const isGoogleOAuth = user && user.app_metadata.provider === SIGN_IN_METHODS.GOOGLE
+  if (isGoogleOAuth) {
+    nextParams[PARAMS.OAUTH_PROVIDER] = SIGN_IN_METHODS.GOOGLE
   }
 
   // Get auth user
@@ -51,7 +64,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       buildUrlWithSearchParams(`${origin}/sign-in`, {
         [PARAMS.AUTH_MESSAGE_CODE]: MESSAGE_CODES.AUTH_FAILED,
         [PARAMS.MESSAGE_TYPE]: 'error',
-        [PARAMS.NEXT]: next,
+        ...nextParams,
       })
     )
   }
@@ -60,7 +73,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     // Redirect to check inbox page
     return NextResponse.redirect(
       buildUrlWithSearchParams(`${origin}/sign-up/check-inbox`, {
-        [PARAMS.NEXT]: next,
+        ...nextParams,
       })
     )
   }
@@ -69,7 +82,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     // Redirect to onboarding, preserve original destination
     return NextResponse.redirect(
       buildUrlWithSearchParams(`${origin}/onboarding`, {
-        [PARAMS.NEXT]: next,
+        ...nextParams,
       })
     )
   }
@@ -79,14 +92,24 @@ export async function GET(request: Request): Promise<NextResponse> {
   const forwardedHost = request.headers.get('x-forwarded-host')
   const isLocalEnv = process.env.NODE_ENV === 'development'
 
+  let redirectUrl: string
   if (isLocalEnv) {
     // No load balancer in development, use origin directly
-    return NextResponse.redirect(`${origin}${next}`)
+    redirectUrl = `${origin}${next}`
   } else if (forwardedHost) {
     // Use forwarded host if available (behind load balancer)
-    return NextResponse.redirect(`https://${forwardedHost}${next}`)
+    redirectUrl = `https://${forwardedHost}${next}`
   } else {
     // Fallback to origin
-    return NextResponse.redirect(`${origin}${next}`)
+    redirectUrl = `${origin}${next}`
   }
+
+  // Add OAuth provider param if present
+  if (isGoogleOAuth) {
+    redirectUrl = buildUrlWithSearchParams(redirectUrl, {
+      [PARAMS.OAUTH_PROVIDER]: SIGN_IN_METHODS.GOOGLE,
+    })
+  }
+
+  return NextResponse.redirect(redirectUrl)
 }

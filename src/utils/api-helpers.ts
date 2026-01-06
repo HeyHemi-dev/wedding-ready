@@ -76,6 +76,19 @@ export function buildUrlWithSearchParams(baseUrl: string, searchParams: SearchPa
 }
 
 /**
+ * Removes a query parameter from a URL or path.
+ *
+ * @param baseUrl - The existing URL or path (e.g. "/feed?oauth_provider=google")
+ * @param key - Query param key to remove
+ * @returns The updated URL including query string
+ */
+export function removeSearchParam(baseUrl: string, key: string): string {
+  const url = new URL(baseUrl, BASE_URL)
+  url.searchParams.delete(key)
+  return url.toString()
+}
+
+/**
  * Parses Next.js search params using a Zod object schema.
  *
  * - Treats query params as untrusted input.

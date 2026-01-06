@@ -4,8 +4,9 @@ import { OPERATION_ERROR } from '@/app/_types/errors'
 import { UserForgotPasswordForm, UserResetPasswordForm, UserSigninForm, UserSignupForm } from '@/app/_types/validation-schema'
 import { isProtectedPath } from '@/middleware-helpers'
 import { getOrigin } from '@/utils/api-helpers'
-import { PARAMS } from '@/utils/constants'
+import { PARAMS, SIGN_IN_METHODS } from '@/utils/constants'
 import { emptyStringToNull } from '@/utils/empty-strings'
+import { saveLastSignInMethod } from '@/utils/local-storage'
 import { logger } from '@/utils/logger'
 
 export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseClient, data: UserSignupForm): Promise<{ id: string }> {
@@ -22,6 +23,9 @@ export async function handleSupabaseSignUpWithPassword(supabaseClient: SupabaseC
     })
     throw OPERATION_ERROR.DATABASE_ERROR('Failed to create user')
   }
+
+  // Save last sign-in method (non-critical, fail silently)
+  saveLastSignInMethod(SIGN_IN_METHODS.EMAIL)
 
   return { id: authData.user.id }
 }
@@ -45,6 +49,9 @@ export async function handleSupabaseSignInWithPassword(supabaseClient: SupabaseC
     })
     throw OPERATION_ERROR.INVALID_STATE('Failed to sign in')
   }
+
+  // Save last sign-in method (non-critical, fail silently)
+  saveLastSignInMethod(SIGN_IN_METHODS.EMAIL)
 
   return { authUserId: authData.user.id }
 }
