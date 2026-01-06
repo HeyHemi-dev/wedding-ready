@@ -3,7 +3,6 @@
 import React from 'react'
 
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 
 import { removeSearchParam } from '@/utils/api-helpers'
 import { PARAMS, SIGN_IN_METHODS } from '@/utils/constants'
@@ -20,7 +19,7 @@ function PersistLastSignInMethodEffect() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  useEffect(() => {
+  React.useEffect(() => {
     const oauthProvider = searchParams.get(PARAMS.OAUTH_PROVIDER)
 
     if (oauthProvider === SIGN_IN_METHODS.GOOGLE) {

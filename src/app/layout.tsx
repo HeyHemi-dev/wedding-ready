@@ -1,5 +1,6 @@
-import { Geist } from 'next/font/google'
 import { Suspense } from 'react'
+
+import { Geist } from 'next/font/google'
 
 import { AppEffects } from '@/components/app-effects'
 import Footer from '@/components/navigation/footer'
