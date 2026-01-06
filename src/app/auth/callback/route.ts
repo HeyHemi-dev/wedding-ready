@@ -34,7 +34,10 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
 
   const supabase = await createClient()
-  const { error: exchangeCodeError } = await tryCatch(supabase.auth.exchangeCodeForSession(codeData.code))
+  const {
+    data: { user },
+    error: exchangeCodeError,
+  } = await supabase.auth.exchangeCodeForSession(codeData.code)
 
   if (exchangeCodeError) {
     // Redirect to sign-in with error message using the established pattern
@@ -48,10 +51,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
 
   // Pass to AppEffects to handle persistence of last sign-in method for OAuth providers
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  const isGoogleOAuth = user?.app_metadata?.provider === SIGN_IN_METHODS.GOOGLE
+  const isGoogleOAuth = user && user.app_metadata.provider === SIGN_IN_METHODS.GOOGLE
   if (isGoogleOAuth) {
     nextParams[PARAMS.OAUTH_PROVIDER] = SIGN_IN_METHODS.GOOGLE
   }
