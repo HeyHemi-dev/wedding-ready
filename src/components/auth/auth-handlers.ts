@@ -69,9 +69,6 @@ export async function handleSupabaseSignInWithGoogle(supabaseClient: SupabaseCli
     throw OPERATION_ERROR.INVALID_STATE(error.message)
   }
 
-  // Save last sign-in method (non-critical, fail silently)
-  saveLastSignInMethod(SIGN_IN_METHODS.GOOGLE)
-
   return
 }
 
