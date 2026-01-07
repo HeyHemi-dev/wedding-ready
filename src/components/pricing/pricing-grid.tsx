@@ -78,31 +78,26 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
           </Button>
         </TableHeaderCell>
       ))}
-
       {/* Feature rows */}
       {featureKeys.map((key, rowIndex) => {
         const isLastRow = rowIndex === featureKeys.length - 1
 
-        return <FeatureRow key={key} feature={key} plans={plans} isLastRow={isLastRow} />
-      })}
-    </Table>
-  )
-}
-
-function FeatureRow({ feature, plans, isLastRow }: { feature: PlanFeatureKey; plans: Plan[]; isLastRow?: boolean }) {
-  return (
-    <>
-      <TableCell isFrozen className="ui-s1 justify-start text-left">
-        {planFeatures[feature]}
-      </TableCell>
-      {plans.map((plan) => {
         return (
-          <TableCell key={`${plan.name}-${feature}`} isFeatured={plan.isFeatured} className={isLastRow ? 'rounded-b-area' : undefined}>
-            {renderFeatureCell(plan[feature])}
-          </TableCell>
+          <>
+            <TableCell isFrozen className="ui-s1 justify-start text-left">
+              {planFeatures[key]}
+            </TableCell>
+            {plans.map((plan) => {
+              return (
+                <TableCell key={`${plan.name}-${key}`} isFeatured={plan.isFeatured} className={isLastRow ? 'rounded-b-area' : undefined}>
+                  {renderFeatureCell(plan[key])}
+                </TableCell>
+              )
+            })}
+          </>
         )
       })}
-    </>
+    </Table>
   )
 }
 
