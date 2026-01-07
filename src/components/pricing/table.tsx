@@ -21,7 +21,7 @@ export function TableCell({ className, isFeatured, isFrozen, children, ...props 
   return (
     <div
       className={cn(
-        'ui grid items-center justify-items-center p-6 text-center',
+        'ui grid items-center justify-items-center border-t border-border p-6 text-center',
         isFeatured && 'bg-area',
         isFrozen && 'sticky left-0 z-10 bg-background',
         className
@@ -34,7 +34,7 @@ export function TableCell({ className, isFeatured, isFrozen, children, ...props 
 
 export function TableHeaderCell({ className, children, ...props }: TableCellProps) {
   return (
-    <TableCell className={cn('rounded-t-area pt-area', className)} {...props}>
+    <TableCell className={cn('rounded-t-area border-t-0 pt-area', className)} {...props}>
       {children}
     </TableCell>
   )
