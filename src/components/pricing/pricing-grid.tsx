@@ -71,37 +71,26 @@ export const plans = [
 ] satisfies Plan[]
 
 export function PricingGrid({ plans }: { plans: Plan[] }) {
-  const headerRowCount = 4
-  const featureRowCount = featureKeys.length
-
-  const frozenColumnWidthPx = 200
-  const planColumnMinWidthPx = 200
-
-  const gridTemplateColumns =
-    plans.length > 0 ? `${frozenColumnWidthPx}px repeat(${plans.length}, minmax(${planColumnMinWidthPx}px, 1fr))` : `${frozenColumnWidthPx}px`
-
-  const gridTemplateRows = featureRowCount > 0 ? `repeat(${headerRowCount}, auto) repeat(${featureRowCount}, auto)` : `repeat(${headerRowCount}, auto)`
+  const rowCountHeader = 4
+  const rowCountFeature = featureKeys.length
+  const columnCount = plans.length + 1
 
   return (
-    <div
-      className="grid overflow-x-auto"
-      style={{
-        gridTemplateColumns,
-        gridTemplateRows,
-      }}>
+    <Table cols={columnCount} rows={rowCountHeader + rowCountFeature} className="grid overflow-x-auto">
       {/* Header row */}
-      <div
-        className="sticky left-0 z-20 bg-background"
+      <TableHeaderCell
+        isFrozen
         style={{
-          gridRow: `span ${headerRowCount} / span ${headerRowCount}`,
+          gridRow: `span ${rowCountHeader} / span ${rowCountHeader}`,
         }}
       />
       {plans.map((plan) => (
-        <div
+        <TableHeaderCell
           key={plan.name}
-          className={cn('grid grid-rows-subgrid justify-items-center gap-sibling rounded-t-area p-6', plan.isFeatured && 'bg-area')}
+          className={cn('grid grid-rows-subgrid')}
+          isFeatured={plan.isFeatured}
           style={{
-            gridRow: `span ${headerRowCount} / span ${headerRowCount}`,
+            gridRow: `span ${rowCountHeader} / span ${rowCountHeader}`,
           }}>
           <div className="flex items-center gap-partner">
             <h3 className="heading-md">{plan.name}</h3>
@@ -115,7 +104,7 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
           <Button asChild>
             <Link href={plan.cta.href}>{plan.cta.label}</Link>
           </Button>
-        </div>
+        </TableHeaderCell>
       ))}
 
       {/* Feature rows */}
@@ -124,19 +113,21 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
 
         return <FeatureRow key={key} feature={key} plans={plans} isLastRow={isLastRow} />
       })}
-    </div>
+    </Table>
   )
 }
 
 function FeatureRow({ feature, plans, isLastRow }: { feature: PlanFeatureKey; plans: Plan[]; isLastRow?: boolean }) {
   return (
     <>
-      <div className="ui-s2 sticky left-0 z-10 bg-background py-4 pr-4">{planFeatures[feature]}</div>
+      <TableCell isFrozen className="ui-s1 justify-start text-left">
+        {planFeatures[feature]}
+      </TableCell>
       {plans.map((plan) => {
         return (
-          <div key={`${plan.name}-${feature}`} className={cn(plan.isFeatured && 'bg-area', plan.isFeatured && isLastRow && 'rounded-b-area', 'py-4')}>
+          <TableCell key={`${plan.name}-${feature}`} isFeatured={plan.isFeatured} className={isLastRow ? 'rounded-b-area' : undefined}>
             {renderFeatureCell(plan[feature])}
-          </div>
+          </TableCell>
         )
       })}
     </>
@@ -147,51 +138,52 @@ function renderFeatureCell(value: PlanFeatureDetail) {
   if (value === true) return <Check className="h-6 w-6" aria-label="Yes" role="img" />
   if (value === false) return <X className="h-6 w-6 text-destructive" aria-label="No" role="img" />
   return (
-    <div>
+    <>
       <div>{value.text}</div>
-      {value.subtext && <div className="subtext">{value.subtext}</div>}
+      {value.subtext && <div className="ui-small text-muted-foreground">{value.subtext}</div>}
+    </>
+  )
+}
+
+interface TableProps extends React.HTMLAttributes<HTMLDivElement> {
+  cols: number
+  rows: number
+}
+
+function Table({ className, cols, rows, children, ...props }: TableProps) {
+  return (
+    <div
+      className={cn('grid overflow-x-auto', className)}
+      style={{ gridTemplateColumns: `repeat(${cols}, minmax(20rem, 1fr))`, gridTemplateRows: `repeat(${rows}, 1fr)` }}
+      {...props}>
+      {children}
     </div>
   )
 }
 
-/* 
-CSS (for reference)
-
-.grid-container {
-  display: grid;
-  grid-template-columns: 200px repeat(auto-fit, minmax(200px, 1fr));
+interface TableCellProps extends React.HTMLAttributes<HTMLDivElement> {
+  isFeatured?: boolean
+  isFrozen?: boolean
 }
 
-.header {
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 2;
+function TableCell({ className, isFeatured, isFrozen, children, ...props }: TableCellProps) {
+  return (
+    <div
+      className={cn(
+        'ui grid items-center justify-items-center p-6 text-center',
+        isFeatured && 'bg-area',
+        isFrozen && 'sticky left-0 z-10 bg-background',
+        className
+      )}
+      {...props}>
+      {children}
+    </div>
+  )
 }
-
-.freeze-col {
-  position: sticky;
-  left: 0;
-  background: white;
-  z-index: 1;
+function TableHeaderCell({ className, children, ...props }: TableCellProps) {
+  return (
+    <TableCell className={cn('rounded-t-area', className)} {...props}>
+      {children}
+    </TableCell>
+  )
 }
-
-.featured-column {
-  background: var(--featured-bg);
-}
-
-.featured-column-start {
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-}
-
-.featured-column-end {
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-}
-
-.subtext {
-  font-size: 0.85em;
-  opacity: 0.7;
-}
-*/
