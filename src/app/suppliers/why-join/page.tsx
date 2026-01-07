@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
 import { PricingGrid } from '@/components/pricing/pricing-grid'
 import { buildUrlWithSearchParams } from '@/utils/api-helpers'
+import { asDollar } from '@/app/_types/generics'
 
 export default function WhyJoinPage() {
   return (
@@ -147,7 +148,7 @@ export default function WhyJoinPage() {
             {
               isFeatured: false,
               name: 'Basic',
-              price: 0,
+              price: asDollar(0),
               description: 'Perfect for getting started',
               cta: {
                 label: 'Join as a supplier',
@@ -163,7 +164,7 @@ export default function WhyJoinPage() {
             {
               isFeatured: true,
               name: 'Plus',
-              price: 30,
+              price: asDollar(30),
               description: 'For suppliers ready to maximize their reach',
               cta: {
                 label: 'Join as a supplier',

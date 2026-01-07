@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
 
-import type { Href } from '@/app/_types/generics'
+import type { Href, Dollar } from '@/app/_types/generics'
 
 import { Table, TableHeaderCell, TableCell } from '@/components/pricing/table'
 
@@ -32,7 +32,7 @@ const featureKeys = Object.keys(planFeatures) as PlanFeatureKey[]
 type Plan = {
   isFeatured: boolean
   name: string
-  price: number
+  price: Dollar
   description: string
   cta: Href
 } & Record<PlanFeatureKey, PlanFeatureDetail>
@@ -69,7 +69,7 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
             {plan.isFeatured && <Badge>Popular</Badge>}
           </div>
           <div className="flex items-baseline gap-partner">
-            <p className="heading-2xl">${plan.price.toLocaleString()}</p>
+            <p className="heading-2xl">{plan.price === 0 ? 'Free' : `$${plan.price.toLocaleString()}`}</p>
             {plan.price !== 0 && <span className="ui text-muted-foreground">/month</span>}
           </div>
           <p className="ui text-center text-muted-foreground">{plan.description}</p>
