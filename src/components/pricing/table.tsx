@@ -2,22 +2,16 @@ import React from 'react'
 
 import { cn } from '@/utils/shadcn-utils'
 
-interface TableProps extends React.HTMLAttributes<HTMLDivElement> {
-  cols: number
-  rows: number
-}
+interface TableProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 interface TableCellProps extends React.HTMLAttributes<HTMLDivElement> {
   isFeatured?: boolean
   isFrozen?: boolean
 }
 
-export function Table({ className, cols, rows, children, ...props }: TableProps) {
+export function Table({ className, children, ...props }: TableProps) {
   return (
-    <div
-      className={cn('grid overflow-x-auto', className)}
-      style={{ gridTemplateColumns: `repeat(${cols}, minmax(20rem, 1fr))`, gridTemplateRows: `repeat(${rows}, 1fr)` }}
-      {...props}>
+    <div className={cn('grid overflow-x-auto', className)} {...props}>
       {children}
     </div>
   )
@@ -40,7 +34,7 @@ export function TableCell({ className, isFeatured, isFrozen, children, ...props 
 
 export function TableHeaderCell({ className, children, ...props }: TableCellProps) {
   return (
-    <TableCell className={cn('rounded-t-area', className)} {...props}>
+    <TableCell className={cn('rounded-t-area pt-area', className)} {...props}>
       {children}
     </TableCell>
   )
