@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
 import { PricingGrid } from '@/components/pricing/pricing-grid'
+import { buildUrlWithSearchParams } from '@/utils/api-helpers'
 
 export default function WhyJoinPage() {
   return (
@@ -150,7 +151,7 @@ export default function WhyJoinPage() {
               description: 'Perfect for getting started',
               cta: {
                 label: 'Join as a supplier',
-                href: '/suppliers/register',
+                href: buildUrlWithSearchParams('/sign-up', { plan: 'basic' }),
               },
               createSupplierProfile: true,
               uploadTileLimit: { text: '20 per month' },
@@ -166,7 +167,7 @@ export default function WhyJoinPage() {
               description: 'For suppliers ready to maximize their reach',
               cta: {
                 label: 'Join as a supplier',
-                href: '/suppliers/register?plan=plus',
+                href: buildUrlWithSearchParams('/sign-up', { plan: 'plus' }),
               },
               createSupplierProfile: true,
               uploadTileLimit: { text: 'Unlimited' },
