@@ -12,6 +12,7 @@ import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
+import { PricingGrid } from '@/components/pricing/pricing-grid'
 
 export default function WhyJoinPage() {
   return (
@@ -140,42 +141,39 @@ export default function WhyJoinPage() {
             </div>
           </div>
         </Area>
-        <PricingTable
+        <PricingGrid
           plans={[
             {
+              isFeatured: false,
               name: 'Basic',
-              price: 'Free',
+              price: 0,
               description: 'Perfect for getting started',
               cta: {
                 label: 'Join as a supplier',
                 href: '/suppliers/register',
               },
-              features: {
-                'Create a supplier profile': <FeatureBoolean value={true} />,
-                'Upload tiles': <p>20 per month</p>,
-                'Credit other suppliers': <FeatureBoolean value={true} />,
-                'Request to be credited': <FeatureBoolean value={true} />,
-                'Featured in Locations directory': <FeatureBoolean value={false} />,
-                'Featured in Services directory': <FeatureBoolean value={false} />,
-              },
+              createSupplierProfile: true,
+              uploadTileLimit: { text: '20 per month' },
+              creditSuppliers: true,
+              requestCredit: true,
+              locationsFeature: false,
+              servicesFeature: false,
             },
             {
+              isFeatured: true,
               name: 'Plus',
-              price: '$30',
+              price: 30,
               description: 'For suppliers ready to maximize their reach',
               cta: {
                 label: 'Join as a supplier',
                 href: '/suppliers/register?plan=plus',
               },
-              featured: true,
-              features: {
-                'Create a supplier profile': <FeatureBoolean value={true} />,
-                'Upload tiles': <p>Unlimited</p>,
-                'Credit other suppliers': <FeatureBoolean value={true} />,
-                'Request to be credited': <FeatureBoolean value={true} />,
-                'Featured in Locations directory': <FeatureTextWithSubtext text="1 Location included" subtext="$10 per additional location" />,
-                'Featured in Services directory': <FeatureTextWithSubtext text="1 Service included" subtext="$10 per additional service" />,
-              },
+              createSupplierProfile: true,
+              uploadTileLimit: { text: 'Unlimited' },
+              creditSuppliers: true,
+              requestCredit: true,
+              locationsFeature: { text: '1 Location included', subtext: '$10 per additional location' },
+              servicesFeature: { text: '1 Service included', subtext: '$10 per additional service' },
             },
           ]}
         />
