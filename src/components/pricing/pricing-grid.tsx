@@ -37,48 +37,18 @@ type Plan = {
   cta: Href
 } & Record<PlanFeatureKey, PlanFeatureDetail>
 
-export const plans = [
-  {
-    isFeatured: false,
-    name: 'Basic',
-    price: 0,
-    description: 'Perfect for getting started',
-    cta: {
-      label: 'Join as a supplier',
-      href: '/suppliers/register',
-    },
-    createSupplierProfile: true,
-    uploadTileLimit: { text: '20 per month' },
-    creditSuppliers: true,
-    requestCredit: true,
-    locationsFeature: false,
-    servicesFeature: false,
-  },
-  {
-    isFeatured: true,
-    name: 'Plus',
-    price: 30,
-    description: 'For suppliers ready to maximize their reach',
-    cta: {
-      label: 'Join as a supplier',
-      href: '/suppliers/register?plan=plus',
-    },
-    createSupplierProfile: true,
-    uploadTileLimit: { text: 'Unlimited' },
-    creditSuppliers: true,
-    requestCredit: true,
-    locationsFeature: { text: '1 Location included', subtext: '$10 per additional location' },
-    servicesFeature: { text: '1 Service included', subtext: '$10 per additional service' },
-  },
-] satisfies Plan[]
-
 export function PricingGrid({ plans }: { plans: Plan[] }) {
   const rowCountHeader = 4
   const rowCountFeature = featureKeys.length
   const columnCount = plans.length + 1
 
   return (
-    <Table cols={columnCount} rows={rowCountHeader + rowCountFeature} className="grid overflow-x-auto">
+    <Table
+      style={{
+        gridTemplateRows: `repeat(${rowCountHeader}, max-content) repeat(${rowCountFeature}, 1fr)`,
+        gridTemplateColumns: `repeat(${columnCount}, minmax(20rem, 1fr))`,
+      }}
+      className="grid overflow-x-auto">
       {/* Header row */}
       <TableHeaderCell
         isFrozen
@@ -89,7 +59,7 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
       {plans.map((plan) => (
         <TableHeaderCell
           key={plan.name}
-          className={cn('grid grid-rows-subgrid')}
+          className={cn('grid grid-rows-subgrid gap-sibling')}
           isFeatured={plan.isFeatured}
           style={{
             gridRow: `span ${rowCountHeader} / span ${rowCountHeader}`,
