@@ -78,12 +78,13 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
           </Button>
         </TableHeaderCell>
       ))}
-      {/* Feature rows */}
+
       {featureKeys.map((key, rowIndex) => {
         const isLastRow = rowIndex === featureKeys.length - 1
 
         return (
-          <>
+          <React.Fragment key={key}>
+            {/* Feature row */}
             <TableCell isFrozen className="ui-s1 justify-start text-left">
               {planFeatures[key]}
             </TableCell>
@@ -94,7 +95,7 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
                 </TableCell>
               )
             })}
-          </>
+          </React.Fragment>
         )
       })}
     </Table>
