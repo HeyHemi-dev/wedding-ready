@@ -7,7 +7,7 @@ interface TableProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 interface TableCellProps extends React.HTMLAttributes<HTMLDivElement> {
-  isAccent?: boolean
+  hasAccent?: boolean
 }
 
 interface TableRowProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -30,12 +30,14 @@ export function Table({ isFirstColFrozen = false, className, children, ...props 
   )
 }
 
-export function TableRow({ hasAccentOnHover = false, className, children, ...props }: TableRowProps) {
+export function TableRow({ hasAccentOnHover = true, className, children, ...props }: TableRowProps) {
   return (
     <div
       data-element="table-row"
       className={cn(
-        'relative col-span-full grid grid-cols-subgrid border-t border-accent-foreground/10 before:pointer-events-none before:absolute before:inset-0 before:z-20 before:bg-accent/40 before:opacity-0 before:mix-blend-multiply before:content-[""] first:border-none hover:before:opacity-100',
+        'relative col-span-full grid grid-cols-subgrid border-t border-accent-foreground/10 first:border-none',
+        hasAccentOnHover &&
+          'transition-opacity before:pointer-events-none before:absolute before:inset-0 before:z-20 before:bg-accent/40 before:opacity-0 before:mix-blend-multiply before:content-[""] hover:before:opacity-100',
         className
       )}
       {...props}>
@@ -44,11 +46,11 @@ export function TableRow({ hasAccentOnHover = false, className, children, ...pro
   )
 }
 
-export function TableCell({ className, isAccent = false, children, ...props }: TableCellProps) {
+export function TableCell({ className, hasAccent = false, children, ...props }: TableCellProps) {
   return (
     <div
       data-element="table-cell"
-      className={cn('row-span-full grid place-content-center px-6 py-4 text-center', isAccent && 'bg-accent/60', className)}
+      className={cn('row-span-full grid place-content-center px-6 py-4 text-center', hasAccent && 'bg-accent/60', className)}
       {...props}>
       {children}
     </div>
