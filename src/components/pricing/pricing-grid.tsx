@@ -20,7 +20,7 @@ type PlanFeatureDetail =
 
 const planFeatures = {
   createSupplierProfile: 'Create a supplier profile',
-  uploadTileLimit: 'Upload tiles',
+  uploadTileLimit: 'Max tile uploads',
   creditSuppliers: 'Credit other suppliers',
   requestCredit: 'Request to be credited',
   locationsFeature: 'Featured in Locations directory',
@@ -44,22 +44,20 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
 
   return (
     <Table
+      isFirstColFrozen={false}
       style={{
         gridTemplateRows: `max-content repeat(${rowCountFeature}, 1fr)`,
         gridTemplateColumns: `minmax(min-content, 1fr) repeat(${columnCount}, minmax(16rem, 1fr))`,
       }}
       className="grid overflow-x-auto">
       {/* Header row */}
-      <TableRow isFirstColFrozen style={{ gridTemplateRows: `repeat(${rowCountHeader}, min-content)` }} className="gap-y-sibling">
-        <TableCell style={{ gridRow: `span ${rowCountHeader}` }} />
+      <TableRow style={{ gridTemplateRows: `repeat(${rowCountHeader}, min-content)` }} className="gap-y-sibling">
+        <TableCell />
         {plans.map((plan) => (
           <TableCell
             key={plan.name}
             className={cn('grid grid-rows-subgrid justify-items-center', plan.isFeatured && 'rounded-t-area pt-area')}
-            isAccent={plan.isFeatured}
-            style={{
-              gridRow: `span ${rowCountHeader}`,
-            }}>
+            isAccent={plan.isFeatured}>
             <div className="flex items-center gap-partner self-end">
               <h3 className="heading-md">{plan.name}</h3>
               {plan.isFeatured && <Badge>Popular</Badge>}
@@ -80,11 +78,11 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
         const isLastRow = rowIndex === featureKeys.length - 1
         /* Feature row */
         return (
-          <TableRow key={key} isFirstColFrozen>
+          <TableRow key={key}>
             <TableCell className="ui-s1 justify-start text-left">{planFeatures[key]}</TableCell>
             {plans.map((plan) => {
               return (
-                <TableCell key={`${plan.name}-${key}`} isAccent={plan.isFeatured} className={isLastRow ? 'rounded-b-area pb-area' : undefined}>
+                <TableCell key={`${plan.name}-${key}`} isAccent={plan.isFeatured} className={isLastRow ? 'rounded-b-area' : undefined}>
                   {renderFeatureCell(plan[key])}
                 </TableCell>
               )
@@ -101,7 +99,7 @@ function renderFeatureCell(value: PlanFeatureDetail) {
   if (value === false) return <X className="h-6 w-6 text-destructive" aria-label="No" role="img" />
   return (
     <>
-      <div>{value.text}</div>
+      <div className="ui">{value.text}</div>
       {value.subtext && <div className="ui-small text-muted-foreground">{value.subtext}</div>}
     </>
   )
