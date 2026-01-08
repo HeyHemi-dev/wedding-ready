@@ -1,4 +1,4 @@
-import { Table, TableRow, TableCell } from '@/components/pricing/table'
+import { Table, TableRow, TableCell, TableHeaderRow } from '@/components/pricing/table'
 import { AddCreditButton } from '@/components/tiles/add-credit-button'
 import { Area } from '@/components/ui/area'
 import { Section } from '@/components/ui/section'
@@ -26,11 +26,11 @@ export default function KitchensinkPage() {
               isFirstColFrozen
               className="ui-small"
               style={{ gridTemplateRows: `repeat(${numRows}, max-content)`, gridTemplateColumns: `repeat(${numColumns}, minmax(20rem, 1fr))` }}>
-              <TableRow hasAccentOnHover={false} className="ui-small-s1">
+              <TableHeaderRow className="ui-small-s1">
                 {Array.from({ length: numColumns }).map((_, index) => (
                   <TableCell key={index}>Header {index + 1}</TableCell>
                 ))}
-              </TableRow>
+              </TableHeaderRow>
               {Array.from({ length: numRows }).map((_, rowIndex) => (
                 <TableRow key={rowIndex}>
                   {Array.from({ length: numColumns }).map((_, colIndex) => (
