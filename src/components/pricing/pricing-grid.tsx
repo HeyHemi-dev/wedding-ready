@@ -50,13 +50,13 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
         gridTemplateColumns: `minmax(min-content, 1fr) repeat(${columnCount}, minmax(16rem, 1fr))`,
       }}>
       {/* Header row */}
-      <TableRow style={{ gridTemplateRows: `repeat(${rowCountHeader}, min-content)` }} className="gap-y-sibling">
+      <TableRow hasAccentOnHover={false} style={{ gridTemplateRows: `repeat(${rowCountHeader}, min-content)` }} className="gap-y-sibling">
         <TableCell />
         {plans.map((plan) => (
           <TableCell
             key={plan.name}
             className={cn('grid grid-rows-subgrid justify-items-center', plan.isFeatured && 'rounded-t-area pt-area')}
-            isAccent={plan.isFeatured}>
+            hasAccent={plan.isFeatured}>
             {renderHeaderCell(plan)}
           </TableCell>
         ))}
@@ -70,7 +70,7 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
             <TableCell className="ui-s1 justify-start text-left">{planFeatures[key]}</TableCell>
             {plans.map((plan) => {
               return (
-                <TableCell key={`${plan.name}-${key}`} isAccent={plan.isFeatured} className={isLastRow ? 'rounded-b-area' : undefined}>
+                <TableCell key={`${plan.name}-${key}`} hasAccent={plan.isFeatured} className={isLastRow ? 'rounded-b-area' : undefined}>
                   {renderFeatureCell(plan[key])}
                 </TableCell>
               )
