@@ -44,12 +44,11 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
 
   return (
     <Table
-      isFirstColFrozen={false}
+      isFirstColFrozen
       style={{
         gridTemplateRows: `max-content repeat(${rowCountFeature}, 1fr)`,
         gridTemplateColumns: `minmax(min-content, 1fr) repeat(${columnCount}, minmax(16rem, 1fr))`,
-      }}
-      className="grid overflow-x-auto">
+      }}>
       {/* Header row */}
       <TableRow style={{ gridTemplateRows: `repeat(${rowCountHeader}, min-content)` }} className="gap-y-sibling">
         <TableCell />
@@ -58,18 +57,7 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
             key={plan.name}
             className={cn('grid grid-rows-subgrid justify-items-center', plan.isFeatured && 'rounded-t-area pt-area')}
             isAccent={plan.isFeatured}>
-            <div className="flex items-center gap-partner self-end">
-              <h3 className="heading-md">{plan.name}</h3>
-              {plan.isFeatured && <Badge>Popular</Badge>}
-            </div>
-            <div className="flex items-baseline gap-partner">
-              <p className="heading-2xl">{plan.price === 0 ? 'Free' : `$${plan.price.toLocaleString()}`}</p>
-              {plan.price !== 0 && <span className="ui text-muted-foreground">/month</span>}
-            </div>
-            <p className="ui text-center text-muted-foreground">{plan.description}</p>
-            <Button asChild>
-              <Link href={plan.cta.href}>{plan.cta.label}</Link>
-            </Button>
+            {renderHeaderCell(plan)}
           </TableCell>
         ))}
       </TableRow>
@@ -91,6 +79,25 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
         )
       })}
     </Table>
+  )
+}
+
+function renderHeaderCell(plan: Plan) {
+  return (
+    <>
+      <div className="flex items-center gap-partner self-end">
+        <h3 className="heading-md">{plan.name}</h3>
+        {plan.isFeatured && <Badge>Popular</Badge>}
+      </div>
+      <div className="flex items-baseline gap-partner">
+        <p className="heading-2xl">{plan.price === 0 ? 'Free' : `$${plan.price.toLocaleString()}`}</p>
+        {plan.price !== 0 && <span className="ui text-muted-foreground">/month</span>}
+      </div>
+      <p className="ui text-center text-muted-foreground">{plan.description}</p>
+      <Button asChild>
+        <Link href={plan.cta.href}>{plan.cta.label}</Link>
+      </Button>
+    </>
   )
 }
 
