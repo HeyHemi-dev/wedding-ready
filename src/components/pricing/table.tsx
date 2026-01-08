@@ -5,8 +5,11 @@ import { cn } from '@/utils/shadcn-utils'
 interface TableProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 interface TableCellProps extends React.HTMLAttributes<HTMLDivElement> {
-  isFeatured?: boolean
-  isFrozen?: boolean
+  isAccent?: boolean
+}
+
+interface TableRowProps extends React.HTMLAttributes<HTMLDivElement> {
+  isFirstColFrozen?: boolean
 }
 
 export function Table({ className, children, ...props }: TableProps) {
@@ -17,13 +20,14 @@ export function Table({ className, children, ...props }: TableProps) {
   )
 }
 
-export function TableCell({ className, isFeatured, isFrozen, children, ...props }: TableCellProps) {
+export function TableRow({ isFirstColFrozen, className, children, ...props }: TableRowProps) {
   return (
     <div
+      data-table-row
       className={cn(
-        'ui grid items-center justify-items-center border-t border-border p-6 text-center',
-        isFeatured && 'bg-area',
-        isFrozen && 'pointer-events-none sticky left-0 z-10 bg-background shadow-[3px_0px_3px_-1px_rgba(0,_0,_0,_0.1)]',
+        'col-span-full grid grid-cols-subgrid border-t border-accent-foreground/10 first:border-none',
+        isFirstColFrozen &&
+          '[&>*:first-child]:sticky [&>*:first-child]:left-0 [&>*:first-child]:z-10 [&>*:first-child]:border-r [&>*:first-child]:border-accent-foreground/10 [&>*:first-child]:bg-background',
         className
       )}
       {...props}>
@@ -32,10 +36,18 @@ export function TableCell({ className, isFeatured, isFrozen, children, ...props 
   )
 }
 
-export function TableHeaderCell({ className, isFeatured, children, ...props }: TableCellProps) {
+export function TableCell({ className, isAccent = false, children, ...props }: TableCellProps) {
   return (
-    <TableCell className={cn('border-t-0', isFeatured && 'rounded-t-area pt-area', className)} isFeatured={isFeatured} {...props}>
+    <div
+      data-table-cell
+      className={cn(
+        // use solid 1px inner shadow instead of border-t
+        'ui rows-span-full grid place-content-center px-6 py-4 text-center',
+        isAccent && 'bg-accent/60',
+        className
+      )}
+      {...props}>
       {children}
-    </TableCell>
+    </div>
   )
 }
