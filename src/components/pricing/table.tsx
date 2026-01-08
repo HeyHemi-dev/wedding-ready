@@ -46,9 +46,9 @@ export function TableRow({ hasAccentOnHover = true, className, children, ...prop
   )
 }
 
-export function TableHeaderRow({ hasAccentOnHover, className, children, ...props }: TableRowProps) {
+export function TableHeaderRow({ hasAccentOnHover = false, className, children, ...props }: TableRowProps) {
   return (
-    <TableRow hasAccentOnHover={false} className={cn('bg-muted font-medium', className)} {...props}>
+    <TableRow hasAccentOnHover={hasAccentOnHover} className={cn('bg-muted font-medium', className)} {...props}>
       {children}
     </TableRow>
   )

@@ -1,10 +1,11 @@
 import { ArrowRight, Users, Sparkles, MapPin, InfinityIcon, HeartHandshake } from 'lucide-react'
 import Link from 'next/link'
 
+import { asDollar } from '@/app/_types/generics'
 import { FeatureCard } from '@/components/card/feature-card'
 import { HowItWorksArrow, HowItWorksStep } from '@/components/card/how-it-works-step'
 import { FAQ } from '@/components/faq/faq'
-import { PricingTable, FeatureBoolean, FeatureTextWithSubtext } from '@/components/pricing/pricing-table'
+import { PricingGrid } from '@/components/pricing/pricing-grid'
 import { Logos } from '@/components/testimonial/logos'
 import { Testimonial } from '@/components/testimonial/testimonial'
 import { FadeInDiv } from '@/components/ui/animated-section'
@@ -12,9 +13,7 @@ import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
-import { PricingGrid } from '@/components/pricing/pricing-grid'
 import { buildUrlWithSearchParams } from '@/utils/api-helpers'
-import { asDollar } from '@/app/_types/generics'
 
 export default function WhyJoinPage() {
   return (

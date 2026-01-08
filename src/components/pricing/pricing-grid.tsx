@@ -1,15 +1,16 @@
-import Link from 'next/link'
 import React from 'react'
 
 import { Check, X } from 'lucide-react'
+import Link from 'next/link'
 
+
+import type { Href, Dollar } from '@/app/_types/generics'
+import { Table, TableCell, TableRow } from '@/components/pricing/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
 
-import type { Href, Dollar } from '@/app/_types/generics'
 
-import { Table, TableCell, TableRow } from '@/components/pricing/table'
 
 type PlanFeatureDetail =
   | boolean
