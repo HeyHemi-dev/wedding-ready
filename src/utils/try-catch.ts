@@ -120,9 +120,9 @@ export async function tryCatchFetch<T, E = Error>(url: string, options?: FetchOp
     return { data: result as T, error: null }
   } catch (error) {
     clearTimeout(timeout)
+    // TODO: logger does not log on client, so fetch errors will likely never be logged.
     logger.error('tryCatchFetch_error', {
       url,
-      options,
       error: error,
     })
     return { data: null, error: error as E }
