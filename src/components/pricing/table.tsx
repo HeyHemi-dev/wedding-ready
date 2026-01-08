@@ -48,10 +48,7 @@ export function TableRow({ hasAccentOnHover = true, className, children, ...prop
 
 export function TableCell({ className, hasAccent = false, children, ...props }: TableCellProps) {
   return (
-    <div
-      data-element="table-cell"
-      className={cn('row-span-full grid place-content-center px-6 py-4 text-center', hasAccent && 'bg-accent/60', className)}
-      {...props}>
+    <div data-element="table-cell" className={cn('row-span-full grid px-6 py-4', hasAccent && 'bg-accent/60', className)} {...props}>
       {children}
     </div>
   )
