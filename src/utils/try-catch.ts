@@ -1,6 +1,7 @@
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { isClient } from '@/utils/api-helpers'
 import { FETCH_TIMEOUT } from '@/utils/constants'
+import { logger } from './logger'
 
 // Types for the result object with discriminated union
 type Success<T> = {
@@ -118,6 +119,11 @@ export async function tryCatchFetch<T, E = Error>(url: string, options?: FetchOp
     return { data: result as T, error: null }
   } catch (error) {
     clearTimeout(timeout)
+    logger.error('tryCatchFetch_error', {
+      url,
+      options,
+      error: error,
+    })
     return { data: null, error: error as E }
   }
 }
