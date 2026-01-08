@@ -5,7 +5,7 @@ import { asDollar } from '@/app/_types/generics'
 import { FeatureCard } from '@/components/card/feature-card'
 import { HowItWorksArrow, HowItWorksStep } from '@/components/card/how-it-works-step'
 import { FAQ } from '@/components/faq/faq'
-import { PricingGrid } from '@/components/pricing/pricing-table'
+import { PricingTable } from '@/components/pricing/pricing-table'
 import { Logos } from '@/components/testimonial/logos'
 import { Testimonial } from '@/components/testimonial/testimonial'
 import { FadeInDiv } from '@/components/ui/animated-section'
@@ -142,7 +142,7 @@ export default function WhyJoinPage() {
             </div>
           </div>
         </Area>
-        <PricingGrid
+        <PricingTable
           plans={[
             {
               isFeatured: false,
