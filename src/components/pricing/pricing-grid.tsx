@@ -9,7 +9,7 @@ import { cn } from '@/utils/shadcn-utils'
 
 import type { Href, Dollar } from '@/app/_types/generics'
 
-import { Table, TableHeaderCell, TableCell } from '@/components/pricing/table'
+import { Table, TableCell, TableRow } from '@/components/pricing/table'
 
 type PlanFeatureDetail =
   | boolean
@@ -40,62 +40,56 @@ type Plan = {
 export function PricingGrid({ plans }: { plans: Plan[] }) {
   const rowCountHeader = 4
   const rowCountFeature = featureKeys.length
-  const columnCount = plans.length + 1
+  const columnCount = plans.length
 
   return (
     <Table
       style={{
-        gridTemplateRows: `repeat(${rowCountHeader}, max-content) repeat(${rowCountFeature}, 1fr)`,
-        gridTemplateColumns: `repeat(${columnCount}, minmax(20rem, 1fr))`,
+        gridTemplateRows: `max-content repeat(${rowCountFeature}, 1fr)`,
+        gridTemplateColumns: `minmax(min-content, 1fr) repeat(${columnCount}, minmax(16rem, 1fr))`,
       }}
       className="grid overflow-x-auto">
       {/* Header row */}
-      <TableHeaderCell
-        isFrozen
-        style={{
-          gridRow: `span ${rowCountHeader} / span ${rowCountHeader}`,
-        }}
-      />
-      {plans.map((plan) => (
-        <TableHeaderCell
-          key={plan.name}
-          className={cn('grid grid-rows-subgrid gap-sibling')}
-          isFeatured={plan.isFeatured}
-          style={{
-            gridRow: `span ${rowCountHeader} / span ${rowCountHeader}`,
-          }}>
-          <div className="flex items-center gap-partner">
-            <h3 className="heading-md">{plan.name}</h3>
-            {plan.isFeatured && <Badge>Popular</Badge>}
-          </div>
-          <div className="flex items-baseline gap-partner">
-            <p className="heading-2xl">{plan.price === 0 ? 'Free' : `$${plan.price.toLocaleString()}`}</p>
-            {plan.price !== 0 && <span className="ui text-muted-foreground">/month</span>}
-          </div>
-          <p className="ui text-center text-muted-foreground">{plan.description}</p>
-          <Button asChild>
-            <Link href={plan.cta.href}>{plan.cta.label}</Link>
-          </Button>
-        </TableHeaderCell>
-      ))}
+      <TableRow isFirstColFrozen style={{ gridTemplateRows: `repeat(${rowCountHeader}, min-content)` }} className="gap-y-sibling">
+        <TableCell style={{ gridRow: `span ${rowCountHeader}` }} />
+        {plans.map((plan) => (
+          <TableCell
+            key={plan.name}
+            className={cn('grid grid-rows-subgrid justify-items-center', plan.isFeatured && 'rounded-t-area pt-area')}
+            isAccent={plan.isFeatured}
+            style={{
+              gridRow: `span ${rowCountHeader}`,
+            }}>
+            <div className="flex items-center gap-partner self-end">
+              <h3 className="heading-md">{plan.name}</h3>
+              {plan.isFeatured && <Badge>Popular</Badge>}
+            </div>
+            <div className="flex items-baseline gap-partner">
+              <p className="heading-2xl">{plan.price === 0 ? 'Free' : `$${plan.price.toLocaleString()}`}</p>
+              {plan.price !== 0 && <span className="ui text-muted-foreground">/month</span>}
+            </div>
+            <p className="ui text-center text-muted-foreground">{plan.description}</p>
+            <Button asChild>
+              <Link href={plan.cta.href}>{plan.cta.label}</Link>
+            </Button>
+          </TableCell>
+        ))}
+      </TableRow>
 
       {featureKeys.map((key, rowIndex) => {
         const isLastRow = rowIndex === featureKeys.length - 1
-
+        /* Feature row */
         return (
-          <React.Fragment key={key}>
-            {/* Feature row */}
-            <TableCell isFrozen className="ui-s1 justify-start text-left">
-              {planFeatures[key]}
-            </TableCell>
+          <TableRow key={key} isFirstColFrozen>
+            <TableCell className="ui-s1 justify-start text-left">{planFeatures[key]}</TableCell>
             {plans.map((plan) => {
               return (
-                <TableCell key={`${plan.name}-${key}`} isFeatured={plan.isFeatured} className={isLastRow ? 'rounded-b-area' : undefined}>
+                <TableCell key={`${plan.name}-${key}`} isAccent={plan.isFeatured} className={isLastRow ? 'rounded-b-area pb-area' : undefined}>
                   {renderFeatureCell(plan[key])}
                 </TableCell>
               )
             })}
-          </React.Fragment>
+          </TableRow>
         )
       })}
     </Table>
