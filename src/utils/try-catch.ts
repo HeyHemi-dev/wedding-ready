@@ -85,8 +85,9 @@ export async function tryCatchFetch<T, E = Error>(url: string, options?: FetchOp
     clearTimeout(timeout)
 
     if (fetchError) {
-      console.error(fetchError)
-      if (fetchError.name === 'AbortError') throw new Error('Request timed out')
+      if (fetchError.name === 'AbortError') {
+        throw new Error('Request timed out')
+      }
 
       throw new Error('Network error: Failed to connect to server')
     }
