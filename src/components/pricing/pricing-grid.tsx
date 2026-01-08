@@ -67,10 +67,10 @@ export function PricingGrid({ plans }: { plans: Plan[] }) {
         /* Feature row */
         return (
           <TableRow key={key}>
-            <TableCell className="ui-s1 justify-start text-left">{planFeatures[key]}</TableCell>
+            <TableCell className="ui-s1 content-center justify-start text-left">{planFeatures[key]}</TableCell>
             {plans.map((plan) => {
               return (
-                <TableCell key={`${plan.name}-${key}`} hasAccent={plan.isFeatured} className={isLastRow ? 'rounded-b-area' : undefined}>
+                <TableCell key={`${plan.name}-${key}`} hasAccent={plan.isFeatured} className={cn('place-content-center', isLastRow && 'rounded-b-area')}>
                   {renderFeatureCell(plan[key])}
                 </TableCell>
               )
