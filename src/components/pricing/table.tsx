@@ -46,6 +46,14 @@ export function TableRow({ hasAccentOnHover = true, className, children, ...prop
   )
 }
 
+export function TableHeaderRow({ hasAccentOnHover, className, children, ...props }: TableRowProps) {
+  return (
+    <TableRow hasAccentOnHover={false} className={cn('bg-muted font-medium', className)} {...props}>
+      {children}
+    </TableRow>
+  )
+}
+
 export function TableCell({ className, hasAccent = false, children, ...props }: TableCellProps) {
   return (
     <div data-element="table-cell" className={cn('row-span-full grid px-6 py-4', hasAccent && 'bg-accent/60', className)} {...props}>
