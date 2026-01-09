@@ -1,108 +1,111 @@
-import { ReactNode } from 'react'
+import React from 'react'
 
 import { Check, X } from 'lucide-react'
 import Link from 'next/link'
 
-import { Href } from '@/app/_types/generics'
+import type { Href, Dollar } from '@/app/_types/generics'
+import { Table, TableCell, TableRow } from '@/components/pricing/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/shadcn-utils'
 
-export const pricingFeatures = [
-  'Create a supplier profile',
-  'Upload tiles',
-  'Credit other suppliers',
-  'Request to be credited',
-  'Featured in Locations directory',
-  'Featured in Services directory',
-] as const
+type PlanFeatureDetail =
+  | boolean
+  | {
+      text: string
+      subtext?: string
+    }
 
-export type Feature = (typeof pricingFeatures)[number]
+const planFeatures = {
+  createSupplierProfile: 'Create a supplier profile',
+  uploadTileLimit: 'Max tile uploads',
+  creditSuppliers: 'Credit other suppliers',
+  requestCredit: 'Request to be credited',
+  locationsFeature: 'Featured in Locations directory',
+  servicesFeature: 'Featured in Services directory',
+} as const
+type PlanFeatureKey = keyof typeof planFeatures
+const featureKeys = Object.keys(planFeatures) as PlanFeatureKey[]
 
-interface PricingPlan {
+type Plan = {
+  isFeatured: boolean
   name: string
-  price: string
+  price: Dollar
   description: string
   cta: Href
-  featured?: boolean
-  features: Record<Feature, ReactNode>
-}
+} & Record<PlanFeatureKey, PlanFeatureDetail>
 
-interface PricingTableProps {
-  plans: PricingPlan[]
-}
+export function PricingTable({ plans }: { plans: Plan[] }) {
+  const rowCountHeader = 4
+  const rowCountFeature = featureKeys.length
+  const columnCount = plans.length
 
-export function PricingTable({ plans }: PricingTableProps) {
   return (
-    <div className="grid overflow-x-auto">
-      <PricingTableHeaderRow plans={plans} />
-      {/* Feature Rows */}
-      <PricingTableFeatureRow feature={'Create a supplier profile'} plans={plans} />
-      <PricingTableFeatureRow feature={'Upload tiles'} plans={plans} />
-      <PricingTableFeatureRow feature={'Credit other suppliers'} plans={plans} />
-      <PricingTableFeatureRow feature={'Request to be credited'} plans={plans} />
-      <PricingTableFeatureRow feature={'Featured in Locations directory'} plans={plans} />
-      <PricingTableFeatureRow feature={'Featured in Services directory'} plans={plans} isLast={true} />
-    </div>
+    <Table
+      isFirstColFrozen
+      style={{
+        gridTemplateRows: `max-content repeat(${rowCountFeature}, 1fr)`,
+        gridTemplateColumns: `minmax(min-content, 1fr) repeat(${columnCount}, minmax(16rem, 1fr))`,
+      }}>
+      {/* Header row */}
+      <TableRow hasAccentOnHover={false} style={{ gridTemplateRows: `repeat(${rowCountHeader}, min-content)` }} className="gap-y-sibling">
+        <TableCell />
+        {plans.map((plan) => (
+          <TableCell
+            key={plan.name}
+            className={cn('grid grid-rows-subgrid justify-items-center', plan.isFeatured && 'rounded-t-area pt-area')}
+            hasAccent={plan.isFeatured}>
+            {renderHeaderCell(plan)}
+          </TableCell>
+        ))}
+      </TableRow>
+
+      {featureKeys.map((key, rowIndex) => {
+        const isLastRow = rowIndex === featureKeys.length - 1
+        /* Feature row */
+        return (
+          <TableRow key={key}>
+            <TableCell className="ui-s1 content-center justify-start text-left">{planFeatures[key]}</TableCell>
+            {plans.map((plan) => {
+              return (
+                <TableCell key={`${plan.name}-${key}`} hasAccent={plan.isFeatured} className={cn('place-content-center', isLastRow && 'rounded-b-area')}>
+                  {renderFeatureCell(plan[key])}
+                </TableCell>
+              )
+            })}
+          </TableRow>
+        )
+      })}
+    </Table>
   )
 }
 
-function PricingTableHeaderRow({ plans }: { plans: PricingPlan[] }) {
+function renderHeaderCell(plan: Plan) {
   return (
-    <div className="grid auto-rows-max grid-cols-[15ch_minmax(20ch,1fr)_minmax(20ch,1fr)] gap-sibling laptop:grid-cols-3">
-      <div className="sticky left-0 z-10 row-span-4 grid grid-rows-subgrid bg-transparent laptop:block laptop:bg-transparent"></div>
-      {plans.map((plan) => (
-        <div
-          key={plan.name}
-          className={cn('row-span-4 grid grid-rows-subgrid justify-items-center gap-sibling rounded-t-area p-6', plan.featured && 'bg-area')}>
-          <div className="flex items-center gap-partner">
-            <h3 className="heading-md">{plan.name}</h3>
-            {plan.featured && <Badge>Popular</Badge>}
-          </div>
-          <div className="flex items-baseline gap-partner">
-            <p className="heading-2xl">{plan.price}</p>
-            {plan.price !== 'Free' && <span className="ui text-muted-foreground">/month</span>}
-          </div>
-          <p className="ui text-center text-muted-foreground">{plan.description}</p>
-          <Button asChild>
-            <Link href={plan.cta.href}>{plan.cta.label}</Link>
-          </Button>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function PricingTableFeatureRow({ feature, plans, isLast = false }: { feature: Feature; plans: PricingPlan[]; isLast?: boolean }) {
-  return (
-    <div className="grid grid-cols-[15ch_minmax(20ch,1fr)_minmax(20ch,1fr)] gap-sibling border-t border-border transition-all duration-200 laptop:grid-cols-3 laptop:hover:bg-primary/20">
-      <div
-        className={cn(
-          'sticky left-0 z-10 flex items-center bg-background p-6 shadow-[3px_0px_3px_-1px_rgba(0,_0,_0,_0.1)] laptop:block laptop:bg-transparent laptop:shadow-none',
-          isLast && 'pb-12'
-        )}>
-        <p className="ui">{feature}</p>
+    <>
+      <div className="flex items-center gap-partner self-end">
+        <h3 className="heading-md">{plan.name}</h3>
+        {plan.isFeatured && <Badge>Popular</Badge>}
       </div>
-      {plans.map((plan) => (
-        <div
-          key={plan.name}
-          className={cn('ui flex items-center justify-center p-6 text-center', plan.featured && 'bg-area', isLast && 'rounded-b-area pb-12')}>
-          {plan.features[feature]}
-        </div>
-      ))}
-    </div>
+      <div className="flex items-baseline gap-partner">
+        <p className="heading-2xl">{plan.price === 0 ? 'Free' : `$${plan.price.toLocaleString()}`}</p>
+        {plan.price !== 0 && <span className="ui text-muted-foreground">/month</span>}
+      </div>
+      <p className="ui text-center text-muted-foreground">{plan.description}</p>
+      <Button asChild>
+        <Link href={plan.cta.href}>{plan.cta.label}</Link>
+      </Button>
+    </>
   )
 }
 
-export function FeatureBoolean({ value }: { value: boolean }) {
-  return value ? <Check className="h-6 w-6" aria-label="Yes" role="img" /> : <X className="h-6 w-6 text-destructive" aria-label="No" role="img" />
-}
-
-export function FeatureTextWithSubtext({ text, subtext }: { text: string; subtext: string }) {
+function renderFeatureCell(value: PlanFeatureDetail) {
+  if (value === true) return <Check className="h-6 w-6" aria-label="Yes" role="img" />
+  if (value === false) return <X className="h-6 w-6 text-destructive" aria-label="No" role="img" />
   return (
-    <div className="flex flex-col">
-      <p className="ui">{text}</p>
-      <p className="ui-small text-muted-foreground">{subtext}</p>
-    </div>
+    <>
+      <div className="ui">{value.text}</div>
+      {value.subtext && <div className="ui-small text-muted-foreground">{value.subtext}</div>}
+    </>
   )
 }

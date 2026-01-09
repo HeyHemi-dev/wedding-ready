@@ -1,10 +1,11 @@
 import { ArrowRight, Users, Sparkles, MapPin, InfinityIcon, HeartHandshake } from 'lucide-react'
 import Link from 'next/link'
 
+import { asDollar } from '@/app/_types/generics'
 import { FeatureCard } from '@/components/card/feature-card'
 import { HowItWorksArrow, HowItWorksStep } from '@/components/card/how-it-works-step'
 import { FAQ } from '@/components/faq/faq'
-import { PricingTable, FeatureBoolean, FeatureTextWithSubtext } from '@/components/pricing/pricing-table'
+import { PricingTable } from '@/components/pricing/pricing-table'
 import { Logos } from '@/components/testimonial/logos'
 import { Testimonial } from '@/components/testimonial/testimonial'
 import { FadeInDiv } from '@/components/ui/animated-section'
@@ -12,6 +13,7 @@ import { Area } from '@/components/ui/area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
+import { buildUrlWithSearchParams } from '@/utils/api-helpers'
 
 export default function WhyJoinPage() {
   return (
@@ -143,39 +145,36 @@ export default function WhyJoinPage() {
         <PricingTable
           plans={[
             {
+              isFeatured: false,
               name: 'Basic',
-              price: 'Free',
+              price: asDollar(0),
               description: 'Perfect for getting started',
               cta: {
                 label: 'Join as a supplier',
-                href: '/suppliers/register',
+                href: buildUrlWithSearchParams('/sign-up', { plan: 'basic' }),
               },
-              features: {
-                'Create a supplier profile': <FeatureBoolean value={true} />,
-                'Upload tiles': <p>20 per month</p>,
-                'Credit other suppliers': <FeatureBoolean value={true} />,
-                'Request to be credited': <FeatureBoolean value={true} />,
-                'Featured in Locations directory': <FeatureBoolean value={false} />,
-                'Featured in Services directory': <FeatureBoolean value={false} />,
-              },
+              createSupplierProfile: true,
+              uploadTileLimit: { text: '20 per month' },
+              creditSuppliers: true,
+              requestCredit: true,
+              locationsFeature: false,
+              servicesFeature: false,
             },
             {
+              isFeatured: true,
               name: 'Plus',
-              price: '$30',
+              price: asDollar(30),
               description: 'For suppliers ready to maximize their reach',
               cta: {
                 label: 'Join as a supplier',
-                href: '/suppliers/register?plan=plus',
+                href: buildUrlWithSearchParams('/sign-up', { plan: 'plus' }),
               },
-              featured: true,
-              features: {
-                'Create a supplier profile': <FeatureBoolean value={true} />,
-                'Upload tiles': <p>Unlimited</p>,
-                'Credit other suppliers': <FeatureBoolean value={true} />,
-                'Request to be credited': <FeatureBoolean value={true} />,
-                'Featured in Locations directory': <FeatureTextWithSubtext text="1 Location included" subtext="$10 per additional location" />,
-                'Featured in Services directory': <FeatureTextWithSubtext text="1 Service included" subtext="$10 per additional service" />,
-              },
+              createSupplierProfile: true,
+              uploadTileLimit: { text: 'Unlimited' },
+              creditSuppliers: true,
+              requestCredit: true,
+              locationsFeature: { text: '1 Location included', subtext: '$10 per additional location' },
+              servicesFeature: { text: '1 Service included', subtext: '$10 per additional service' },
             },
           ]}
         />

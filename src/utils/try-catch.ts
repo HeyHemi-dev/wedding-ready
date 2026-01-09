@@ -2,6 +2,8 @@ import { OPERATION_ERROR } from '@/app/_types/errors'
 import { isClient } from '@/utils/api-helpers'
 import { FETCH_TIMEOUT } from '@/utils/constants'
 
+import { logger } from './logger'
+
 // Types for the result object with discriminated union
 type Success<T> = {
   data: T
@@ -85,8 +87,9 @@ export async function tryCatchFetch<T, E = Error>(url: string, options?: FetchOp
     clearTimeout(timeout)
 
     if (fetchError) {
-      console.error(fetchError)
-      if (fetchError.name === 'AbortError') throw new Error('Request timed out')
+      if (fetchError.name === 'AbortError') {
+        throw new Error('Request timed out')
+      }
 
       throw new Error('Network error: Failed to connect to server')
     }
@@ -117,6 +120,11 @@ export async function tryCatchFetch<T, E = Error>(url: string, options?: FetchOp
     return { data: result as T, error: null }
   } catch (error) {
     clearTimeout(timeout)
+    // TODO: logger does not log on client, so fetch errors will likely never be logged.
+    logger.error('tryCatchFetch_error', {
+      url,
+      error: error,
+    })
     return { data: null, error: error as E }
   }
 }

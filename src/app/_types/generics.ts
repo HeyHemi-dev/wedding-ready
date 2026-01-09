@@ -5,6 +5,14 @@ export type Href = {
   label: string
 }
 
+export type Dollar = number & { readonly __brand: 'Dollar' }
+export const asDollar = (n: number): Dollar => {
+  if (!Number.isInteger(n) || n < 0) {
+    throw new Error('Dollar must be a whole number ≥ 0')
+  }
+  return n as Dollar
+}
+
 export type HttpErrorResponseBody = {
   code: string
   message?: string
