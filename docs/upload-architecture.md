@@ -8,17 +8,17 @@ This document focuses on how supplier image uploads work end-to-end in Wedding R
 
 ```mermaid
 flowchart LR
-  Supplier[Supplier user\n/browser)] --> UploadPage[/suppliers/[handle]/new]
-  UploadPage --> UI[Upload UI\nDropzone + Preview Forms]
-  UI --> UploadThingClient[UploadThing React client]
-  UploadThingClient --> UploadThingRoute[/api/uploadthing]
-  UploadThingRoute --> UploadThingMW[UploadThing middleware\nvalidation + authz]
-  UploadThingMW --> FileStorage[UploadThing storage\n(ufsUrl)]
-  FileStorage --> UploadComplete[onUploadComplete callback]
-  UploadComplete --> TileOps[tileOperations.createForSupplier]
-  TileOps --> DB[(Postgres via Drizzle models)]
-  UploadComplete --> ClientDone[onClientUploadComplete]
-  ClientDone --> TilePage[/t/:tileId]
+  Supplier["Supplier user\n(browser)"] --> UploadPage["/suppliers/{handle}/new"]
+  UploadPage --> UI["Upload UI\nDropzone + Preview Forms"]
+  UI --> UploadThingClient["UploadThing React client"]
+  UploadThingClient --> UploadThingRoute["/api/uploadthing"]
+  UploadThingRoute --> UploadThingMW["UploadThing middleware\nvalidation + authz"]
+  UploadThingMW --> FileStorage["UploadThing storage\n(ufsUrl)"]
+  FileStorage --> UploadComplete["onUploadComplete callback"]
+  UploadComplete --> TileOps["tileOperations.createForSupplier"]
+  TileOps --> DB[("Postgres via Drizzle models")]
+  UploadComplete --> ClientDone["onClientUploadComplete"]
+  ClientDone --> TilePage["/t/:tileId"]
 ```
 
 ## 2) Supplier Upload Flow (detailed)
