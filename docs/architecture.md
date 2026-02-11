@@ -3,6 +3,7 @@
 # Project Architecture Documentation
 
 - Upload architecture deep-dive: [`docs/upload-architecture.md`](./upload-architecture.md)
+- Feed fetch architecture deep-dive: [`docs/feed-fetch-architecture.md`](./feed-fetch-architecture.md)
 
 ## Layered Architecture
 
