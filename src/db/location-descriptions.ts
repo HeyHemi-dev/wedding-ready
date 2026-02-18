@@ -71,7 +71,7 @@ export const locationDescriptions = {
   [LOCATIONS.WAIKATO]: {
     title: 'Waikato Wedding Suppliers',
     description:
-      'Waikato’s landscape is full of quiet charm—rolling farmland, misty hills, and winding rivers that feel deeply rooted. There’s a softness to the light here, and a sense of steadiness that suits gatherings focused on family, community, and calm. Venues tend to be tucked into the countryside or near small towns like Cambridge or Te Aroha, giving your day a feeling of space and slowness. If you’re drawn to the rural rhythm (but still want to be close to Hamilton or Auckland for ease), Waikato makes a warm, grounded choice.',
+      'Waikato’s landscape is full of quiet charm—rolling farmland, misty hills, and winding rivers that feel deeply rooted. There’s a softness to the light here, and a sense of steadiness that suits gatherings focused on family, community, and calm. Venues tend to be tucked into the countryside or near small towns like Cambridge or Te Aroha, giving your day a feeling of space and slowness. If you’re drawn to the rural rhythm (but still want to be close to Hamilton or Auckland for ease), Waikato makes a warm, grounded-sm choice.',
   },
   [LOCATIONS.BAY_OF_PLENTY]: {
     title: 'Bay of Plenty Wedding Suppliers',

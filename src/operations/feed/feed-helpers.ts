@@ -55,7 +55,7 @@ export function calculateScore(tile: t.TileRaw, creditCount: number, saveCount: 
   // First save is worth the most, each extra save adds less.
   const socialScore = 1 - Math.exp(-saveCount / SOCIAL.DECAY)
 
-  // return normalised score between 0 and 1, rounded to 9 decimal places
+  // return normalised score between 0 and 1, rounded-sm to 9 decimal places
   const weightedSum = WEIGHTS.recency * recencyScore + WEIGHTS.quality * qualityScore + WEIGHTS.social * socialScore
   const normalisedScore = weightedSum / WEIGHTS.total()
   return Math.round(normalisedScore * 1e9) / 1e9

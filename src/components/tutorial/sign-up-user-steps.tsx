@@ -11,11 +11,11 @@
 //           <p>It looks like this App is hosted on Vercel.</p>
 //           <p className="mt-4">
 //             This particular deployment is
-//             <span className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
+//             <span className="relative rounded-sm bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
 //               "{process.env.VERCEL_ENV}"
 //             </span>{" "}
 //             on
-//             <span className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
+//             <span className="relative rounded-sm bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
 //               https://{process.env.VERCEL_URL}
 //             </span>
 //             .
@@ -35,19 +35,19 @@
 //           <ul className="mt-4">
 //             <li>
 //               -{" "}
-//               <span className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
+//               <span className="relative rounded-sm bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
 //                 http://localhost:3000/**
 //               </span>
 //             </li>
 //             <li>
 //               -{" "}
-//               <span className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
+//               <span className="relative rounded-sm bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
 //                 {`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/**`}
 //               </span>
 //             </li>
 //             <li>
 //               -{" "}
-//               <span className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
+//               <span className="relative rounded-sm bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
 //                 {`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL?.replace(".vercel.app", "")}-*-[vercel-team-url].vercel.app/**`}
 //               </span>{" "}
 //               (Vercel Team URL can be found in{" "}

@@ -18,7 +18,7 @@ type SupplierCardProps = {
 
 export function SupplierCard({ name, subtitle, mainImage, thumbnailImages, stat, href, avatar }: SupplierCardProps) {
   return (
-    <Link href={href} className="grid gap-sibling rounded transition-all hover:bg-primary/80 hover:shadow-contour focus:bg-primary/80">
+    <Link href={href} className="grid gap-sibling rounded-sm transition-all hover:bg-primary/80 hover:shadow-contour focus:bg-primary/80">
       <div className="grid max-w-full grid-cols-3 grid-rows-2 gap-hairline overflow-hidden rounded">
         <div className="relative col-span-2 row-span-2 aspect-square bg-white">
           {mainImage && <Image src={mainImage} alt={name} fill sizes="100vw" className="object-cover" />}
