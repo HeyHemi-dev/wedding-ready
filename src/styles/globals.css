@@ -55,7 +55,6 @@
   --gap-acquaintance: var(--gap-acquaintance);
   --gap-stranger: var(--gap-stranger);
 
-  --radius: var(--radius-base);
   --radius-sm: calc(var(--radius-base) * 0.5);
   --radius-md: calc(var(--radius-base) * 1.5);
   --radius-lg: calc(var(--radius-base) * 2);
