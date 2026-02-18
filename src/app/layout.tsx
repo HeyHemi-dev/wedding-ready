@@ -13,7 +13,6 @@ import { Providers } from './providers'
 import type { Metadata } from 'next'
 
 import '@/styles/globals.css'
-import '@uploadthing/react/styles.css'
 
 const defaultUrl = BASE_URL
 
