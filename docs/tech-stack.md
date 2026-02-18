@@ -8,7 +8,6 @@
 - **Database**: [Supabase PostgreSQL](https://supabase.com/docs/guides/database/overview) with [Drizzle ORM](https://orm.drizzle.team/docs/rqb).
 - **Authentication**: [Supabase Auth](https://supabase.com/docs/guides/auth) with SSR.
 - **Storage**: [Uploadthing](https://docs.uploadthing.com/).
-- **Styling**: [Tailwind CSS v3](https://v3.tailwindcss.com/) with [shadcn/ui](https://ui.shadcn.com/docs) components.
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/docs) with [shadcn/ui](https://ui.shadcn.com/docs) components.
 - **Language**: TypeScript throughout.
 - **Testing**: [Vitest](https://vitest.dev/) integration tests with local supabase instance.
-

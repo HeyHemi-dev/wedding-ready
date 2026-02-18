@@ -37,6 +37,104 @@
   --spacing-sm: 1rem;
   --spacing-xs: 0.5rem;
   --spacing-xxs: 0.25rem;
+  --spacing-site: var(--padding-site-gutter);
+  --spacing-section: var(--padding-section);
+  --spacing-contour: var(--padding-contour);
+  --spacing-area: var(--padding-area);
+  --spacing-header-content: var(--height-header-content);
+  --spacing-header: var(--height-header);
+  --spacing-action-bar: calc(var(--radius-area) * 2);
+  --spacing-spouse: var(--gap-spouse);
+  --spacing-partner: var(--gap-partner);
+  --spacing-sibling: var(--gap-sibling);
+  --spacing-close-friend: var(--gap-close-friend);
+  --spacing-friend: var(--gap-friend);
+  --spacing-acquaintance: var(--gap-acquaintance);
+  --spacing-stranger: var(--gap-stranger);
+
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 1.5);
+  --radius-lg: calc(var(--radius) * 2);
+  --radius-full: calc(var(--radius) * 999);
+  --radius-outside: calc(var(--radius) + var(--padding-contour));
+  --radius-inside: calc(var(--radius) - var(--padding-contour));
+  --radius-area: calc(var(--radius) * 3);
+  --radius-area-outside: calc(var(--radius-area) + var(--padding-contour));
+  --radius-area-inside: calc(var(--radius-area) - var(--padding-contour));
+
+  --shadow-contour: 0 0 0 var(--padding-contour) hsl(var(--primary));
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@utility rounded {
+  border-radius: var(--radius);
+}
+
+@utility grid-cols-siteLayout {
+  grid-template-columns: var(--site-layout);
+}
+
+@utility min-h-svh-minus-header {
+  min-height: calc(100svh - var(--height-header));
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+@import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
+@plugin 'tailwindcss-animate';
+
+@theme {
+  --breakpoint-tablet: 450px;
+  --breakpoint-laptop: 850px;
+  --breakpoint-wide: 1550px;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-area: hsl(var(--area));
+  --color-area-foreground: hsl(var(--area-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --spacing-hairline: var(--hairline);
+  --spacing-xxl: 4rem;
+  --spacing-xl: 3rem;
+  --spacing-lg: 2rem;
+  --spacing-md: 1.5rem;
+  --spacing-sm: 1rem;
+  --spacing-xs: 0.5rem;
+  --spacing-xxs: 0.25rem;
   --padding-site: var(--padding-site-gutter);
   --padding-section: var(--padding-section);
   --padding-contour: var(--padding-contour);
