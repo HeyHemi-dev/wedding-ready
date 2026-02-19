@@ -3,7 +3,7 @@ name: Preview CI
 on:
   pull_request:
     branches:
-      - preview
+      - main
     types:
       - opened
       - synchronize
