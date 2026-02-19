@@ -129,7 +129,7 @@ export const serviceDescriptions = {
   [SERVICES.CATERER]: {
     title: 'New Zealand Wedding Caterers',
     description:
-      'Aotearoa’s food scene is a reflection of its rich, multicultural roots —grounded-sm in the land, shaped by migration, and always evolving. From pāua fritters to biryani bowls, local caterers bring together flavours from across the globe with a distinct Kiwi ease. Expect menus built around local produce, relaxed service, and dishes that invite people to gather, share, and celebrate.',
+      'Aotearoa’s food scene is a reflection of its rich, multicultural roots —grounded in the land, shaped by migration, and always evolving. From pāua fritters to biryani bowls, local caterers bring together flavours from across the globe with a distinct Kiwi ease. Expect menus built around local produce, relaxed service, and dishes that invite people to gather, share, and celebrate.',
   },
   [SERVICES.CELEBRANT]: {
     title: 'New Zealand Wedding Celebrants',
