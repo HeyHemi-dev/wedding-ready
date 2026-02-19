@@ -1,0 +1,25 @@
+@utility grid-cols-siteLayout {
+  grid-template-columns: var(--site-layout);
+}
+
+@utility min-h-svh-minus-header {
+  min-height: calc(100svh - var(--height-header));
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}

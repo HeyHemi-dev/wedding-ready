@@ -1,0 +1,72 @@
+@theme {
+  --breakpoint-tablet: 450px;
+  --breakpoint-laptop: 850px;
+  --breakpoint-wide: 1550px;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-area: hsl(var(--area));
+  --color-area-foreground: hsl(var(--area-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --spacing-hairline: var(--wr-hairline);
+  --spacing-xxl: 4rem;
+  --spacing-xl: 3rem;
+  --spacing-lg: 2rem;
+  --spacing-md: 1.5rem;
+  --spacing-sm: 1rem;
+  --spacing-xs: 0.5rem;
+  --spacing-xxs: 0.25rem;
+
+  --padding-site: var(--wr-padding-site-gutter);
+  --padding-section: var(--wr-padding-section);
+  --padding-contour: var(--wr-padding-contour);
+  --padding-area: var(--wr-padding-area);
+
+  --width-site: var(--wr-width-site);
+  --width-prose: var(--wr-width-prose);
+
+  --height-header-content: var(--wr-height-header-content);
+  --height-header: var(--wr-height-header);
+  --height-action-bar: calc(var(--wr-radius-area) * 2);
+
+  --gap-spouse: var(--wr-gap-spouse);
+  --gap-partner: var(--wr-gap-partner);
+  --gap-sibling: var(--wr-gap-sibling);
+  --gap-close-friend: var(--wr-gap-close-friend);
+  --gap-friend: var(--wr-gap-friend);
+  --gap-acquaintance: var(--wr-gap-acquaintance);
+  --gap-stranger: var(--wr-gap-stranger);
+  --gap-area: var(--wr-gap-area);
+
+  --radius: var(--wr-radius-base);
+  --radius-sm: calc(var(--wr-radius-base) * 0.5);
+  --radius-md: calc(var(--wr-radius-base) * 1.5);
+  --radius-lg: calc(var(--wr-radius-base) * 2);
+  --radius-full: calc(var(--wr-radius-base) * 999);
+  --radius-outside: calc(var(--wr-radius-base) + var(--wr-padding-contour));
+  --radius-inside: calc(var(--wr-radius-base) - var(--wr-padding-contour));
+  --radius-area: var(--wr-radius-area);
+  --radius-area-outside: calc(var(--wr-radius-area) + var(--wr-padding-contour));
+  --radius-area-inside: calc(var(--wr-radius-area) - var(--wr-padding-contour));
+
+  --shadow-contour: 0 0 0 var(--wr-padding-contour) hsl(var(--primary));
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}

@@ -1,0 +1,145 @@
+@layer base {
+  :root {
+    --background: 39 16% 98%;
+    --foreground: 210 5% 10%;
+    --muted: 39 17% 95%;
+    --muted-foreground: 39 5% 49%;
+    --card: 39 17% 91%;
+    --card-foreground: var(--foreground);
+    --area: var(--card);
+    --area-foreground: var(--card-foreground);
+    --popover: 0 0% 100%;
+    --popover-foreground: var(--foreground);
+    --primary: 66 100% 73%;
+    --primary-foreground: 66 100% 15%;
+    --secondary: 290 100% 94%;
+    --secondary-foreground: 290 100% 29%;
+    --accent: 154 83% 91%;
+    --accent-foreground: 154 79% 23%;
+    --destructive: 0 50% 50%;
+    --destructive-foreground: 32 5% 98%;
+    --border: 0 0% 100%;
+    --input: var(--border);
+    --ring: var(--primary);
+
+    --wr-gap-base: 0.25rem;
+    --wr-gap-scale: 1.5;
+
+    --wr-radius-base: 0.5rem;
+    --wr-radius-area: calc(var(--wr-radius-base) * 3);
+
+    --wr-hairline: 1px;
+    --wr-gap-spouse: calc(var(--wr-gap-base));
+    --wr-gap-partner: calc(var(--wr-gap-spouse) * var(--wr-gap-scale));
+    --wr-gap-sibling: calc(var(--wr-gap-partner) * var(--wr-gap-scale));
+    --wr-gap-friend: calc(var(--wr-gap-sibling) * var(--wr-gap-scale));
+    --wr-gap-acquaintance: calc(var(--wr-gap-friend) * var(--wr-gap-scale));
+    --wr-gap-stranger: calc(var(--wr-gap-acquaintance) * var(--wr-gap-scale));
+    --wr-gap-close-friend: calc(var(--wr-gap-sibling) * (var(--wr-gap-scale) / 2));
+    --wr-gap-area: var(--wr-gap-friend);
+
+    --wr-padding-site-gutter: 0px;
+    --wr-padding-section: calc(var(--wr-gap-stranger) / 2);
+    --wr-padding-contour: 2px;
+    --wr-padding-area: calc(var(--wr-radius-area) * 3);
+
+    --wr-height-header-content: 2rem;
+    --wr-height-header: calc(var(--wr-height-header-content) + (var(--wr-gap-area) * 2));
+    --wr-height-page: 100svh;
+    --wr-height-first-section: calc(var(--wr-height-page) - var(--wr-height-header));
+
+    --wr-width-site: 80rem;
+    --wr-width-prose: 80ch;
+
+    --site-layout: minmax(var(--wr-padding-site-gutter), auto) minmax(0, var(--wr-width-site)) minmax(var(--wr-padding-site-gutter), auto);
+
+    --gap-base: var(--wr-gap-base);
+    --gap-scale: var(--wr-gap-scale);
+    --gap-spouse: var(--wr-gap-spouse);
+    --gap-partner: var(--wr-gap-partner);
+    --gap-sibling: var(--wr-gap-sibling);
+    --gap-friend: var(--wr-gap-friend);
+    --gap-acquaintance: var(--wr-gap-acquaintance);
+    --gap-stranger: var(--wr-gap-stranger);
+    --gap-close-friend: var(--wr-gap-close-friend);
+    --gap-area: var(--wr-gap-area);
+
+    --padding-site-gutter: var(--wr-padding-site-gutter);
+    --padding-section: var(--wr-padding-section);
+    --padding-contour: var(--wr-padding-contour);
+    --padding-area: var(--wr-padding-area);
+
+    --height-header-content: var(--wr-height-header-content);
+    --height-header: var(--wr-height-header);
+    --radius-area: var(--wr-radius-area);
+    --width-site: var(--wr-width-site);
+    --width-prose: var(--wr-width-prose);
+
+    --wr-text-size-base: 1rem;
+    --wr-text-scale: 1.2;
+    --text-size-lg: calc(var(--wr-text-size-base) * var(--wr-text-scale));
+    --text-size-xl: calc(var(--text-size-lg) * var(--wr-text-scale));
+    --text-size-2xl: calc(var(--text-size-xl) * var(--wr-text-scale));
+    --text-size-3xl: calc(var(--text-size-2xl) * var(--wr-text-scale));
+    --text-size-4xl: calc(var(--text-size-3xl) * var(--wr-text-scale));
+    --text-size-5xl: calc(var(--text-size-4xl) * var(--wr-text-scale));
+    --text-size-6xl: calc(var(--text-size-5xl) * var(--wr-text-scale));
+    --text-size-sm: calc(var(--wr-text-size-base) / var(--wr-text-scale));
+    --text-size-xs: calc(var(--text-size-sm) / var(--wr-text-scale));
+    --text-size-2xs: calc(var(--text-size-xs) / var(--wr-text-scale));
+  }
+
+  .dark {
+    --background: 32 10% 10%;
+    --foreground: 32 5% 98%;
+    --card: 32 6% 10%;
+    --card-foreground: 32 5% 98%;
+    --popover: 32 10% 5%;
+    --popover-foreground: 32 5% 98%;
+    --primary: 32 14% 37%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 32 10% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: -6 10% 25%;
+    --muted-foreground: 32 5% 65%;
+    --accent: -6 10% 25%;
+    --accent-foreground: 32 5% 95%;
+    --destructive: 0 50% 50%;
+    --destructive-foreground: 32 5% 98%;
+    --border: 32 20% 50%;
+    --input: 32 20% 50%;
+    --ring: 32 14% 37%;
+    --wr-radius-base: 0rem;
+  }
+
+  @media (min-width: 450px) {
+    :root {
+      --wr-gap-scale: 1.8;
+      --wr-padding-site-gutter: calc(var(--wr-gap-friend) / 2);
+      --wr-text-size-base: 1rem;
+      --wr-text-scale: 1.225;
+    }
+  }
+
+  @media (min-width: 850px) {
+    :root {
+      --wr-gap-scale: 2;
+      --wr-text-size-base: 1rem;
+      --wr-text-scale: 1.25;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
+  }
+
+  * {
+    @apply border-border;
+  }
+}
