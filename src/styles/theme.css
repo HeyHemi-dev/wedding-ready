@@ -32,7 +32,7 @@
   --spacing-md: 1.5rem;
   --spacing-sm: 1rem;
   --spacing-xs: 0.5rem;
-  --spacing-xxs: 0.25rem;
+  --spacing-2xs: 0.25rem;
 
   --padding-site: var(--wr-padding-site-gutter);
   --padding-section: var(--wr-padding-section);
