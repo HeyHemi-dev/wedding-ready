@@ -1,9 +1,13 @@
 name: Preview CI
 
 on:
-  push:
-    branches-ignore:
-      - main
+  pull_request:
+    branches:
+      - preview
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   preview-ci:
