@@ -26,7 +26,7 @@
   --color-ring: hsl(var(--ring));
 
   --spacing-hairline: var(--wr-hairline);
-  --spacing-xxl: 4rem;
+  --spacing-2xl: 4rem;
   --spacing-xl: 3rem;
   --spacing-lg: 2rem;
   --spacing-md: 1.5rem;
