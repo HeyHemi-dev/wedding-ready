@@ -322,7 +322,7 @@ describe('feedHelpers', () => {
       expect(score).toBeCloseTo(1, 6) // use closeTo to avoid floating point precision issues
     })
 
-    it('should return normalized score rounded-sm to 9 decimal places', () => {
+    it('should return normalized score rounded to 9 decimal places', () => {
       // Arrange
       const tile = createMockTile()
 
@@ -330,7 +330,7 @@ describe('feedHelpers', () => {
       const score = calculateScore(tile, 3, 14)
 
       // Assert
-      // Check that score is rounded-sm to 9 decimal places
+      // Check that score is rounded to 9 decimal places
       const decimalPlaces = score.toString().split('.')[1]?.length || 0
       expect(decimalPlaces).toBeLessThanOrEqual(9)
       expect(score).toBeGreaterThanOrEqual(0)
