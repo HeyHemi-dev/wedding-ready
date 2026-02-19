@@ -1,4 +1,4 @@
-name: Run Preview Migrations And Tests
+name: Preview CI
 
 on:
   push:
@@ -6,7 +6,8 @@ on:
       - main
 
 jobs:
-  migrate:
+  preview-ci:
+    name: Migrate and Test
     runs-on: ubuntu-latest
     env:
       DATABASE_URL_SESSION_POOLER: ${{ secrets.PREVIEW_DATABASE_URL_SESSION_POOLER }}
