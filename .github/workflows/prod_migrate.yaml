@@ -1,4 +1,4 @@
-name: Run Drizzle Migrations For Production
+name: Production CI
 
 on:
   push:
@@ -6,7 +6,8 @@ on:
       - main
 
 jobs:
-  migrate:
+  prod-ci:
+    name: Run Migrations
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
