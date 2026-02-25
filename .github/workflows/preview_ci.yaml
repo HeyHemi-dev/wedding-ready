@@ -13,6 +13,7 @@ jobs:
   preview-ci:
     name: Migrate and Test
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     env:
       DATABASE_URL_SESSION_POOLER: ${{ secrets.PREVIEW_DATABASE_URL_SESSION_POOLER }}
       DATABASE_URL: ${{ secrets.PREVIEW_DATABASE_URL }}
