@@ -1,4 +1,4 @@
-import { describe, expect, test, beforeEach, afterAll } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
 import { scene, testClient, TEST_ORIGIN } from '@/testing/scene'
@@ -39,6 +39,7 @@ describe('authOperations', () => {
   }
 
   beforeEach(async () => {
+    scene.startTest()
     await Promise.all([
       scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
       scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
@@ -46,11 +47,11 @@ describe('authOperations', () => {
     ])
   })
 
-  afterAll(async () => {
+  afterEach(async () => {
     await Promise.all([
+      scene.endTest(),
       scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
       scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
-      scene.resetTestData(),
       cleanUpTestUsers(),
     ])
   })

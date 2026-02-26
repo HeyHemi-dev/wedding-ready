@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach, afterAll } from 'vitest'
+import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
@@ -7,12 +7,12 @@ import { createTileCreditForm, createSupplierUpdateForm, scene, TEST_SUPPLIER } 
 import { supplierOperations } from './supplier-operations'
 
 describe('supplierOperations', () => {
-  afterEach(async () => {
-    await scene.resetTestData()
+  beforeEach(() => {
+    scene.startTest()
   })
 
-  afterAll(async () => {
-    await scene.resetTestData()
+  afterEach(async () => {
+    await scene.endTest()
   })
 
   describe('getByHandle', () => {

@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from 'vitest'
+import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
 import { scene, TEST_SUPPLIER } from '@/testing/scene'
@@ -6,8 +6,12 @@ import { scene, TEST_SUPPLIER } from '@/testing/scene'
 import { locationOperations } from './location-operations'
 
 describe('locationOperations', () => {
-  afterAll(async () => {
-    await scene.resetTestData()
+  beforeEach(() => {
+    scene.startTest()
+  })
+
+  afterEach(async () => {
+    await scene.endTest()
   })
 
   describe('getAllWithSupplierCount', () => {
