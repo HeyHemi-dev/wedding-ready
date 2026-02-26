@@ -34,39 +34,53 @@
   --spacing-xs: 0.5rem;
   --spacing-2xs: 0.25rem;
 
+  --gap-spouse: var(--wr-gap-base);
+  --gap-partner: calc(var(--gap-spouse) * var(--wr-gap-scale));
+  --gap-sibling: calc(var(--gap-partner) * var(--wr-gap-scale));
+  --gap-close-friend: calc(var(--gap-sibling) * (var(--wr-gap-scale) / 2));
+  --gap-friend: calc(var(--gap-sibling) * var(--wr-gap-scale));
+  --gap-acquaintance: calc(var(--gap-friend) * var(--wr-gap-scale));
+  --gap-stranger: calc(var(--gap-acquaintance) * var(--wr-gap-scale));
+  --gap-area: var(--gap-friend);
+
   --padding-site: var(--wr-padding-site-gutter);
-  --padding-section: var(--wr-padding-section);
+  --padding-section: calc(var(--gap-stranger) / 2);
   --padding-contour: var(--wr-padding-contour);
-  --padding-area: var(--wr-padding-area);
+  --padding-area: calc(var(--radius-area) * 3);
 
   --width-site: var(--wr-width-site);
   --width-prose: var(--wr-width-prose);
+  --site-layout: minmax(var(--padding-site), auto) minmax(0, var(--width-site)) minmax(var(--padding-site), auto);
 
   --height-header-content: var(--wr-height-header-content);
-  --height-header: var(--wr-height-header);
-  --height-action-bar: calc(var(--wr-radius-area) * 2);
-
-  --gap-spouse: var(--wr-gap-spouse);
-  --gap-partner: var(--wr-gap-partner);
-  --gap-sibling: var(--wr-gap-sibling);
-  --gap-close-friend: var(--wr-gap-close-friend);
-  --gap-friend: var(--wr-gap-friend);
-  --gap-acquaintance: var(--wr-gap-acquaintance);
-  --gap-stranger: var(--wr-gap-stranger);
-  --gap-area: var(--wr-gap-area);
+  --height-header: calc(var(--height-header-content) + (var(--gap-area) * 2));
+  --height-action-bar: calc(var(--radius-area) * 2);
+  --height-page: var(--wr-height-page);
+  --height-first-section: calc(var(--height-page) - var(--height-header));
 
   --radius: var(--wr-radius-base);
   --radius-sm: calc(var(--wr-radius-base) * 0.5);
   --radius-md: calc(var(--wr-radius-base) * 1.5);
   --radius-lg: calc(var(--wr-radius-base) * 2);
   --radius-full: calc(var(--wr-radius-base) * 999);
-  --radius-outside: calc(var(--wr-radius-base) + var(--wr-padding-contour));
-  --radius-inside: calc(var(--wr-radius-base) - var(--wr-padding-contour));
-  --radius-area: var(--wr-radius-area);
-  --radius-area-outside: calc(var(--wr-radius-area) + var(--wr-padding-contour));
-  --radius-area-inside: calc(var(--wr-radius-area) - var(--wr-padding-contour));
+  --radius-outside: calc(var(--radius) + var(--padding-contour));
+  --radius-inside: calc(var(--radius) - var(--padding-contour));
+  --radius-area: calc(var(--radius) * 3);
+  --radius-area-outside: calc(var(--radius-area) + var(--padding-contour));
+  --radius-area-inside: calc(var(--radius-area) - var(--padding-contour));
 
-  --shadow-contour: 0 0 0 var(--wr-padding-contour) hsl(var(--primary));
+  --text-size-lg: calc(var(--wr-text-size-base) * var(--wr-text-scale));
+  --text-size-xl: calc(var(--text-size-lg) * var(--wr-text-scale));
+  --text-size-2xl: calc(var(--text-size-xl) * var(--wr-text-scale));
+  --text-size-3xl: calc(var(--text-size-2xl) * var(--wr-text-scale));
+  --text-size-4xl: calc(var(--text-size-3xl) * var(--wr-text-scale));
+  --text-size-5xl: calc(var(--text-size-4xl) * var(--wr-text-scale));
+  --text-size-6xl: calc(var(--text-size-5xl) * var(--wr-text-scale));
+  --text-size-sm: calc(var(--wr-text-size-base) / var(--wr-text-scale));
+  --text-size-xs: calc(var(--text-size-sm) / var(--wr-text-scale));
+  --text-size-2xs: calc(var(--text-size-xs) / var(--wr-text-scale));
+
+  --shadow-contour: 0 0 0 var(--padding-contour) hsl(var(--primary));
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 }

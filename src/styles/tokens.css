@@ -26,67 +26,19 @@
     --wr-gap-scale: 1.5;
 
     --wr-radius-base: 0.5rem;
-    --wr-radius-area: calc(var(--wr-radius-base) * 3);
-
     --wr-hairline: 1px;
-    --wr-gap-spouse: calc(var(--wr-gap-base));
-    --wr-gap-partner: calc(var(--wr-gap-spouse) * var(--wr-gap-scale));
-    --wr-gap-sibling: calc(var(--wr-gap-partner) * var(--wr-gap-scale));
-    --wr-gap-friend: calc(var(--wr-gap-sibling) * var(--wr-gap-scale));
-    --wr-gap-acquaintance: calc(var(--wr-gap-friend) * var(--wr-gap-scale));
-    --wr-gap-stranger: calc(var(--wr-gap-acquaintance) * var(--wr-gap-scale));
-    --wr-gap-close-friend: calc(var(--wr-gap-sibling) * (var(--wr-gap-scale) / 2));
-    --wr-gap-area: var(--wr-gap-friend);
 
     --wr-padding-site-gutter: 0px;
-    --wr-padding-section: calc(var(--wr-gap-stranger) / 2);
     --wr-padding-contour: 2px;
-    --wr-padding-area: calc(var(--wr-radius-area) * 3);
 
     --wr-height-header-content: 2rem;
-    --wr-height-header: calc(var(--wr-height-header-content) + (var(--wr-gap-area) * 2));
     --wr-height-page: 100svh;
-    --wr-height-first-section: calc(var(--wr-height-page) - var(--wr-height-header));
 
     --wr-width-site: 80rem;
     --wr-width-prose: 80ch;
 
-    --site-layout: minmax(var(--wr-padding-site-gutter), auto) minmax(0, var(--wr-width-site)) minmax(var(--wr-padding-site-gutter), auto);
-
-    --gap-base: var(--wr-gap-base);
-    --gap-scale: var(--wr-gap-scale);
-    --gap-spouse: var(--wr-gap-spouse);
-    --gap-partner: var(--wr-gap-partner);
-    --gap-sibling: var(--wr-gap-sibling);
-    --gap-friend: var(--wr-gap-friend);
-    --gap-acquaintance: var(--wr-gap-acquaintance);
-    --gap-stranger: var(--wr-gap-stranger);
-    --gap-close-friend: var(--wr-gap-close-friend);
-    --gap-area: var(--wr-gap-area);
-
-    --padding-site-gutter: var(--wr-padding-site-gutter);
-    --padding-section: var(--wr-padding-section);
-    --padding-contour: var(--wr-padding-contour);
-    --padding-area: var(--wr-padding-area);
-
-    --height-header-content: var(--wr-height-header-content);
-    --height-header: var(--wr-height-header);
-    --radius-area: var(--wr-radius-area);
-    --width-site: var(--wr-width-site);
-    --width-prose: var(--wr-width-prose);
-
     --wr-text-size-base: 1rem;
     --wr-text-scale: 1.2;
-    --text-size-lg: calc(var(--wr-text-size-base) * var(--wr-text-scale));
-    --text-size-xl: calc(var(--text-size-lg) * var(--wr-text-scale));
-    --text-size-2xl: calc(var(--text-size-xl) * var(--wr-text-scale));
-    --text-size-3xl: calc(var(--text-size-2xl) * var(--wr-text-scale));
-    --text-size-4xl: calc(var(--text-size-3xl) * var(--wr-text-scale));
-    --text-size-5xl: calc(var(--text-size-4xl) * var(--wr-text-scale));
-    --text-size-6xl: calc(var(--text-size-5xl) * var(--wr-text-scale));
-    --text-size-sm: calc(var(--wr-text-size-base) / var(--wr-text-scale));
-    --text-size-xs: calc(var(--text-size-sm) / var(--wr-text-scale));
-    --text-size-2xs: calc(var(--text-size-xs) / var(--wr-text-scale));
   }
 
   .dark {
@@ -115,7 +67,7 @@
   @media (min-width: 450px) {
     :root {
       --wr-gap-scale: 1.8;
-      --wr-padding-site-gutter: calc(var(--wr-gap-friend) / 2);
+      --wr-padding-site-gutter: calc(var(--wr-gap-base) * var(--wr-gap-scale) * var(--wr-gap-scale) * var(--wr-gap-scale) / 2);
       --wr-text-size-base: 1rem;
       --wr-text-scale: 1.225;
     }
