@@ -1,4 +1,4 @@
-import { afterAll, afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { LOCATIONS } from '@/db/constants'
@@ -18,16 +18,12 @@ const CURRENT_USER = {
 }
 
 describe('tileOperations', () => {
-  afterEach(async () => {
-    await scene.withoutTilesForSupplier()
+  beforeEach(() => {
+    scene.startTest()
   })
-  afterAll(async () => {
-    await scene.resetTestData()
-    await scene.withoutUser({ handle: CURRENT_USER.handle })
 
-    // Clean up additional
-    await scene.withoutTilesForSupplier({ supplierHandle: 'testsupplier2' })
-    await scene.withoutSupplier({ handle: 'testsupplier2' })
+  afterEach(async () => {
+    await scene.endTest()
   })
 
   describe('getById', () => {

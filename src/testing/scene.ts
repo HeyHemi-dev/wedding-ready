@@ -1,4 +1,7 @@
-import { eq } from 'drizzle-orm'
+import { AsyncLocalStorage } from 'node:async_hooks'
+import { randomUUID } from 'node:crypto'
+
+import { eq, ilike, inArray, like, or } from 'drizzle-orm'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { Supplier } from '@/app/_types/suppliers'
@@ -54,7 +57,21 @@ export type TestTile = typeof TEST_TILE
 
 export const TEST_ORIGIN = BASE_URL
 
+const TEST_MARKER = '__t_'
+
+type TestContext = {
+  ns: string
+  createdUserIds: Set<string>
+  createdSupplierIds: Set<string>
+  createdTileIds: Set<string>
+}
+
+const testContextStore = new AsyncLocalStorage<TestContext>()
+
 export const scene = {
+  startTest,
+  endTest,
+  cleanupStaleNamespacedData,
   hasUser,
   hasSupplier,
   hasUserAndSupplier,
@@ -66,6 +83,39 @@ export const scene = {
   resetTestData,
 }
 
+function startTest(): void {
+  const ns = `t_${randomUUID().slice(0, 8)}`
+  testContextStore.enterWith({
+    ns,
+    createdUserIds: new Set(),
+    createdSupplierIds: new Set(),
+    createdTileIds: new Set(),
+  })
+}
+
+async function endTest(): Promise<void> {
+  const ctx = testContextStore.getStore()
+  if (!ctx) return
+
+  if (ctx.createdTileIds.size > 0) {
+    await tileModel.deleteManyByIds([...ctx.createdTileIds])
+  }
+
+  if (ctx.createdSupplierIds.size > 0) {
+    await db.delete(s.suppliers).where(inArray(s.suppliers.id, [...ctx.createdSupplierIds]))
+  }
+
+  if (ctx.createdUserIds.size > 0) {
+    await Promise.all([...ctx.createdUserIds].map((userId) => testClient.auth.admin.deleteUser(userId)))
+  }
+
+  await cleanupByNamespace(ctx.ns)
+}
+
+async function cleanupStaleNamespacedData(): Promise<void> {
+  await cleanupByPattern()
+}
+
 async function hasUser({
   email = TEST_USER.email,
   password = TEST_USER.password,
@@ -74,12 +124,18 @@ async function hasUser({
   avatarUrl = '',
   supabaseClient = testClient,
 }: Partial<UserSignupForm> & Partial<OnboardingForm> & { supabaseClient?: SupabaseClient } = {}): Promise<t.UserProfileRaw> {
-  const user = await userProfileModel.getRawByHandle(handle)
+  const ctx = testContextStore.getStore()
+  const scopedHandle = scopedValue(handle, ctx)
+  const scopedEmail = scopedEmailValue(email, ctx)
+
+  const user = await userProfileModel.getRawByHandle(scopedHandle)
   if (user) return user
 
-  const { id } = await authOperations.signUp({ userSignFormData: { email, password }, supabaseClient, origin: TEST_ORIGIN })
+  const { id } = await authOperations.signUp({ userSignFormData: { email: scopedEmail, password }, supabaseClient, origin: TEST_ORIGIN })
+  const profile = await authOperations.completeOnboarding(id, { handle: scopedHandle, displayName, avatarUrl })
 
-  return await authOperations.completeOnboarding(id, { handle, displayName, avatarUrl })
+  ctx?.createdUserIds.add(profile.id)
+  return profile
 }
 
 async function hasSupplier({
@@ -91,10 +147,15 @@ async function hasSupplier({
   services = TEST_SUPPLIER.services,
   createdByUserId,
 }: Partial<SupplierRegistrationForm> & { createdByUserId: string }): Promise<Supplier> {
-  const supplier = await supplierOperations.getByHandle(handle)
+  const ctx = testContextStore.getStore()
+  const scopedHandle = scopedValue(handle, ctx)
+
+  const supplier = await supplierOperations.getByHandle(scopedHandle)
   if (supplier) return supplier
 
-  return await supplierOperations.register({ name, handle, websiteUrl, description, locations, services }, createdByUserId)
+  const createdSupplier = await supplierOperations.register({ name, handle: scopedHandle, websiteUrl, description, locations, services }, createdByUserId)
+  ctx?.createdSupplierIds.add(createdSupplier.id)
+  return createdSupplier
 }
 
 async function hasUserAndSupplier(): Promise<{ user: t.UserProfileRaw; supplier: Supplier }> {
@@ -112,12 +173,14 @@ async function hasTile({
   createdByUserId,
   credits,
 }: Partial<TileCreate> & Pick<TileCreate, 'createdByUserId' | 'credits'>): Promise<t.TileRaw> {
-  const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, imagePath))
+  const ctx = testContextStore.getStore()
+  const scopedImagePath = scopedPathValue(imagePath, ctx)
+  const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, scopedImagePath))
 
   if (tiles.length > 0) return tiles[0]
 
   const newTile = await tileOperations.createForSupplier({
-    imagePath,
+    imagePath: scopedImagePath,
     imageRatio,
     title,
     description,
@@ -127,6 +190,8 @@ async function hasTile({
   })
   const tile = await tileModel.getRawById(newTile.id)
   if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND('Failed to create tile')
+
+  ctx?.createdTileIds.add(tile.id)
   return tile
 }
 
@@ -162,7 +227,57 @@ async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }
 async function resetTestData(): Promise<void> {
   await withoutTilesForSupplier({ supplierHandle: TEST_SUPPLIER.handle })
   await withoutSupplier({ handle: TEST_SUPPLIER.handle })
+  await cleanupStaleNamespacedData()
   // Don't clean up the test user. All tests assume a user exists.
+}
+
+async function cleanupByNamespace(ns: string): Promise<void> {
+  await Promise.all([
+    db.delete(s.tiles).where(like(s.tiles.imagePath, `%__${ns}`)),
+    db.delete(s.suppliers).where(like(s.suppliers.handle, `%__${ns}`)),
+  ])
+
+  const users = await db.select({ id: s.userProfiles.id }).from(s.userProfiles).where(like(s.userProfiles.handle, `%__${ns}`))
+  if (users.length > 0) {
+    await Promise.all(users.map((user) => testClient.auth.admin.deleteUser(user.id)))
+  }
+}
+
+async function cleanupByPattern(): Promise<void> {
+  await Promise.all([
+    db.delete(s.tiles).where(ilike(s.tiles.imagePath, `%${TEST_MARKER}%`)),
+    db.delete(s.suppliers).where(ilike(s.suppliers.handle, `%${TEST_MARKER}%`)),
+  ])
+
+  const users = await db
+    .select({ id: s.userProfiles.id })
+    .from(s.userProfiles)
+    .where(or(ilike(s.userProfiles.handle, `%${TEST_MARKER}%`), ilike(s.userProfiles.displayName, `%${TEST_MARKER}%`)))
+
+  if (users.length > 0) {
+    await Promise.all(users.map((user) => testClient.auth.admin.deleteUser(user.id)))
+  }
+}
+
+function scopedValue(base: string, ctx?: TestContext): string {
+  if (!ctx) return base
+  if (base.includes(`${TEST_MARKER}${ctx.ns}`)) return base
+  return `${base}${TEST_MARKER}${ctx.ns}`
+}
+
+function scopedEmailValue(base: string, ctx?: TestContext): string {
+  if (!ctx) return base
+
+  const [localPart, domainPart] = base.split('@')
+  if (!domainPart) return scopedValue(base, ctx)
+
+  if (localPart.includes(`${TEST_MARKER}${ctx.ns}`)) return base
+
+  return `${localPart}${TEST_MARKER}${ctx.ns}@${domainPart}`
+}
+
+function scopedPathValue(base: string, ctx?: TestContext): string {
+  return scopedValue(base, ctx)
 }
 
 export function createTileCreditForm({
