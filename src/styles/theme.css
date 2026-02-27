@@ -25,6 +25,8 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
+
+
   --spacing-hairline: var(--wr-hairline);
   --spacing-2xl: 4rem;
   --spacing-xl: 3rem;
@@ -58,27 +60,27 @@
   --height-page: var(--wr-height-page);
   --height-first-section: calc(var(--height-page) - var(--height-header));
 
-  --radius: var(--wr-radius-base);
-  --radius-sm: calc(var(--wr-radius-base) * 0.5);
-  --radius-md: calc(var(--wr-radius-base) * 1.5);
-  --radius-lg: calc(var(--wr-radius-base) * 2);
-  --radius-full: calc(var(--wr-radius-base) * 999);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 1.5);
+  --radius-lg: calc(var(--radius) * 2);
+  --radius-full: calc(var(--radius) * 999);
   --radius-outside: calc(var(--radius) + var(--padding-contour));
   --radius-inside: calc(var(--radius) - var(--padding-contour));
   --radius-area: calc(var(--radius) * 3);
   --radius-area-outside: calc(var(--radius-area) + var(--padding-contour));
   --radius-area-inside: calc(var(--radius-area) - var(--padding-contour));
 
-  --text-size-lg: calc(var(--wr-text-size-base) * var(--wr-text-scale));
-  --text-size-xl: calc(var(--text-size-lg) * var(--wr-text-scale));
-  --text-size-2xl: calc(var(--text-size-xl) * var(--wr-text-scale));
-  --text-size-3xl: calc(var(--text-size-2xl) * var(--wr-text-scale));
-  --text-size-4xl: calc(var(--text-size-3xl) * var(--wr-text-scale));
-  --text-size-5xl: calc(var(--text-size-4xl) * var(--wr-text-scale));
-  --text-size-6xl: calc(var(--text-size-5xl) * var(--wr-text-scale));
-  --text-size-sm: calc(var(--wr-text-size-base) / var(--wr-text-scale));
-  --text-size-xs: calc(var(--text-size-sm) / var(--wr-text-scale));
-  --text-size-2xs: calc(var(--text-size-xs) / var(--wr-text-scale));
+  --text-base: var(--wr-text-size);
+  --text-lg: calc(var(--text-base) * var(--wr-text-scale));
+  --text-xl: calc(var(--text-lg) * var(--wr-text-scale));
+  --text-2xl: calc(var(--text-xl) * var(--wr-text-scale));
+  --text-3xl: calc(var(--text-2xl) * var(--wr-text-scale));
+  --text-4xl: calc(var(--text-3xl) * var(--wr-text-scale));
+  --text-5xl: calc(var(--text-4xl) * var(--wr-text-scale));
+  --text-6xl: calc(var(--text-5xl) * var(--wr-text-scale));
+  --text-sm: calc(var(--text-base) / var(--wr-text-scale));
+  --text-xs: calc(var(--text-sm) / var(--wr-text-scale));
+  --text-2xs: calc(var(--text-xs) / var(--wr-text-scale));
 
   --shadow-contour: 0 0 0 var(--padding-contour) hsl(var(--primary));
   --animate-accordion-down: accordion-down 0.2s ease-out;

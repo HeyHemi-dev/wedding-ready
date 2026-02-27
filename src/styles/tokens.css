@@ -21,11 +21,11 @@
     --border: 0 0% 100%;
     --input: var(--border);
     --ring: var(--primary);
+    --radius: 0.5rem;
 
     --wr-gap-base: 0.25rem;
     --wr-gap-scale: 1.5;
 
-    --wr-radius-base: 0.5rem;
     --wr-hairline: 1px;
 
     --wr-padding-site-gutter: 0px;
@@ -37,7 +37,7 @@
     --wr-width-site: 80rem;
     --wr-width-prose: 80ch;
 
-    --wr-text-size-base: 1rem;
+    --wr-text-size: 1rem;
     --wr-text-scale: 1.2;
   }
 
@@ -61,14 +61,14 @@
     --border: 32 20% 50%;
     --input: 32 20% 50%;
     --ring: 32 14% 37%;
-    --wr-radius-base: 0rem;
+    --radius: 0rem;
   }
 
   @media (min-width: 450px) {
     :root {
       --wr-gap-scale: 1.8;
       --wr-padding-site-gutter: calc(var(--wr-gap-base) * var(--wr-gap-scale) * var(--wr-gap-scale) * var(--wr-gap-scale) / 2);
-      --wr-text-size-base: 1rem;
+      --wr-text-size: 1rem;
       --wr-text-scale: 1.225;
     }
   }
@@ -76,7 +76,7 @@
   @media (min-width: 850px) {
     :root {
       --wr-gap-scale: 2;
-      --wr-text-size-base: 1rem;
+      --wr-text-size: 1rem;
       --wr-text-scale: 1.25;
     }
   }
