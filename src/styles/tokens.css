@@ -21,15 +21,12 @@
     --border: 0 0% 100%;
     --input: var(--border);
     --ring: var(--primary);
-    --radius: 0.5rem;
+    --radius: 1.5rem;
 
     --wr-gap-base: 0.25rem;
     --wr-gap-scale: 1.5;
 
-    --wr-hairline: 1px;
-
     --wr-padding-site-gutter: 0px;
-    --wr-padding-contour: 2px;
 
     --wr-height-header-content: 2rem;
     --wr-height-page: 100svh;
@@ -61,7 +58,7 @@
     --border: 32 20% 50%;
     --input: 32 20% 50%;
     --ring: 32 14% 37%;
-    --radius: 0rem;
+    --radius: 1.5rem;
   }
 
   @media (min-width: 450px) {

@@ -125,7 +125,7 @@ export default function WhyJoinPage() {
             </ul>
           </div>
 
-          <div className="grid place-content-center rounded-sm border-2 border-dashed border-white p-6">
+          <div className="grid place-content-center rounded-md border-2 border-dashed border-white p-6">
             <Users className="mb-friend mx-auto h-16 w-16 text-muted-foreground" />
             <p className="ui-small text-muted-foreground">Visual coming soon</p>
           </div>
@@ -254,7 +254,7 @@ export default function WhyJoinPage() {
                     Unlike social media that demands constant updates, your content stays relevant as long as you offer the services and products. Upload
                     content in bulk (up to 10 images at a time) and build a lasting digital presence that keeps working for you.
                   </p>
-                  <p className="rounded-sm bg-muted p-4">
+                  <p className="rounded-md bg-muted p-4">
                     We&apos;re also exploring an Instagram integration to automatically import images and credits.{' '}
                     <a href="https://weddingready.co.nz/contact" className="underline">
                       Register your interest.

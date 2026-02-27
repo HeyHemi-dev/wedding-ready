@@ -27,7 +27,7 @@
 
 
 
-  --spacing-hairline: var(--wr-hairline);
+  --spacing-hairline: 1px;
   --spacing-2xl: 4rem;
   --spacing-xl: 3rem;
   --spacing-lg: 2rem;
@@ -47,7 +47,7 @@
 
   --padding-site: var(--wr-padding-site-gutter);
   --padding-section: calc(var(--gap-stranger) / 2);
-  --padding-contour: var(--wr-padding-contour);
+  --padding-contour: 2px;
   --padding-area: calc(var(--radius-area) * 3);
 
   --width-site: var(--wr-width-site);
@@ -60,13 +60,14 @@
   --height-page: var(--wr-height-page);
   --height-first-section: calc(var(--height-page) - var(--height-header));
 
-  --radius-sm: calc(var(--radius) * 0.5);
-  --radius-md: calc(var(--radius) * 1.5);
-  --radius-lg: calc(var(--radius) * 2);
-  --radius-full: calc(var(--radius) * 999);
-  --radius-outside: calc(var(--radius) + var(--padding-contour));
-  --radius-inside: calc(var(--radius) - var(--padding-contour));
-  --radius-area: calc(var(--radius) * 3);
+  --radius-base: var(--radius);
+  --radius-sm: calc(var(--radius-base) * 0.5);
+  --radius-md: calc(var(--radius-base) * 1);
+  --radius-lg: calc(var(--radius-base) * 2);
+  --radius-full: calc(var(--radius-base) * 999);
+  --radius-outside: calc(var(--radius-md) + var(--padding-contour));
+  --radius-inside: calc(var(--radius-md) - var(--padding-contour));
+  --radius-area: calc(var(--radius-base) * 3);
   --radius-area-outside: calc(var(--radius-area) + var(--padding-contour));
   --radius-area-inside: calc(var(--radius-area) - var(--padding-contour));
 

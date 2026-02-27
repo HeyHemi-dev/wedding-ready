@@ -43,7 +43,7 @@ export default async function SupplierEditPage({ params }: { params: Promise<{ h
 
       <div className="grid gap-friend">
         <h2 className="ui-s2">Manage users</h2>
-        <pre className="whitespace-pre-wrap rounded-sm border bg-muted p-3 font-mono text-xs text-muted-foreground">{JSON.stringify(authUserRole, null, 2)}</pre>
+        <pre className="whitespace-pre-wrap rounded-md border bg-muted p-3 font-mono text-xs text-muted-foreground">{JSON.stringify(authUserRole, null, 2)}</pre>
       </div>
     </div>
   )

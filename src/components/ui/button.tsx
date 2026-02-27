@@ -6,7 +6,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/utils/shadcn-utils'
 
 const buttonVariants = cva(
-  'py-2 inline-flex items-center justify-center whitespace-nowrap rounded-sm  ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'py-2 inline-flex items-center justify-center whitespace-nowrap rounded-md  ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
@@ -16,7 +16,7 @@ const buttonVariants = cva(
         secondary: 'ui-small-s1 bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'ui-small-s1 hover:bg-primary/80 text-primary-foreground',
         link: 'text-primary-foreground underline-offset-4 hover:underline',
-        input: 'justify-between rounded-sm border border-input bg-input text-base ring-offset-background laptop:text-sm data-[placeholder]:text-muted-foreground',
+        input: 'justify-between rounded-md border border-input bg-input text-base ring-offset-background laptop:text-sm data-[placeholder]:text-muted-foreground',
       },
       size: {
         default: 'h-10 px-4',
