@@ -84,11 +84,11 @@
     "prettier-plugin-tailwindcss": "^0.7.0",
     "stylelint": "^16.19.1",
     "stylelint-config-tailwindcss": "^1.0.0",
-    "supabase": "^2.67.3",
+    "supabase": "^2.76.15",
     "tailwind-merge": "^3.0.0",
     "tailwindcss": "^4",
-    "tw-animate-css": "latest",
     "tsx": "^4.19.3",
+    "tw-animate-css": "latest",
     "typescript": "5.7.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.1.2"
