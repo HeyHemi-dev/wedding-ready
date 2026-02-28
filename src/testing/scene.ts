@@ -117,7 +117,7 @@ function scope(): string {
     throw new Error('No active test scene scope. Call scene.startTest() before using scoped test data.')
   }
 
-  return `${TEST_MARKER}${ctx.ns}`
+  return namespacePrefix(ctx.ns)
 }
 
 async function endTest(): Promise<void> {
@@ -146,6 +146,11 @@ async function endTest(): Promise<void> {
   }
 
   if (ctx.createdUserIds.size > 0) {
+    const { error: ownedDataCleanupError } = await tryCatch(cleanupOwnedDataByUserIds([...ctx.createdUserIds]))
+    if (ownedDataCleanupError) {
+      cleanupIssues.push(toCleanupIssue('cleanup_owned_data_by_user', ownedDataCleanupError))
+    }
+
     for (const userId of ctx.createdUserIds) {
       await deleteAuthUserById(userId, { cleanupIssues, operation: 'delete_created_user' })
     }
@@ -286,9 +291,10 @@ async function resetTestData(): Promise<void> {
 }
 
 async function cleanupByNamespace(ns: string): Promise<void> {
+  const prefix = namespacePrefix(ns)
   await Promise.all([
-    db.delete(s.tiles).where(like(s.tiles.imagePath, `%${TEST_MARKER}${ns}`)),
-    db.delete(s.suppliers).where(like(s.suppliers.handle, `%${TEST_MARKER}${ns}`)),
+    db.delete(s.tiles).where(like(s.tiles.imagePath, `${prefix}%`)),
+    db.delete(s.suppliers).where(like(s.suppliers.handle, `${prefix}%`)),
   ])
 }
 
@@ -296,20 +302,17 @@ async function cleanupByPattern(): Promise<void> {
   const users = await db
     .select({ id: s.userProfiles.id })
     .from(s.userProfiles)
-    .where(or(ilike(s.userProfiles.handle, `%${TEST_MARKER}%`), ilike(s.userProfiles.displayName, `%${TEST_MARKER}%`)))
+    .where(or(ilike(s.userProfiles.handle, `${TEST_MARKER}%`), ilike(s.userProfiles.displayName, `${TEST_MARKER}%`)))
 
   const namespacedUserIds = users.map((user) => user.id)
 
   if (namespacedUserIds.length > 0) {
-    await Promise.all([
-      db.delete(s.tiles).where(inArray(s.tiles.createdByUserId, namespacedUserIds)),
-      db.delete(s.suppliers).where(inArray(s.suppliers.createdByUserId, namespacedUserIds)),
-    ])
+    await cleanupOwnedDataByUserIds(namespacedUserIds)
   }
 
   await Promise.all([
-    db.delete(s.tiles).where(ilike(s.tiles.imagePath, `%${TEST_MARKER}%`)),
-    db.delete(s.suppliers).where(ilike(s.suppliers.handle, `%${TEST_MARKER}%`)),
+    db.delete(s.tiles).where(ilike(s.tiles.imagePath, `${TEST_MARKER}%`)),
+    db.delete(s.suppliers).where(ilike(s.suppliers.handle, `${TEST_MARKER}%`)),
   ])
 
   if (users.length > 0) {
@@ -321,6 +324,15 @@ async function cleanupByPattern(): Promise<void> {
       logCleanupIssues('Test cleanup encountered stale user deletion issues', cleanupIssues)
     }
   }
+}
+
+async function cleanupOwnedDataByUserIds(userIds: string[]): Promise<void> {
+  if (userIds.length === 0) return
+
+  await Promise.all([
+    db.delete(s.tiles).where(inArray(s.tiles.createdByUserId, userIds)),
+    db.delete(s.suppliers).where(inArray(s.suppliers.createdByUserId, userIds)),
+  ])
 }
 
 async function deleteAuthUserById(
@@ -387,8 +399,9 @@ function isIgnorableCleanupIssue(issue: CleanupIssue): boolean {
 
 function scopedValue(base: string, ctx?: TestContext): string {
   if (!ctx) return base
-  if (base.includes(`${TEST_MARKER}${ctx.ns}`)) return base
-  return `${base}${TEST_MARKER}${ctx.ns}`
+  const prefix = namespacePrefix(ctx.ns)
+  if (base.startsWith(prefix)) return base
+  return `${prefix}${base}`
 }
 
 function scopedEmailValue(base: string, ctx?: TestContext): string {
@@ -397,9 +410,10 @@ function scopedEmailValue(base: string, ctx?: TestContext): string {
   const [localPart, domainPart] = base.split('@')
   if (!domainPart) return scopedValue(base, ctx)
 
-  if (localPart.includes(`${TEST_MARKER}${ctx.ns}`)) return base
+  const prefix = namespacePrefix(ctx.ns)
+  if (localPart.startsWith(prefix)) return base
 
-  return `${localPart}${TEST_MARKER}${ctx.ns}@${domainPart}`
+  return `${prefix}${localPart}@${domainPart}`
 }
 
 function scopedPathValue(base: string, ctx?: TestContext): string {
@@ -466,13 +480,17 @@ export function makeTileData(scope: string, overrides: Partial<TestTile> = {}): 
 }
 
 function withScope(value: string, scope: string): string {
-  if (value.includes(scope)) return value
-  return `${value}${scope}`
+  if (value.startsWith(scope)) return value
+  return `${scope}${value}`
 }
 
 function withEmailScope(email: string, scope: string): string {
   const [localPart, domainPart] = email.split('@')
   if (!domainPart) return withScope(email, scope)
-  if (localPart.includes(scope)) return email
-  return `${localPart}${scope}@${domainPart}`
+  if (localPart.startsWith(scope)) return email
+  return `${scope}${localPart}@${domainPart}`
+}
+
+function namespacePrefix(ns: string): string {
+  return `${TEST_MARKER}${ns}__`
 }

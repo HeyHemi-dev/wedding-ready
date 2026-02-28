@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
@@ -24,10 +23,9 @@ const AUTH_TEST_USER_2 = {
 
 function makeAuthTestUserData(
   base: typeof AUTH_TEST_USER_1 = AUTH_TEST_USER_1,
-  overrides: Partial<typeof AUTH_TEST_USER_1> = {},
-  tag = randomUUID().slice(0, 8)
+  overrides: Partial<typeof AUTH_TEST_USER_1> = {}
 ) {
-  return makeUserData(`${scene.scope()}-${tag}`, { ...base, ...overrides })
+  return makeUserData(scene.scope(), { ...base, ...overrides })
 }
 
 describe('authOperations', () => {
