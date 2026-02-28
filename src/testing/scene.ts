@@ -74,6 +74,7 @@ type TestUserProfile = t.UserProfileRaw & { email: string }
 export const scene = {
   startTest,
   endTest,
+  scope,
   cleanupStaleNamespacedData,
   hasUser,
   hasSupplier,
@@ -99,6 +100,15 @@ function startTest(): void {
 
 function getTestContext(): TestContext | undefined {
   return testContextStore.getStore() ?? activeTestContext ?? undefined
+}
+
+function scope(): string {
+  const ctx = getTestContext()
+  if (!ctx) {
+    throw new Error('No active test scene scope. Call scene.startTest() before using scoped test data.')
+  }
+
+  return `${TEST_MARKER}${ctx.ns}`
 }
 
 async function endTest(): Promise<void> {

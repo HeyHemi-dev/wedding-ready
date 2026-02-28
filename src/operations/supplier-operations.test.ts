@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto'
 import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
@@ -7,12 +6,11 @@ import { createTileCreditForm, createSupplierUpdateForm, scene, TEST_SUPPLIER } 
 
 import { supplierOperations } from './supplier-operations'
 
-function uniqueSupplierRegistration(overrides: Partial<typeof TEST_SUPPLIER> = {}) {
-  const suffix = randomUUID().slice(0, 8)
+function makeSupplierData(scope: string, overrides: Partial<typeof TEST_SUPPLIER> = {}) {
   return {
     ...TEST_SUPPLIER,
-    handle: `testsupplier-${suffix}`,
-    name: `Test Supplier ${suffix}`,
+    handle: `${TEST_SUPPLIER.handle}${scope}`,
+    name: `${TEST_SUPPLIER.name}${scope}`,
     ...overrides,
   }
 }
@@ -76,7 +74,7 @@ describe('supplierOperations', () => {
     it('should successfully register a new supplier', async () => {
       // Arrange
       const user = await scene.hasUser()
-      const supplierData = uniqueSupplierRegistration()
+      const supplierData = makeSupplierData(scene.scope())
 
       // Act
       const result = await supplierOperations.register(supplierData, user.id)
@@ -88,8 +86,8 @@ describe('supplierOperations', () => {
 
     it('should throw error when handle is already taken', async () => {
       // Arrange
-      const { user } = await scene.hasUserAndSupplier()
-      const supplierData = uniqueSupplierRegistration()
+      const user = await scene.hasUser()
+      const supplierData = makeSupplierData(scene.scope())
       await supplierOperations.register(supplierData, user.id)
 
       // Act & Assert
@@ -104,7 +102,7 @@ describe('supplierOperations', () => {
     it('should convert empty strings to null for optional fields (websiteUrl, description)', async () => {
       // Arrange
       const user = await scene.hasUser()
-      const supplierData = uniqueSupplierRegistration({
+      const supplierData = makeSupplierData(scene.scope(), {
         websiteUrl: '',
         description: '',
       })
@@ -122,7 +120,7 @@ describe('supplierOperations', () => {
     it('should handle mixed empty and non-empty optional fields', async () => {
       // Arrange
       const user = await scene.hasUser()
-      const supplierData = uniqueSupplierRegistration({
+      const supplierData = makeSupplierData(scene.scope(), {
         websiteUrl: 'https://example.com',
         description: '',
       })
