@@ -66,6 +66,13 @@ type TestContext = {
   createdTileIds: Set<string>
 }
 
+type CleanupIssue = {
+  operation: string
+  message: string
+  code?: string
+  status?: number
+}
+
 const testContextStore = new AsyncLocalStorage<TestContext>()
 let activeTestContext: TestContext | null = null
 
@@ -115,39 +122,36 @@ async function endTest(): Promise<void> {
   const ctx = getTestContext()
   if (!ctx) return
 
-  const cleanupErrors: Error[] = []
+  const cleanupIssues: CleanupIssue[] = []
 
   if (ctx.createdTileIds.size > 0) {
-    try {
-      await tileModel.deleteManyByIds([...ctx.createdTileIds])
-    } catch (error) {
-      cleanupErrors.push(error as Error)
+    const { error } = await tryCatch(tileModel.deleteManyByIds([...ctx.createdTileIds]))
+    if (error) {
+      cleanupIssues.push(toCleanupIssue('delete_created_tiles', error))
     }
   }
 
   if (ctx.createdSupplierIds.size > 0) {
-    try {
-      await db.delete(s.suppliers).where(inArray(s.suppliers.id, [...ctx.createdSupplierIds]))
-    } catch (error) {
-      cleanupErrors.push(error as Error)
+    const { error } = await tryCatch(db.delete(s.suppliers).where(inArray(s.suppliers.id, [...ctx.createdSupplierIds])))
+    if (error) {
+      cleanupIssues.push(toCleanupIssue('delete_created_suppliers', error))
     }
   }
 
-  try {
-    await cleanupByNamespace(ctx.ns)
-  } catch (error) {
-    cleanupErrors.push(error as Error)
+  const { error: namespaceError } = await tryCatch(cleanupByNamespace(ctx.ns))
+  if (namespaceError) {
+    cleanupIssues.push(toCleanupIssue('cleanup_namespace', namespaceError))
   }
 
   if (ctx.createdUserIds.size > 0) {
     for (const userId of ctx.createdUserIds) {
-      await deleteAuthUserById(userId, { cleanupErrors })
+      await deleteAuthUserById(userId, { cleanupIssues, operation: 'delete_created_user' })
     }
   }
 
   activeTestContext = null
-  if (cleanupErrors.length > 0) {
-    console.error('Test cleanup encountered errors:', cleanupErrors)
+  if (cleanupIssues.length > 0) {
+    logCleanupIssues('Test cleanup encountered issues', cleanupIssues)
   }
 }
 
@@ -304,19 +308,23 @@ async function cleanupByPattern(): Promise<void> {
   ])
 
   if (users.length > 0) {
-    const cleanupErrors: Error[] = []
+    const cleanupIssues: CleanupIssue[] = []
     for (const user of users) {
-      await deleteAuthUserById(user.id, { cleanupErrors })
+      await deleteAuthUserById(user.id, { cleanupIssues, operation: 'delete_stale_user' })
     }
-    if (cleanupErrors.length > 0) {
-      console.error('Test cleanup encountered stale user deletion errors:', cleanupErrors)
+    if (cleanupIssues.length > 0) {
+      logCleanupIssues('Test cleanup encountered stale user deletion issues', cleanupIssues)
     }
   }
 }
 
 async function deleteAuthUserById(
   userId: string,
-  { supabaseClient = testClient, cleanupErrors }: { supabaseClient?: SupabaseClient; cleanupErrors?: Error[] } = {}
+  {
+    supabaseClient = testClient,
+    cleanupIssues,
+    operation = 'delete_auth_user',
+  }: { supabaseClient?: SupabaseClient; cleanupIssues?: CleanupIssue[]; operation?: string } = {}
 ): Promise<void> {
   const { data: response, error: requestError } = await tryCatch(supabaseClient.auth.admin.deleteUser(userId))
 
@@ -327,12 +335,39 @@ async function deleteAuthUserById(
 
   if (!authError) return
 
-  if (cleanupErrors) {
-    cleanupErrors.push(authError)
+  if (cleanupIssues) {
+    cleanupIssues.push(toCleanupIssue(operation, authError))
     return
   }
 
   throw authError
+}
+
+function toCleanupIssue(operation: string, error: unknown): CleanupIssue {
+  if (error instanceof Error) {
+    const errorWithMetadata = error as Error & { code?: string; status?: number }
+    return {
+      operation,
+      message: error.message,
+      code: errorWithMetadata.code,
+      status: errorWithMetadata.status,
+    }
+  }
+
+  return {
+    operation,
+    message: String(error),
+  }
+}
+
+function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
+  console.warn(label)
+  issues.forEach((issue, index) => {
+    const parts = [`${index + 1}. op=${issue.operation}`, `message=${issue.message}`]
+    if (issue.code) parts.push(`code=${issue.code}`)
+    if (typeof issue.status === 'number') parts.push(`status=${issue.status}`)
+    console.warn(parts.join(' | '))
+  })
 }
 
 function scopedValue(base: string, ctx?: TestContext): string {
