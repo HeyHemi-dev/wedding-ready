@@ -73,6 +73,8 @@ type CleanupIssue = {
   status?: number
 }
 
+const IGNORED_CLEANUP_CODES = new Set(['user_not_found'])
+
 const testContextStore = new AsyncLocalStorage<TestContext>()
 let activeTestContext: TestContext | null = null
 
@@ -149,6 +151,9 @@ async function endTest(): Promise<void> {
     }
   }
 
+  ctx.createdTileIds.clear()
+  ctx.createdSupplierIds.clear()
+  ctx.createdUserIds.clear()
   activeTestContext = null
   if (cleanupIssues.length > 0) {
     logCleanupIssues('Test cleanup encountered issues', cleanupIssues)
@@ -334,9 +339,11 @@ async function deleteAuthUserById(
       null)
 
   if (!authError) return
+  const issue = toCleanupIssue(operation, authError)
+  if (isIgnorableCleanupIssue(issue)) return
 
   if (cleanupIssues) {
-    cleanupIssues.push(toCleanupIssue(operation, authError))
+    cleanupIssues.push(issue)
     return
   }
 
@@ -361,13 +368,21 @@ function toCleanupIssue(operation: string, error: unknown): CleanupIssue {
 }
 
 function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
+  const relevantIssues = issues.filter((issue) => !isIgnorableCleanupIssue(issue))
+  if (relevantIssues.length === 0) return
+
   console.warn(label)
-  issues.forEach((issue, index) => {
+  relevantIssues.forEach((issue, index) => {
     const parts = [`${index + 1}. op=${issue.operation}`, `message=${issue.message}`]
     if (issue.code) parts.push(`code=${issue.code}`)
     if (typeof issue.status === 'number') parts.push(`status=${issue.status}`)
     console.warn(parts.join(' | '))
   })
+}
+
+function isIgnorableCleanupIssue(issue: CleanupIssue): boolean {
+  if (issue.code && IGNORED_CLEANUP_CODES.has(issue.code)) return true
+  return issue.status === 404 && issue.operation.includes('delete_')
 }
 
 function scopedValue(base: string, ctx?: TestContext): string {
