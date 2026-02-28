@@ -370,3 +370,12 @@ export function createSupplierUpdateForm({
     description,
   }
 }
+
+export function makeSupplierData(scope: string, overrides: Partial<TestSupplier> = {}): TestSupplier {
+  return {
+    ...TEST_SUPPLIER,
+    handle: `${TEST_SUPPLIER.handle}${scope}`,
+    name: `${TEST_SUPPLIER.name}${scope}`,
+    ...overrides,
+  }
+}

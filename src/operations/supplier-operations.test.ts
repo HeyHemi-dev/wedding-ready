@@ -2,18 +2,9 @@ import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
-import { createTileCreditForm, createSupplierUpdateForm, scene, TEST_SUPPLIER } from '@/testing/scene'
+import { createTileCreditForm, createSupplierUpdateForm, makeSupplierData, scene, TEST_SUPPLIER } from '@/testing/scene'
 
 import { supplierOperations } from './supplier-operations'
-
-function makeSupplierData(scope: string, overrides: Partial<typeof TEST_SUPPLIER> = {}) {
-  return {
-    ...TEST_SUPPLIER,
-    handle: `${TEST_SUPPLIER.handle}${scope}`,
-    name: `${TEST_SUPPLIER.name}${scope}`,
-    ...overrides,
-  }
-}
 
 describe('supplierOperations', () => {
   beforeEach(() => {
