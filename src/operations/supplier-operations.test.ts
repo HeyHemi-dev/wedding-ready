@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
-import { createTileCreditForm, createSupplierUpdateForm, makeSupplierData, scene, TEST_SUPPLIER } from '@/testing/scene'
+import { createTileCreditForm, createSupplierUpdateForm, makeSupplierData, scene } from '@/testing/scene'
 
 import { supplierOperations } from './supplier-operations'
 
@@ -87,7 +87,8 @@ describe('supplierOperations', () => {
 
     it('should throw error when user is not found', async () => {
       // Arrange, Act & Assert
-      await expect(supplierOperations.register(TEST_SUPPLIER, '00000000-0000-0000-0000-000000000000')).rejects.toThrow()
+      const supplierData = makeSupplierData(scene.scope())
+      await expect(supplierOperations.register(supplierData, '00000000-0000-0000-0000-000000000000')).rejects.toThrow()
     })
 
     it('should convert empty strings to null for optional fields (websiteUrl, description)', async () => {

@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
-import { scene, testClient, TEST_ID_0, TEST_ORIGIN } from '@/testing/scene'
+import { makeUserData, scene, testClient, TEST_ID_0, TEST_ORIGIN } from '@/testing/scene'
 import { tryCatch } from '@/utils/try-catch'
 
 import { authOperations, SIGN_UP_STATUS } from './auth-operations'
@@ -22,14 +22,12 @@ const AUTH_TEST_USER_2 = {
   handle: 'authuser2',
 }
 
-function uniqueAuthTestUser(overrides: Partial<typeof AUTH_TEST_USER_1> = {}) {
-  const suffix = randomUUID().slice(0, 8)
-  return {
-    ...AUTH_TEST_USER_1,
-    email: `auth.test.user+${suffix}@example.com`,
-    handle: `authuser${suffix}`,
-    ...overrides,
-  }
+function makeAuthTestUserData(
+  base: typeof AUTH_TEST_USER_1 = AUTH_TEST_USER_1,
+  overrides: Partial<typeof AUTH_TEST_USER_1> = {},
+  tag = randomUUID().slice(0, 8)
+) {
+  return makeUserData(`${scene.scope()}-${tag}`, { ...base, ...overrides })
 }
 
 describe('authOperations', () => {
@@ -69,7 +67,7 @@ describe('authOperations', () => {
 
   describe('signUp', () => {
     test('should successfully create a new user account', async () => {
-      const authUser = uniqueAuthTestUser()
+      const authUser = makeAuthTestUserData()
 
       // Act
       const testUser = await authOperations.signUp({
@@ -90,7 +88,7 @@ describe('authOperations', () => {
     })
 
     test('should throw error when email is already taken', async () => {
-      const authUser = uniqueAuthTestUser()
+      const authUser = makeAuthTestUserData()
       const existing = await authOperations.signUp({
         userSignFormData: authUser,
         supabaseClient: testClient,
@@ -111,7 +109,7 @@ describe('authOperations', () => {
 
   describe('completeOnboarding', () => {
     test('should successfully complete onboarding', async () => {
-      const authUser = uniqueAuthTestUser()
+      const authUser = makeAuthTestUserData()
 
       // Arrange
       const testUser = await authOperations.signUp({
@@ -136,7 +134,7 @@ describe('authOperations', () => {
     })
 
     test('should throw error when user is not found', async () => {
-      const authUser = uniqueAuthTestUser()
+      const authUser = makeAuthTestUserData()
 
       await expect(
         authOperations.completeOnboarding(TEST_ID_0, {
@@ -148,8 +146,8 @@ describe('authOperations', () => {
     })
 
     test('should throw error when handle is already taken', async () => {
-      const authUser1 = uniqueAuthTestUser()
-      const authUser2 = uniqueAuthTestUser()
+      const authUser1 = makeAuthTestUserData(AUTH_TEST_USER_1, {}, 'user-1')
+      const authUser2 = makeAuthTestUserData(AUTH_TEST_USER_2, {}, 'user-2')
 
       const first = await authOperations.signUp({
         userSignFormData: authUser1,
@@ -195,7 +193,7 @@ describe('authOperations', () => {
     })
 
     test('should return SIGN_UP_STATUS.VERIFIED when user is verified but no profile is created', async () => {
-      const authUser = uniqueAuthTestUser()
+      const authUser = makeAuthTestUserData()
       // Arrange
       const testUser = await authOperations.signUp({
         userSignFormData: authUser,
@@ -214,7 +212,7 @@ describe('authOperations', () => {
     })
 
     test('should return SIGN_UP_STATUS.ONBOARDED when user is verified and profile is created', async () => {
-      const authUser = uniqueAuthTestUser()
+      const authUser = makeAuthTestUserData()
       // Arrange
       const testUser = await authOperations.signUp({
         userSignFormData: authUser,

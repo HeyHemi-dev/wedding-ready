@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
-import { scene, testClient } from '@/testing/scene'
+import { makeUserData, scene, testClient } from '@/testing/scene'
 import { tryCatch } from '@/utils/try-catch'
 
 import { handleSupabaseSignInWithPassword, handleSupabaseSignOut, handleSupabaseSignUpWithPassword } from './auth-handlers'
@@ -22,14 +22,12 @@ const AUTH_TEST_USER_2 = {
   handle: 'authuser2',
 }
 
-function uniqueAuthTestUser(overrides: Partial<typeof AUTH_TEST_USER_1> = {}) {
-  const suffix = randomUUID().slice(0, 8)
-  return {
-    ...AUTH_TEST_USER_1,
-    email: `auth.handler.test.user+${suffix}@example.com`,
-    handle: `authhandler${suffix}`,
-    ...overrides,
-  }
+function makeAuthTestUserData(
+  base: typeof AUTH_TEST_USER_1 = AUTH_TEST_USER_1,
+  overrides: Partial<typeof AUTH_TEST_USER_1> = {},
+  tag = randomUUID().slice(0, 8)
+) {
+  return makeUserData(`${scene.scope()}-${tag}`, { ...base, ...overrides })
 }
 
 describe('authHandlers', () => {
@@ -69,7 +67,7 @@ describe('authHandlers', () => {
 
   describe('signUp', () => {
     test('should successfully create a new user account', async () => {
-      const authUser = uniqueAuthTestUser()
+      const authUser = makeAuthTestUserData()
       // Act
       const testUser = await handleSupabaseSignUpWithPassword(testClient, authUser)
 
@@ -86,7 +84,7 @@ describe('authHandlers', () => {
     })
 
     test('should throw error when email is already taken', async () => {
-      const authUser = uniqueAuthTestUser()
+      const authUser = makeAuthTestUserData()
       const existing = await handleSupabaseSignUpWithPassword(testClient, authUser)
       addTestUserToCleanup(existing.id)
 

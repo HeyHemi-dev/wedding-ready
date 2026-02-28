@@ -6,7 +6,7 @@ import { LOCATIONS } from '@/db/constants'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
-import { createTileCreditForm, scene, TEST_TILE, TEST_ID_0 } from '@/testing/scene'
+import { createTileCreditForm, makeTileData, scene, TEST_TILE, TEST_ID_0 } from '@/testing/scene'
 
 import { RECENCY, updateScoreForTile } from './feed/feed-helpers'
 import { getSaveStatesMap, tileOperations } from './tile-operations'
@@ -19,6 +19,7 @@ const CURRENT_USER = {
 }
 
 const uniqueImagePath = (label: string) => `https://example.com/${label}-${randomUUID()}.jpg`
+const scopedImagePath = (label: string) => makeTileData(scene.scope(), { imagePath: uniqueImagePath(label) }).imagePath
 
 describe('tileOperations', () => {
   beforeEach(() => {
@@ -175,7 +176,7 @@ describe('tileOperations', () => {
       // Arrange - Create a private tile directly via model
       const user = await scene.hasUser()
       const privateTile = await tileModel.createRaw({
-        imagePath: uniqueImagePath('private-tile-test'),
+        imagePath: scopedImagePath('private-tile-test'),
         imageRatio: 0.667,
         title: 'Private Tile',
         description: null,
@@ -362,7 +363,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createForSupplier({
         ...TEST_TILE,
-        imagePath: uniqueImagePath('create-for-supplier'),
+        imagePath: scopedImagePath('create-for-supplier'),
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
       })
@@ -379,7 +380,7 @@ describe('tileOperations', () => {
       await expect(
         tileOperations.createForSupplier({
           ...TEST_TILE,
-          imagePath: uniqueImagePath('create-for-supplier-no-credits'),
+          imagePath: scopedImagePath('create-for-supplier-no-credits'),
           createdByUserId: user.id,
           credits: [],
         })
@@ -393,7 +394,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createForSupplier({
         ...TEST_TILE,
-        imagePath: uniqueImagePath('create-for-supplier-empty-fields'),
+        imagePath: scopedImagePath('create-for-supplier-empty-fields'),
         title: '',
         description: '',
         createdByUserId: user.id,
@@ -414,7 +415,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createForSupplier({
         ...TEST_TILE,
-        imagePath: uniqueImagePath('create-for-supplier-empty-credit-description'),
+        imagePath: scopedImagePath('create-for-supplier-empty-credit-description'),
         title: 'Test Title',
         description: 'Test Description',
         createdByUserId: user.id,
@@ -434,7 +435,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createForSupplier({
         ...TEST_TILE,
-        imagePath: uniqueImagePath('create-for-supplier-mixed-fields'),
+        imagePath: scopedImagePath('create-for-supplier-mixed-fields'),
         title: 'Test Title',
         description: '',
         createdByUserId: user.id,
@@ -460,7 +461,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createForSupplier({
         ...TEST_TILE,
-        imagePath: uniqueImagePath('create-for-supplier-multi-credit'),
+        imagePath: scopedImagePath('create-for-supplier-multi-credit'),
         createdByUserId: user.id,
         credits: [
           createTileCreditForm({ supplierId: supplier1.id, serviceDescription: 'First supplier description' }),

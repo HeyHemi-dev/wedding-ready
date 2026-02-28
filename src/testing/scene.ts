@@ -284,15 +284,24 @@ async function cleanupByNamespace(ns: string): Promise<void> {
 }
 
 async function cleanupByPattern(): Promise<void> {
-  await Promise.all([
-    db.delete(s.tiles).where(ilike(s.tiles.imagePath, `%${TEST_MARKER}%`)),
-    db.delete(s.suppliers).where(ilike(s.suppliers.handle, `%${TEST_MARKER}%`)),
-  ])
-
   const users = await db
     .select({ id: s.userProfiles.id })
     .from(s.userProfiles)
     .where(or(ilike(s.userProfiles.handle, `%${TEST_MARKER}%`), ilike(s.userProfiles.displayName, `%${TEST_MARKER}%`)))
+
+  const namespacedUserIds = users.map((user) => user.id)
+
+  if (namespacedUserIds.length > 0) {
+    await Promise.all([
+      db.delete(s.tiles).where(inArray(s.tiles.createdByUserId, namespacedUserIds)),
+      db.delete(s.suppliers).where(inArray(s.suppliers.createdByUserId, namespacedUserIds)),
+    ])
+  }
+
+  await Promise.all([
+    db.delete(s.tiles).where(ilike(s.tiles.imagePath, `%${TEST_MARKER}%`)),
+    db.delete(s.suppliers).where(ilike(s.suppliers.handle, `%${TEST_MARKER}%`)),
+  ])
 
   if (users.length > 0) {
     const cleanupErrors: Error[] = []
@@ -378,4 +387,42 @@ export function makeSupplierData(scope: string, overrides: Partial<TestSupplier>
     name: `${TEST_SUPPLIER.name}${scope}`,
     ...overrides,
   }
+}
+
+export function makeUserData(scope: string, overrides: Partial<TestUser> = {}): TestUser {
+  const base = {
+    ...TEST_USER,
+    ...overrides,
+  }
+
+  return {
+    ...base,
+    email: withEmailScope(base.email, scope),
+    handle: withScope(base.handle, scope),
+    displayName: withScope(base.displayName, scope),
+  }
+}
+
+export function makeTileData(scope: string, overrides: Partial<TestTile> = {}): TestTile {
+  const base = {
+    ...TEST_TILE,
+    ...overrides,
+  }
+
+  return {
+    ...base,
+    imagePath: withScope(base.imagePath, scope),
+  }
+}
+
+function withScope(value: string, scope: string): string {
+  if (value.includes(scope)) return value
+  return `${value}${scope}`
+}
+
+function withEmailScope(email: string, scope: string): string {
+  const [localPart, domainPart] = email.split('@')
+  if (!domainPart) return withScope(email, scope)
+  if (localPart.includes(scope)) return email
+  return `${localPart}${scope}@${domainPart}`
 }
