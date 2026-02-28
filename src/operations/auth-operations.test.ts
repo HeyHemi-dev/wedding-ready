@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
-import { scene, testClient, TEST_ORIGIN } from '@/testing/scene'
+import { scene, testClient, TEST_ID_0, TEST_ORIGIN } from '@/testing/scene'
 import { tryCatch } from '@/utils/try-catch'
 
 import { authOperations, SIGN_UP_STATUS } from './auth-operations'
@@ -134,8 +134,50 @@ describe('authOperations', () => {
       expect(result.handle).toBe(authUser.handle)
       expect(result.displayName).toBe(authUser.displayName)
     })
-    test('should throw error when user is not found', async () => {})
-    test('should throw error when handle is already taken', async () => {})
+
+    test('should throw error when user is not found', async () => {
+      const authUser = uniqueAuthTestUser()
+
+      await expect(
+        authOperations.completeOnboarding(TEST_ID_0, {
+          handle: authUser.handle,
+          displayName: authUser.displayName,
+          avatarUrl: '',
+        })
+      ).rejects.toThrow()
+    })
+
+    test('should throw error when handle is already taken', async () => {
+      const authUser1 = uniqueAuthTestUser()
+      const authUser2 = uniqueAuthTestUser()
+
+      const first = await authOperations.signUp({
+        userSignFormData: authUser1,
+        supabaseClient: testClient,
+        origin: TEST_ORIGIN,
+      })
+      const second = await authOperations.signUp({
+        userSignFormData: authUser2,
+        supabaseClient: testClient,
+        origin: TEST_ORIGIN,
+      })
+      addTestUserToCleanup(first.id)
+      addTestUserToCleanup(second.id)
+
+      await authOperations.completeOnboarding(first.id, {
+        handle: authUser1.handle,
+        displayName: authUser1.displayName,
+        avatarUrl: '',
+      })
+
+      await expect(
+        authOperations.completeOnboarding(second.id, {
+          handle: authUser1.handle,
+          displayName: authUser2.displayName,
+          avatarUrl: '',
+        })
+      ).rejects.toThrow()
+    })
   })
 
   describe('getUserSignUpStatus', () => {
