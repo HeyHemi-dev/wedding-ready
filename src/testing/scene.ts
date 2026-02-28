@@ -17,6 +17,7 @@ import { supplierOperations } from '@/operations/supplier-operations'
 import { tileOperations } from '@/operations/tile-operations'
 import { BASE_URL } from '@/utils/constants'
 import { createAdminClient } from '@/utils/supabase/server'
+import { tryCatch } from '@/utils/try-catch'
 
 import type { SupabaseClient } from '@supabase/supabase-js'
 
@@ -123,9 +124,8 @@ async function endTest(): Promise<void> {
   }
 
   if (ctx.createdUserIds.size > 0) {
-    const deletions = await Promise.allSettled([...ctx.createdUserIds].map((userId) => testClient.auth.admin.deleteUser(userId)))
-    for (const deletion of deletions) {
-      if (deletion.status === 'rejected') cleanupErrors.push(deletion.reason as Error)
+    for (const userId of ctx.createdUserIds) {
+      await deleteAuthUserById(userId, { cleanupErrors })
     }
   }
 
@@ -239,7 +239,7 @@ async function withoutUser({
   const user = await userProfileModel.getRawByHandle(scopedHandle)
   if (!user) return
 
-  await supabaseClient.auth.admin.deleteUser(user.id)
+  await deleteAuthUserById(user.id, { supabaseClient })
 }
 
 async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {
@@ -259,7 +259,10 @@ async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }
 async function resetTestData(): Promise<void> {
   await withoutTilesForSupplier({ supplierHandle: TEST_SUPPLIER.handle })
   await withoutSupplier({ handle: TEST_SUPPLIER.handle })
-  await cleanupStaleNamespacedData()
+  const ctx = getTestContext()
+  if (ctx) {
+    await cleanupByNamespace(ctx.ns)
+  }
   // Don't clean up the test user. All tests assume a user exists.
 }
 
@@ -274,7 +277,11 @@ async function cleanupByNamespace(ns: string): Promise<void> {
     .from(s.userProfiles)
     .where(like(s.userProfiles.handle, `%${TEST_MARKER}${ns}`))
   if (users.length > 0) {
-    await Promise.all(users.map((user) => testClient.auth.admin.deleteUser(user.id)))
+    const cleanupErrors: Error[] = []
+    await Promise.all(users.map((user) => deleteAuthUserById(user.id, { cleanupErrors })))
+    if (cleanupErrors.length > 0) {
+      console.error('Test cleanup encountered user deletion errors:', cleanupErrors)
+    }
   }
 }
 
@@ -290,8 +297,33 @@ async function cleanupByPattern(): Promise<void> {
     .where(or(ilike(s.userProfiles.handle, `%${TEST_MARKER}%`), ilike(s.userProfiles.displayName, `%${TEST_MARKER}%`)))
 
   if (users.length > 0) {
-    await Promise.all(users.map((user) => testClient.auth.admin.deleteUser(user.id)))
+    const cleanupErrors: Error[] = []
+    await Promise.all(users.map((user) => deleteAuthUserById(user.id, { cleanupErrors })))
+    if (cleanupErrors.length > 0) {
+      console.error('Test cleanup encountered stale user deletion errors:', cleanupErrors)
+    }
   }
+}
+
+async function deleteAuthUserById(
+  userId: string,
+  { supabaseClient = testClient, cleanupErrors }: { supabaseClient?: SupabaseClient; cleanupErrors?: Error[] } = {}
+): Promise<void> {
+  const { data: response, error: requestError } = await tryCatch(supabaseClient.auth.admin.deleteUser(userId))
+
+  const authError =
+    requestError ??
+    ((response as { error?: Error | null } | null)?.error ??
+      null)
+
+  if (!authError) return
+
+  if (cleanupErrors) {
+    cleanupErrors.push(authError)
+    return
+  }
+
+  throw authError
 }
 
 function scopedValue(base: string, ctx?: TestContext): string {
