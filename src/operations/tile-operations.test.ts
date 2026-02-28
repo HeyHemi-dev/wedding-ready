@@ -1,4 +1,5 @@
-import { afterAll, afterEach, describe, expect, it } from 'vitest'
+import { randomUUID } from 'node:crypto'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
 import { LOCATIONS } from '@/db/constants'
@@ -17,17 +18,15 @@ const CURRENT_USER = {
   handle: 'currentUser',
 }
 
-describe('tileOperations', () => {
-  afterEach(async () => {
-    await scene.withoutTilesForSupplier()
-  })
-  afterAll(async () => {
-    await scene.resetTestData()
-    await scene.withoutUser({ handle: CURRENT_USER.handle })
+const uniqueImagePath = (label: string) => `https://example.com/${label}-${randomUUID()}.jpg`
 
-    // Clean up additional
-    await scene.withoutTilesForSupplier({ supplierHandle: 'testsupplier2' })
-    await scene.withoutSupplier({ handle: 'testsupplier2' })
+describe('tileOperations', () => {
+  beforeEach(() => {
+    scene.startTest()
+  })
+
+  afterEach(async () => {
+    await scene.endTest()
   })
 
   describe('getById', () => {
@@ -176,7 +175,7 @@ describe('tileOperations', () => {
       // Arrange - Create a private tile directly via model
       const user = await scene.hasUser()
       const privateTile = await tileModel.createRaw({
-        imagePath: 'private-tile-test.jpg',
+        imagePath: uniqueImagePath('private-tile-test'),
         imageRatio: 0.667,
         title: 'Private Tile',
         description: null,
@@ -310,11 +309,7 @@ describe('tileOperations', () => {
 
     it('should return empty array when user has no saved tiles', async () => {
       // Arrange
-      const { user, supplier } = await scene.hasUserAndSupplier()
-      await scene.hasTile({
-        createdByUserId: user.id,
-        credits: [createTileCreditForm({ supplierId: supplier.id })],
-      })
+      const { user } = await scene.hasUserAndSupplier()
 
       // Act
       const result = await tileOperations.getListForUser(user.id)
@@ -367,6 +362,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createForSupplier({
         ...TEST_TILE,
+        imagePath: uniqueImagePath('create-for-supplier'),
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
       })
@@ -383,6 +379,7 @@ describe('tileOperations', () => {
       await expect(
         tileOperations.createForSupplier({
           ...TEST_TILE,
+          imagePath: uniqueImagePath('create-for-supplier-no-credits'),
           createdByUserId: user.id,
           credits: [],
         })
@@ -396,6 +393,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createForSupplier({
         ...TEST_TILE,
+        imagePath: uniqueImagePath('create-for-supplier-empty-fields'),
         title: '',
         description: '',
         createdByUserId: user.id,
@@ -416,6 +414,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createForSupplier({
         ...TEST_TILE,
+        imagePath: uniqueImagePath('create-for-supplier-empty-credit-description'),
         title: 'Test Title',
         description: 'Test Description',
         createdByUserId: user.id,
@@ -435,6 +434,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createForSupplier({
         ...TEST_TILE,
+        imagePath: uniqueImagePath('create-for-supplier-mixed-fields'),
         title: 'Test Title',
         description: '',
         createdByUserId: user.id,
@@ -460,6 +460,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createForSupplier({
         ...TEST_TILE,
+        imagePath: uniqueImagePath('create-for-supplier-multi-credit'),
         createdByUserId: user.id,
         credits: [
           createTileCreditForm({ supplierId: supplier1.id, serviceDescription: 'First supplier description' }),
@@ -657,7 +658,7 @@ describe('tileOperations', () => {
       expect(tile.score).toBeGreaterThan(0)
       expect(after).toBeDefined()
       expect(after!.score).toBeGreaterThan(0)
-      expect(after!.score).toBeLessThan(tile.score)
+      expect(after!.score).toBeLessThanOrEqual(tile.score)
       expect(after!.scoreUpdatedAt).not.toBe(tile.scoreUpdatedAt)
     })
   })

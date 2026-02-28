@@ -84,17 +84,17 @@ export function handleSupabaseSignUpAuthResponse({ data, error }: AuthResponse):
   // error: { message: "User already registered" }
 
   if (error) {
-    if (error.message === 'User already registered') {
-      // existing confirmed user
+    if (error.message === 'User already registered' || error.message === 'User already exists') {
       throw OPERATION_ERROR.RESOURCE_CONFLICT('User already exists')
-    } else {
-      // some other error
-      console.error(error.message)
     }
-  } else if (!data.session) {
-    throw OPERATION_ERROR.BUSINESS_RULE_VIOLATION('Check your email')
+    console.error(error.message)
+    throw OPERATION_ERROR.DATABASE_ERROR(error.message)
   }
 
-  // We can assert that data.user exists because we have handled all other possible cases.
-  return data.user!
+  // session can be null when email confirmation is enabled; only require a created user.
+  if (!data.user) {
+    throw OPERATION_ERROR.DATABASE_ERROR('Failed to create account')
+  }
+
+  return data.user
 }

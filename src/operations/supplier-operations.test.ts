@@ -1,4 +1,5 @@
-import { describe, it, expect, afterEach, afterAll } from 'vitest'
+import { randomUUID } from 'node:crypto'
+import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
@@ -6,13 +7,23 @@ import { createTileCreditForm, createSupplierUpdateForm, scene, TEST_SUPPLIER } 
 
 import { supplierOperations } from './supplier-operations'
 
+function uniqueSupplierRegistration(overrides: Partial<typeof TEST_SUPPLIER> = {}) {
+  const suffix = randomUUID().slice(0, 8)
+  return {
+    ...TEST_SUPPLIER,
+    handle: `testsupplier-${suffix}`,
+    name: `Test Supplier ${suffix}`,
+    ...overrides,
+  }
+}
+
 describe('supplierOperations', () => {
-  afterEach(async () => {
-    await scene.resetTestData()
+  beforeEach(() => {
+    scene.startTest()
   })
 
-  afterAll(async () => {
-    await scene.resetTestData()
+  afterEach(async () => {
+    await scene.endTest()
   })
 
   describe('getByHandle', () => {
@@ -65,22 +76,24 @@ describe('supplierOperations', () => {
     it('should successfully register a new supplier', async () => {
       // Arrange
       const user = await scene.hasUser()
-      await scene.withoutSupplier({ handle: TEST_SUPPLIER.handle })
+      const supplierData = uniqueSupplierRegistration()
 
       // Act
-      const result = await supplierOperations.register(TEST_SUPPLIER, user.id)
+      const result = await supplierOperations.register(supplierData, user.id)
 
       // Assert
       expect(result).toBeDefined()
-      expect(result.handle).toBe(TEST_SUPPLIER.handle)
+      expect(result.handle).toBe(supplierData.handle)
     })
 
     it('should throw error when handle is already taken', async () => {
       // Arrange
       const { user } = await scene.hasUserAndSupplier()
+      const supplierData = uniqueSupplierRegistration()
+      await supplierOperations.register(supplierData, user.id)
 
       // Act & Assert
-      await expect(supplierOperations.register(TEST_SUPPLIER, user.id)).rejects.toThrow()
+      await expect(supplierOperations.register(supplierData, user.id)).rejects.toThrow()
     })
 
     it('should throw error when user is not found', async () => {
@@ -91,17 +104,13 @@ describe('supplierOperations', () => {
     it('should convert empty strings to null for optional fields (websiteUrl, description)', async () => {
       // Arrange
       const user = await scene.hasUser()
-      await scene.withoutSupplier({ handle: TEST_SUPPLIER.handle })
+      const supplierData = uniqueSupplierRegistration({
+        websiteUrl: '',
+        description: '',
+      })
 
       // Act
-      const result = await supplierOperations.register(
-        {
-          ...TEST_SUPPLIER,
-          websiteUrl: '',
-          description: '',
-        },
-        user.id
-      )
+      const result = await supplierOperations.register(supplierData, user.id)
 
       // Assert - Check that empty strings were converted to null in the DB
       const supplier = await supplierModel.getRawById(result.id)
@@ -113,17 +122,13 @@ describe('supplierOperations', () => {
     it('should handle mixed empty and non-empty optional fields', async () => {
       // Arrange
       const user = await scene.hasUser()
-      await scene.withoutSupplier({ handle: TEST_SUPPLIER.handle })
+      const supplierData = uniqueSupplierRegistration({
+        websiteUrl: 'https://example.com',
+        description: '',
+      })
 
       // Act
-      const result = await supplierOperations.register(
-        {
-          ...TEST_SUPPLIER,
-          websiteUrl: 'https://example.com',
-          description: '',
-        },
-        user.id
-      )
+      const result = await supplierOperations.register(supplierData, user.id)
 
       // Assert
       const supplier = await supplierModel.getRawById(result.id)
@@ -219,8 +224,8 @@ describe('supplierOperations', () => {
     it('should return suppliers with the given query', async () => {
       // Arrange
       const user = await scene.hasUser()
-      await scene.hasSupplier({ createdByUserId: user.id })
-      const query = TEST_SUPPLIER.handle.slice(0, 3)
+      const supplier = await scene.hasSupplier({ createdByUserId: user.id })
+      const query = supplier.handle
 
       // Act
       const result = await supplierOperations.search(query)
@@ -228,7 +233,7 @@ describe('supplierOperations', () => {
       // Assert
       expect(result).toBeDefined()
       expect(result.length).toBeGreaterThan(0)
-      expect(result.find((r) => r.handle === TEST_SUPPLIER.handle)).toBeDefined()
+      expect(result.find((r) => r.handle === supplier.handle)).toBeDefined()
     })
 
     it('should handle case insensitivity', async () => {
@@ -248,7 +253,7 @@ describe('supplierOperations', () => {
     it('should handle partial matches', async () => {
       // Arrange
       const { supplier } = await scene.hasUserAndSupplier()
-      const query = supplier.handle.slice(3, 6)
+      const query = supplier.handle.slice(-6)
 
       // Act
       const result = await supplierOperations.search(query)

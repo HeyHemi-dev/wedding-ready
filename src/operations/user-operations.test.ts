@@ -1,4 +1,4 @@
-import { afterAll, afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { scene, testClient } from '@/testing/scene'
 
@@ -12,13 +12,12 @@ const TEST_USER_OPERATIONS = {
 }
 
 describe('userOperations', () => {
-  afterEach(async () => {
-    await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle, supabaseClient: testClient })
+  beforeEach(() => {
+    scene.startTest()
   })
 
-  afterAll(async () => {
-    await scene.resetTestData()
-    await scene.withoutUser({ handle: TEST_USER_OPERATIONS.handle, supabaseClient: testClient })
+  afterEach(async () => {
+    await scene.endTest()
   })
 
   describe('getById', () => {
