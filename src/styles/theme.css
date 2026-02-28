@@ -48,7 +48,7 @@
   --padding-site: var(--wr-padding-site-gutter);
   --padding-section: calc(var(--gap-stranger) / 2);
   --padding-contour: 2px;
-  --padding-area: calc(var(--radius-area) * 3);
+  --padding-area: calc(var(--radius-area) * 2);
 
   --width-site: var(--wr-width-site);
   --width-prose: var(--wr-width-prose);
