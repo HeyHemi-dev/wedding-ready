@@ -123,16 +123,16 @@ async function endTest(): Promise<void> {
     }
   }
 
-  if (ctx.createdUserIds.size > 0) {
-    for (const userId of ctx.createdUserIds) {
-      await deleteAuthUserById(userId, { cleanupErrors })
-    }
-  }
-
   try {
     await cleanupByNamespace(ctx.ns)
   } catch (error) {
     cleanupErrors.push(error as Error)
+  }
+
+  if (ctx.createdUserIds.size > 0) {
+    for (const userId of ctx.createdUserIds) {
+      await deleteAuthUserById(userId, { cleanupErrors })
+    }
   }
 
   activeTestContext = null
@@ -271,18 +271,6 @@ async function cleanupByNamespace(ns: string): Promise<void> {
     db.delete(s.tiles).where(like(s.tiles.imagePath, `%${TEST_MARKER}${ns}`)),
     db.delete(s.suppliers).where(like(s.suppliers.handle, `%${TEST_MARKER}${ns}`)),
   ])
-
-  const users = await db
-    .select({ id: s.userProfiles.id })
-    .from(s.userProfiles)
-    .where(like(s.userProfiles.handle, `%${TEST_MARKER}${ns}`))
-  if (users.length > 0) {
-    const cleanupErrors: Error[] = []
-    await Promise.all(users.map((user) => deleteAuthUserById(user.id, { cleanupErrors })))
-    if (cleanupErrors.length > 0) {
-      console.error('Test cleanup encountered user deletion errors:', cleanupErrors)
-    }
-  }
 }
 
 async function cleanupByPattern(): Promise<void> {
@@ -298,7 +286,9 @@ async function cleanupByPattern(): Promise<void> {
 
   if (users.length > 0) {
     const cleanupErrors: Error[] = []
-    await Promise.all(users.map((user) => deleteAuthUserById(user.id, { cleanupErrors })))
+    for (const user of users) {
+      await deleteAuthUserById(user.id, { cleanupErrors })
+    }
     if (cleanupErrors.length > 0) {
       console.error('Test cleanup encountered stale user deletion errors:', cleanupErrors)
     }
