@@ -96,6 +96,21 @@ export const scene = {
   resetTestData,
 }
 
+/**
+ * Initializes per-test scene context.
+ *
+ * Side effects:
+ * - creates a new namespaced TestContext (`ns`) and empty created-id sets
+ * - mutates `activeTestContext`
+ * - writes context into AsyncLocalStorage via `testContextStore.enterWith(ctx)`
+ *
+ * Call order:
+ * - call before creating test resources (typically in `beforeEach`)
+ *
+ * Concurrency:
+ * - context is per async call-chain; each concurrent test must call `startTest`
+ *   in its own lifecycle to avoid sharing fallback `activeTestContext`.
+ */
 function startTest(): void {
   const ctx: TestContext = {
     ns: randomUUID().slice(0, 8),
@@ -107,6 +122,10 @@ function startTest(): void {
   testContextStore.enterWith(ctx)
 }
 
+/**
+ * Returns current test context from AsyncLocalStorage, falling back to
+ * `activeTestContext` when no store is bound to the current async chain.
+ */
 function getTestContext(): TestContext | undefined {
   return testContextStore.getStore() ?? activeTestContext ?? undefined
 }
@@ -120,6 +139,21 @@ function scope(): string {
   return namespacePrefix(ctx.ns)
 }
 
+/**
+ * Finalizes per-test scene context and performs destructive cleanup.
+ *
+ * Side effects:
+ * - deletes resources tracked in context:
+ *   - tiles via `tileModel.deleteManyByIds(createdTileIds)`
+ *   - suppliers via `db.delete(...inArray(...createdSupplierIds))`
+ *   - auth users via `testClient.auth.admin.deleteUser` (through helper)
+ * - runs namespace cleanup via `cleanupByNamespace(ns)`
+ * - aggregates cleanup issues and may log them
+ * - clears created-id sets and resets `activeTestContext` to `null`
+ *
+ * Call order:
+ * - call after each test (typically in `afterEach`) to prevent cross-test bleed.
+ */
 async function endTest(): Promise<void> {
   const ctx = getTestContext()
   if (!ctx) return
@@ -165,6 +199,15 @@ async function endTest(): Promise<void> {
   }
 }
 
+/**
+ * Removes stale namespaced test data not tied to current in-memory context.
+ *
+ * Side effects:
+ * - invokes `cleanupByPattern()` for broad stale namespaced cleanup.
+ *
+ * Usage:
+ * - intended for global setup/teardown safety net, not primary per-test cleanup.
+ */
 async function cleanupStaleNamespacedData(): Promise<void> {
   await cleanupByPattern()
 }
