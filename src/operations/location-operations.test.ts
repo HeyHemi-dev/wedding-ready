@@ -7,11 +7,11 @@ import { locationOperations } from './location-operations'
 
 describe('locationOperations', () => {
   beforeEach(() => {
-    scene.startTest()
+    scene.setup()
   })
 
   afterEach(async () => {
-    await scene.endTest()
+    await scene.cleanup()
   })
 
   describe('getAllWithSupplierCount', () => {

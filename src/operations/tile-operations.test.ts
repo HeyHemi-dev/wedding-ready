@@ -23,11 +23,11 @@ const scopedImagePath = (label: string) => makeTileData(scene.scope(), { imagePa
 
 describe('tileOperations', () => {
   beforeEach(() => {
-    scene.startTest()
+    scene.setup()
   })
 
   afterEach(async () => {
-    await scene.endTest()
+    await scene.cleanup()
   })
 
   describe('getById', () => {

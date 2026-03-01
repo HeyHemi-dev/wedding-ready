@@ -77,10 +77,10 @@ let activeTestContext: TestContext | null = null
 type TestUserProfile = t.UserProfileRaw & { email: string }
 
 export const scene = {
-  startTest,
-  endTest,
+  setup,
+  cleanup,
   scope,
-  cleanupStaleNamespacedData,
+  cleanupStaleData,
   hasUser,
   hasSupplier,
   hasUserAndSupplier,
@@ -104,10 +104,10 @@ export const scene = {
  * - call before creating test resources (typically in `beforeEach`)
  *
  * Concurrency:
- * - context is per async call-chain; each concurrent test must call `startTest`
+ * - context is per async call-chain; each concurrent test must call `setup`
  *   in its own lifecycle to avoid sharing fallback `activeTestContext`.
  */
-function startTest(): void {
+function setup(): void {
   const ctx: TestContext = {
     ns: randomUUID().slice(0, 8),
     createdUserIds: new Set(),
@@ -121,7 +121,7 @@ function startTest(): void {
 function scope(): string {
   const ctx = getTestContext()
   if (!ctx) {
-    throw new Error('No active test scene scope. Call scene.startTest() before using scoped test data.')
+    throw new Error('No active test scene scope. Call scene.setup() before using scoped test data.')
   }
 
   return namespacePrefix(ctx.ns)
@@ -141,7 +141,7 @@ function scope(): string {
  * Call order:
  * - call after each test (typically in `afterEach`) to prevent cross-test bleed.
  */
-async function endTest(): Promise<void> {
+async function cleanup(): Promise<void> {
   const ctx = getTestContext()
   if (!ctx) return
 
@@ -190,7 +190,7 @@ async function endTest(): Promise<void> {
  * Usage:
  * - intended for global setup/teardown safety net, not primary per-test cleanup.
  */
-async function cleanupStaleNamespacedData(): Promise<void> {
+async function cleanupStaleData(): Promise<void> {
   await cleanupByPattern()
 }
 
@@ -343,10 +343,7 @@ async function cleanupByPattern(): Promise<void> {
     .select({ id: s.userProfiles.id })
     .from(s.userProfiles)
     .where(
-      or(
-        sql`${s.userProfiles.handle} ILIKE ${markerPrefixPattern} ESCAPE '\\'`,
-        sql`${s.userProfiles.displayName} ILIKE ${markerPrefixPattern} ESCAPE '\\'`
-      )
+      or(sql`${s.userProfiles.handle} ILIKE ${markerPrefixPattern} ESCAPE '\\'`, sql`${s.userProfiles.displayName} ILIKE ${markerPrefixPattern} ESCAPE '\\'`)
     )
 
   const namespacedUserIds = users.map((user) => user.id)
@@ -390,10 +387,7 @@ async function deleteAuthUserById(
 ): Promise<void> {
   const { data: response, error: requestError } = await tryCatch(supabaseClient.auth.admin.deleteUser(userId))
 
-  const authError =
-    requestError ??
-    ((response as { error?: Error | null } | null)?.error ??
-      null)
+  const authError = requestError ?? (response as { error?: Error | null } | null)?.error ?? null
 
   if (!authError) return
 

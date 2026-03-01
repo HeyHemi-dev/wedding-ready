@@ -21,10 +21,7 @@ const AUTH_TEST_USER_2 = {
   handle: 'authuser2',
 }
 
-function makeAuthTestUserData(
-  base: typeof AUTH_TEST_USER_1 = AUTH_TEST_USER_1,
-  overrides: Partial<typeof AUTH_TEST_USER_1> = {}
-) {
+function makeAuthTestUserData(base: typeof AUTH_TEST_USER_1 = AUTH_TEST_USER_1, overrides: Partial<typeof AUTH_TEST_USER_1> = {}) {
   return makeUserData(scene.scope(), { ...base, ...overrides })
 }
 
@@ -46,7 +43,7 @@ describe('authOperations', () => {
   }
 
   beforeEach(async () => {
-    scene.startTest()
+    scene.setup()
     await Promise.all([
       scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
       scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
@@ -56,7 +53,7 @@ describe('authOperations', () => {
 
   afterEach(async () => {
     await Promise.all([
-      scene.endTest(),
+      scene.cleanup(),
       scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
       scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
       cleanUpTestUsers(),

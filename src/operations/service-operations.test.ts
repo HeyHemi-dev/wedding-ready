@@ -7,11 +7,11 @@ import { serviceOperations } from './service-operations'
 
 describe('serviceOperations', () => {
   beforeEach(() => {
-    scene.startTest()
+    scene.setup()
   })
 
   afterEach(async () => {
-    await scene.endTest()
+    await scene.cleanup()
   })
 
   describe('getAllWithSupplierCount', () => {

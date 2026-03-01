@@ -13,11 +13,11 @@ const TEST_USER_OPERATIONS = {
 
 describe('userOperations', () => {
   beforeEach(() => {
-    scene.startTest()
+    scene.setup()
   })
 
   afterEach(async () => {
-    await scene.endTest()
+    await scene.cleanup()
   })
 
   describe('getById', () => {

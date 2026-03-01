@@ -8,11 +8,11 @@ import { supplierOperations } from './supplier-operations'
 
 describe('supplierOperations', () => {
   beforeEach(() => {
-    scene.startTest()
+    scene.setup()
   })
 
   afterEach(async () => {
-    await scene.endTest()
+    await scene.cleanup()
   })
 
   describe('getByHandle', () => {
