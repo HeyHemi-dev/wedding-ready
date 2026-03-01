@@ -144,8 +144,8 @@ describe('authOperations', () => {
     })
 
     test('should throw error when handle is already taken', async () => {
-      const authUser1 = makeAuthTestUserData(AUTH_TEST_USER_1, {}, 'user-1')
-      const authUser2 = makeAuthTestUserData(AUTH_TEST_USER_2, {}, 'user-2')
+      const authUser1 = makeAuthTestUserData(AUTH_TEST_USER_1)
+      const authUser2 = makeAuthTestUserData(AUTH_TEST_USER_2)
 
       const first = await authOperations.signUp({
         userSignFormData: authUser1,
