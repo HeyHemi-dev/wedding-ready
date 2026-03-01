@@ -1,11 +1,11 @@
 @import 'tailwindcss';
-@custom-variant dark (&:where(.dark, .dark *));
 @import 'tw-animate-css';
 
 @import './tokens.css';
 @import './theme.css';
 @import './utilities.css';
 @import './components.css';
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* TEMPORARY: explicit semantic width overrides so width classes (w/min-w/max-w)
    win over spacing namespace collisions in Tailwind v4 (e.g. *-xl resolving to
