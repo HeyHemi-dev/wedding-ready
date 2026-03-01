@@ -79,7 +79,7 @@ type TestUserProfile = t.UserProfileRaw & { email: string }
 export const scene = {
   setup,
   cleanup,
-  scope,
+  namespace,
   cleanupStaleData,
   hasUser,
   hasSupplier,
@@ -118,10 +118,10 @@ function setup(): void {
   testContextStore.enterWith(ctx)
 }
 
-function scope(): string {
+function namespace(): string {
   const ctx = getTestContext()
   if (!ctx) {
-    throw new Error('No active test scene scope. Call scene.setup() before using scoped test data.')
+    throw new Error('No active test scene namespace. Call scene.setup() before using namespaced test data.')
   }
 
   return namespacePrefix(ctx.ns)

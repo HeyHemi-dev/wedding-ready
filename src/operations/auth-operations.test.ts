@@ -22,7 +22,7 @@ const AUTH_TEST_USER_2 = {
 }
 
 function makeAuthTestUserData(base: typeof AUTH_TEST_USER_1 = AUTH_TEST_USER_1, overrides: Partial<typeof AUTH_TEST_USER_1> = {}) {
-  return makeUserData(scene.scope(), { ...base, ...overrides })
+  return makeUserData(scene.namespace(), { ...base, ...overrides })
 }
 
 describe('authOperations', () => {

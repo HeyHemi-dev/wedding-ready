@@ -65,7 +65,7 @@ describe('supplierOperations', () => {
     it('should successfully register a new supplier', async () => {
       // Arrange
       const user = await scene.hasUser()
-      const supplierData = makeSupplierData(scene.scope())
+      const supplierData = makeSupplierData(scene.namespace())
 
       // Act
       const result = await supplierOperations.register(supplierData, user.id)
@@ -78,7 +78,7 @@ describe('supplierOperations', () => {
     it('should throw error when handle is already taken', async () => {
       // Arrange
       const user = await scene.hasUser()
-      const supplierData = makeSupplierData(scene.scope())
+      const supplierData = makeSupplierData(scene.namespace())
       await supplierOperations.register(supplierData, user.id)
 
       // Act & Assert
@@ -87,14 +87,14 @@ describe('supplierOperations', () => {
 
     it('should throw error when user is not found', async () => {
       // Arrange, Act & Assert
-      const supplierData = makeSupplierData(scene.scope())
+      const supplierData = makeSupplierData(scene.namespace())
       await expect(supplierOperations.register(supplierData, '00000000-0000-0000-0000-000000000000')).rejects.toThrow()
     })
 
     it('should convert empty strings to null for optional fields (websiteUrl, description)', async () => {
       // Arrange
       const user = await scene.hasUser()
-      const supplierData = makeSupplierData(scene.scope(), {
+      const supplierData = makeSupplierData(scene.namespace(), {
         websiteUrl: '',
         description: '',
       })
@@ -112,7 +112,7 @@ describe('supplierOperations', () => {
     it('should handle mixed empty and non-empty optional fields', async () => {
       // Arrange
       const user = await scene.hasUser()
-      const supplierData = makeSupplierData(scene.scope(), {
+      const supplierData = makeSupplierData(scene.namespace(), {
         websiteUrl: 'https://example.com',
         description: '',
       })
