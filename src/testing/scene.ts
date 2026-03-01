@@ -222,7 +222,13 @@ async function hasUser({
 }: Partial<UserSignupForm> & Partial<OnboardingForm> & { supabaseClient?: SupabaseClient } = {}): Promise<TestUserProfile> {
   const ctx = getTestContext()
   const scopedHandle = scopedValue(handle, ctx)
-  const scopedEmail = scopedEmailValue(email, ctx)
+  const [localPart, domainPart] = email.split('@')
+  const scopedEmail =
+    !ctx || !domainPart
+      ? scopedValue(email, ctx)
+      : localPart.startsWith(namespacePrefix(ctx.ns))
+        ? email
+        : `${namespacePrefix(ctx.ns)}${localPart}@${domainPart}`
 
   const user = await userProfileModel.getRawByHandle(scopedHandle)
   if (user) return { ...user, email: scopedEmail }
@@ -270,7 +276,7 @@ async function hasTile({
   credits,
 }: Partial<TileCreate> & Pick<TileCreate, 'createdByUserId' | 'credits'>): Promise<t.TileRaw> {
   const ctx = getTestContext()
-  const scopedImagePath = scopedPathValue(imagePath, ctx)
+  const scopedImagePath = scopedValue(imagePath, ctx)
   const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, scopedImagePath))
 
   if (tiles.length > 0) return tiles[0]
@@ -334,7 +340,7 @@ async function resetTestData(): Promise<void> {
 }
 
 async function cleanupByNamespace(ns: string): Promise<void> {
-  const prefixPattern = `${escapeLikePattern(namespacePrefix(ns))}%`
+  const prefixPattern = `${namespacePrefix(ns).replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')}%`
   await Promise.all([
     db.delete(s.tiles).where(sql`${s.tiles.imagePath} LIKE ${prefixPattern} ESCAPE '\\'`),
     db.delete(s.suppliers).where(sql`${s.suppliers.handle} LIKE ${prefixPattern} ESCAPE '\\'`),
@@ -342,7 +348,7 @@ async function cleanupByNamespace(ns: string): Promise<void> {
 }
 
 async function cleanupByPattern(): Promise<void> {
-  const markerPrefixPattern = `${escapeLikePattern(TEST_MARKER)}%`
+  const markerPrefixPattern = `${TEST_MARKER.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')}%`
   const users = await db
     .select({ id: s.userProfiles.id })
     .from(s.userProfiles)
@@ -453,22 +459,6 @@ function scopedValue(base: string, ctx?: TestContext): string {
   return `${prefix}${base}`
 }
 
-function scopedEmailValue(base: string, ctx?: TestContext): string {
-  if (!ctx) return base
-
-  const [localPart, domainPart] = base.split('@')
-  if (!domainPart) return scopedValue(base, ctx)
-
-  const prefix = namespacePrefix(ctx.ns)
-  if (localPart.startsWith(prefix)) return base
-
-  return `${prefix}${localPart}@${domainPart}`
-}
-
-function scopedPathValue(base: string, ctx?: TestContext): string {
-  return scopedValue(base, ctx)
-}
-
 export function createTileCreditForm({
   supplierId,
   service = SERVICES.PHOTOGRAPHER,
@@ -542,8 +532,4 @@ function withEmailScope(email: string, scope: string): string {
 
 function namespacePrefix(ns: string): string {
   return `${TEST_MARKER}${ns}__`
-}
-
-function escapeLikePattern(value: string): string {
-  return value.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')
 }
