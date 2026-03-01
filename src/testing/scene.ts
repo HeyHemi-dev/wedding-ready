@@ -484,11 +484,15 @@ export function createSupplierUpdateForm({
 }
 
 export function makeSupplierData(scope: string, overrides: Partial<TestSupplier> = {}): TestSupplier {
-  return {
+  const base = {
     ...TEST_SUPPLIER,
-    handle: `${TEST_SUPPLIER.handle}${scope}`,
-    name: `${TEST_SUPPLIER.name}${scope}`,
     ...overrides,
+  }
+
+  return {
+    ...base,
+    handle: withScope(base.handle, scope),
+    name: withScope(base.name, scope),
   }
 }
 
