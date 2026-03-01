@@ -1,4 +1,4 @@
-import { eq, ilike, inArray, like, or } from 'drizzle-orm'
+import { eq, inArray, or, sql } from 'drizzle-orm'
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { randomUUID } from 'node:crypto'
 
@@ -291,18 +291,24 @@ async function resetTestData(): Promise<void> {
 }
 
 async function cleanupByNamespace(ns: string): Promise<void> {
-  const prefix = namespacePrefix(ns)
+  const prefixPattern = `${escapeLikePattern(namespacePrefix(ns))}%`
   await Promise.all([
-    db.delete(s.tiles).where(like(s.tiles.imagePath, `${prefix}%`)),
-    db.delete(s.suppliers).where(like(s.suppliers.handle, `${prefix}%`)),
+    db.delete(s.tiles).where(sql`${s.tiles.imagePath} LIKE ${prefixPattern} ESCAPE '\\'`),
+    db.delete(s.suppliers).where(sql`${s.suppliers.handle} LIKE ${prefixPattern} ESCAPE '\\'`),
   ])
 }
 
 async function cleanupByPattern(): Promise<void> {
+  const markerPrefixPattern = `${escapeLikePattern(TEST_MARKER)}%`
   const users = await db
     .select({ id: s.userProfiles.id })
     .from(s.userProfiles)
-    .where(or(ilike(s.userProfiles.handle, `${TEST_MARKER}%`), ilike(s.userProfiles.displayName, `${TEST_MARKER}%`)))
+    .where(
+      or(
+        sql`${s.userProfiles.handle} ILIKE ${markerPrefixPattern} ESCAPE '\\'`,
+        sql`${s.userProfiles.displayName} ILIKE ${markerPrefixPattern} ESCAPE '\\'`
+      )
+    )
 
   const namespacedUserIds = users.map((user) => user.id)
 
@@ -311,8 +317,8 @@ async function cleanupByPattern(): Promise<void> {
   }
 
   await Promise.all([
-    db.delete(s.tiles).where(ilike(s.tiles.imagePath, `${TEST_MARKER}%`)),
-    db.delete(s.suppliers).where(ilike(s.suppliers.handle, `${TEST_MARKER}%`)),
+    db.delete(s.tiles).where(sql`${s.tiles.imagePath} ILIKE ${markerPrefixPattern} ESCAPE '\\'`),
+    db.delete(s.suppliers).where(sql`${s.suppliers.handle} ILIKE ${markerPrefixPattern} ESCAPE '\\'`),
   ])
 
   if (users.length > 0) {
@@ -493,4 +499,8 @@ function withEmailScope(email: string, scope: string): string {
 
 function namespacePrefix(ns: string): string {
   return `${TEST_MARKER}${ns}__`
+}
+
+function escapeLikePattern(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')
 }
