@@ -122,14 +122,6 @@ function startTest(): void {
   testContextStore.enterWith(ctx)
 }
 
-/**
- * Returns current test context from AsyncLocalStorage, falling back to
- * `activeTestContext` when no store is bound to the current async chain.
- */
-function getTestContext(): TestContext | undefined {
-  return testContextStore.getStore() ?? activeTestContext ?? undefined
-}
-
 function scope(): string {
   const ctx = getTestContext()
   if (!ctx) {
@@ -337,6 +329,14 @@ async function resetTestData(): Promise<void> {
     await cleanupByNamespace(ctx.ns)
   }
   // Don't clean up the test user. All tests assume a user exists.
+}
+
+/**
+ * Returns current test context from AsyncLocalStorage, falling back to
+ * `activeTestContext` when no store is bound to the current async chain.
+ */
+function getTestContext(): TestContext | undefined {
+  return testContextStore.getStore() ?? activeTestContext ?? undefined
 }
 
 async function cleanupByNamespace(ns: string): Promise<void> {
