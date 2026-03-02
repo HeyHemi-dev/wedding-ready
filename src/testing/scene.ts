@@ -23,7 +23,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 
 // Shared Supabase admin client for tests to avoid multiple instances
 export const testClient = createAdminClient()
-
+export const TEST_ORIGIN = BASE_URL
 export const TEST_ID = '123e4567-e89b-4123-a456-426614174000'
 export const TEST_ID_0 = '00000000-0000-4000-8000-000000000000'
 export const TEST_ID_F = 'ffffffff-ffff-4fff-bfff-ffffffffffff'
@@ -55,14 +55,10 @@ export const TEST_TILE = {
 }
 export type TestTile = typeof TEST_TILE
 
-export const TEST_ORIGIN = BASE_URL
-
 const TEST_MARKER = '__t_'
-
 type TestContext = {
   ns: string
 }
-
 type CleanupIssue = {
   operation: string
   message: string
@@ -75,8 +71,8 @@ type TestUserProfile = t.UserProfileRaw & { email: string }
 
 export const scene = {
   setup,
-  cleanup,
   namespace,
+  cleanup,
   cleanupStaleData,
   hasUser,
   hasSupplier,
@@ -138,7 +134,41 @@ async function cleanup(): Promise<void> {
   const ctx = getTestContext()
   if (!ctx) return
 
-  const cleanupIssues = await cleanupByNamespace(ctx.ns)
+  const prefixPattern = `${ctx.ns.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')}%`
+  const cleanupIssues: CleanupIssue[] = []
+
+  const { data: users, error: usersError } = await tryCatch(
+    db
+      .select({ id: s.userProfiles.id })
+      .from(s.userProfiles)
+      .where(or(sql`${s.userProfiles.handle} ILIKE ${prefixPattern} ESCAPE '\\'`, sql`${s.userProfiles.displayName} ILIKE ${prefixPattern} ESCAPE '\\'`))
+  )
+  if (usersError) {
+    cleanupIssues.push(toCleanupIssue('select_namespaced_users', usersError))
+  }
+
+  const namespacedUserIds = users?.map((user) => user.id) ?? []
+  if (namespacedUserIds.length > 0) {
+    const { error: ownedDataCleanupError } = await tryCatch(cleanupDataByUserIds(namespacedUserIds))
+    if (ownedDataCleanupError) {
+      cleanupIssues.push(toCleanupIssue('cleanup_owned_data_by_user', ownedDataCleanupError))
+    }
+  }
+
+  const { error: tilesDeleteError } = await tryCatch(db.delete(s.tiles).where(sql`${s.tiles.imagePath} ILIKE ${prefixPattern} ESCAPE '\\'`))
+  if (tilesDeleteError) {
+    cleanupIssues.push(toCleanupIssue('delete_namespaced_tiles', tilesDeleteError))
+  }
+
+  const { error: suppliersDeleteError } = await tryCatch(db.delete(s.suppliers).where(sql`${s.suppliers.handle} ILIKE ${prefixPattern} ESCAPE '\\'`))
+  if (suppliersDeleteError) {
+    cleanupIssues.push(toCleanupIssue('delete_namespaced_suppliers', suppliersDeleteError))
+  }
+
+  for (const userId of namespacedUserIds) {
+    await cleanupAuthByUserId(userId, { cleanupIssues, operation: 'delete_namespaced_user' })
+  }
+
   activeTestContext = null
   if (cleanupIssues.length > 0) {
     logCleanupIssues('Test cleanup encountered issues', cleanupIssues)
@@ -249,7 +279,7 @@ async function withoutUser({
   const user = await userProfileModel.getRawByHandle(namespacedHandle)
   if (!user) return
 
-  await deleteAuthUserById(user.id, { supabaseClient })
+  await cleanupAuthByUserId(user.id, { supabaseClient })
 }
 
 async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {
@@ -274,45 +304,6 @@ function getTestContext(): TestContext | undefined {
   return testContextStore.getStore() ?? activeTestContext ?? undefined
 }
 
-async function cleanupByNamespace(ns: string): Promise<CleanupIssue[]> {
-  const prefixPattern = `${ns.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')}%`
-  const cleanupIssues: CleanupIssue[] = []
-
-  const { data: users, error: usersError } = await tryCatch(
-    db
-      .select({ id: s.userProfiles.id })
-      .from(s.userProfiles)
-      .where(or(sql`${s.userProfiles.handle} ILIKE ${prefixPattern} ESCAPE '\\'`, sql`${s.userProfiles.displayName} ILIKE ${prefixPattern} ESCAPE '\\'`))
-  )
-  if (usersError) {
-    cleanupIssues.push(toCleanupIssue('select_namespaced_users', usersError))
-  }
-
-  const namespacedUserIds = users?.map((user) => user.id) ?? []
-  if (namespacedUserIds.length > 0) {
-    const { error: ownedDataCleanupError } = await tryCatch(cleanupOwnedDataByUserIds(namespacedUserIds))
-    if (ownedDataCleanupError) {
-      cleanupIssues.push(toCleanupIssue('cleanup_owned_data_by_user', ownedDataCleanupError))
-    }
-  }
-
-  const { error: tilesDeleteError } = await tryCatch(db.delete(s.tiles).where(sql`${s.tiles.imagePath} ILIKE ${prefixPattern} ESCAPE '\\'`))
-  if (tilesDeleteError) {
-    cleanupIssues.push(toCleanupIssue('delete_namespaced_tiles', tilesDeleteError))
-  }
-
-  const { error: suppliersDeleteError } = await tryCatch(db.delete(s.suppliers).where(sql`${s.suppliers.handle} ILIKE ${prefixPattern} ESCAPE '\\'`))
-  if (suppliersDeleteError) {
-    cleanupIssues.push(toCleanupIssue('delete_namespaced_suppliers', suppliersDeleteError))
-  }
-
-  for (const userId of namespacedUserIds) {
-    await deleteAuthUserById(userId, { cleanupIssues, operation: 'delete_namespaced_user' })
-  }
-
-  return cleanupIssues
-}
-
 async function cleanupByPattern(): Promise<void> {
   const markerPrefixPattern = `${TEST_MARKER.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')}%`
   const users = await db
@@ -325,7 +316,7 @@ async function cleanupByPattern(): Promise<void> {
   const namespacedUserIds = users.map((user) => user.id)
 
   if (namespacedUserIds.length > 0) {
-    await cleanupOwnedDataByUserIds(namespacedUserIds)
+    await cleanupDataByUserIds(namespacedUserIds)
   }
 
   await Promise.all([
@@ -336,7 +327,7 @@ async function cleanupByPattern(): Promise<void> {
   if (users.length > 0) {
     const cleanupIssues: CleanupIssue[] = []
     for (const user of users) {
-      await deleteAuthUserById(user.id, { cleanupIssues, operation: 'delete_stale_user' })
+      await cleanupAuthByUserId(user.id, { cleanupIssues, operation: 'delete_stale_user' })
     }
     if (cleanupIssues.length > 0) {
       logCleanupIssues('Test cleanup encountered stale user deletion issues', cleanupIssues)
@@ -344,7 +335,7 @@ async function cleanupByPattern(): Promise<void> {
   }
 }
 
-async function cleanupOwnedDataByUserIds(userIds: string[]): Promise<void> {
+async function cleanupDataByUserIds(userIds: string[]): Promise<void> {
   if (userIds.length === 0) return
 
   await Promise.all([
@@ -353,7 +344,7 @@ async function cleanupOwnedDataByUserIds(userIds: string[]): Promise<void> {
   ])
 }
 
-async function deleteAuthUserById(
+async function cleanupAuthByUserId(
   userId: string,
   {
     supabaseClient = testClient,
