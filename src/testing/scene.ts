@@ -433,7 +433,6 @@ export function makeSupplierData(namespace: string, overrides: Partial<TestSuppl
   return {
     ...base,
     handle: withNamespace(base.handle, namespace),
-    name: withNamespace(base.name, namespace),
   }
 }
 
@@ -447,7 +446,6 @@ export function makeUserData(namespace: string, overrides: Partial<TestUser> = {
     ...base,
     email: withNamespace(base.email, namespace),
     handle: withNamespace(base.handle, namespace),
-    displayName: withNamespace(base.displayName, namespace),
   }
 }
 
