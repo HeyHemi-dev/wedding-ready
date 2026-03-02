@@ -453,7 +453,7 @@ export function createSupplierUpdateForm({
   }
 }
 
-export function makeSupplierData(scope: string, overrides: Partial<TestSupplier> = {}): TestSupplier {
+export function makeSupplierData(namespace: string, overrides: Partial<TestSupplier> = {}): TestSupplier {
   const base = {
     ...TEST_SUPPLIER,
     ...overrides,
@@ -461,12 +461,12 @@ export function makeSupplierData(scope: string, overrides: Partial<TestSupplier>
 
   return {
     ...base,
-    handle: withScope(base.handle, scope),
-    name: withScope(base.name, scope),
+    handle: withNamespace(base.handle, namespace),
+    name: withNamespace(base.name, namespace),
   }
 }
 
-export function makeUserData(scope: string, overrides: Partial<TestUser> = {}): TestUser {
+export function makeUserData(namespace: string, overrides: Partial<TestUser> = {}): TestUser {
   const base = {
     ...TEST_USER,
     ...overrides,
@@ -474,34 +474,28 @@ export function makeUserData(scope: string, overrides: Partial<TestUser> = {}): 
 
   return {
     ...base,
-    email: withEmailScope(base.email, scope),
-    handle: withScope(base.handle, scope),
-    displayName: withScope(base.displayName, scope),
+    email: withNamespace(base.email, namespace),
+    handle: withNamespace(base.handle, namespace),
+    displayName: withNamespace(base.displayName, namespace),
   }
 }
 
-export function makeTileData(scope: string, overrides: Partial<TestTile> = {}): TestTile {
+export function makeTileData(namespace: string, overrides: Partial<TestTile> = {}): TestTile {
   const base = {
     ...TEST_TILE,
     ...overrides,
   }
+  const imagePath = overrides.imagePath ?? `https://example.com/test-tile-${randomUUID()}.jpg`
 
   return {
     ...base,
-    imagePath: withScope(base.imagePath, scope),
+    imagePath: withNamespace(imagePath, namespace),
   }
 }
 
-function withScope(value: string, scope: string): string {
-  if (value.startsWith(scope)) return value
-  return `${scope}${value}`
-}
-
-function withEmailScope(email: string, scope: string): string {
-  const [localPart, domainPart] = email.split('@')
-  if (!domainPart) return withScope(email, scope)
-  if (localPart.startsWith(scope)) return email
-  return `${scope}${localPart}@${domainPart}`
+function withNamespace(value: string, namespace: string): string {
+  if (value.startsWith(namespace)) return value
+  return `${namespace}${value}`
 }
 
 function namespacePrefix(ns: string): string {

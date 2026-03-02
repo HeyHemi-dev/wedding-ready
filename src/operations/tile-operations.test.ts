@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { OPERATION_ERROR } from '@/app/_types/errors'
@@ -6,7 +5,7 @@ import { LOCATIONS } from '@/db/constants'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
-import { createTileCreditForm, makeTileData, scene, TEST_TILE, TEST_ID_0 } from '@/testing/scene'
+import { createTileCreditForm, makeTileData, scene, TEST_ID_0 } from '@/testing/scene'
 
 import { RECENCY, updateScoreForTile } from './feed/feed-helpers'
 import { getSaveStatesMap, tileOperations } from './tile-operations'
@@ -17,8 +16,6 @@ const CURRENT_USER = {
   displayName: 'Current User',
   handle: 'currentUser',
 }
-
-const uniqueImagePath = (label: string) => makeTileData(scene.namespace(), { imagePath: `https://example.com/${label}-${randomUUID()}.jpg` }).imagePath
 
 describe('tileOperations', () => {
   beforeEach(() => {
@@ -174,12 +171,14 @@ describe('tileOperations', () => {
     it('should only return public tiles', async () => {
       // Arrange - Create a private tile directly via model
       const user = await scene.hasUser()
-      const privateTile = await tileModel.createRaw({
-        imagePath: uniqueImagePath('private-tile-test'),
-        imageRatio: 0.667,
+      const privateTileData = makeTileData(scene.namespace(), {
         title: 'Private Tile',
-        description: null,
+        description: '',
         location: LOCATIONS.WELLINGTON,
+      })
+      const privateTile = await tileModel.createRaw({
+        ...privateTileData,
+        description: null,
         createdByUserId: user.id,
         isPrivate: true,
       })
@@ -358,11 +357,11 @@ describe('tileOperations', () => {
     it('should create a tile for a supplier', async () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
+      const tileData = makeTileData(scene.namespace())
 
       // Act
       const result = await tileOperations.createForSupplier({
-        ...TEST_TILE,
-        imagePath: uniqueImagePath('create-for-supplier'),
+        ...tileData,
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
       })
@@ -374,12 +373,12 @@ describe('tileOperations', () => {
     it('should throw an error if no credits are provided', async () => {
       // Arrange
       const user = await scene.hasUser()
+      const tileData = makeTileData(scene.namespace())
 
       // Act & Assert
       await expect(
         tileOperations.createForSupplier({
-          ...TEST_TILE,
-          imagePath: uniqueImagePath('create-for-supplier-no-credits'),
+          ...tileData,
           createdByUserId: user.id,
           credits: [],
         })
@@ -389,13 +388,14 @@ describe('tileOperations', () => {
     it('should convert empty strings to null for optional fields (title, description)', async () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
+      const tileData = makeTileData(scene.namespace(), {
+        title: '',
+        description: '',
+      })
 
       // Act
       const result = await tileOperations.createForSupplier({
-        ...TEST_TILE,
-        imagePath: uniqueImagePath('create-for-supplier-empty-fields'),
-        title: '',
-        description: '',
+        ...tileData,
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id })],
       })
@@ -410,13 +410,14 @@ describe('tileOperations', () => {
     it('should convert empty strings to null for optional serviceDescription in credits', async () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
+      const tileData = makeTileData(scene.namespace(), {
+        title: 'Test Title',
+        description: 'Test Description',
+      })
 
       // Act
       const result = await tileOperations.createForSupplier({
-        ...TEST_TILE,
-        imagePath: uniqueImagePath('create-for-supplier-empty-credit-description'),
-        title: 'Test Title',
-        description: 'Test Description',
+        ...tileData,
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id, serviceDescription: '' })],
       })
@@ -430,13 +431,14 @@ describe('tileOperations', () => {
     it('should handle mixed empty and non-empty optional fields', async () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
+      const tileData = makeTileData(scene.namespace(), {
+        title: 'Test Title',
+        description: '',
+      })
 
       // Act
       const result = await tileOperations.createForSupplier({
-        ...TEST_TILE,
-        imagePath: uniqueImagePath('create-for-supplier-mixed-fields'),
-        title: 'Test Title',
-        description: '',
+        ...tileData,
         createdByUserId: user.id,
         credits: [createTileCreditForm({ supplierId: supplier.id, serviceDescription: 'Some description' })],
       })
@@ -456,11 +458,11 @@ describe('tileOperations', () => {
       const user = await scene.hasUser()
       const supplier1 = await scene.hasSupplier({ createdByUserId: user.id })
       const supplier2 = await scene.hasSupplier({ handle: 'testsupplier2', createdByUserId: user.id })
+      const tileData = makeTileData(scene.namespace())
 
       // Act
       const result = await tileOperations.createForSupplier({
-        ...TEST_TILE,
-        imagePath: uniqueImagePath('create-for-supplier-multi-credit'),
+        ...tileData,
         createdByUserId: user.id,
         credits: [
           createTileCreditForm({ supplierId: supplier1.id, serviceDescription: 'First supplier description' }),
