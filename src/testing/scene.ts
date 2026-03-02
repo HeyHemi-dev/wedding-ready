@@ -203,23 +203,17 @@ async function hasUser({
   supabaseClient = testClient,
 }: Partial<UserSignupForm> & Partial<OnboardingForm> & { supabaseClient?: SupabaseClient } = {}): Promise<TestUserProfile> {
   const ctx = getTestContext()
-  const scopedHandle = scopedValue(handle, ctx)
-  const [localPart, domainPart] = email.split('@')
-  const scopedEmail =
-    !ctx || !domainPart
-      ? scopedValue(email, ctx)
-      : localPart.startsWith(namespacePrefix(ctx.ns))
-        ? email
-        : `${namespacePrefix(ctx.ns)}${localPart}@${domainPart}`
+  const namespacedHandle = namespacedValue(handle, ctx)
+  const namespacedEmail = namespacedValue(email, ctx)
 
-  const user = await userProfileModel.getRawByHandle(scopedHandle)
-  if (user) return { ...user, email: scopedEmail }
+  const user = await userProfileModel.getRawByHandle(namespacedHandle)
+  if (user) return { ...user, email: namespacedEmail }
 
-  const { id } = await authOperations.signUp({ userSignFormData: { email: scopedEmail, password }, supabaseClient, origin: TEST_ORIGIN })
-  const profile = await authOperations.completeOnboarding(id, { handle: scopedHandle, displayName, avatarUrl })
+  const { id } = await authOperations.signUp({ userSignFormData: { email: namespacedEmail, password }, supabaseClient, origin: TEST_ORIGIN })
+  const profile = await authOperations.completeOnboarding(id, { handle: namespacedHandle, displayName, avatarUrl })
 
   ctx?.createdUserIds.add(profile.id)
-  return { ...profile, email: scopedEmail }
+  return { ...profile, email: namespacedEmail }
 }
 
 async function hasSupplier({
@@ -232,12 +226,12 @@ async function hasSupplier({
   createdByUserId,
 }: Partial<SupplierRegistrationForm> & { createdByUserId: string }): Promise<Supplier> {
   const ctx = getTestContext()
-  const scopedHandle = scopedValue(handle, ctx)
+  const namespacedHandle = namespacedValue(handle, ctx)
 
-  const supplier = await supplierOperations.getByHandle(scopedHandle)
+  const supplier = await supplierOperations.getByHandle(namespacedHandle)
   if (supplier) return supplier
 
-  const createdSupplier = await supplierOperations.register({ name, handle: scopedHandle, websiteUrl, description, locations, services }, createdByUserId)
+  const createdSupplier = await supplierOperations.register({ name, handle: namespacedHandle, websiteUrl, description, locations, services }, createdByUserId)
   ctx?.createdSupplierIds.add(createdSupplier.id)
   return createdSupplier
 }
@@ -258,13 +252,13 @@ async function hasTile({
   credits,
 }: Partial<TileCreate> & Pick<TileCreate, 'createdByUserId' | 'credits'>): Promise<t.TileRaw> {
   const ctx = getTestContext()
-  const scopedImagePath = scopedValue(imagePath, ctx)
-  const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, scopedImagePath))
+  const namespacedImagePath = namespacedValue(imagePath, ctx)
+  const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, namespacedImagePath))
 
   if (tiles.length > 0) return tiles[0]
 
   const newTile = await tileOperations.createForSupplier({
-    imagePath: scopedImagePath,
+    imagePath: namespacedImagePath,
     imageRatio,
     title,
     description,
@@ -290,23 +284,23 @@ async function withoutUser({
   handle = TEST_USER.handle,
   supabaseClient = testClient,
 }: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
-  const scopedHandle = scopedValue(handle, getTestContext())
-  const user = await userProfileModel.getRawByHandle(scopedHandle)
+  const namespacedHandle = namespacedValue(handle, getTestContext())
+  const user = await userProfileModel.getRawByHandle(namespacedHandle)
   if (!user) return
 
   await deleteAuthUserById(user.id, { supabaseClient })
 }
 
 async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {
-  const scopedHandle = scopedValue(handle, getTestContext())
-  const supplier = await supplierModel.getRawByHandle(scopedHandle)
+  const namespacedHandle = namespacedValue(handle, getTestContext())
+  const supplier = await supplierModel.getRawByHandle(namespacedHandle)
   if (!supplier) return
   await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
 }
 
 async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }: Partial<{ supplierHandle: string }> = {}): Promise<void> {
-  const scopedHandle = scopedValue(supplierHandle, getTestContext())
-  const tiles = await tileModel.getManyRawBySupplierHandle(scopedHandle)
+  const namespacedHandle = namespacedValue(supplierHandle, getTestContext())
+  const tiles = await tileModel.getManyRawBySupplierHandle(namespacedHandle)
   if (tiles.length === 0) return
   await tileModel.deleteManyByIds(tiles.map((t) => t.id))
 }
@@ -422,7 +416,7 @@ function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
   })
 }
 
-function scopedValue(base: string, ctx?: TestContext): string {
+function namespacedValue(base: string, ctx?: TestContext): string {
   if (!ctx) return base
   const prefix = namespacePrefix(ctx.ns)
   if (base.startsWith(prefix)) return base
