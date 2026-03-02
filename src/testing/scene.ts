@@ -150,7 +150,7 @@ async function cleanup(): Promise<void> {
     db
       .select({ id: s.userProfiles.id })
       .from(s.userProfiles)
-      .where(sql`${CLEANUP_MARKER_COLUMNS.userProfile} ILIKE ${prefixPattern} ESCAPE '\\'`)
+      .where(sql`${CLEANUP_MARKER_COLUMNS.userProfile} LIKE ${prefixPattern} ESCAPE '\\'`)
   )
   if (usersError) {
     cleanupIssues.push(toCleanupIssue('select_namespaced_users', usersError))
@@ -164,12 +164,12 @@ async function cleanup(): Promise<void> {
     }
   }
 
-  const { error: tilesDeleteError } = await tryCatch(db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} ILIKE ${prefixPattern} ESCAPE '\\'`))
+  const { error: tilesDeleteError } = await tryCatch(db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} LIKE ${prefixPattern} ESCAPE '\\'`))
   if (tilesDeleteError) {
     cleanupIssues.push(toCleanupIssue('delete_namespaced_tiles', tilesDeleteError))
   }
 
-  const { error: suppliersDeleteError } = await tryCatch(db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} ILIKE ${prefixPattern} ESCAPE '\\'`))
+  const { error: suppliersDeleteError } = await tryCatch(db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} LIKE ${prefixPattern} ESCAPE '\\'`))
   if (suppliersDeleteError) {
     cleanupIssues.push(toCleanupIssue('delete_namespaced_suppliers', suppliersDeleteError))
   }
@@ -318,7 +318,7 @@ async function cleanupByPattern(): Promise<void> {
   const users = await db
     .select({ id: s.userProfiles.id })
     .from(s.userProfiles)
-    .where(sql`${CLEANUP_MARKER_COLUMNS.userProfile} ILIKE ${markerPrefixPattern} ESCAPE '\\'`)
+    .where(sql`${CLEANUP_MARKER_COLUMNS.userProfile} LIKE ${markerPrefixPattern} ESCAPE '\\'`)
 
   const namespacedUserIds = users.map((user) => user.id)
 
@@ -327,8 +327,8 @@ async function cleanupByPattern(): Promise<void> {
   }
 
   await Promise.all([
-    db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} ILIKE ${markerPrefixPattern} ESCAPE '\\'`),
-    db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} ILIKE ${markerPrefixPattern} ESCAPE '\\'`),
+    db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} LIKE ${markerPrefixPattern} ESCAPE '\\'`),
+    db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} LIKE ${markerPrefixPattern} ESCAPE '\\'`),
   ])
 
   if (users.length > 0) {
