@@ -80,7 +80,7 @@ type TestUserProfile = t.UserProfileRaw & { email: string }
 
 export const scene = {
   setup,
-  namespace,
+  context,
   cleanup,
   cleanupStaleData,
   hasUser,
@@ -116,13 +116,8 @@ function setup(): void {
   testContextStore.enterWith(ctx)
 }
 
-function namespace(): string {
-  const ctx = getTestContext()
-  if (!ctx) {
-    throw OPERATION_ERROR.INVALID_STATE('No active test scene namespace. Call scene.setup() before using namespaced test data.')
-  }
-
-  return ctx.ns
+function context(): TestContext {
+  return getTestContext()
 }
 
 /**
@@ -142,7 +137,6 @@ function namespace(): string {
 async function cleanup(): Promise<void> {
   const cleanupIssues: CleanupIssue[] = []
   const ctx = getTestContext()
-  if (!ctx) return
   const prefixPattern = `${ctx.ns.replace(/_/g, '\\_')}%`
 
   const { data: users, error: usersError } = await tryCatch(
@@ -232,8 +226,8 @@ async function hasUser({
   supabaseClient = testClient,
 }: Partial<UserSignupForm> & Partial<OnboardingForm> & { supabaseClient?: SupabaseClient } = {}): Promise<TestUserProfile> {
   const ctx = getTestContext()
-  const namespacedHandle = namespacedValue(handle, ctx)
-  const namespacedEmail = namespacedValue(email, ctx)
+  const namespacedHandle = withContext(handle, ctx)
+  const namespacedEmail = withContext(email, ctx)
 
   const user = await userProfileModel.getRawByHandle(namespacedHandle)
   if (user) return { ...user, email: namespacedEmail }
@@ -254,7 +248,7 @@ async function hasSupplier({
   createdByUserId,
 }: Partial<SupplierRegistrationForm> & { createdByUserId: string }): Promise<Supplier> {
   const ctx = getTestContext()
-  const namespacedHandle = namespacedValue(handle, ctx)
+  const namespacedHandle = withContext(handle, ctx)
 
   const supplier = await supplierOperations.getByHandle(namespacedHandle)
   if (supplier) return supplier
@@ -279,7 +273,7 @@ async function hasTile({
   credits,
 }: Partial<TileCreate> & Pick<TileCreate, 'createdByUserId' | 'credits'>): Promise<t.TileRaw> {
   const ctx = getTestContext()
-  const namespacedImagePath = namespacedValue(imagePath, ctx)
+  const namespacedImagePath = withContext(imagePath, ctx)
   const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, namespacedImagePath))
 
   if (tiles.length > 0) return tiles[0]
@@ -310,7 +304,7 @@ async function withoutUser({
   handle = TEST_USER.handle,
   supabaseClient = testClient,
 }: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
-  const namespacedHandle = namespacedValue(handle, getTestContext())
+  const namespacedHandle = withContext(handle, getTestContext())
   const user = await userProfileModel.getRawByHandle(namespacedHandle)
   if (!user) return
 
@@ -318,14 +312,14 @@ async function withoutUser({
 }
 
 async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {
-  const namespacedHandle = namespacedValue(handle, getTestContext())
+  const namespacedHandle = withContext(handle, getTestContext())
   const supplier = await supplierModel.getRawByHandle(namespacedHandle)
   if (!supplier) return
   await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
 }
 
 async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }: Partial<{ supplierHandle: string }> = {}): Promise<void> {
-  const namespacedHandle = namespacedValue(supplierHandle, getTestContext())
+  const namespacedHandle = withContext(supplierHandle, getTestContext())
   const tiles = await tileModel.getManyRawBySupplierHandle(namespacedHandle)
   if (tiles.length === 0) return
   await tileModel.deleteManyByIds(tiles.map((t) => t.id))
@@ -335,8 +329,13 @@ async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }
  * Returns current test context from AsyncLocalStorage, falling back to
  * `activeTestContext` when no store is bound to the current async chain.
  */
-function getTestContext(): TestContext | undefined {
-  return testContextStore.getStore() ?? activeTestContext ?? undefined
+function getTestContext(): TestContext {
+  const ctx = testContextStore.getStore() ?? activeTestContext ?? undefined
+  if (!ctx) {
+    throw OPERATION_ERROR.INVALID_STATE('No active test scene namespace. Call scene.setup() before using scene utilities.')
+  }
+
+  return ctx
 }
 
 async function cleanupDataByUserIds(userIds: string[]): Promise<void> {
@@ -393,11 +392,7 @@ function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
   })
 }
 
-function namespacedValue(base: string, ctx?: TestContext): string {
-  if (!ctx) {
-    throw OPERATION_ERROR.INVALID_STATE('No active test scene namespace. Call scene.setup() before creating or querying scene data.')
-  }
-
+function withContext(base: string, ctx: TestContext): string {
   return `${ctx.ns}${base}`
 }
 
@@ -425,7 +420,7 @@ export function makeSupplierUpdateData({
   }
 }
 
-export function makeSupplierData(namespace: string, overrides: Partial<TestSupplier> = {}): TestSupplier {
+export function makeSupplierData(context: TestContext, overrides: Partial<TestSupplier> = {}): TestSupplier {
   const base = {
     ...TEST_SUPPLIER,
     ...overrides,
@@ -433,11 +428,11 @@ export function makeSupplierData(namespace: string, overrides: Partial<TestSuppl
 
   return {
     ...base,
-    handle: withNamespace(base.handle, namespace),
+    handle: withContext(base.handle, context),
   }
 }
 
-export function makeUserData(namespace: string, overrides: Partial<TestUser> = {}): TestUser {
+export function makeUserData(context: TestContext, overrides: Partial<TestUser> = {}): TestUser {
   const base = {
     ...TEST_USER,
     ...overrides,
@@ -445,12 +440,12 @@ export function makeUserData(namespace: string, overrides: Partial<TestUser> = {
 
   return {
     ...base,
-    email: withNamespace(base.email, namespace),
-    handle: withNamespace(base.handle, namespace),
+    email: withContext(base.email, context),
+    handle: withContext(base.handle, context),
   }
 }
 
-export function makeTileData(namespace: string, overrides: Partial<TestTile> = {}): TestTile {
+export function makeTileData(context: TestContext, overrides: Partial<TestTile> = {}): TestTile {
   const base = {
     ...TEST_TILE,
     ...overrides,
@@ -459,10 +454,6 @@ export function makeTileData(namespace: string, overrides: Partial<TestTile> = {
 
   return {
     ...base,
-    imagePath: withNamespace(imagePath, namespace),
+    imagePath: withContext(imagePath, context),
   }
-}
-
-function withNamespace(value: string, namespace: string): string {
-  return `${namespace}${value}`
 }
