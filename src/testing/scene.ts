@@ -109,7 +109,7 @@ export const scene = {
  */
 function setup(): void {
   const ctx: TestContext = {
-    ns: randomUUID().slice(0, 8),
+    ns: `${TEST_MARKER}${randomUUID().slice(0, 8)}`,
     createdUserIds: new Set(),
     createdSupplierIds: new Set(),
     createdTileIds: new Set(),
@@ -124,7 +124,7 @@ function namespace(): string {
     throw new Error('No active test scene namespace. Call scene.setup() before using namespaced test data.')
   }
 
-  return namespacePrefix(ctx.ns)
+  return ctx.ns
 }
 
 /**
@@ -324,7 +324,7 @@ function getTestContext(): TestContext | undefined {
 }
 
 async function cleanupByNamespace(ns: string): Promise<void> {
-  const prefixPattern = `${namespacePrefix(ns).replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')}%`
+  const prefixPattern = `${ns.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')}%`
   await Promise.all([
     db.delete(s.tiles).where(sql`${s.tiles.imagePath} LIKE ${prefixPattern} ESCAPE '\\'`),
     db.delete(s.suppliers).where(sql`${s.suppliers.handle} LIKE ${prefixPattern} ESCAPE '\\'`),
@@ -418,7 +418,7 @@ function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
 
 function namespacedValue(base: string, ctx?: TestContext): string {
   if (!ctx) return base
-  const prefix = namespacePrefix(ctx.ns)
+  const prefix = ctx.ns
   if (base.startsWith(prefix)) return base
   return `${prefix}${base}`
 }
@@ -490,8 +490,4 @@ export function makeTileData(namespace: string, overrides: Partial<TestTile> = {
 function withNamespace(value: string, namespace: string): string {
   if (value.startsWith(namespace)) return value
   return `${namespace}${value}`
-}
-
-function namespacePrefix(ns: string): string {
-  return `${TEST_MARKER}${ns}__`
 }
