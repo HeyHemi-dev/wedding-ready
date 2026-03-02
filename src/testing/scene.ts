@@ -117,7 +117,7 @@ function setup(): void {
   testContextStore.enterWith(ctx)
 }
 
-/** Returns the active test context; call only after scene.setup() in the current test lifecycle. */
+/** Returns the active test context; call in the current test lifecycle. Throws if scene.setup() has not been called. */
 function context(): TestContext {
   return getTestContext()
 }
