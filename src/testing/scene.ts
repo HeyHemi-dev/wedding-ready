@@ -117,6 +117,7 @@ function setup(): void {
   testContextStore.enterWith(ctx)
 }
 
+/** Returns the active test context; call only after scene.setup() in the current test lifecycle. */
 function context(): TestContext {
   return getTestContext()
 }
@@ -218,6 +219,7 @@ async function cleanupStaleData(): Promise<void> {
   }
 }
 
+/** Returns an existing namespaced user for the active scene, or creates one when missing. */
 async function hasUser({
   email = TEST_USER.email,
   password = TEST_USER.password,
@@ -238,6 +240,7 @@ async function hasUser({
   return { ...profile, email: userData.email }
 }
 
+/** Returns an existing namespaced supplier for the active scene, or registers one when missing. */
 async function hasSupplier({
   name = TEST_SUPPLIER.name,
   handle = TEST_SUPPLIER.handle,
@@ -263,6 +266,7 @@ async function hasUserAndSupplier(): Promise<{ user: TestUserProfile; supplier: 
   return { user, supplier }
 }
 
+/** Returns an existing namespaced tile for the active scene, or creates one when missing. */
 async function hasTile({
   imagePath = TEST_TILE.imagePath,
   imageRatio = TEST_TILE.imageRatio,
@@ -296,6 +300,7 @@ async function hasUserSupplierAndTile(): Promise<{ user: TestUserProfile; suppli
   return { user, supplier, tile }
 }
 
+/** Deletes a namespaced user by handle when present. */
 async function withoutUser({
   handle = TEST_USER.handle,
   supabaseClient = testClient,
@@ -307,6 +312,7 @@ async function withoutUser({
   await cleanupAuthByUserId(user.id, { supabaseClient })
 }
 
+/** Deletes a namespaced supplier by handle when present. */
 async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {
   const namespacedHandle = withNamespace(handle, getTestContext())
   const supplier = await supplierModel.getRawByHandle(namespacedHandle)
@@ -314,6 +320,7 @@ async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ hand
   await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
 }
 
+/** Deletes all tiles linked to a namespaced supplier handle. */
 async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }: Partial<{ supplierHandle: string }> = {}): Promise<void> {
   const namespacedHandle = withNamespace(supplierHandle, getTestContext())
   const tiles = await tileModel.getManyRawBySupplierHandle(namespacedHandle)
@@ -334,6 +341,7 @@ function getTestContext(): TestContext {
   return ctx
 }
 
+/** Deletes user-owned rows for the provided user IDs across `tiles` and `suppliers`. */
 async function cleanupDataByUserIds(userIds: string[]): Promise<void> {
   if (userIds.length === 0) return
 
@@ -343,6 +351,7 @@ async function cleanupDataByUserIds(userIds: string[]): Promise<void> {
   ])
 }
 
+/** Deletes an auth user by id; pushes to `cleanupIssues` when provided, otherwise throws on failure. */
 async function cleanupAuthByUserId(
   userId: string,
   {
@@ -388,6 +397,7 @@ function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
   })
 }
 
+/** Internal helper to prefix a raw value with the active scene namespace. */
 function withNamespace(base: string, ctx: TestContext): string {
   return `${ctx.ns}${base}`
 }
