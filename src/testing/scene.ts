@@ -1,4 +1,4 @@
-import { eq, inArray, or, sql } from 'drizzle-orm'
+import { eq, inArray, sql } from 'drizzle-orm'
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { randomUUID } from 'node:crypto'
 
@@ -63,6 +63,15 @@ type CleanupIssue = {
   operation: string
   message: string
 }
+
+// Canonical namespaced marker columns used for cleanup lookups.
+// user_profiles.handle is the stable identity for test user-profile rows.
+// suppliers.handle and tiles.imagePath are stable unique test markers.
+const CLEANUP_MARKER_COLUMNS = {
+  userProfile: s.userProfiles.handle,
+  supplier: s.suppliers.handle,
+  tile: s.tiles.imagePath,
+} as const
 
 const testContextStore = new AsyncLocalStorage<TestContext>()
 let activeTestContext: TestContext | null = null
@@ -141,7 +150,7 @@ async function cleanup(): Promise<void> {
     db
       .select({ id: s.userProfiles.id })
       .from(s.userProfiles)
-      .where(or(sql`${s.userProfiles.handle} ILIKE ${prefixPattern} ESCAPE '\\'`, sql`${s.userProfiles.displayName} ILIKE ${prefixPattern} ESCAPE '\\'`))
+      .where(sql`${CLEANUP_MARKER_COLUMNS.userProfile} ILIKE ${prefixPattern} ESCAPE '\\'`)
   )
   if (usersError) {
     cleanupIssues.push(toCleanupIssue('select_namespaced_users', usersError))
@@ -155,12 +164,12 @@ async function cleanup(): Promise<void> {
     }
   }
 
-  const { error: tilesDeleteError } = await tryCatch(db.delete(s.tiles).where(sql`${s.tiles.imagePath} ILIKE ${prefixPattern} ESCAPE '\\'`))
+  const { error: tilesDeleteError } = await tryCatch(db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} ILIKE ${prefixPattern} ESCAPE '\\'`))
   if (tilesDeleteError) {
     cleanupIssues.push(toCleanupIssue('delete_namespaced_tiles', tilesDeleteError))
   }
 
-  const { error: suppliersDeleteError } = await tryCatch(db.delete(s.suppliers).where(sql`${s.suppliers.handle} ILIKE ${prefixPattern} ESCAPE '\\'`))
+  const { error: suppliersDeleteError } = await tryCatch(db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} ILIKE ${prefixPattern} ESCAPE '\\'`))
   if (suppliersDeleteError) {
     cleanupIssues.push(toCleanupIssue('delete_namespaced_suppliers', suppliersDeleteError))
   }
@@ -309,9 +318,7 @@ async function cleanupByPattern(): Promise<void> {
   const users = await db
     .select({ id: s.userProfiles.id })
     .from(s.userProfiles)
-    .where(
-      or(sql`${s.userProfiles.handle} ILIKE ${markerPrefixPattern} ESCAPE '\\'`, sql`${s.userProfiles.displayName} ILIKE ${markerPrefixPattern} ESCAPE '\\'`)
-    )
+    .where(sql`${CLEANUP_MARKER_COLUMNS.userProfile} ILIKE ${markerPrefixPattern} ESCAPE '\\'`)
 
   const namespacedUserIds = users.map((user) => user.id)
 
@@ -320,8 +327,8 @@ async function cleanupByPattern(): Promise<void> {
   }
 
   await Promise.all([
-    db.delete(s.tiles).where(sql`${s.tiles.imagePath} ILIKE ${markerPrefixPattern} ESCAPE '\\'`),
-    db.delete(s.suppliers).where(sql`${s.suppliers.handle} ILIKE ${markerPrefixPattern} ESCAPE '\\'`),
+    db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} ILIKE ${markerPrefixPattern} ESCAPE '\\'`),
+    db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} ILIKE ${markerPrefixPattern} ESCAPE '\\'`),
   ])
 
   if (users.length > 0) {
