@@ -479,7 +479,7 @@ export function makeTileData(namespace: string, overrides: Partial<TestTile> = {
     ...TEST_TILE,
     ...overrides,
   }
-  const imagePath = overrides.imagePath ?? `https://example.com/test-tile-${randomUUID()}.jpg`
+  const imagePath = overrides.imagePath ?? `${TEST_TILE.imagePath}-${randomUUID()}.jpg`
 
   return {
     ...base,
