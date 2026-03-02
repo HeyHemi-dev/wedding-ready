@@ -140,11 +140,10 @@ function namespace(): string {
  * - call after each test (typically in `afterEach`) to prevent cross-test bleed.
  */
 async function cleanup(): Promise<void> {
+  const cleanupIssues: CleanupIssue[] = []
   const ctx = getTestContext()
   if (!ctx) return
-
-  const prefixPattern = `${ctx.ns.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')}%`
-  const cleanupIssues: CleanupIssue[] = []
+  const prefixPattern = `${ctx.ns.replace(/_/g, '\\_')}%`
 
   const { data: users, error: usersError } = await tryCatch(
     db
@@ -156,26 +155,28 @@ async function cleanup(): Promise<void> {
     cleanupIssues.push(toCleanupIssue('select_namespaced_users', usersError))
   }
 
-  const namespacedUserIds = users?.map((user) => user.id) ?? []
-  if (namespacedUserIds.length > 0) {
-    const { error: ownedDataCleanupError } = await tryCatch(cleanupDataByUserIds(namespacedUserIds))
-    if (ownedDataCleanupError) {
-      cleanupIssues.push(toCleanupIssue('cleanup_owned_data_by_user', ownedDataCleanupError))
+  const userIds = users?.map((user) => user.id) ?? []
+  if (userIds.length > 0) {
+    const { error: userDataCleanupError } = await tryCatch(cleanupDataByUserIds(userIds))
+    if (userDataCleanupError) {
+      cleanupIssues.push(toCleanupIssue('cleanup_user_data', userDataCleanupError))
     }
   }
 
-  const { error: tilesDeleteError } = await tryCatch(db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} LIKE ${prefixPattern} ESCAPE '\\'`))
-  if (tilesDeleteError) {
-    cleanupIssues.push(toCleanupIssue('delete_namespaced_tiles', tilesDeleteError))
+  const { error: tilesCleanupError } = await tryCatch(db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} LIKE ${prefixPattern} ESCAPE '\\'`))
+  if (tilesCleanupError) {
+    cleanupIssues.push(toCleanupIssue('cleanup_tiles', tilesCleanupError))
   }
 
-  const { error: suppliersDeleteError } = await tryCatch(db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} LIKE ${prefixPattern} ESCAPE '\\'`))
-  if (suppliersDeleteError) {
-    cleanupIssues.push(toCleanupIssue('delete_namespaced_suppliers', suppliersDeleteError))
+  const { error: suppliersCleanupError } = await tryCatch(
+    db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} LIKE ${prefixPattern} ESCAPE '\\'`)
+  )
+  if (suppliersCleanupError) {
+    cleanupIssues.push(toCleanupIssue('cleanup_suppliers', suppliersCleanupError))
   }
 
-  for (const userId of namespacedUserIds) {
-    await cleanupAuthByUserId(userId, { cleanupIssues, operation: 'delete_namespaced_user' })
+  for (const userId of userIds) {
+    await cleanupAuthByUserId(userId, { cleanupIssues, operation: 'cleanup_auth_user' })
   }
 
   activeTestContext = null
@@ -314,21 +315,21 @@ function getTestContext(): TestContext | undefined {
 }
 
 async function cleanupByPattern(): Promise<void> {
-  const markerPrefixPattern = `${TEST_MARKER.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')}%`
+  const prefixPattern = `${TEST_MARKER.replace(/_/g, '\\_')}%`
   const users = await db
     .select({ id: s.userProfiles.id })
     .from(s.userProfiles)
-    .where(sql`${CLEANUP_MARKER_COLUMNS.userProfile} LIKE ${markerPrefixPattern} ESCAPE '\\'`)
+    .where(sql`${CLEANUP_MARKER_COLUMNS.userProfile} LIKE ${prefixPattern} ESCAPE '\\'`)
 
-  const namespacedUserIds = users.map((user) => user.id)
+  const userIds = users.map((user) => user.id)
 
-  if (namespacedUserIds.length > 0) {
-    await cleanupDataByUserIds(namespacedUserIds)
+  if (userIds.length > 0) {
+    await cleanupDataByUserIds(userIds)
   }
 
   await Promise.all([
-    db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} LIKE ${markerPrefixPattern} ESCAPE '\\'`),
-    db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} LIKE ${markerPrefixPattern} ESCAPE '\\'`),
+    db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} LIKE ${prefixPattern} ESCAPE '\\'`),
+    db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} LIKE ${prefixPattern} ESCAPE '\\'`),
   ])
 
   if (users.length > 0) {
