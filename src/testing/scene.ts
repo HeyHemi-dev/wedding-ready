@@ -61,9 +61,6 @@ const TEST_MARKER = '__t_'
 
 type TestContext = {
   ns: string
-  createdUserIds: Set<string>
-  createdSupplierIds: Set<string>
-  createdTileIds: Set<string>
 }
 
 type CleanupIssue = {
@@ -95,7 +92,7 @@ export const scene = {
  * Initializes per-test scene context.
  *
  * Side effects:
- * - creates a new namespaced TestContext (`ns`) and empty created-id sets
+ * - creates a new namespaced TestContext (`ns`)
  * - mutates `activeTestContext`
  * - writes context into AsyncLocalStorage via `testContextStore.enterWith(ctx)`
  *
@@ -109,9 +106,6 @@ export const scene = {
 function setup(): void {
   const ctx: TestContext = {
     ns: `${TEST_MARKER}${randomUUID().slice(0, 8)}`,
-    createdUserIds: new Set(),
-    createdSupplierIds: new Set(),
-    createdTileIds: new Set(),
   }
   activeTestContext = ctx
   testContextStore.enterWith(ctx)
@@ -130,12 +124,12 @@ function namespace(): string {
  * Finalizes per-test scene context and performs destructive cleanup.
  *
  * Side effects:
- * - deletes resources tracked in context:
- *   - tiles via `tileModel.deleteManyByIds(createdTileIds)`
- *   - suppliers via `db.delete(...inArray(...createdSupplierIds))`
- *   - auth users via `testClient.auth.admin.deleteUser` (through helper)
+ * - deletes resources for the current test namespace only
+ *   - owned data via `createdByUserId` for namespaced users
+ *   - namespaced tiles/suppliers by namespaced fields
+ *   - namespaced auth users via `testClient.auth.admin.deleteUser` (through helper)
  * - aggregates cleanup issues and may log them
- * - clears created-id sets and resets `activeTestContext` to `null`
+ * - resets `activeTestContext` to `null`
  *
  * Call order:
  * - call after each test (typically in `afterEach`) to prevent cross-test bleed.
@@ -144,36 +138,7 @@ async function cleanup(): Promise<void> {
   const ctx = getTestContext()
   if (!ctx) return
 
-  const cleanupIssues: CleanupIssue[] = []
-
-  if (ctx.createdTileIds.size > 0) {
-    const { error } = await tryCatch(tileModel.deleteManyByIds([...ctx.createdTileIds]))
-    if (error) {
-      cleanupIssues.push(toCleanupIssue('delete_created_tiles', error))
-    }
-  }
-
-  if (ctx.createdSupplierIds.size > 0) {
-    const { error } = await tryCatch(db.delete(s.suppliers).where(inArray(s.suppliers.id, [...ctx.createdSupplierIds])))
-    if (error) {
-      cleanupIssues.push(toCleanupIssue('delete_created_suppliers', error))
-    }
-  }
-
-  if (ctx.createdUserIds.size > 0) {
-    const { error: ownedDataCleanupError } = await tryCatch(cleanupOwnedDataByUserIds([...ctx.createdUserIds]))
-    if (ownedDataCleanupError) {
-      cleanupIssues.push(toCleanupIssue('cleanup_owned_data_by_user', ownedDataCleanupError))
-    }
-
-    for (const userId of ctx.createdUserIds) {
-      await deleteAuthUserById(userId, { cleanupIssues, operation: 'delete_created_user' })
-    }
-  }
-
-  ctx.createdTileIds.clear()
-  ctx.createdSupplierIds.clear()
-  ctx.createdUserIds.clear()
+  const cleanupIssues = await cleanupByNamespace(ctx.ns)
   activeTestContext = null
   if (cleanupIssues.length > 0) {
     logCleanupIssues('Test cleanup encountered issues', cleanupIssues)
@@ -211,7 +176,6 @@ async function hasUser({
   const { id } = await authOperations.signUp({ userSignFormData: { email: namespacedEmail, password }, supabaseClient, origin: TEST_ORIGIN })
   const profile = await authOperations.completeOnboarding(id, { handle: namespacedHandle, displayName, avatarUrl })
 
-  ctx?.createdUserIds.add(profile.id)
   return { ...profile, email: namespacedEmail }
 }
 
@@ -231,7 +195,6 @@ async function hasSupplier({
   if (supplier) return supplier
 
   const createdSupplier = await supplierOperations.register({ name, handle: namespacedHandle, websiteUrl, description, locations, services }, createdByUserId)
-  ctx?.createdSupplierIds.add(createdSupplier.id)
   return createdSupplier
 }
 
@@ -268,7 +231,6 @@ async function hasTile({
   const tile = await tileModel.getRawById(newTile.id)
   if (!tile) throw OPERATION_ERROR.RESOURCE_NOT_FOUND('Failed to create tile')
 
-  ctx?.createdTileIds.add(tile.id)
   return tile
 }
 
@@ -312,12 +274,43 @@ function getTestContext(): TestContext | undefined {
   return testContextStore.getStore() ?? activeTestContext ?? undefined
 }
 
-async function cleanupByNamespace(ns: string): Promise<void> {
+async function cleanupByNamespace(ns: string): Promise<CleanupIssue[]> {
   const prefixPattern = `${ns.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')}%`
-  await Promise.all([
-    db.delete(s.tiles).where(sql`${s.tiles.imagePath} LIKE ${prefixPattern} ESCAPE '\\'`),
-    db.delete(s.suppliers).where(sql`${s.suppliers.handle} LIKE ${prefixPattern} ESCAPE '\\'`),
-  ])
+  const cleanupIssues: CleanupIssue[] = []
+
+  const { data: users, error: usersError } = await tryCatch(
+    db
+      .select({ id: s.userProfiles.id })
+      .from(s.userProfiles)
+      .where(or(sql`${s.userProfiles.handle} ILIKE ${prefixPattern} ESCAPE '\\'`, sql`${s.userProfiles.displayName} ILIKE ${prefixPattern} ESCAPE '\\'`))
+  )
+  if (usersError) {
+    cleanupIssues.push(toCleanupIssue('select_namespaced_users', usersError))
+  }
+
+  const namespacedUserIds = users?.map((user) => user.id) ?? []
+  if (namespacedUserIds.length > 0) {
+    const { error: ownedDataCleanupError } = await tryCatch(cleanupOwnedDataByUserIds(namespacedUserIds))
+    if (ownedDataCleanupError) {
+      cleanupIssues.push(toCleanupIssue('cleanup_owned_data_by_user', ownedDataCleanupError))
+    }
+  }
+
+  const { error: tilesDeleteError } = await tryCatch(db.delete(s.tiles).where(sql`${s.tiles.imagePath} ILIKE ${prefixPattern} ESCAPE '\\'`))
+  if (tilesDeleteError) {
+    cleanupIssues.push(toCleanupIssue('delete_namespaced_tiles', tilesDeleteError))
+  }
+
+  const { error: suppliersDeleteError } = await tryCatch(db.delete(s.suppliers).where(sql`${s.suppliers.handle} ILIKE ${prefixPattern} ESCAPE '\\'`))
+  if (suppliersDeleteError) {
+    cleanupIssues.push(toCleanupIssue('delete_namespaced_suppliers', suppliersDeleteError))
+  }
+
+  for (const userId of namespacedUserIds) {
+    await deleteAuthUserById(userId, { cleanupIssues, operation: 'delete_namespaced_user' })
+  }
+
+  return cleanupIssues
 }
 
 async function cleanupByPattern(): Promise<void> {
@@ -399,9 +392,9 @@ function toCleanupIssue(operation: string, error: unknown): CleanupIssue {
 function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
   if (issues.length === 0) return
 
-  console.warn(label)
+  console.error(label)
   issues.forEach((issue, index) => {
-    console.warn(`${index + 1}. op=${issue.operation} | message=${issue.message}`)
+    console.error(`${index + 1}. op=${issue.operation} | message=${issue.message}`)
   })
 }
 
