@@ -119,7 +119,7 @@ function setup(): void {
 function namespace(): string {
   const ctx = getTestContext()
   if (!ctx) {
-    throw new Error('No active test scene namespace. Call scene.setup() before using namespaced test data.')
+    throw OPERATION_ERROR.INVALID_STATE('No active test scene namespace. Call scene.setup() before using namespaced test data.')
   }
 
   return ctx.ns
@@ -302,7 +302,7 @@ async function hasTile({
 async function hasUserSupplierAndTile(): Promise<{ user: TestUserProfile; supplier: Supplier; tile: t.TileRaw }> {
   const user = await hasUser()
   const supplier = await hasSupplier({ createdByUserId: user.id })
-  const tile = await hasTile({ createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+  const tile = await hasTile({ createdByUserId: user.id, credits: [makeTileCreditData({ supplierId: supplier.id })] })
   return { user, supplier, tile }
 }
 
@@ -394,13 +394,14 @@ function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
 }
 
 function namespacedValue(base: string, ctx?: TestContext): string {
-  if (!ctx) return base
-  const prefix = ctx.ns
-  if (base.startsWith(prefix)) return base
-  return `${prefix}${base}`
+  if (!ctx) {
+    throw OPERATION_ERROR.INVALID_STATE('No active test scene namespace. Call scene.setup() before creating or querying scene data.')
+  }
+
+  return `${ctx.ns}${base}`
 }
 
-export function createTileCreditForm({
+export function makeTileCreditData({
   supplierId,
   service = SERVICES.PHOTOGRAPHER,
   serviceDescription = '',
@@ -412,7 +413,7 @@ export function createTileCreditForm({
   }
 }
 
-export function createSupplierUpdateForm({
+export function makeSupplierUpdateData({
   name,
   websiteUrl = TEST_SUPPLIER.websiteUrl,
   description = TEST_SUPPLIER.description,
@@ -463,6 +464,5 @@ export function makeTileData(namespace: string, overrides: Partial<TestTile> = {
 }
 
 function withNamespace(value: string, namespace: string): string {
-  if (value.startsWith(namespace)) return value
   return `${namespace}${value}`
 }
