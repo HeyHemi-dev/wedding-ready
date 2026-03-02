@@ -28,13 +28,16 @@ export const TEST_ID = '123e4567-e89b-4123-a456-426614174000'
 export const TEST_ID_0 = '00000000-0000-4000-8000-000000000000'
 export const TEST_ID_F = 'ffffffff-ffff-4fff-bfff-ffffffffffff'
 
+export type TestUser = UserSignupForm & Pick<OnboardingForm, 'displayName' | 'handle'>
+export type TestSupplier = SupplierRegistrationForm
+export type TestTile = Omit<TileCreate, 'createdByUserId' | 'credits'>
+
 export const TEST_USER = {
   email: 'test.user@example.com',
   password: 'testpassword123',
   displayName: 'Test User',
   handle: 'testuser',
-}
-export type TestUser = typeof TEST_USER
+} satisfies TestUser
 
 export const TEST_SUPPLIER = {
   name: 'Test Supplier',
@@ -43,8 +46,7 @@ export const TEST_SUPPLIER = {
   description: 'Test Supplier Description',
   locations: [LOCATIONS.WELLINGTON, LOCATIONS.AUCKLAND, LOCATIONS.CANTERBURY],
   services: [SERVICES.PHOTOGRAPHER, SERVICES.VIDEOGRAPHER],
-}
-export type TestSupplier = typeof TEST_SUPPLIER
+} satisfies TestSupplier
 
 export const TEST_TILE = {
   imagePath: 'https://example.com/fake-image.jpg',
@@ -52,8 +54,7 @@ export const TEST_TILE = {
   title: '',
   description: '',
   location: LOCATIONS.WELLINGTON,
-}
-export type TestTile = typeof TEST_TILE
+} satisfies TestTile
 
 const TEST_MARKER = '__t_'
 type TestContext = {
@@ -226,16 +227,15 @@ async function hasUser({
   supabaseClient = testClient,
 }: Partial<UserSignupForm> & Partial<OnboardingForm> & { supabaseClient?: SupabaseClient } = {}): Promise<TestUserProfile> {
   const ctx = getTestContext()
-  const namespacedHandle = withNamespace(handle, ctx)
-  const namespacedEmail = withNamespace(email, ctx)
+  const userData = makeUserData(ctx, { email, handle, displayName, password })
 
-  const user = await userProfileModel.getRawByHandle(namespacedHandle)
-  if (user) return { ...user, email: namespacedEmail }
+  const user = await userProfileModel.getRawByHandle(userData.handle)
+  if (user) return { ...user, email: userData.email }
 
-  const { id } = await authOperations.signUp({ userSignFormData: { email: namespacedEmail, password }, supabaseClient, origin: TEST_ORIGIN })
-  const profile = await authOperations.completeOnboarding(id, { handle: namespacedHandle, displayName, avatarUrl })
+  const { id } = await authOperations.signUp({ userSignFormData: { email: userData.email, password }, supabaseClient, origin: TEST_ORIGIN })
+  const profile = await authOperations.completeOnboarding(id, { handle: userData.handle, displayName: userData.displayName, avatarUrl })
 
-  return { ...profile, email: namespacedEmail }
+  return { ...profile, email: userData.email }
 }
 
 async function hasSupplier({
@@ -248,12 +248,12 @@ async function hasSupplier({
   createdByUserId,
 }: Partial<SupplierRegistrationForm> & { createdByUserId: string }): Promise<Supplier> {
   const ctx = getTestContext()
-  const namespacedHandle = withNamespace(handle, ctx)
+  const supplierData = makeSupplierData(ctx, { name, handle, websiteUrl, description, locations, services })
 
-  const supplier = await supplierOperations.getByHandle(namespacedHandle)
+  const supplier = await supplierOperations.getByHandle(supplierData.handle)
   if (supplier) return supplier
 
-  const createdSupplier = await supplierOperations.register({ name, handle: namespacedHandle, websiteUrl, description, locations, services }, createdByUserId)
+  const createdSupplier = await supplierOperations.register(supplierData, createdByUserId)
   return createdSupplier
 }
 
@@ -273,17 +273,13 @@ async function hasTile({
   credits,
 }: Partial<TileCreate> & Pick<TileCreate, 'createdByUserId' | 'credits'>): Promise<t.TileRaw> {
   const ctx = getTestContext()
-  const namespacedImagePath = withNamespace(imagePath, ctx)
-  const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, namespacedImagePath))
+  const tileData = makeTileData(ctx, { imagePath, imageRatio, title, description, location })
+  const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, tileData.imagePath))
 
   if (tiles.length > 0) return tiles[0]
 
   const newTile = await tileOperations.createForSupplier({
-    imagePath: namespacedImagePath,
-    imageRatio,
-    title,
-    description,
-    location,
+    ...tileData,
     createdByUserId,
     credits,
   })
