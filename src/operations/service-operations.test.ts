@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from 'vitest'
+import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 
 import { SERVICES } from '@/db/constants'
 import { scene, TEST_SUPPLIER } from '@/testing/scene'
@@ -6,8 +6,12 @@ import { scene, TEST_SUPPLIER } from '@/testing/scene'
 import { serviceOperations } from './service-operations'
 
 describe('serviceOperations', () => {
-  afterAll(async () => {
-    await scene.resetTestData()
+  beforeEach(() => {
+    scene.setup()
+  })
+
+  afterEach(async () => {
+    await scene.cleanup()
   })
 
   describe('getAllWithSupplierCount', () => {

@@ -1,0 +1,89 @@
+@theme {
+  --breakpoint-tablet: 450px;
+  --breakpoint-laptop: 850px;
+  --breakpoint-wide: 1550px;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-area: hsl(var(--area));
+  --color-area-foreground: hsl(var(--area-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+
+
+  --spacing-hairline: 1px;
+  --spacing-2xl: 4rem;
+  --spacing-xl: 3rem;
+  --spacing-lg: 2rem;
+  --spacing-md: 1.5rem;
+  --spacing-sm: 1rem;
+  --spacing-xs: 0.5rem;
+  --spacing-2xs: 0.25rem;
+
+  --gap-spouse: var(--wr-gap-base);
+  --gap-partner: calc(var(--gap-spouse) * var(--wr-gap-scale));
+  --gap-sibling: calc(var(--gap-partner) * var(--wr-gap-scale));
+  --gap-close-friend: calc(var(--gap-sibling) * (var(--wr-gap-scale) / 2));
+  --gap-friend: calc(var(--gap-sibling) * var(--wr-gap-scale));
+  --gap-acquaintance: calc(var(--gap-friend) * var(--wr-gap-scale));
+  --gap-stranger: calc(var(--gap-acquaintance) * var(--wr-gap-scale));
+  --gap-area: var(--gap-friend);
+
+  --padding-site: var(--wr-padding-site-gutter);
+  --padding-section: calc(var(--gap-stranger) / 2);
+  --padding-contour: 2px;
+  --padding-area: calc(var(--radius-area) * 2);
+
+  --width-site: var(--wr-width-site);
+  --width-prose: var(--wr-width-prose);
+  --site-layout: minmax(var(--padding-site), auto) minmax(0, var(--width-site)) minmax(var(--padding-site), auto);
+
+  --height-header-content: var(--wr-height-header-content);
+  --height-header: calc(var(--height-header-content) + (var(--gap-area) * 2));
+  --height-action-bar: calc(var(--radius-area) * 2);
+  --height-page: var(--wr-height-page);
+  --height-first-section: calc(var(--height-page) - var(--height-header));
+
+  --radius-base: var(--radius);
+  --radius-sm: calc(var(--radius-base) * 0.5);
+  --radius-md: calc(var(--radius-base) * 1);
+  --radius-lg: calc(var(--radius-base) * 2);
+  --radius-full: calc(var(--radius-base) * 999);
+  --radius-outside: calc(var(--radius-md) + var(--padding-contour));
+  --radius-inside: calc(var(--radius-md) - var(--padding-contour));
+  --radius-area: calc(var(--radius-base) * 3);
+  --radius-area-outside: calc(var(--radius-area) + var(--padding-contour));
+  --radius-area-inside: calc(var(--radius-area) - var(--padding-contour));
+
+  --text-base: var(--wr-text-size);
+  --text-lg: calc(var(--text-base) * var(--wr-text-scale));
+  --text-xl: calc(var(--text-lg) * var(--wr-text-scale));
+  --text-2xl: calc(var(--text-xl) * var(--wr-text-scale));
+  --text-3xl: calc(var(--text-2xl) * var(--wr-text-scale));
+  --text-4xl: calc(var(--text-3xl) * var(--wr-text-scale));
+  --text-5xl: calc(var(--text-4xl) * var(--wr-text-scale));
+  --text-6xl: calc(var(--text-5xl) * var(--wr-text-scale));
+  --text-sm: calc(var(--text-base) / var(--wr-text-scale));
+  --text-xs: calc(var(--text-sm) / var(--wr-text-scale));
+  --text-2xs: calc(var(--text-xs) / var(--wr-text-scale));
+
+  --shadow-contour: 0 0 0 var(--padding-contour) hsl(var(--primary));
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}

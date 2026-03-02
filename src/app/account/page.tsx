@@ -24,7 +24,7 @@ export default async function AccountPage() {
         }}
         className="max-w-lg"
       />
-      <pre className="whitespace-pre-wrap rounded border bg-muted p-3 font-mono text-xs text-muted-foreground">{JSON.stringify(user, null, 2)}</pre>
+      <pre className="whitespace-pre-wrap rounded-md border bg-muted p-3 font-mono text-xs text-muted-foreground">{JSON.stringify(user, null, 2)}</pre>
     </div>
   )
 }

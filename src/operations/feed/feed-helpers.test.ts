@@ -11,12 +11,13 @@ function createMockTile(overrides: Partial<t.TileRaw> = {}): t.TileRaw {
   const old = new Date(Date.now() - RECENCY.MAX_AGE_SECONDS * 1000)
 
   // destructure createdAt so we can ensure updatedAt and scoreUpdatedAt are always the same as createdAt
-  const { createdAt, ...rest } = overrides
+  const { createdAt, imageRatio = 0.667, ...rest } = overrides
   const createdDate = createdAt ?? old
 
   return {
     id: 'test-id',
     imagePath: 'https://example.com/image.jpg',
+    imageRatio,
     title: null,
     description: null,
     createdByUserId: 'test-user-id',

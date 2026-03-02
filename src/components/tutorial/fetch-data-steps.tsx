@@ -78,7 +78,7 @@
 //         <p>
 //           To create a Supabase client and query data from an Async Server
 //           Component, create a new page.tsx file at{" "}
-//           <span className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
+//           <span className="relative rounded-sm bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
 //             /app/notes/page.tsx
 //           </span>{" "}
 //           and add the following.

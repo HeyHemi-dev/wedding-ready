@@ -1,7 +1,7 @@
-import { describe, expect, test, beforeEach, afterAll } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
-import { scene, testClient } from '@/testing/scene'
+import { makeUserData, scene, testClient } from '@/testing/scene'
 import { tryCatch } from '@/utils/try-catch'
 
 import { handleSupabaseSignInWithPassword, handleSupabaseSignOut, handleSupabaseSignUpWithPassword } from './auth-handlers'
@@ -19,6 +19,10 @@ const AUTH_TEST_USER_2 = {
   password: 'testpassword123',
   displayName: 'Test User 2',
   handle: 'authuser2',
+}
+
+function makeAuthTestUserData(base: typeof AUTH_TEST_USER_1 = AUTH_TEST_USER_1, overrides: Partial<typeof AUTH_TEST_USER_1> = {}) {
+  return makeUserData(scene.context(), { ...base, ...overrides })
 }
 
 describe('authHandlers', () => {
@@ -39,6 +43,7 @@ describe('authHandlers', () => {
   }
 
   beforeEach(async () => {
+    scene.setup()
     await Promise.all([
       scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
       scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
@@ -46,19 +51,20 @@ describe('authHandlers', () => {
     ])
   })
 
-  afterAll(async () => {
+  afterEach(async () => {
     await Promise.all([
+      scene.cleanup(),
       scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
       scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
-      scene.resetTestData(),
       cleanUpTestUsers(),
     ])
   })
 
   describe('signUp', () => {
     test('should successfully create a new user account', async () => {
+      const authUser = makeAuthTestUserData()
       // Act
-      const testUser = await handleSupabaseSignUpWithPassword(testClient, AUTH_TEST_USER_1)
+      const testUser = await handleSupabaseSignUpWithPassword(testClient, authUser)
 
       addTestUserToCleanup(testUser.id)
 
@@ -67,28 +73,24 @@ describe('authHandlers', () => {
       expect(testUser.id).toBeDefined()
 
       // Verify user exists in auth
-      const { data: authUser } = await testClient.auth.admin.getUserById(testUser.id)
-      expect(authUser.user).toBeDefined()
-      expect(authUser.user?.email).toBe(AUTH_TEST_USER_1.email)
+      const { data: authUserData } = await testClient.auth.admin.getUserById(testUser.id)
+      expect(authUserData.user).toBeDefined()
+      expect(authUserData.user?.email).toBe(authUser.email)
     })
 
     test('should throw error when email is already taken', async () => {
-      // Arrange
-      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
+      const authUser = makeAuthTestUserData()
+      const existing = await handleSupabaseSignUpWithPassword(testClient, authUser)
+      addTestUserToCleanup(existing.id)
 
       // Use same email as first user
       const userSignupData: UserSignupForm = {
-        email: AUTH_TEST_USER_1.email,
-        password: AUTH_TEST_USER_1.password,
+        email: authUser.email,
+        password: authUser.password,
       }
 
       // Act & Assert
-      await expect(async () => {
-        const result = await handleSupabaseSignUpWithPassword(testClient, userSignupData)
-
-        addTestUserToCleanup(result.id)
-        return
-      }).rejects.toThrow()
+      await expect(handleSupabaseSignUpWithPassword(testClient, userSignupData)).rejects.toThrow()
     })
   })
 
@@ -98,7 +100,10 @@ describe('authHandlers', () => {
       const testUser = await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
 
       // Act
-      const result = await handleSupabaseSignInWithPassword(testClient, AUTH_TEST_USER_1)
+      const result = await handleSupabaseSignInWithPassword(testClient, {
+        email: testUser.email,
+        password: AUTH_TEST_USER_1.password,
+      })
 
       // Assert
       expect(result).toBeDefined()
@@ -107,14 +112,12 @@ describe('authHandlers', () => {
 
     test('should throw error when credentials are invalid', async () => {
       // Act & Assert
-      await expect(async () => {
-        const result = await handleSupabaseSignInWithPassword(testClient, {
+      await expect(
+        handleSupabaseSignInWithPassword(testClient, {
           email: 'nonexistent@example.com',
           password: 'wrongpassword',
         })
-        addTestUserToCleanup(result.authUserId)
-        return
-      }).rejects.toThrow()
+      ).rejects.toThrow()
     })
   })
 
@@ -122,9 +125,9 @@ describe('authHandlers', () => {
     test('should successfully sign out user', async () => {
       // Arrange
       // Create and sign in user
-      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
+      const created = await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
       await handleSupabaseSignInWithPassword(testClient, {
-        email: AUTH_TEST_USER_1.email,
+        email: created.email,
         password: AUTH_TEST_USER_1.password,
       })
 

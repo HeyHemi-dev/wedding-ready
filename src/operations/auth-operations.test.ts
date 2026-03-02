@@ -1,7 +1,7 @@
-import { describe, expect, test, beforeEach, afterAll } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 
 import { UserSignupForm } from '@/app/_types/validation-schema'
-import { scene, testClient, TEST_ORIGIN } from '@/testing/scene'
+import { makeUserData, scene, testClient, TEST_ID_0, TEST_ORIGIN } from '@/testing/scene'
 import { tryCatch } from '@/utils/try-catch'
 
 import { authOperations, SIGN_UP_STATUS } from './auth-operations'
@@ -19,6 +19,10 @@ const AUTH_TEST_USER_2 = {
   password: 'testpassword123',
   displayName: 'Test User 2',
   handle: 'authuser2',
+}
+
+function makeAuthTestUserData(base: typeof AUTH_TEST_USER_1 = AUTH_TEST_USER_1, overrides: Partial<typeof AUTH_TEST_USER_1> = {}) {
+  return makeUserData(scene.context(), { ...base, ...overrides })
 }
 
 describe('authOperations', () => {
@@ -39,6 +43,7 @@ describe('authOperations', () => {
   }
 
   beforeEach(async () => {
+    scene.setup()
     await Promise.all([
       scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
       scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
@@ -46,20 +51,22 @@ describe('authOperations', () => {
     ])
   })
 
-  afterAll(async () => {
+  afterEach(async () => {
     await Promise.all([
+      scene.cleanup(),
       scene.withoutUser({ handle: AUTH_TEST_USER_1.handle, supabaseClient: testClient }),
       scene.withoutUser({ handle: AUTH_TEST_USER_2.handle, supabaseClient: testClient }),
-      scene.resetTestData(),
       cleanUpTestUsers(),
     ])
   })
 
   describe('signUp', () => {
     test('should successfully create a new user account', async () => {
+      const authUser = makeAuthTestUserData()
+
       // Act
       const testUser = await authOperations.signUp({
-        userSignFormData: AUTH_TEST_USER_1,
+        userSignFormData: authUser,
         supabaseClient: testClient,
         origin: TEST_ORIGIN,
       })
@@ -70,39 +77,38 @@ describe('authOperations', () => {
       expect(testUser.id).toBeDefined()
 
       // Verify user exists in auth
-      const { data: authUser } = await testClient.auth.admin.getUserById(testUser.id)
-      expect(authUser.user).toBeDefined()
-      expect(authUser.user?.email).toBe(AUTH_TEST_USER_1.email)
+      const { data: authUserData } = await testClient.auth.admin.getUserById(testUser.id)
+      expect(authUserData.user).toBeDefined()
+      expect(authUserData.user?.email).toBe(authUser.email)
     })
 
     test('should throw error when email is already taken', async () => {
-      // Arrange
-      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
+      const authUser = makeAuthTestUserData()
+      const existing = await authOperations.signUp({
+        userSignFormData: authUser,
+        supabaseClient: testClient,
+        origin: TEST_ORIGIN,
+      })
+      addTestUserToCleanup(existing.id)
 
       // Use same email as first user
       const userSignupData: UserSignupForm = {
-        email: AUTH_TEST_USER_1.email,
-        password: AUTH_TEST_USER_1.password,
+        email: authUser.email,
+        password: authUser.password,
       }
 
       // Act & Assert
-      await expect(async () => {
-        const result = await authOperations.signUp({
-          userSignFormData: userSignupData,
-          supabaseClient: testClient,
-          origin: TEST_ORIGIN,
-        })
-        addTestUserToCleanup(result.id)
-        return
-      }).rejects.toThrow()
+      await expect(authOperations.signUp({ userSignFormData: userSignupData, supabaseClient: testClient, origin: TEST_ORIGIN })).rejects.toThrow()
     })
   })
 
   describe('completeOnboarding', () => {
     test('should successfully complete onboarding', async () => {
+      const authUser = makeAuthTestUserData()
+
       // Arrange
       const testUser = await authOperations.signUp({
-        userSignFormData: AUTH_TEST_USER_1,
+        userSignFormData: authUser,
         supabaseClient: testClient,
         origin: TEST_ORIGIN,
       })
@@ -110,19 +116,61 @@ describe('authOperations', () => {
 
       // Act
       const result = await authOperations.completeOnboarding(testUser.id, {
-        handle: AUTH_TEST_USER_1.handle,
-        displayName: AUTH_TEST_USER_1.displayName,
+        handle: authUser.handle,
+        displayName: authUser.displayName,
         avatarUrl: '',
       })
 
       // Assert
       expect(result).toBeDefined()
       expect(result.id).toBe(testUser.id)
-      expect(result.handle).toBe(AUTH_TEST_USER_1.handle)
-      expect(result.displayName).toBe(AUTH_TEST_USER_1.displayName)
+      expect(result.handle).toBe(authUser.handle)
+      expect(result.displayName).toBe(authUser.displayName)
     })
-    test('should throw error when user is not found', async () => {})
-    test('should throw error when handle is already taken', async () => {})
+
+    test('should throw error when user is not found', async () => {
+      const authUser = makeAuthTestUserData()
+
+      await expect(
+        authOperations.completeOnboarding(TEST_ID_0, {
+          handle: authUser.handle,
+          displayName: authUser.displayName,
+          avatarUrl: '',
+        })
+      ).rejects.toThrow()
+    })
+
+    test('should throw error when handle is already taken', async () => {
+      const authUser1 = makeAuthTestUserData(AUTH_TEST_USER_1)
+      const authUser2 = makeAuthTestUserData(AUTH_TEST_USER_2)
+
+      const first = await authOperations.signUp({
+        userSignFormData: authUser1,
+        supabaseClient: testClient,
+        origin: TEST_ORIGIN,
+      })
+      const second = await authOperations.signUp({
+        userSignFormData: authUser2,
+        supabaseClient: testClient,
+        origin: TEST_ORIGIN,
+      })
+      addTestUserToCleanup(first.id)
+      addTestUserToCleanup(second.id)
+
+      await authOperations.completeOnboarding(first.id, {
+        handle: authUser1.handle,
+        displayName: authUser1.displayName,
+        avatarUrl: '',
+      })
+
+      await expect(
+        authOperations.completeOnboarding(second.id, {
+          handle: authUser1.handle,
+          displayName: authUser2.displayName,
+          avatarUrl: '',
+        })
+      ).rejects.toThrow()
+    })
   })
 
   describe('getUserSignUpStatus', () => {
@@ -140,9 +188,10 @@ describe('authOperations', () => {
     })
 
     test('should return SIGN_UP_STATUS.VERIFIED when user is verified but no profile is created', async () => {
+      const authUser = makeAuthTestUserData()
       // Arrange
       const testUser = await authOperations.signUp({
-        userSignFormData: AUTH_TEST_USER_1,
+        userSignFormData: authUser,
         supabaseClient: testClient,
         origin: TEST_ORIGIN,
       })
@@ -158,16 +207,17 @@ describe('authOperations', () => {
     })
 
     test('should return SIGN_UP_STATUS.ONBOARDED when user is verified and profile is created', async () => {
+      const authUser = makeAuthTestUserData()
       // Arrange
       const testUser = await authOperations.signUp({
-        userSignFormData: AUTH_TEST_USER_1,
+        userSignFormData: authUser,
         supabaseClient: testClient,
         origin: TEST_ORIGIN,
       })
       addTestUserToCleanup(testUser.id)
       await authOperations.completeOnboarding(testUser.id, {
-        handle: AUTH_TEST_USER_1.handle,
-        displayName: AUTH_TEST_USER_1.displayName,
+        handle: authUser.handle,
+        displayName: authUser.displayName,
         avatarUrl: '',
       })
 
@@ -189,7 +239,7 @@ describe('authOperations', () => {
       // Act
       const result = await authOperations.signIn({
         userSigninFormData: {
-          email: AUTH_TEST_USER_1.email,
+          email: testUser.email,
           password: AUTH_TEST_USER_1.password,
         },
         supabaseClient: testClient,
@@ -202,17 +252,15 @@ describe('authOperations', () => {
 
     test('should throw error when credentials are invalid', async () => {
       // Act & Assert
-      await expect(async () => {
-        const result = await authOperations.signIn({
+      await expect(
+        authOperations.signIn({
           userSigninFormData: {
             email: 'nonexistent@example.com',
             password: 'wrongpassword',
           },
           supabaseClient: testClient,
         })
-        addTestUserToCleanup(result.authUserId)
-        return
-      }).rejects.toThrow()
+      ).rejects.toThrow()
     })
   })
 
@@ -221,11 +269,11 @@ describe('authOperations', () => {
       // Arrange
 
       // Create and sign in user
-      await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
+      const created = await scene.hasUser({ ...AUTH_TEST_USER_1, supabaseClient: testClient })
 
       await authOperations.signIn({
         userSigninFormData: {
-          email: AUTH_TEST_USER_1.email,
+          email: created.email,
           password: AUTH_TEST_USER_1.password,
         },
         supabaseClient: testClient,

@@ -28,7 +28,7 @@ export function AuthMessage({ message }: { message: Message }) {
     <div className="ui-small flex w-full max-w-md flex-col gap-sibling">
       <div
         className={cn(
-          'rounded border border-border bg-background px-md py-sm text-foreground',
+          'rounded-md border border-border bg-background px-md py-sm text-foreground',
           messageData.type === 'success' && 'bg-secondary text-secondary-foreground',
           messageData.type === 'error' && 'bg-destructive/10 text-destructive',
           messageData.type === 'info' && 'bg-amber-600/10 text-foreground'
