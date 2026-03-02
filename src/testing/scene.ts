@@ -189,13 +189,38 @@ async function cleanup(): Promise<void> {
  * Removes stale namespaced test data not tied to current in-memory context.
  *
  * Side effects:
- * - invokes `cleanupByPattern()` for broad stale namespaced cleanup.
+ * - performs broad stale namespaced cleanup by marker prefix.
  *
  * Usage:
  * - intended for global setup/teardown safety net, not primary per-test cleanup.
  */
 async function cleanupStaleData(): Promise<void> {
-  await cleanupByPattern()
+  const prefixPattern = `${TEST_MARKER.replace(/_/g, '\\_')}%`
+  const users = await db
+    .select({ id: s.userProfiles.id })
+    .from(s.userProfiles)
+    .where(sql`${CLEANUP_MARKER_COLUMNS.userProfile} LIKE ${prefixPattern} ESCAPE '\\'`)
+
+  const userIds = users.map((user) => user.id)
+
+  if (userIds.length > 0) {
+    await cleanupDataByUserIds(userIds)
+  }
+
+  await Promise.all([
+    db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} LIKE ${prefixPattern} ESCAPE '\\'`),
+    db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} LIKE ${prefixPattern} ESCAPE '\\'`),
+  ])
+
+  if (users.length > 0) {
+    const cleanupIssues: CleanupIssue[] = []
+    for (const user of users) {
+      await cleanupAuthByUserId(user.id, { cleanupIssues, operation: 'delete_stale_user' })
+    }
+    if (cleanupIssues.length > 0) {
+      logCleanupIssues('Test cleanup encountered stale user deletion issues', cleanupIssues)
+    }
+  }
 }
 
 async function hasUser({
@@ -312,35 +337,6 @@ async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }
  */
 function getTestContext(): TestContext | undefined {
   return testContextStore.getStore() ?? activeTestContext ?? undefined
-}
-
-async function cleanupByPattern(): Promise<void> {
-  const prefixPattern = `${TEST_MARKER.replace(/_/g, '\\_')}%`
-  const users = await db
-    .select({ id: s.userProfiles.id })
-    .from(s.userProfiles)
-    .where(sql`${CLEANUP_MARKER_COLUMNS.userProfile} LIKE ${prefixPattern} ESCAPE '\\'`)
-
-  const userIds = users.map((user) => user.id)
-
-  if (userIds.length > 0) {
-    await cleanupDataByUserIds(userIds)
-  }
-
-  await Promise.all([
-    db.delete(s.tiles).where(sql`${CLEANUP_MARKER_COLUMNS.tile} LIKE ${prefixPattern} ESCAPE '\\'`),
-    db.delete(s.suppliers).where(sql`${CLEANUP_MARKER_COLUMNS.supplier} LIKE ${prefixPattern} ESCAPE '\\'`),
-  ])
-
-  if (users.length > 0) {
-    const cleanupIssues: CleanupIssue[] = []
-    for (const user of users) {
-      await cleanupAuthByUserId(user.id, { cleanupIssues, operation: 'delete_stale_user' })
-    }
-    if (cleanupIssues.length > 0) {
-      logCleanupIssues('Test cleanup encountered stale user deletion issues', cleanupIssues)
-    }
-  }
 }
 
 async function cleanupDataByUserIds(userIds: string[]): Promise<void> {
