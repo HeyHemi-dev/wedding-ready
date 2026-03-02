@@ -226,8 +226,8 @@ async function hasUser({
   supabaseClient = testClient,
 }: Partial<UserSignupForm> & Partial<OnboardingForm> & { supabaseClient?: SupabaseClient } = {}): Promise<TestUserProfile> {
   const ctx = getTestContext()
-  const namespacedHandle = withContext(handle, ctx)
-  const namespacedEmail = withContext(email, ctx)
+  const namespacedHandle = withNamespace(handle, ctx)
+  const namespacedEmail = withNamespace(email, ctx)
 
   const user = await userProfileModel.getRawByHandle(namespacedHandle)
   if (user) return { ...user, email: namespacedEmail }
@@ -248,7 +248,7 @@ async function hasSupplier({
   createdByUserId,
 }: Partial<SupplierRegistrationForm> & { createdByUserId: string }): Promise<Supplier> {
   const ctx = getTestContext()
-  const namespacedHandle = withContext(handle, ctx)
+  const namespacedHandle = withNamespace(handle, ctx)
 
   const supplier = await supplierOperations.getByHandle(namespacedHandle)
   if (supplier) return supplier
@@ -273,7 +273,7 @@ async function hasTile({
   credits,
 }: Partial<TileCreate> & Pick<TileCreate, 'createdByUserId' | 'credits'>): Promise<t.TileRaw> {
   const ctx = getTestContext()
-  const namespacedImagePath = withContext(imagePath, ctx)
+  const namespacedImagePath = withNamespace(imagePath, ctx)
   const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, namespacedImagePath))
 
   if (tiles.length > 0) return tiles[0]
@@ -304,7 +304,7 @@ async function withoutUser({
   handle = TEST_USER.handle,
   supabaseClient = testClient,
 }: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
-  const namespacedHandle = withContext(handle, getTestContext())
+  const namespacedHandle = withNamespace(handle, getTestContext())
   const user = await userProfileModel.getRawByHandle(namespacedHandle)
   if (!user) return
 
@@ -312,14 +312,14 @@ async function withoutUser({
 }
 
 async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {
-  const namespacedHandle = withContext(handle, getTestContext())
+  const namespacedHandle = withNamespace(handle, getTestContext())
   const supplier = await supplierModel.getRawByHandle(namespacedHandle)
   if (!supplier) return
   await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
 }
 
 async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }: Partial<{ supplierHandle: string }> = {}): Promise<void> {
-  const namespacedHandle = withContext(supplierHandle, getTestContext())
+  const namespacedHandle = withNamespace(supplierHandle, getTestContext())
   const tiles = await tileModel.getManyRawBySupplierHandle(namespacedHandle)
   if (tiles.length === 0) return
   await tileModel.deleteManyByIds(tiles.map((t) => t.id))
@@ -392,7 +392,7 @@ function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
   })
 }
 
-function withContext(base: string, ctx: TestContext): string {
+function withNamespace(base: string, ctx: TestContext): string {
   return `${ctx.ns}${base}`
 }
 
@@ -428,7 +428,7 @@ export function makeSupplierData(context: TestContext, overrides: Partial<TestSu
 
   return {
     ...base,
-    handle: withContext(base.handle, context),
+    handle: withNamespace(base.handle, context),
   }
 }
 
@@ -440,8 +440,8 @@ export function makeUserData(context: TestContext, overrides: Partial<TestUser> 
 
   return {
     ...base,
-    email: withContext(base.email, context),
-    handle: withContext(base.handle, context),
+    email: withNamespace(base.email, context),
+    handle: withNamespace(base.handle, context),
   }
 }
 
@@ -454,6 +454,6 @@ export function makeTileData(context: TestContext, overrides: Partial<TestTile> 
 
   return {
     ...base,
-    imagePath: withContext(imagePath, context),
+    imagePath: withNamespace(imagePath, context),
   }
 }
