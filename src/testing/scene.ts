@@ -89,7 +89,6 @@ export const scene = {
   withoutUser,
   withoutSupplier,
   withoutTilesForSupplier,
-  resetTestData,
 }
 
 /**
@@ -303,16 +302,6 @@ async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }
   const tiles = await tileModel.getManyRawBySupplierHandle(namespacedHandle)
   if (tiles.length === 0) return
   await tileModel.deleteManyByIds(tiles.map((t) => t.id))
-}
-
-async function resetTestData(): Promise<void> {
-  await withoutTilesForSupplier({ supplierHandle: TEST_SUPPLIER.handle })
-  await withoutSupplier({ handle: TEST_SUPPLIER.handle })
-  const ctx = getTestContext()
-  if (ctx) {
-    await cleanupByNamespace(ctx.ns)
-  }
-  // Don't clean up the test user. All tests assume a user exists.
 }
 
 /**
