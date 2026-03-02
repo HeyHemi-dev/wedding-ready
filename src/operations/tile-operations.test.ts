@@ -5,7 +5,7 @@ import { LOCATIONS } from '@/db/constants'
 import { savedTilesModel } from '@/models/saved-tiles'
 import { tileModel } from '@/models/tile'
 import { tileSupplierModel } from '@/models/tile-supplier'
-import { createTileCreditForm, makeTileData, scene, TEST_ID_0 } from '@/testing/scene'
+import { makeTileCreditData, makeTileData, scene, TEST_ID_0 } from '@/testing/scene'
 
 import { RECENCY, updateScoreForTile } from './feed/feed-helpers'
 import { getSaveStatesMap, tileOperations } from './tile-operations'
@@ -99,7 +99,7 @@ describe('tileOperations', () => {
         await scene.hasTile({
           imagePath: `feed-no-duplicate-tile-${i}.jpg`,
           createdByUserId: user.id,
-          credits: [createTileCreditForm({ supplierId: supplier.id })],
+          credits: [makeTileCreditData({ supplierId: supplier.id })],
         })
       }
 
@@ -142,7 +142,7 @@ describe('tileOperations', () => {
         await scene.hasTile({
           imagePath: `feed-correctly-indicate-hasnextpage-tile-${i}.jpg`,
           createdByUserId: user.id,
-          credits: [createTileCreditForm({ supplierId: supplier.id })],
+          credits: [makeTileCreditData({ supplierId: supplier.id })],
         })
       }
 
@@ -207,12 +207,12 @@ describe('tileOperations', () => {
       const tile1 = await scene.hasTile({
         imagePath: 'feed-saved-tile-1.jpg',
         createdByUserId: user.id,
-        credits: [createTileCreditForm({ supplierId: supplier.id })],
+        credits: [makeTileCreditData({ supplierId: supplier.id })],
       })
       await scene.hasTile({
         imagePath: 'feed-saved-tile-2.jpg',
         createdByUserId: user.id,
-        credits: [createTileCreditForm({ supplierId: supplier.id })],
+        credits: [makeTileCreditData({ supplierId: supplier.id })],
       })
       await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: currentUser.id, isSaved: true })
 
@@ -259,8 +259,8 @@ describe('tileOperations', () => {
     it('should return isSaved as undefined for all tiles when no authUserId provided', async () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
-      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-      await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [makeTileCreditData({ supplierId: supplier.id })] })
+      await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [makeTileCreditData({ supplierId: supplier.id })] })
 
       await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
 
@@ -275,8 +275,8 @@ describe('tileOperations', () => {
     it('should return correct isSaved status for each tile when authUserId provided', async () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
-      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-      const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [makeTileCreditData({ supplierId: supplier.id })] })
+      const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [makeTileCreditData({ supplierId: supplier.id })] })
       await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
       await savedTilesModel.upsertRaw({ tileId: tile2.id, userId: user.id, isSaved: false })
 
@@ -334,8 +334,8 @@ describe('tileOperations', () => {
     it('should return correct isSaved status for each tile when authUserId provided', async () => {
       // Arrange
       const { user, supplier } = await scene.hasUserAndSupplier()
-      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
-      const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+      const tile1 = await scene.hasTile({ imagePath: 'image1.jpg', createdByUserId: user.id, credits: [makeTileCreditData({ supplierId: supplier.id })] })
+      const tile2 = await scene.hasTile({ imagePath: 'image2.jpg', createdByUserId: user.id, credits: [makeTileCreditData({ supplierId: supplier.id })] })
       await savedTilesModel.upsertRaw({ tileId: tile1.id, userId: user.id, isSaved: true })
       await savedTilesModel.upsertRaw({ tileId: tile2.id, userId: user.id, isSaved: true })
 
@@ -363,7 +363,7 @@ describe('tileOperations', () => {
       const result = await tileOperations.createForSupplier({
         ...tileData,
         createdByUserId: user.id,
-        credits: [createTileCreditForm({ supplierId: supplier.id })],
+        credits: [makeTileCreditData({ supplierId: supplier.id })],
       })
 
       // Assert
@@ -397,7 +397,7 @@ describe('tileOperations', () => {
       const result = await tileOperations.createForSupplier({
         ...tileData,
         createdByUserId: user.id,
-        credits: [createTileCreditForm({ supplierId: supplier.id })],
+        credits: [makeTileCreditData({ supplierId: supplier.id })],
       })
 
       // Assert - Check that empty strings were converted to null in the DB
@@ -419,7 +419,7 @@ describe('tileOperations', () => {
       const result = await tileOperations.createForSupplier({
         ...tileData,
         createdByUserId: user.id,
-        credits: [createTileCreditForm({ supplierId: supplier.id, serviceDescription: '' })],
+        credits: [makeTileCreditData({ supplierId: supplier.id, serviceDescription: '' })],
       })
 
       // Assert - Check that empty string in serviceDescription was converted to null
@@ -440,7 +440,7 @@ describe('tileOperations', () => {
       const result = await tileOperations.createForSupplier({
         ...tileData,
         createdByUserId: user.id,
-        credits: [createTileCreditForm({ supplierId: supplier.id, serviceDescription: 'Some description' })],
+        credits: [makeTileCreditData({ supplierId: supplier.id, serviceDescription: 'Some description' })],
       })
 
       // Assert
@@ -465,8 +465,8 @@ describe('tileOperations', () => {
         ...tileData,
         createdByUserId: user.id,
         credits: [
-          createTileCreditForm({ supplierId: supplier1.id, serviceDescription: 'First supplier description' }),
-          createTileCreditForm({ supplierId: supplier2.id, serviceDescription: 'Second supplier description' }),
+          makeTileCreditData({ supplierId: supplier1.id, serviceDescription: 'First supplier description' }),
+          makeTileCreditData({ supplierId: supplier2.id, serviceDescription: 'Second supplier description' }),
         ],
       })
 
@@ -519,7 +519,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createCreditForTile({
         tileId: tile.id,
-        credit: createTileCreditForm({ supplierId: supplier2.id }),
+        credit: makeTileCreditData({ supplierId: supplier2.id }),
         authUserId: user.id,
       })
 
@@ -537,7 +537,7 @@ describe('tileOperations', () => {
       await expect(
         tileOperations.createCreditForTile({
           tileId: TEST_ID_0,
-          credit: createTileCreditForm({ supplierId: supplier.id }),
+          credit: makeTileCreditData({ supplierId: supplier.id }),
           authUserId: user.id,
         })
       ).rejects.toThrow()
@@ -551,7 +551,7 @@ describe('tileOperations', () => {
       await expect(
         tileOperations.createCreditForTile({
           tileId: tile.id,
-          credit: createTileCreditForm({ supplierId: TEST_ID_0 }),
+          credit: makeTileCreditData({ supplierId: TEST_ID_0 }),
           authUserId: user.id,
         })
       ).rejects.toThrow()
@@ -565,7 +565,7 @@ describe('tileOperations', () => {
       await expect(
         tileOperations.createCreditForTile({
           tileId: tile.id,
-          credit: createTileCreditForm({ supplierId: supplier.id }),
+          credit: makeTileCreditData({ supplierId: supplier.id }),
           authUserId: TEST_ID_0,
         })
       ).rejects.toThrow()
@@ -580,7 +580,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createCreditForTile({
         tileId: tile.id,
-        credit: createTileCreditForm({ supplierId: supplier2.id, serviceDescription: '' }),
+        credit: makeTileCreditData({ supplierId: supplier2.id, serviceDescription: '' }),
         authUserId: user.id,
       })
 
@@ -604,7 +604,7 @@ describe('tileOperations', () => {
       // Act
       const result = await tileOperations.createCreditForTile({
         tileId: tile.id,
-        credit: createTileCreditForm({ supplierId: supplier2.id, serviceDescription }),
+        credit: makeTileCreditData({ supplierId: supplier2.id, serviceDescription }),
         authUserId: user.id,
       })
 
@@ -644,7 +644,7 @@ describe('tileOperations', () => {
         title: 'Update Scores Tile',
         description: '',
         createdByUserId: user.id,
-        credits: [createTileCreditForm({ supplierId: supplier.id })],
+        credits: [makeTileCreditData({ supplierId: supplier.id })],
       })
 
       // Fake aged tile to trigger score update

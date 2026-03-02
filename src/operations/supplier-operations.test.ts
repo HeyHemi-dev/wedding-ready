@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 
 import { LOCATIONS } from '@/db/constants'
 import { supplierModel } from '@/models/supplier'
-import { createTileCreditForm, createSupplierUpdateForm, makeSupplierData, scene } from '@/testing/scene'
+import { makeTileCreditData, makeSupplierUpdateData, makeSupplierData, scene } from '@/testing/scene'
 
 import { supplierOperations } from './supplier-operations'
 
@@ -46,7 +46,7 @@ describe('supplierOperations', () => {
       // Arrange
       const user = await scene.hasUser()
       const supplier = await scene.hasSupplier({ createdByUserId: user.id, locations: [LOCATIONS.OTAGO] })
-      const tile = await scene.hasTile({ createdByUserId: user.id, credits: [createTileCreditForm({ supplierId: supplier.id })] })
+      const tile = await scene.hasTile({ createdByUserId: user.id, credits: [makeTileCreditData({ supplierId: supplier.id })] })
 
       // Act
       const result = await supplierOperations.getListForSupplierGrid({ location: LOCATIONS.OTAGO })
@@ -134,7 +134,7 @@ describe('supplierOperations', () => {
       const user = await scene.hasUser()
       const supplier = await scene.hasSupplier({ createdByUserId: user.id, name: 'Test Supplier' })
 
-      const updatedSupplier = await supplierOperations.updateProfile(supplier.id, createSupplierUpdateForm({ name: 'Updated Supplier' }), user.id)
+      const updatedSupplier = await supplierOperations.updateProfile(supplier.id, makeSupplierUpdateData({ name: 'Updated Supplier' }), user.id)
 
       // Assert
       expect(updatedSupplier).toBeDefined()
@@ -148,7 +148,7 @@ describe('supplierOperations', () => {
 
       // Act & Assert
       await expect(
-        supplierOperations.updateProfile('00000000-0000-0000-0000-000000000000', createSupplierUpdateForm({ name: 'Updated Supplier' }), user.id)
+        supplierOperations.updateProfile('00000000-0000-0000-0000-000000000000', makeSupplierUpdateData({ name: 'Updated Supplier' }), user.id)
       ).rejects.toThrow()
     })
 
@@ -157,7 +157,7 @@ describe('supplierOperations', () => {
       const { supplier } = await scene.hasUserAndSupplier()
 
       await expect(
-        supplierOperations.updateProfile(supplier.id, createSupplierUpdateForm({ name: 'Updated Supplier' }), '00000000-0000-0000-0000-000000000000')
+        supplierOperations.updateProfile(supplier.id, makeSupplierUpdateData({ name: 'Updated Supplier' }), '00000000-0000-0000-0000-000000000000')
       ).rejects.toThrow()
     })
 
@@ -166,7 +166,7 @@ describe('supplierOperations', () => {
       const { user, supplier } = await scene.hasUserAndSupplier()
 
       // Act
-      await supplierOperations.updateProfile(supplier.id, createSupplierUpdateForm({ name: 'Updated Supplier', websiteUrl: '', description: '' }), user.id)
+      await supplierOperations.updateProfile(supplier.id, makeSupplierUpdateData({ name: 'Updated Supplier', websiteUrl: '', description: '' }), user.id)
 
       // Assert
       const updatedSupplier = await supplierModel.getRawById(supplier.id)
@@ -182,7 +182,7 @@ describe('supplierOperations', () => {
       // Act
       await supplierOperations.updateProfile(
         supplier.id,
-        createSupplierUpdateForm({ name: 'Updated Supplier', websiteUrl: 'https://example.com', description: '' }),
+        makeSupplierUpdateData({ name: 'Updated Supplier', websiteUrl: 'https://example.com', description: '' }),
         user.id
       )
 
@@ -200,7 +200,7 @@ describe('supplierOperations', () => {
       const description = 'New description'
 
       // Act
-      await supplierOperations.updateProfile(supplier.id, createSupplierUpdateForm({ name: 'Updated Supplier', websiteUrl, description }), user.id)
+      await supplierOperations.updateProfile(supplier.id, makeSupplierUpdateData({ name: 'Updated Supplier', websiteUrl, description }), user.id)
 
       // Assert
       const updatedSupplier = await supplierModel.getRawById(supplier.id)
