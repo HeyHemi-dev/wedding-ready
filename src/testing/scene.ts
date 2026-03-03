@@ -29,6 +29,7 @@ export const TEST_ID_0 = '00000000-0000-4000-8000-000000000000'
 export const TEST_ID_F = 'ffffffff-ffff-4fff-bfff-ffffffffffff'
 
 export type TestUser = UserSignupForm & Pick<OnboardingForm, 'displayName' | 'handle'>
+export type TestUserProfile = t.UserProfileRaw & { email: string }
 export type TestSupplier = SupplierRegistrationForm
 export type TestTile = Omit<TileCreate, 'createdByUserId' | 'credits'>
 
@@ -76,9 +77,7 @@ const CLEANUP_MARKER_COLUMNS = {
 } as const
 
 const sceneContextStore = new AsyncLocalStorage<SceneContext>()
-let activeTestContext: SceneContext | null = null
-
-type TestUserProfile = t.UserProfileRaw & { email: string }
+let activeSceneContext: SceneContext | null = null
 
 export const scene = {
   setup,
@@ -100,7 +99,7 @@ export const scene = {
  *
  * Side effects:
  * - creates a new SceneContext (`ns` may be empty when `isTest: false`)
- * - mutates `activeTestContext`
+ * - mutates `activeSceneContext`
  * - writes context into AsyncLocalStorage via `sceneContextStore.enterWith(ctx)`
  *
  * Call order:
@@ -108,20 +107,20 @@ export const scene = {
  *
  * Concurrency:
  * - context is per async call-chain; each concurrent test must call `setup`
- *   in its own lifecycle to avoid sharing fallback `activeTestContext`.
+ *   in its own lifecycle to avoid sharing fallback `activeSceneContext`.
  */
 function setup({ isTest = true }: { isTest?: boolean } = {}): void {
   const ctx: SceneContext = {
     ns: isTest ? `${TEST_MARKER}${randomUUID().slice(0, 8)}` : '',
     isTest,
   }
-  activeTestContext = ctx
+  activeSceneContext = ctx
   sceneContextStore.enterWith(ctx)
 }
 
-/** Returns the active test context; call in the current test lifecycle. Throws if scene.setup() has not been called. */
+/** Returns the active scene context; call in the current test lifecycle. Throws if scene.setup() has not been called. */
 function context(): SceneContext {
-  return getTestContext()
+  return getSceneContext()
 }
 
 /**
@@ -133,14 +132,14 @@ function context(): SceneContext {
  *   - namespaced tiles/suppliers by namespaced fields
  *   - namespaced auth users via `testClient.auth.admin.deleteUser` (through helper)
  * - aggregates cleanup issues and may log them
- * - resets `activeTestContext` to `null`
+ * - resets `activeSceneContext` to `null`
  *
  * Call order:
  * - call after each test (typically in `afterEach`) to prevent cross-test bleed.
  */
 async function cleanup(): Promise<void> {
   const cleanupIssues: CleanupIssue[] = []
-  const ctx = getTestContext()
+  const ctx = getSceneContext()
   if (!ctx.isTest) {
     throw OPERATION_ERROR.INVALID_STATE('scene.cleanup() requires a test-scoped scene context.')
   }
@@ -180,7 +179,7 @@ async function cleanup(): Promise<void> {
     await cleanupAuthByUserId(userId, { cleanupIssues, operation: 'cleanup_auth_user' })
   }
 
-  activeTestContext = null
+  activeSceneContext = null
   if (cleanupIssues.length > 0) {
     logCleanupIssues('Test cleanup encountered issues', cleanupIssues)
   }
@@ -233,7 +232,7 @@ async function hasUser({
   avatarUrl = '',
   supabaseClient = testClient,
 }: Partial<UserSignupForm> & Partial<OnboardingForm> & { supabaseClient?: SupabaseClient } = {}): Promise<TestUserProfile> {
-  const ctx = getTestContext()
+  const ctx = getSceneContext()
   const userData = makeUserData(ctx, { email, handle, displayName, password })
 
   const user = await userProfileModel.getRawByHandle(userData.handle)
@@ -255,7 +254,7 @@ async function hasSupplier({
   services = TEST_SUPPLIER.services,
   createdByUserId,
 }: Partial<SupplierRegistrationForm> & { createdByUserId: string }): Promise<Supplier> {
-  const ctx = getTestContext()
+  const ctx = getSceneContext()
   const supplierData = makeSupplierData(ctx, { name, handle, websiteUrl, description, locations, services })
 
   const supplier = await supplierOperations.getByHandle(supplierData.handle)
@@ -281,7 +280,7 @@ async function hasTile({
   createdByUserId,
   credits,
 }: Partial<TileCreate> & Pick<TileCreate, 'createdByUserId' | 'credits'>): Promise<t.TileRaw> {
-  const ctx = getTestContext()
+  const ctx = getSceneContext()
   const tileData = makeTileData(ctx, { imagePath, imageRatio, title, description, location })
   const tiles = await db.select().from(s.tiles).where(eq(s.tiles.imagePath, tileData.imagePath))
 
@@ -310,7 +309,7 @@ async function withoutUser({
   handle = TEST_USER.handle,
   supabaseClient = testClient,
 }: Partial<{ handle: string; supabaseClient: SupabaseClient }> = {}): Promise<void> {
-  const namespacedHandle = withNamespace(handle, getTestContext())
+  const namespacedHandle = withNamespace(handle, getSceneContext())
   const user = await userProfileModel.getRawByHandle(namespacedHandle)
   if (!user) return
 
@@ -319,7 +318,7 @@ async function withoutUser({
 
 /** Deletes a namespaced supplier by handle when present. */
 async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ handle: string }> = {}): Promise<void> {
-  const namespacedHandle = withNamespace(handle, getTestContext())
+  const namespacedHandle = withNamespace(handle, getSceneContext())
   const supplier = await supplierModel.getRawByHandle(namespacedHandle)
   if (!supplier) return
   await db.delete(s.suppliers).where(eq(s.suppliers.id, supplier.id))
@@ -327,20 +326,20 @@ async function withoutSupplier({ handle = TEST_SUPPLIER.handle }: Partial<{ hand
 
 /** Deletes all tiles linked to a namespaced supplier handle. */
 async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }: Partial<{ supplierHandle: string }> = {}): Promise<void> {
-  const namespacedHandle = withNamespace(supplierHandle, getTestContext())
+  const namespacedHandle = withNamespace(supplierHandle, getSceneContext())
   const tiles = await tileModel.getManyRawBySupplierHandle(namespacedHandle)
   if (tiles.length === 0) return
   await tileModel.deleteManyByIds(tiles.map((t) => t.id))
 }
 
 /**
- * Returns current test context from AsyncLocalStorage, falling back to
- * `activeTestContext` when no store is bound to the current async chain.
+ * Returns current scene context from AsyncLocalStorage, falling back to
+ * `activeSceneContext` when no store is bound to the current async chain.
  */
-function getTestContext(): SceneContext {
-  const ctx = sceneContextStore.getStore() ?? activeTestContext ?? undefined
+function getSceneContext(): SceneContext {
+  const ctx = sceneContextStore.getStore() ?? activeSceneContext ?? undefined
   if (!ctx) {
-    throw OPERATION_ERROR.INVALID_STATE('No active test scene namespace. Call scene.setup() before using scene utilities.')
+    throw OPERATION_ERROR.INVALID_STATE('No active scene context. Call scene.setup() before using scene utilities.')
   }
 
   return ctx
