@@ -7,8 +7,8 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-area: var(--area);
-  --color-area-foreground: var(--area-foreground);
+  --color-area: var(--card);
+  --color-area-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -24,8 +24,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-
-
 
   --spacing-hairline: 1px;
   --spacing-2xl: 4rem;
@@ -43,7 +41,7 @@
   --gap-friend: calc(var(--gap-sibling) * var(--wr-gap-scale));
   --gap-acquaintance: calc(var(--gap-friend) * var(--wr-gap-scale));
   --gap-stranger: calc(var(--gap-acquaintance) * var(--wr-gap-scale));
-  --gap-area: var(--gap-friend);
+  --gap-area: 0rem;
 
   --padding-site: var(--wr-padding-site-gutter);
   --padding-section: calc(var(--gap-stranger) / 2);
