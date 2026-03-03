@@ -59,6 +59,7 @@ export const TEST_TILE = {
 const TEST_MARKER = '__t_'
 type TestContext = {
   ns: string
+  isTest: boolean
 }
 type CleanupIssue = {
   operation: string
@@ -98,7 +99,7 @@ export const scene = {
  * Initializes per-test scene context.
  *
  * Side effects:
- * - creates a new namespaced TestContext (`ns`)
+ * - creates a new TestContext (`ns` may be empty when `isTest: false`)
  * - mutates `activeTestContext`
  * - writes context into AsyncLocalStorage via `testContextStore.enterWith(ctx)`
  *
@@ -109,9 +110,10 @@ export const scene = {
  * - context is per async call-chain; each concurrent test must call `setup`
  *   in its own lifecycle to avoid sharing fallback `activeTestContext`.
  */
-function setup(): void {
+function setup({ isTest = true }: { isTest?: boolean } = {}): void {
   const ctx: TestContext = {
-    ns: `${TEST_MARKER}${randomUUID().slice(0, 8)}`,
+    ns: isTest ? `${TEST_MARKER}${randomUUID().slice(0, 8)}` : '',
+    isTest,
   }
   activeTestContext = ctx
   testContextStore.enterWith(ctx)
@@ -139,6 +141,9 @@ function context(): TestContext {
 async function cleanup(): Promise<void> {
   const cleanupIssues: CleanupIssue[] = []
   const ctx = getTestContext()
+  if (!ctx.isTest) {
+    throw OPERATION_ERROR.INVALID_STATE('scene.cleanup() requires a test-scoped scene context.')
+  }
   const prefixPattern = `${ctx.ns.replace(/_/g, '\\_')}%`
 
   const { data: users, error: usersError } = await tryCatch(
@@ -399,6 +404,7 @@ function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
 
 /** Internal helper to prefix a raw value with the active scene namespace. */
 function withNamespace(base: string, ctx: TestContext): string {
+  if (!ctx.isTest) return base
   return `${ctx.ns}${base}`
 }
 

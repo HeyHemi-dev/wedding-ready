@@ -22,6 +22,7 @@ const SUPPLIER = {
 
 async function seedDatabase() {
   console.log('Seeding database...')
+  scene.setup({ isTest: false })
 
   const user = await scene.hasUser(AUTH_USER)
   console.log('User created')
