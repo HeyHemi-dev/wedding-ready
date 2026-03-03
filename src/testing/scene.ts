@@ -57,7 +57,7 @@ export const TEST_TILE = {
 } satisfies TestTile
 
 const TEST_MARKER = '__t_'
-type TestContext = {
+type SceneContext = {
   ns: string
   isTest: boolean
 }
@@ -75,8 +75,8 @@ const CLEANUP_MARKER_COLUMNS = {
   tile: s.tiles.imagePath,
 } as const
 
-const testContextStore = new AsyncLocalStorage<TestContext>()
-let activeTestContext: TestContext | null = null
+const sceneContextStore = new AsyncLocalStorage<SceneContext>()
+let activeTestContext: SceneContext | null = null
 
 type TestUserProfile = t.UserProfileRaw & { email: string }
 
@@ -99,9 +99,9 @@ export const scene = {
  * Initializes per-test scene context.
  *
  * Side effects:
- * - creates a new TestContext (`ns` may be empty when `isTest: false`)
+ * - creates a new SceneContext (`ns` may be empty when `isTest: false`)
  * - mutates `activeTestContext`
- * - writes context into AsyncLocalStorage via `testContextStore.enterWith(ctx)`
+ * - writes context into AsyncLocalStorage via `sceneContextStore.enterWith(ctx)`
  *
  * Call order:
  * - call before creating test resources (typically in `beforeEach`)
@@ -111,16 +111,16 @@ export const scene = {
  *   in its own lifecycle to avoid sharing fallback `activeTestContext`.
  */
 function setup({ isTest = true }: { isTest?: boolean } = {}): void {
-  const ctx: TestContext = {
+  const ctx: SceneContext = {
     ns: isTest ? `${TEST_MARKER}${randomUUID().slice(0, 8)}` : '',
     isTest,
   }
   activeTestContext = ctx
-  testContextStore.enterWith(ctx)
+  sceneContextStore.enterWith(ctx)
 }
 
 /** Returns the active test context; call in the current test lifecycle. Throws if scene.setup() has not been called. */
-function context(): TestContext {
+function context(): SceneContext {
   return getTestContext()
 }
 
@@ -337,8 +337,8 @@ async function withoutTilesForSupplier({ supplierHandle = TEST_SUPPLIER.handle }
  * Returns current test context from AsyncLocalStorage, falling back to
  * `activeTestContext` when no store is bound to the current async chain.
  */
-function getTestContext(): TestContext {
-  const ctx = testContextStore.getStore() ?? activeTestContext ?? undefined
+function getTestContext(): SceneContext {
+  const ctx = sceneContextStore.getStore() ?? activeTestContext ?? undefined
   if (!ctx) {
     throw OPERATION_ERROR.INVALID_STATE('No active test scene namespace. Call scene.setup() before using scene utilities.')
   }
@@ -403,7 +403,7 @@ function logCleanupIssues(label: string, issues: CleanupIssue[]): void {
 }
 
 /** Internal helper to prefix a raw value with the active scene namespace. */
-function withNamespace(base: string, ctx: TestContext): string {
+function withNamespace(base: string, ctx: SceneContext): string {
   if (!ctx.isTest) return base
   return `${ctx.ns}${base}`
 }
@@ -432,7 +432,7 @@ export function makeSupplierUpdateData({
   }
 }
 
-export function makeSupplierData(context: TestContext, overrides: Partial<TestSupplier> = {}): TestSupplier {
+export function makeSupplierData(context: SceneContext, overrides: Partial<TestSupplier> = {}): TestSupplier {
   const base = {
     ...TEST_SUPPLIER,
     ...overrides,
@@ -444,7 +444,7 @@ export function makeSupplierData(context: TestContext, overrides: Partial<TestSu
   }
 }
 
-export function makeUserData(context: TestContext, overrides: Partial<TestUser> = {}): TestUser {
+export function makeUserData(context: SceneContext, overrides: Partial<TestUser> = {}): TestUser {
   const base = {
     ...TEST_USER,
     ...overrides,
@@ -457,7 +457,7 @@ export function makeUserData(context: TestContext, overrides: Partial<TestUser> 
   }
 }
 
-export function makeTileData(context: TestContext, overrides: Partial<TestTile> = {}): TestTile {
+export function makeTileData(context: SceneContext, overrides: Partial<TestTile> = {}): TestTile {
   const base = {
     ...TEST_TILE,
     ...overrides,
