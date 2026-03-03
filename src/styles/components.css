@@ -1,6 +1,6 @@
 @layer components {
   .area {
-    background-color: hsl(var(--area));
+    background-color: var(--area);
     border-radius: var(--radius-area);
     padding: var(--padding-area);
   }
