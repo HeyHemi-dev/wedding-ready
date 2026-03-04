@@ -13,6 +13,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "db:generate": "drizzle-kit generate --config drizzle.config.ts",
+    "db:start": "supabase start && pnpm db:migrate && pnpm db:seed",
+    "db:stop": "supabase stop",
     "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "db:pull": "drizzle-kit pull --config drizzle.config.ts",

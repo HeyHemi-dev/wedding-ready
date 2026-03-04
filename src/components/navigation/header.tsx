@@ -28,20 +28,20 @@ export default async function Header() {
   })
 
   return (
-    <header className="grid h-header grid-cols-siteLayout grid-rows-[0_1fr_0] gap-y-area">
-      <div className="col-start-2 col-end-3 row-start-2 row-end-3 grid h-header-content grid-cols-[auto_1fr_auto] gap-friend">
-        <div className="logo-wrapper aspect-[12/7]">
-          <Link href={authUserId ? '/feed' : '/'} className="relative block h-full rounded-full p-contour hover:bg-primary/80" passHref>
+    <header className="h-header grid-cols-siteLayout gap-y-wr4 grid grid-rows-[0_1fr_0]">
+      <div className="h-header-content gap-friend col-start-2 col-end-3 row-start-2 row-end-3 grid grid-cols-[auto_1fr_auto]">
+        <div className="logo-wrapper aspect-12/7">
+          <Link href={authUserId ? '/feed' : '/'} className="p-contour hover:bg-primary/80 relative block h-full rounded-full" passHref>
             <Image src={'/assets/WeddingReady_icon.png'} alt="WeddingReady" fill sizes="300px" className="object-contain" priority />
           </Link>
         </div>
-        <nav className="flex items-center gap-sibling">
+        <nav className="gap-sibling flex items-center">
           <NavLink link={{ href: '/find-suppliers', label: 'Find Suppliers' }} />
           {/* <NavLink link={{ href: '/articles', label: 'Advice' }} /> */}
         </nav>
-        <ErrorBoundary fallback={<Skeleton className="aspect-[12/7] rounded-full" />}>
+        <ErrorBoundary fallback={<Skeleton className="aspect-12/7 rounded-full" />}>
           <HydrationBoundary state={dehydrate(queryClient)}>
-            <Suspense fallback={<Skeleton className="aspect-[12/7] rounded-full" />}>
+            <Suspense fallback={<Skeleton className="aspect-12/7 rounded-full" />}>
               <HeaderAuth />
             </Suspense>
           </HydrationBoundary>

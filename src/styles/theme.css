@@ -3,38 +3,27 @@
   --breakpoint-laptop: 850px;
   --breakpoint-wide: 1550px;
 
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-area: hsl(var(--area));
-  --color-area-foreground: hsl(var(--area-foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-
-
-
-  --spacing-hairline: 1px;
-  --spacing-2xl: 4rem;
-  --spacing-xl: 3rem;
-  --spacing-lg: 2rem;
-  --spacing-md: 1.5rem;
-  --spacing-sm: 1rem;
-  --spacing-xs: 0.5rem;
-  --spacing-2xs: 0.25rem;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-area: var(--card);
+  --color-area-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
   --gap-spouse: var(--wr-gap-base);
   --gap-partner: calc(var(--gap-spouse) * var(--wr-gap-scale));
@@ -43,7 +32,38 @@
   --gap-friend: calc(var(--gap-sibling) * var(--wr-gap-scale));
   --gap-acquaintance: calc(var(--gap-friend) * var(--wr-gap-scale));
   --gap-stranger: calc(var(--gap-acquaintance) * var(--wr-gap-scale));
-  --gap-area: var(--gap-friend);
+  --gap-area: 0rem;
+
+  --gap-wr1: var(--wr-gap-base);
+  --gap-wr2: calc(var(--gap-wr1) * var(--wr-gap-scale));
+  --gap-wr3: calc(var(--gap-wr2) * var(--wr-gap-scale));
+  --gap-wr4: calc(var(--gap-wr3) * var(--wr-gap-scale));
+  --gap-wr4-5: calc(var(--gap-wr4) + var(--gap-wr3));
+  --gap-wr5: calc(var(--gap-wr4) * var(--wr-gap-scale));
+  --gap-wr5-5: calc(var(--gap-wr5) + var(--gap-wr4));
+  --gap-wr6: calc(var(--gap-wr5) * var(--wr-gap-scale));
+  --gap-wr6-5: calc(var(--gap-wr6) + var(--gap-wr5));
+  --gap-wr7: calc(var(--gap-wr6) * var(--wr-gap-scale));
+
+  --spacing-2xl: 4rem;
+  --spacing-xl: 3rem;
+  --spacing-lg: 2rem;
+  --spacing-md: 1.5rem;
+  --spacing-sm: 1rem;
+  --spacing-xs: 0.5rem;
+  --spacing-2xs: 0.25rem;
+
+  --spacing-hairline: 1px;
+  --spacing-wr1: calc(var(--gap-wr1) / 2);
+  --spacing-wr2: calc(var(--gap-wr2) / 2);
+  --spacing-wr3: calc(var(--gap-wr3) / 2);
+  --spacing-wr4: calc(var(--gap-wr4) / 2);
+  --spacing-wr4-5: calc(var(--gap-wr4-5) / 2);
+  --spacing-wr5: calc(var(--gap-wr5) / 2);
+  --spacing-wr5-5: calc(var(--gap-wr5-5) / 2);
+  --spacing-wr6: calc(var(--gap-wr6) / 2);
+  --spacing-wr6-5: calc(var(--gap-wr6-5) / 2);
+  --spacing-wr7: calc(var(--gap-wr7) / 2);
 
   --padding-site: var(--wr-padding-site-gutter);
   --padding-section: calc(var(--gap-stranger) / 2);
@@ -55,7 +75,7 @@
   --site-layout: minmax(var(--padding-site), auto) minmax(0, var(--width-site)) minmax(var(--padding-site), auto);
 
   --height-header-content: var(--wr-height-header-content);
-  --height-header: calc(var(--height-header-content) + (var(--gap-area) * 2));
+  --height-header: calc(var(--height-header-content) + (var(--gap-wr4) * 2));
   --height-action-bar: calc(var(--radius-area) * 2);
   --height-page: var(--wr-height-page);
   --height-first-section: calc(var(--height-page) - var(--height-header));
@@ -83,7 +103,7 @@
   --text-xs: calc(var(--text-sm) / var(--wr-text-scale));
   --text-2xs: calc(var(--text-xs) / var(--wr-text-scale));
 
-  --shadow-contour: 0 0 0 var(--padding-contour) hsl(var(--primary));
+  --shadow-contour: 0 0 0 var(--padding-contour) var(--primary);
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 }

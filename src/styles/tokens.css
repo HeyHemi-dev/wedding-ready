@@ -1,93 +1,143 @@
-@layer base {
+:root {
+  --kowhai: oklch(0.96 0.2 113);
+
+  --pounamu-50: oklch(0.97 0.03 179);
+  --pounamu-100: oklch(0.94 0.054 177);
+  --pounamu-150: oklch(0.91 0.07 177);
+  --pounamu-200: oklch(0.87 0.085 178);
+  --pounamu-250: oklch(0.84 0.088 178);
+  --pounamu-300: oklch(0.8 0.093 178);
+  --pounamu-350: oklch(0.77 0.093 179);
+  --pounamu-400: oklch(0.73 0.092 179);
+  --pounamu-450: oklch(0.69 0.092 179);
+  --pounamu-500: oklch(0.65 0.093 179);
+  --pounamu-550: oklch(0.61 0.092 179);
+  --pounamu-600: oklch(0.57 0.092 180);
+  --pounamu-650: oklch(0.52 0.09 179);
+  --pounamu-700: oklch(0.48 0.087 179);
+  --pounamu-750: oklch(0.43 0.079 177);
+  --pounamu-800: oklch(0.38 0.071 175);
+  --pounamu-850: oklch(0.31 0.06 172);
+  --pounamu-900: oklch(0.25 0.05 168);
+  --pounamu-950: oklch(0.14 0.03 157);
+
+  --neutral-50: oklch(0.96 0.001 106);
+  --neutral-100: oklch(0.92 0.001 106);
+  --neutral-150: oklch(0.89 0.003 85);
+  --neutral-200: oklch(0.85 0.004 106);
+  --neutral-250: oklch(0.82 0.004 91);
+  --neutral-300: oklch(0.78 0.004 91);
+  --neutral-350: oklch(0.74 0.004 91);
+  --neutral-400: oklch(0.71 0.006 85);
+  --neutral-450: oklch(0.67 0.006 85);
+  --neutral-500: oklch(0.64 0.006 85);
+  --neutral-550: oklch(0.6 0.007 75);
+  --neutral-600: oklch(0.53 0.007 60);
+  --neutral-650: oklch(0.47 0.006 49);
+  --neutral-700: oklch(0.4 0.004 39);
+  --neutral-750: oklch(0.33 0.003 49);
+  --neutral-800: oklch(0.27 0.003 17);
+  --neutral-850: oklch(0.2 0.002 17);
+  --neutral-900: oklch(0.13 0 90);
+  --neutral-950: oklch(0.07 0 90);
+
+  --neutral-25: oklch(0.98 0 106);
+  --neutral-925: oklch(0.09 0 90);
+
+  --neutral-0: oklch(1 0 0);
+  --neutral-1000: oklch(0 0 0);
+
+  --wr-gap-base: 0.25rem;
+  --wr-gap-scale: 1.5;
+
+  --wr-padding-site-gutter: 0px;
+
+  --wr-height-header-content: 2rem;
+  --wr-height-page: 100svh;
+
+  --wr-width-site: 80rem;
+  --wr-width-prose: 80ch;
+
+  --wr-text-size: 1rem;
+  --wr-text-scale: 1.2;
+}
+
+:root {
+  --background: var(--neutral-25);
+  --foreground: var(--neutral-900);
+  --card: var(--neutral-50);
+  --card-foreground: var(--foreground);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --primary: var(--pounamu-150);
+  --primary-foreground: var(--pounamu-800);
+  --secondary: var(--kowhai);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--neutral-100);
+  --muted-foreground: var(--neutral-600);
+  --accent: var(--pounamu-50);
+  --accent-foreground: var(--pounamu-700);
+  --destructive: oklch(0.95 0.02 30);
+  --destructive-foreground: oklch(0.54 0.21 31);
+  --border: var(--neutral-0);
+  --input: var(--pounamu-50);
+  --input-bg: var(--neutral-0);
+  --ring: var(--pounamu-400);
+  --link: var(--accent-foreground);
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: var(--neutral-25);
+  --foreground: var(--neutral-900);
+  --card: var(--neutral-50);
+  --card-foreground: var(--foreground);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --primary: var(--pounamu-150);
+  --primary-foreground: var(--pounamu-800);
+  --secondary: var(--kowhai);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--neutral-100);
+  --muted-foreground: var(--neutral-600);
+  --accent: var(--pounamu-50);
+  --accent-foreground: var(--pounamu-700);
+  --destructive: oklch(0.95 0.02 30);
+  --destructive-foreground: oklch(0.54 0.21 31);
+  --border: var(--neutral-0);
+  --input: var(--pounamu-50);
+  --input-bg: var(--neutral-0);
+  --ring: var(--pounamu-400);
+  --link: var(--accent-foreground);
+}
+
+@media (min-width: 450px) {
   :root {
-    --background: 39 16% 98%;
-    --foreground: 210 5% 10%;
-    --muted: 39 17% 95%;
-    --muted-foreground: 39 5% 49%;
-    --card: 39 17% 91%;
-    --card-foreground: var(--foreground);
-    --area: var(--card);
-    --area-foreground: var(--card-foreground);
-    --popover: 0 0% 100%;
-    --popover-foreground: var(--foreground);
-    --primary: 66 100% 73%;
-    --primary-foreground: 66 100% 15%;
-    --secondary: 290 100% 94%;
-    --secondary-foreground: 290 100% 29%;
-    --accent: 154 83% 91%;
-    --accent-foreground: 154 79% 23%;
-    --destructive: 0 50% 50%;
-    --destructive-foreground: 32 5% 98%;
-    --border: 0 0% 100%;
-    --input: var(--border);
-    --ring: var(--primary);
-    --radius: 0.75rem;
-
-    --wr-gap-base: 0.25rem;
-    --wr-gap-scale: 1.5;
-
-    --wr-padding-site-gutter: 0px;
-
-    --wr-height-header-content: 2rem;
-    --wr-height-page: 100svh;
-
-    --wr-width-site: 80rem;
-    --wr-width-prose: 80ch;
-
+    --wr-gap-scale: 1.8;
+    --wr-padding-site-gutter: calc(var(--wr-gap-base) * var(--wr-gap-scale) * var(--wr-gap-scale) * var(--wr-gap-scale) / 2);
     --wr-text-size: 1rem;
-    --wr-text-scale: 1.2;
+    --wr-text-scale: 1.225;
   }
+}
 
-  .dark {
-    --background: 32 10% 10%;
-    --foreground: 32 5% 98%;
-    --card: 32 6% 10%;
-    --card-foreground: 32 5% 98%;
-    --popover: 32 10% 5%;
-    --popover-foreground: 32 5% 98%;
-    --primary: 32 14% 37%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 32 10% 20%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: -6 10% 25%;
-    --muted-foreground: 32 5% 65%;
-    --accent: -6 10% 25%;
-    --accent-foreground: 32 5% 95%;
-    --destructive: 0 50% 50%;
-    --destructive-foreground: 32 5% 98%;
-    --border: 32 20% 50%;
-    --input: 32 20% 50%;
-    --ring: 32 14% 37%;
+@media (min-width: 850px) {
+  :root {
+    --wr-gap-scale: 2;
+    --wr-text-size: 1rem;
+    --wr-text-scale: 1.25;
   }
+}
 
-  @media (min-width: 450px) {
-    :root {
-      --wr-gap-scale: 1.8;
-      --wr-padding-site-gutter: calc(var(--wr-gap-base) * var(--wr-gap-scale) * var(--wr-gap-scale) * var(--wr-gap-scale) / 2);
-      --wr-text-size: 1rem;
-      --wr-text-scale: 1.225;
-    }
-  }
+html {
+  scroll-behavior: smooth;
+}
 
-  @media (min-width: 850px) {
-    :root {
-      --wr-gap-scale: 2;
-      --wr-text-size: 1rem;
-      --wr-text-scale: 1.25;
-    }
-  }
+body {
+  @apply bg-background text-foreground;
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
+}
 
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    scrollbar-gutter: stable;
-    overflow-y: scroll;
-  }
-
-  * {
-    @apply border-border;
-  }
+* {
+  @apply border-border;
 }
